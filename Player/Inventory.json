@@ -1,0 +1,68 @@
+[
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Advanced Furnace",
+	"type": "Furnace",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Basic Furnace",
+	"type": "Furnace",
+	"totalOwned": 20
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Basic Upgrader",
+	"type": "Upgrader",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Diamond Dropper",
+	"type": "Dropper",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Fast Conveyor",
+	"type": "Conveyor",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Lava Dropper",
+	"type": "Dropper",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Magic Furnace",
+	"type": "Furnace",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Renewal Forge",
+	"type": "Upgrader",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Simple Dropper",
+	"type": "Dropper",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Standard Conveyor",
+	"type": "Conveyor",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Ultra Conveyor",
+	"type": "Conveyor",
+	"totalOwned": 0
+}
+]

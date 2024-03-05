@@ -1,0 +1,39 @@
+Render:
+
+Probably take a hybrid approach in which I use a stage to manage the UI and do the rest myself.
+
+
+
+for(Item item : placedItems) {
+    if (camera.frustum.pointInFrustum(item.getVector().x, item.getVector().y, 0)) { //Only draws what can actually be seen.
+            batch.draw(item.getTexture(), item.getVector().x, item.getVector().y);
+    }
+}
+for (Ore ore : activeOre) {
+    if (camera.frustum.pointInFrustum(item.getVector().x, item.getVector().y, 0)) { //Only draws what can actually be seen.
+        batch.draw(ore.getTexture(), ore.getVector().x, ore.getVector().y);
+    }
+}
+
+
+
+stage.draw()
+
+
+
+
+
+
+Shaders:
+
+Shader that highlights the outlines of all placed items Blue. Green or Red blue by default.
+
+Shader that covers the ground around a placed Item in shadow.
+
+Shaders so that special items can glow/emit light.
+
+Shader that covers the outside of the map in shadow,
+
+Shader that highlights the item that you are gonna place/makes it pulse white.
+
+Shader that highlights the item you are gonna place red if not able to be placed.

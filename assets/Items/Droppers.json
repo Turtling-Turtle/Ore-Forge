@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Simple Dropper",
+    "description": "A basic dropper that starts your mining empire.",
+    "blockLayout": [
+      [0,3,0],
+      [0,0,0],
+      [0,0,0]
+    ],
+    "tier": "COMMON",
+    "itemValue": 10.0,
+    "oreName": "Coal",
+    "oreValue": 5.0,
+    "oreTemp": 25,
+    "multiOre": 1,
+    "dropInterval": 1.5
+  },
+  {
+    "name": "Lava Dropper",
+    "description": "Drops hot lava ores to forge the strongest metals.",
+    "blockLayout": [
+      [0,3,0],
+      [0,0,0],
+      [0,0,0]
+    ],
+    "tier": "RARE",
+    "itemValue": 50.0,
+    "oreName": "Lava Ore",
+    "oreValue": 20.0,
+    "oreTemp": 1000,
+    "multiOre": 1,
+    "dropInterval": 2.0
+  },
+  {
+    "name": "Diamond Dropper",
+    "description": "A luxurious dropper that drops diamonds.",
+    "blockLayout": [
+      [0,3,0],
+      [0,0,0],
+      [0,0,0]
+    ],
+    "tier": "EPIC",
+    "itemValue": 100.0,
+    "oreName": "Diamond",
+    "oreValue": 100.0,
+    "oreTemp": 300,
+    "multiOre": 1,
+    "dropInterval": 5.0
+  }
+]
