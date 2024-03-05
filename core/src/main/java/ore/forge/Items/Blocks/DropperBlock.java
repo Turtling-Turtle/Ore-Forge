@@ -2,7 +2,7 @@ package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
 import ore.forge.Items.Item;
-import ore.forge.Items.Strategies.DropperStrategies.DropperStrategy;
+import ore.forge.Strategies.DropperStrategies.DropperStrategy;
 import ore.forge.OreRealm;
 
 //@author Nathan Ulmen

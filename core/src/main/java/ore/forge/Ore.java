@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Items.Blocks.Worker;
-import ore.forge.Items.Strategies.OreStrategies.OreStrategy;
+import ore.forge.Strategies.OreStrategies.OreStrategy;
 
 import java.util.BitSet;
 import java.util.HashMap;

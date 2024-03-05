@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 import ore.forge.Items.Blocks.UpgradeBlock;
-import ore.forge.Items.Strategies.UpgradeStrategies.UpgradeStrategy;
+import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.UpgradeTag;
 
 //@author Nathan Ulmen

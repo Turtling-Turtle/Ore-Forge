@@ -4,7 +4,7 @@ package ore.forge.Items.Blocks;
 import ore.forge.Direction;
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
-import ore.forge.Items.Strategies.UpgradeStrategies.UpgradeStrategy;
+import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.FurnaceBlock;
-import ore.forge.Items.Strategies.UpgradeStrategies.UpgradeStrategy;
+import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
 //@author Nathan Ulmen
 public class Furnace extends Item {
