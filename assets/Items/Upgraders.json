@@ -54,6 +54,48 @@
       "maxUpgrades": 5,
       "isResetter": false
     }
+  },
+  {
+    "name": "Searing Winds",
+    "description": "Ore is touched by winds so hot it's lit ablaze.",
+    "blockLayout": [
+      [0, 0, 0],
+      [0, 2, 0],
+      [0, 0, 0]
+    ],
+    "tier": "PRESTIGE",
+    "itemValue": 0,
+    "conveyorSpeed" : 5.0,
+    "upgrade": {
+     "type": "BundledUPG",
+      "upgStrat1": {
+        "type": "ConditionalUPG",
+        "ifModifier": {
+          "type": "MultiplyUPG",
+          "valueToModify": "ORE_VALUE",
+          "modifier": 6.0
+        },
+        "elseModifier": {
+          "type": "AddUPG",
+          "valueToModify": "MULTIORE",
+          "modifier": 4.0
+        },
+        "condition": "MULTIORE",
+        "comparison": "LESS_THAN",
+        "threshold": 1.0
+      },
+        "upgStrat2": {
+          "type": "ApplyEffect",
+            "strategyType": "Inflamed",
+            "duration": 8.0,
+            "tempIncrease": 10
+        }
+    },
+    "upgradeTag": {
+      "name": "Searing Winds",
+      "maxUpgrades": 1,
+      "isResetter": false
+    }
   }
 
 ]

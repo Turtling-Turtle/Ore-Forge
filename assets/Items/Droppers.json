@@ -14,8 +14,8 @@
     "oreTemp": 25,
     "multiOre": 1,
     "dropInterval": 1.5,
-    "strategyType": {
-      "type": null
+    "oreStrategy": {
+      "strategyType": null
     }
   },
   {
@@ -33,8 +33,8 @@
     "oreTemp": 1000,
     "multiOre": 1,
     "dropInterval": 2.0,
-    "strategyType": {
-      "type": null
+    "oreStrategy": {
+      "strategyType": null
     }
   },
   {
@@ -52,8 +52,8 @@
     "oreTemp": 300,
     "multiOre": 1,
     "dropInterval": 5.0,
-    "strategyType": {
-      "type": null
+    "oreStrategy": {
+      "strategyType": null
     }
   },
   {
@@ -71,9 +71,42 @@
     "oreTemp": 0,
     "multiOre": 1,
     "dropInterval": 0.04,
-    "strategyType": {
-      "type": null
+    "oreStrategy": {
+      "strategyType": null
     }
+  },
+  {
+  "name": "Wubium Mine",
+  "description": "That's one quick mine.",
+  "blockLayout": [
+    [ 0, 3, 0 ],
+    [ 0, 0, 0 ],
+    [ 0, 0, 0 ]
+  ],
+  "tier": "EXOTIC",
+  "itemValue": 0,
+  "oreName": "Wubite",
+  "oreValue": 1000000,
+  "oreTemp": 0,
+  "multiOre": 1,
+  "dropInterval": 0.04,
+  "oreStrategy": {
+    "strategyType": "BundledEffect",
+      "oreStrat1": {
+        "strategyType": "Inflamed",
+          "duration": 8,
+          "tempIncrease": 10
+      },
+      "oreStrat2" : {
+        "strategyType": null
+      },
+      "oreStrat3" : {
+        "strategyType": null
+      },
+      "oreStrat4" : {
+        "strategyType": null
+      }
   }
+}
 
 ]

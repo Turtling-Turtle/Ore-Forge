@@ -38,7 +38,8 @@ public class ResourceManager {
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
         for (Item item: allItems.values()) {
-            Gdx.app.log("Name", item.toString());
+            Gdx.app.log("Item", item.toString());
+            System.out.println();
         }
     }
 
@@ -80,7 +81,7 @@ public class ResourceManager {
             jsonValue.getInt("oreTemp"),
             jsonValue.getInt("multiOre"),
             jsonValue.getFloat("dropInterval"),
-            createOreStrategy(jsonValue.get("strategyType"))
+            createOreStrategy(jsonValue.get("oreStrategy"))
         );
         allItems.put(dropper.getName(), dropper);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
@@ -167,9 +168,9 @@ public class ResourceManager {
             case "ApplyEffect":
                 return new ApplyEffect(createOreStrategy(upgradeStrategyJson));
             case "EffectPurger":
-                return new EffectPurger();
+                return new EffectPurger();//Not Implemented
             case "TargetedCleanser":
-                return new TargetedCleanser();
+                return new TargetedCleanser();//Not Implemented
             case "null" :
                 return null;
             default:
@@ -178,12 +179,12 @@ public class ResourceManager {
     }
 
     private OreStrategy createOreStrategy(JsonValue oreStrategyJson) {
-        if (oreStrategyJson.getString("type") == null) {return null;}
-        String type = oreStrategyJson.getString("type");
+        if (oreStrategyJson.getString("strategyType") == null) {return null;}
+        String type = oreStrategyJson.getString("strategyType");
         switch (type) {
             case "BundledEffect":
                 return createBundledEffect(oreStrategyJson);
-            case "Enflamed":
+            case "Inflamed":
                 return new Inflamed(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempIncrease"));
             case "FrostBite":
                 return new FrostBite(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempDecrease"));
@@ -193,12 +194,20 @@ public class ResourceManager {
     }
 
     private OreStrategy createBundledEffect(JsonValue param) {
-        OreStrategy oreStrategy1 = createOreStrategy(param.get("oreStrat1"));
-        OreStrategy oreStrategy2 = createOreStrategy(param.get("oreStrat2"));
-        OreStrategy oreStrategy3 = createOreStrategy(param.get("oreStrat3"));
-        OreStrategy oreStrategy4 = createOreStrategy(param.get("oreStrat4"));
+        OreStrategy oreStrategy1 = createOreStrategyOrNull(param, "oreStrat1");
+        OreStrategy oreStrategy2 = createOreStrategyOrNull(param, "oreStrat2");
+        OreStrategy oreStrategy3 = createOreStrategyOrNull(param, "oreStrat3");
+        OreStrategy oreStrategy4 = createOreStrategyOrNull(param, "oreStrat4");
 
         return new BundledEffect(oreStrategy1, oreStrategy2, oreStrategy3, oreStrategy4);
+    }
+
+    private OreStrategy createOreStrategyOrNull(JsonValue param, String valueToGet) {
+        try {
+            return createOreStrategy(param.get(valueToGet));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     private UpgradeStrategy createConditionalUPG(JsonValue param) {
@@ -211,12 +220,20 @@ public class ResourceManager {
     }
 
     private UpgradeStrategy createBundledUPG(JsonValue param) {
-        UpgradeStrategy upgradeStrategy1 = createUpgradeStrategy(param.get("upgStrat1"));
-        UpgradeStrategy upgradeStrategy2 = createUpgradeStrategy(param.get("upgStrat2"));
-        UpgradeStrategy upgradeStrategy3 = createUpgradeStrategy(param.get("upgStrat3"));
-        UpgradeStrategy upgradeStrategy4 = createUpgradeStrategy(param.get("upgStrat4"));
+        UpgradeStrategy upgradeStrategy1 = createUpgradeStrategyOrNull(param,"upgStrat1");
+        UpgradeStrategy upgradeStrategy2 = createUpgradeStrategyOrNull(param, "upgStrat2");
+        UpgradeStrategy upgradeStrategy3 = createUpgradeStrategyOrNull(param, "upgStrat3");
+        UpgradeStrategy upgradeStrategy4 = createUpgradeStrategyOrNull(param, "upgStrat4");
 
         return new BundledUPG(upgradeStrategy1, upgradeStrategy2, upgradeStrategy3, upgradeStrategy4);
+    }
+
+    private UpgradeStrategy createUpgradeStrategyOrNull(JsonValue param, String valueToGet) {
+        try {
+            return createUpgradeStrategy(param.get(valueToGet));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     private UpgradeTag createUpgradeTag(JsonValue jsonValue) {

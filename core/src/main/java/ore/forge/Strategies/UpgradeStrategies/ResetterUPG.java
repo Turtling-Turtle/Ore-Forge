@@ -13,4 +13,8 @@ public class ResetterUPG implements UpgradeStrategy{
         ore.resetNonResetterTags();
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

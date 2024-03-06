@@ -35,4 +35,8 @@ public class Inflamed implements OreStrategy, Cloneable{
         }
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "\tDuration: " + duration + "\tTemp Increase: " + tempIncrease;
+    }
 }

@@ -14,4 +14,9 @@ public class ApplyEffect implements UpgradeStrategy {
     public void applyTo(Ore ore) {
         ore.applyEffect(effect);
     }
+
+    @Override
+    public String toString() {
+        return  getClass().getSimpleName() + "\t" + effect.toString();
+    }
 }

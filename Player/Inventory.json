@@ -49,6 +49,12 @@
 },
 {
 	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Searing Winds",
+	"type": "Upgrader",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
 	"itemName": "Simple Dropper",
 	"type": "Dropper",
 	"totalOwned": 0

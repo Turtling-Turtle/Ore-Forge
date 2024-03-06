@@ -152,6 +152,18 @@ public abstract class Item {
         return blockConfig[0].length;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public int[][] getNumberConfig() {
+        return numberConfig;
+    }
+
+    public double getItemValue() {
+        return itemValue;
+    }
+
     public Texture getTexture() {
         return itemTexture;
     }

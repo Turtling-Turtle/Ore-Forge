@@ -59,4 +59,13 @@ public class Upgrader extends Item{
         }
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + upgradeToString();
+    }
+
+    public String upgradeToString() {
+        return upgrade.toString();
+    }
+
 }

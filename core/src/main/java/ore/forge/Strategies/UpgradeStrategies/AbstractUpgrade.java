@@ -19,7 +19,7 @@ public abstract class AbstractUpgrade implements UpgradeStrategy {
    }
 
    public String toString() {
-      return "VTM: " + value + "\tModifier: " + modifier;
+      return "Type: " + getClass().getSimpleName() + "\tVTM: " + value + "\tModifier: " + modifier;
    }
 
 }

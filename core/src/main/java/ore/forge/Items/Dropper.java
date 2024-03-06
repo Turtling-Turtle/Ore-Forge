@@ -88,6 +88,30 @@ public class Dropper extends Item {
         }
     }
 
+    public String getOreName() {
+        return oreName;
+    }
+
+    public double getOreValue() {
+        return oreValue;
+    }
+
+    public int getOreTemp() {
+        return oreTemp;
+    }
+
+    public int getMultiOre() {
+        return multiOre;
+    }
+
+    public float getTimeSinceLast() {
+        return timeSinceLast;
+    }
+
+    public OreStrategy getOreEffects() {
+        return oreEffects;
+    }
+
     public float getDropInterval() {
         return dropInterval;
     }
