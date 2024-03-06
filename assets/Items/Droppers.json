@@ -13,7 +13,10 @@
     "oreValue": 5.0,
     "oreTemp": 25,
     "multiOre": 1,
-    "dropInterval": 1.5
+    "dropInterval": 1.5,
+    "strategyType": {
+      "type": null
+    }
   },
   {
     "name": "Lava Dropper",
@@ -29,7 +32,10 @@
     "oreValue": 20.0,
     "oreTemp": 1000,
     "multiOre": 1,
-    "dropInterval": 2.0
+    "dropInterval": 2.0,
+    "strategyType": {
+      "type": null
+    }
   },
   {
     "name": "Diamond Dropper",
@@ -45,6 +51,29 @@
     "oreValue": 100.0,
     "oreTemp": 300,
     "multiOre": 1,
-    "dropInterval": 5.0
+    "dropInterval": 5.0,
+    "strategyType": {
+      "type": null
+    }
+  },
+  {
+    "name": "Wubium Mine",
+    "description": "\"That's one fast mine.\"",
+    "blockLayout": [
+      [0,3,0],
+      [0,0,0],
+      [0,0,0]
+    ],
+    "tier": "EXOTIC",
+    "itemValue": 0,
+    "oreName": "Wubite",
+    "oreValue": 1000000.0,
+    "oreTemp": 0,
+    "multiOre": 1,
+    "dropInterval": 0.04,
+    "strategyType": {
+      "type": null
+    }
   }
+
 ]

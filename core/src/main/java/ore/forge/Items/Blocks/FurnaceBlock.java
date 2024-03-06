@@ -1,6 +1,7 @@
 package ore.forge.Items.Blocks;
 
 
+import com.badlogic.gdx.Gdx;
 import ore.forge.Direction;
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
@@ -33,8 +34,8 @@ public class FurnaceBlock extends Block implements Worker{
     public void handle(Ore ore) {
         upgrade.applyTo(ore);
         player.addToWallet(ore.getOreValue() * ore.getMultiOre());
+//        Gdx.app.log("Sold For:", String.valueOf(ore.getOreValue() * ore.getMultiOre()));
         calculateSpecialReward(ore);
-        ore.reset();
         oreRealm.takeOre(ore);
         setFull(false);
 //        Gdx.app.log("Wallet:", String.valueOf(player.getWallet()));

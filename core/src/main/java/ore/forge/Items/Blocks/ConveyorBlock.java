@@ -1,7 +1,9 @@
 package ore.forge.Items.Blocks;
 
 
+import com.badlogic.gdx.math.Vector2;
 import ore.forge.Direction;
+import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
 import ore.forge.Ore;
 
@@ -26,8 +28,28 @@ public class ConveyorBlock extends Block implements Worker {
         Block blockInFront = map.getBlockInFront(vector2, direction);
         if (blockInFront != null && blockInFront.isValid()) {
             ore.setDestination(blockInFront.getVector(), this.speed, this.direction);
-            blockInFront.setFull(true);
+            if (!(blockInFront instanceof FurnaceBlock)) {
+                blockInFront.setFull(true);
+            }
             this.setFull(false); //Set this block to empty because it has now moved the ore.\
+       } else {
+            int x = (int) vector2.x;
+            int y = (int) vector2.y;
+            switch (direction) {
+                case NORTH:
+                    y++;
+                    break;
+                case SOUTH:
+                    y--;
+                    break;
+                case EAST:
+                    x++;
+                    break;
+                case WEST:
+                    x--;
+                    break;
+            }
+            ore.setDestination(new Vector2(x,y), speed, direction);
         }
     }
 

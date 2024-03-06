@@ -7,7 +7,7 @@ public class ConditionalUPG implements UpgradeStrategy{
     public enum Condition{VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
     public enum Comparison {GREATER_THAN, LESS_THAN, EQUAL_TO} //Type of comparison
     private final Condition condition;
-    private Comparison comparison;
+    private final Comparison comparison;
     private final UpgradeStrategy ifModifier;
     private final UpgradeStrategy elseModifier;
     private final double threshold;

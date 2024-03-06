@@ -29,7 +29,7 @@ public class BundledUPG implements UpgradeStrategy{
         StringBuilder s = new StringBuilder();
         for (UpgradeStrategy upgStrat : upgradeStrategies) {
             if (upgStrat != null) {
-                s.append(upgStrat.toString());
+                s.append(upgStrat);
             }
         }
         return s.toString();

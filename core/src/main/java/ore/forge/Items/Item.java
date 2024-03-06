@@ -53,7 +53,7 @@ public abstract class Item {
     }
 
     public void placeItem(int X, int Y) {
-        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) {return;}
+        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return;
 
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;

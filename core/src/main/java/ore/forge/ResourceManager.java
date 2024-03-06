@@ -6,6 +6,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.*;
+import ore.forge.Strategies.OreStrategies.BundledEffect;
+import ore.forge.Strategies.OreStrategies.Inflamed;
+import ore.forge.Strategies.OreStrategies.FrostBite;
+import ore.forge.Strategies.OreStrategies.OreStrategy;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
@@ -40,59 +44,88 @@ public class ResourceManager {
 
     public void loadItems(String fileToParse) {
         JsonValue fileContents = jsonReader.parse(Gdx.files.internal(fileToParse));
-        for (JsonValue jsonValue : fileContents) {
-            createItem(jsonValue, fileToParse);
+        switch (fileToParse) {
+            case Constants.DROPPERS_FP:
+                for (JsonValue jsonValue : fileContents) {
+                    createDropper(jsonValue);
+                }
+                break;
+            case Constants.FURNACE_FP:
+                for (JsonValue jsonValue : fileContents) {
+                    createFurnace(jsonValue);
+                }
+                break;
+            case Constants.UPGRADER_FP:
+                for (JsonValue jsonValue : fileContents) {
+                    createUpgrader(jsonValue);
+                }
+                break;
+            case Constants.CONVEYORS_FP:
+                for (JsonValue jsonValue : fileContents) {
+                    createConveyor(jsonValue);
+                }
+                break;
         }
     }
 
-    private void createItem(JsonValue jsonValue, String fileToParse) {
-        switch (fileToParse) {
-            case Constants.DROPPERS_FP:
-                Dropper dropper = new Dropper(jsonValue.getString("name"),
-                        jsonValue.getString("description"),
-                        parseBlockLayout(jsonValue.get("blockLayout")),
-                        Item.Tier.valueOf(jsonValue.getString("tier")),
-                        jsonValue.getDouble("itemValue"),
-                        jsonValue.getString("oreName"),
-                        jsonValue.getDouble("oreValue"),
-                        jsonValue.getInt("oreTemp"),
-                        jsonValue.getInt("multiOre"),
-                        jsonValue.getFloat("dropInterval"));
-                allItems.put(dropper.getName(), dropper);
-                break;
-            case Constants.FURNACE_FP:
-                Furnace furnace = new Furnace(jsonValue.getString("name"),
-                        jsonValue.getString("description"),
-                        parseBlockLayout(jsonValue.get("blockLayout")),
-                        Item.Tier.valueOf(jsonValue.getString("tier")),
-                        jsonValue.getDouble("itemValue"),
-                        createUpgradeStrategy(jsonValue.get("upgrade")),
-                        jsonValue.getInt("specialPointReward"),
-                        jsonValue.getInt("rewardThreshold"));
-                allItems.put(furnace.getName(), furnace);
-                break;
-            case Constants.UPGRADER_FP:
-                Upgrader upgrader = new Upgrader(jsonValue.getString("name"),
-                        jsonValue.getString("description"),
-                        parseBlockLayout(jsonValue.get("blockLayout")),
-                        Item.Tier.valueOf(jsonValue.getString("tier")),
-                        jsonValue.getDouble("itemValue"),
-                        jsonValue.getFloat("conveyorSpeed"),
-                        createUpgradeStrategy(jsonValue.get("upgrade")),
-                        createUpgradeTag(jsonValue.get("upgradeTag")));
-                allItems.put(upgrader.getName(), upgrader);
-                break;
-            case Constants.CONVEYORS_FP:
-                Conveyor conveyor = new Conveyor(jsonValue.getString("name"),
-                        jsonValue.getString("description"),
-                        parseBlockLayout(jsonValue.get("blockLayout")),
-                        Item.Tier.valueOf(jsonValue.getString("tier")),
-                        jsonValue.getDouble("itemValue"),
-                        jsonValue.getFloat("conveyorSpeed")
-                        );
-                allItems.put(conveyor.getName(), conveyor);
-                break;
-        }
+    private void createDropper(JsonValue jsonValue) {
+        Dropper dropper = new Dropper(
+            jsonValue.getString("name"),
+            jsonValue.getString("description"),
+            parseBlockLayout(jsonValue.get("blockLayout")),
+            Item.Tier.valueOf(jsonValue.getString("tier")),
+            jsonValue.getDouble("itemValue"),
+            jsonValue.getString("oreName"),
+            jsonValue.getDouble("oreValue"),
+            jsonValue.getInt("oreTemp"),
+            jsonValue.getInt("multiOre"),
+            jsonValue.getFloat("dropInterval"),
+            createOreStrategy(jsonValue.get("strategyType"))
+        );
+        allItems.put(dropper.getName(), dropper);
+        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
+    }
+
+    private void createFurnace(JsonValue jsonValue) {
+        Furnace furnace = new Furnace(
+            jsonValue.getString("name"),
+            jsonValue.getString("description"),
+            parseBlockLayout(jsonValue.get("blockLayout")),
+            Item.Tier.valueOf(jsonValue.getString("tier")),
+            jsonValue.getDouble("itemValue"),
+            createUpgradeStrategy(jsonValue.get("upgrade")),
+            jsonValue.getInt("specialPointReward"),
+            jsonValue.getInt("rewardThreshold")
+        );
+        allItems.put(furnace.getName(), furnace);
+        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
+    }
+
+    private void createUpgrader(JsonValue jsonValue) {
+        Upgrader upgrader = new Upgrader(
+            jsonValue.getString("name"),
+            jsonValue.getString("description"),
+            parseBlockLayout(jsonValue.get("blockLayout")),
+            Item.Tier.valueOf(jsonValue.getString("tier")),
+            jsonValue.getDouble("itemValue"),
+            jsonValue.getFloat("conveyorSpeed"),
+            createUpgradeStrategy(jsonValue.get("upgrade")),
+            createUpgradeTag(jsonValue.get("upgradeTag"))
+        );
+        allItems.put(upgrader.getName(), upgrader);
+        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
+    }
+
+    private void createConveyor(JsonValue jsonValue) {
+        Conveyor conveyor = new Conveyor(jsonValue.getString("name"),
+            jsonValue.getString("description"),
+            parseBlockLayout(jsonValue.get("blockLayout")),
+            Item.Tier.valueOf(jsonValue.getString("tier")),
+            jsonValue.getDouble("itemValue"),
+            jsonValue.getFloat("conveyorSpeed")
+        );
+        allItems.put(conveyor.getName(), conveyor);
+        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
     }
 
     private int[][] parseBlockLayout(JsonValue jsonValue) {
@@ -110,7 +143,7 @@ public class ResourceManager {
         return blockLayout;
     }
 
-    private UpgradeStrategy createUpgradeStrategy(JsonValue upgradeStrategyJson) {//As of 2/6/2024 this has not been tested....
+    private UpgradeStrategy createUpgradeStrategy(JsonValue upgradeStrategyJson) {//This should be improved to be more flexible but don't know how.
         if (upgradeStrategyJson.getString("type") == null) {
             return null;
         }
@@ -131,11 +164,41 @@ public class ResourceManager {
                 return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
             case "InfluencedUPG" :
                 return new InfluencedUPG(upgradeStrategyJson.getDouble("modifier"), AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")), InfluencedUPG.ValuesOfInfluence.valueOf(upgradeStrategyJson.getString("ValueOfInfluence")));
+            case "ApplyEffect":
+                return new ApplyEffect(createOreStrategy(upgradeStrategyJson));
+            case "EffectPurger":
+                return new EffectPurger();
+            case "TargetedCleanser":
+                return new TargetedCleanser();
             case "null" :
                 return null;
             default:
                 throw new IllegalArgumentException("Unknown/Invalid Strategy: " + strategyType);
         }
+    }
+
+    private OreStrategy createOreStrategy(JsonValue oreStrategyJson) {
+        if (oreStrategyJson.getString("type") == null) {return null;}
+        String type = oreStrategyJson.getString("type");
+        switch (type) {
+            case "BundledEffect":
+                return createBundledEffect(oreStrategyJson);
+            case "Enflamed":
+                return new Inflamed(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempIncrease"));
+            case "FrostBite":
+                return new FrostBite(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempDecrease"));
+            default:
+                throw new IllegalArgumentException("Unknown/Invalid Strategy: " + type);
+        }
+    }
+
+    private OreStrategy createBundledEffect(JsonValue param) {
+        OreStrategy oreStrategy1 = createOreStrategy(param.get("oreStrat1"));
+        OreStrategy oreStrategy2 = createOreStrategy(param.get("oreStrat2"));
+        OreStrategy oreStrategy3 = createOreStrategy(param.get("oreStrat3"));
+        OreStrategy oreStrategy4 = createOreStrategy(param.get("oreStrat4"));
+
+        return new BundledEffect(oreStrategy1, oreStrategy2, oreStrategy3, oreStrategy4);
     }
 
     private UpgradeStrategy createConditionalUPG(JsonValue param) {
@@ -168,13 +231,14 @@ public class ResourceManager {
                 if (allItems.containsKey(jsonValue.getString("itemName"))) {
                     inventoryNodes.add(createNode(jsonValue));
                 } else {
-                    System.out.println(jsonValue.getString("itemName") + "is not a valid Item");
+                    System.out.println(Constants.RED + jsonValue.getString("itemName") + "is not a valid Item" + Constants.DEFAULT);
                 }
             }
         }
 
+        boolean found;
         for (Item item : allItems.values()) {
-            boolean found= false;
+            found = false;
             for(InventoryNode node: inventoryNodes) {
                 if (node.getName().equals(item.getName())) {
                     found = true;
@@ -189,10 +253,9 @@ public class ResourceManager {
     }
 
     private InventoryNode createNode(JsonValue jsonValue) {
-        allItems.get(jsonValue.getString("itemName"));
-        return new InventoryNode(
-                allItems.get(jsonValue.getString("itemName")),
-                jsonValue.getInt("totalOwned"));
+        Item heldItem = allItems.get(jsonValue.getString("itemName"));
+        int numOwned = jsonValue.getInt("totalOwned");
+        return new InventoryNode(heldItem, numOwned);
     }
 
     public void loadPlayerStats(Player player) {
@@ -203,6 +266,12 @@ public class ResourceManager {
             player.setSpecialPoints(fileContents.getLong("specialPoints"));
             player.setPrestigeCurrency(fileContents.getInt("prestigeCurrency"));
             player.setMostMoneyObtained(fileContents.getDouble("mostMoneyObtained"));
+        } else {
+            player.setPrestigeLevel(0);
+            player.setWallet(50);
+            player.setSpecialPoints(0);
+            player.setPrestigeCurrency(0);
+            player.setMostMoneyObtained(0);
         }
 
     }

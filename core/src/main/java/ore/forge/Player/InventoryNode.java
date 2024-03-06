@@ -4,7 +4,7 @@ package ore.forge.Player;
 import ore.forge.Items.*;
 
 public class InventoryNode {
-    private String nodeName;
+    private final String nodeName;
     private int totalOwned;//Accounts for the number placed on base and the number in the inventory. Decremented when sold or incremented when a new item is obtained.
     private int stored;//number In inventory currently, decremented when item is placed.
     private int placed;//number placed on base currently, increment when item is placed.
@@ -18,16 +18,13 @@ public class InventoryNode {
 
     public Item createNewHeldItem() {
         assertCheck();
-        if (heldItem instanceof Upgrader) {
-            return new Upgrader((Upgrader) heldItem);
-        } else if (heldItem instanceof Dropper) {
-            return new Dropper((Dropper) heldItem);
-        } else if (heldItem instanceof Conveyor) {
-            return new Conveyor((Conveyor) heldItem);
-        } else if (heldItem instanceof Furnace) {
-            return new Furnace((Furnace) heldItem);
-        }
-        return null;
+        return switch (heldItem) {
+            case Upgrader upgrader -> new Upgrader(upgrader);
+            case Furnace furnace -> new Furnace(furnace);
+            case Dropper dropper -> new Dropper(dropper);
+            case Conveyor conveyor -> new Conveyor(conveyor);
+            default -> throw new IllegalStateException("Unexpected value: " + heldItem);
+        };
     }
 
     public String getName() {

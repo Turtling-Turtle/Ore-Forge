@@ -16,12 +16,6 @@ public class Player {
     public Inventory inventory;
     private long numberOfTicks = 0;
 
-    public Player(double wallet, int prestigeLevel, int prestigeCurrency) {
-        this.wallet = wallet;
-        this.prestigeLevel = prestigeLevel;
-        this.prestigeCurrency = prestigeCurrency;
-    }
-
     public Player() {
 
     }
@@ -132,8 +126,7 @@ public class Player {
     }
 
     public String toString() {
-        String playerInfo = "Prestige Level: " + prestigeLevel + "\tWallet: " + wallet + "\tPlayer Prestige Currency: " + prestigeCurrency + "\tSpecial Points: " + specialPoints;
-        return playerInfo;
+        return "Prestige Level: " + prestigeLevel + "\tWallet: " + wallet + "\tPlayer Prestige Currency: " + prestigeCurrency + "\tSpecial Points: " + specialPoints;
     }
 
     private class PlayerData {

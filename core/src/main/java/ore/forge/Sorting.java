@@ -163,9 +163,7 @@ public class Sorting {
         }
 
         // Copy the sorted values into the original array
-        for (int i = first; i <= last; i++) {
-            data[i] = temp[i];
-        }
+        if (last + 1 - first >= 0) System.arraycopy(temp, first, data, first, last + 1 - first);
     }
 
 

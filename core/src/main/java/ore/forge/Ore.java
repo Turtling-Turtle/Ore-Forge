@@ -6,23 +6,25 @@ import com.badlogic.gdx.math.Vector2;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 
-public class Ore implements OreStrategy {
+public class Ore {
     protected static Map map = Map.getSingleton();
-    protected static final OreRealm oreRealm = OreRealm.getSingleton();
+    protected static OreRealm oreRealm = OreRealm.getSingleton();
     private String oreName;
     private double oreValue;
-    private int oreTemperature, upgradeCount, multiOre, oreHistory;
+    private int upgradeCount, multiOre, oreHistory;
+    private float oreTemperature;
     private boolean processable;
-    private BitSet history;
+    private final BitSet history;
     private final HashMap<String, UpgradeTag> tagMap;
     private final Vector2 position, destination;
     private float moveSpeed;
     private Direction direction;
-    private Texture texture;
-    private OreStrategy strategy;
+    private final Texture texture;
+    private final ArrayList<OreStrategy> effects;
 
     public Ore() {
         this.oreValue = 0;
@@ -36,12 +38,15 @@ public class Ore implements OreStrategy {
         destination = new Vector2();
         texture = new Texture(Gdx.files.internal("Ruby2.png"));
         direction = Direction.NORTH;
+        effects = new ArrayList<>();
         history = new BitSet();
 
-//        setDefualtTags();
     }
 
     public void move(float deltaTime) {
+        for (OreStrategy effect : effects) {
+            effect.activate(deltaTime, this);
+        }
        if (position.x != destination.x || position.y != destination.y)  {
            switch (direction) {
                case NORTH:
@@ -88,24 +93,33 @@ public class Ore implements OreStrategy {
        }
     }
 
+    public void applyEffect(OreStrategy effect) {
+        effects.add(effect);
+    }
+
     public void setDestination(Vector2 target, float speed, Direction direction) {
         this.destination.set(target);
         this.direction = direction;
         this.moveSpeed = speed;
     }
 
-    @Override
-    public void activate() {
-        strategy.activate();
-    }
-
     public void activateBlock() {
         if ((map.getBlock((int) position.x, (int) position.y) instanceof Worker)){
             ((Worker)map.getBlock(position)).handle(this);
+        } else {
+            oreRealm.takeOre(this);
         }
 
 
 //        map.getWorker(vector2).handle(this);//Casts block to worker block, very dangerous!!
+    }
+
+    public void setMoveSpeed(float newSpeed) {
+        moveSpeed = newSpeed;
+    }
+
+    public float getMoveSpeed() {
+        return moveSpeed;
     }
 
     public Ore setVector(Vector2 vector) {
@@ -113,11 +127,14 @@ public class Ore implements OreStrategy {
         return this;
     }
 
-    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName) {
+    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, OreStrategy strategy) {
         this.oreValue = oreValue;
         this.oreTemperature = oreTemp;
         this.multiOre = multiOre;
         this.oreName = oreName;
+        if (strategy!= null) {
+            effects.add(strategy);
+        }
         return this;
     }
 
@@ -140,6 +157,14 @@ public class Ore implements OreStrategy {
         }
     }
 
+    public void removeEffect(String effectToRemove) {
+        effects.remove(effectToRemove);
+    }
+
+    public void purgeEffects() {
+        effects.clear();
+    }
+
     public double getOreValue() {
         return oreValue;
     }
@@ -153,11 +178,11 @@ public class Ore implements OreStrategy {
 //        this.oreValue = newValue;
 //    }
 
-    public int getOreTemp() {
-        return this.oreTemperature;
+    public float getOreTemp() {
+        return oreTemperature;
     }
 
-    public void setTemp(int newTemp) {
+    public void setTemp(float newTemp) {
         oreTemperature = newTemp;
     }
 
@@ -186,12 +211,16 @@ public class Ore implements OreStrategy {
     }
 
     public void reset() {
+//        if (map.getBlock(position)!= null) {
+//            map.getBlock(position).setFull(false);
+//        }
         this.oreValue = 0;
         this.oreTemperature = 0;
         this.oreName = "";
         this.upgradeCount = 0;
         this.multiOre = 1;
         this.processable = true;
+        effects.clear();
         resetAllTags();
     }
 
@@ -201,16 +230,16 @@ public class Ore implements OreStrategy {
     }
 
     public void resetNonResetterTags() {
-        for (UpgradeTag t : tagMap.values()) {
-            if (!t.isResseter()){
-                t.reset();
+        for (UpgradeTag tag : tagMap.values()) {
+            if (!tag.isResseter()){
+                tag.reset();
             }
         }
     }
 
     public void resetAllTags() {
-        for (UpgradeTag t: tagMap.values()) {
-            t.reset();
+        for (UpgradeTag tag: tagMap.values()) {
+            tag.reset();
         }
     }
 

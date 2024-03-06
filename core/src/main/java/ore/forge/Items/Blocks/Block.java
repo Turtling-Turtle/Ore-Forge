@@ -21,7 +21,6 @@ public class Block {
         vector2 = new Vector2();
         vector2.set(x,y);
         this.direction = direction;
-        map = Map.getSingleton();
     }
 
     public Block(Item parentItem) {

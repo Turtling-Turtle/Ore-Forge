@@ -1,6 +1,11 @@
 package ore.forge.Strategies.OreStrategies;
 
+import ore.forge.Ore;
+
 public interface OreStrategy {
-    public void activate();
+    void activate(float deltaT, Ore ore);
+
+    OreStrategy clone();
+
 
 }

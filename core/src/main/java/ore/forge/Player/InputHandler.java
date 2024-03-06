@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.Items.*;
+import ore.forge.Strategies.OreStrategies.BundledEffect;
+import ore.forge.Strategies.OreStrategies.Inflamed;
+import ore.forge.Strategies.OreStrategies.OnUpgrade;
+import ore.forge.Strategies.OreStrategies.OreStrategy;
 import ore.forge.Strategies.UpgradeStrategies.AbstractUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
@@ -19,20 +23,21 @@ import java.util.Stack;
 public class InputHandler {
     protected static final Map map = Map.getSingleton();
     public Vector3 mouseScreen, mouseWorld;
-    private float cameraSpeed;
+    private final float cameraSpeed;
     private boolean buildMode;
     private Item heldItem;
     public Item selectedItem;
     public Stack<Item> recentlyPlaced;
+    private InventoryNode heldNode;
     private boolean isSelecting;
     public Rectangle selectionRectangle;
 
     public int[][] upgraderConfig = {//Test values
-            { 0, 1, 1, 0},
-            { 0, 2, 2, 0},
-            { 0, 1, 1, 0},
-//            {2,2},
-//            {1,1},
+//            { 0, 1, 1, 0},
+//            { 0, 2, 2, 0},
+//            { 0, 1, 1, 0},
+            {2,2},
+            {1,1},
     };
     public int [][] conveyorConfig = {
             {1, 1},
@@ -47,8 +52,6 @@ public class InputHandler {
             {0,0,0},
             {0,0,0},
     };
-
-
     public int[][] buildingConfig = {
             {0,1,0},
             {0,1,0},
@@ -57,6 +60,9 @@ public class InputHandler {
 
     UpgradeStrategy testUpgrade = new MultiplyUPG(3.0, AbstractUpgrade.ValueToModify.ORE_VALUE);
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
+    OreStrategy onnUpgrade = new OnUpgrade(1.1f, 1.5f);
+    OreStrategy enflamed = new Inflamed(9999, 5);
+    OreStrategy bundled = new BundledEffect(onnUpgrade, enflamed, null, null);
 
     public InputHandler() {
         mouseScreen = new Vector3();
@@ -90,21 +96,21 @@ public class InputHandler {
             //buildMode, active item becomes conveyor
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 50);
+                heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 5);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Ore", 20, 1, 1, 0.05f);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Ore", 20, 1, 1, 0.05f, bundled);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
             //buildMode, active item becomes upgrader
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 3, testUpgrade, upgradeTag);
+                heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, testUpgrade, upgradeTag);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
@@ -150,15 +156,6 @@ public class InputHandler {
     private void handlePlacement() {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildMode) {//Will need to update to perform inventory checks.
             heldItem.placeItem((int)mouseWorld.x, (int)mouseWorld.y);
-//            if (heldItem instanceof Conveyor) {
-//                heldItem = new Conveyor((Conveyor) heldItem);
-//            } else if (heldItem instanceof Upgrader) {
-//                heldItem = new Upgrader((Upgrader) heldItem);
-//            } else if (heldItem instanceof Dropper) {
-//                heldItem = new Dropper((Dropper) heldItem);
-//            } else if (heldItem instanceof Furnace) {
-//                heldItem = new Furnace((Furnace) heldItem);
-//            }
             switch (heldItem) {
                 case Upgrader upgrader -> heldItem = new Upgrader(upgrader);
                 case Furnace furnace -> heldItem = new Furnace(furnace);
@@ -176,7 +173,7 @@ public class InputHandler {
 
     private void handleObserverMode(){
         if (!buildMode && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isInvalidCoord() && map.getBlock(mouseWorld.x, mouseWorld.y) !=null) {
+            if (!isInvalid() && map.getBlock(mouseWorld.x, mouseWorld.y) !=null) {
                 selectedItem = map.getBlock(mouseWorld.x, mouseWorld.y).getParentItem();
                 isSelecting = true;
             } else {
@@ -210,7 +207,7 @@ public class InputHandler {
         return isSelecting;
     }
 
-    private boolean isInvalidCoord() {
+    private boolean isInvalid() {
         return mouseWorld.x > map.mapTiles.length || mouseWorld.x < 0 || mouseWorld.y > map.mapTiles[0].length || mouseWorld.y < 0;
     }
 

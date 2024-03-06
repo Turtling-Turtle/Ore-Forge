@@ -25,6 +25,14 @@ public class Conveyor extends Item{
         alignWith(itemToClone.direction);
     }
 
+    public void update() {
+        for (int i = 0; i < blockConfig.length; i++) {
+            for (int j = 0; j < blockConfig[i].length; j++) {
+                blockConfig[i][j].setFull(false);
+            }
+        }
+    }
+
 
     @Override
     public void initBlockConfiguration(int[][] numberConfig) {

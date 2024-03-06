@@ -35,6 +35,7 @@ public class TheTycoonGame extends Game {
 		fpsCounter.setFontScale(0.6f);
 		fpsCounter.setPosition(99, 100);
 		fpsCounter.setVisible(false);
+        OreRealm.getSingleton().populate();
 
 
 

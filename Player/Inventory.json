@@ -64,5 +64,11 @@
 	"itemName": "Ultra Conveyor",
 	"type": "Conveyor",
 	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Wubium Mine",
+	"type": "Dropper",
+	"totalOwned": 0
 }
 ]

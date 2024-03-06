@@ -18,14 +18,14 @@ public class Map {
     }
 
     public Map() {
-//        initializeMap();
+        initializeMap();
     }
 
     private void initializeMap() {
         int index = 0;
         for (int i = 0; i < mapTiles.length; i++) {
             for (int j = 0; j < mapTiles[0].length; j++) {
-               mapTiles[i][j] = new Block(null);
+               mapTiles[i][j] = null;
             }
         }
     }
@@ -49,6 +49,7 @@ public class Map {
         }
         return getBlock(x, y);
     }
+
 
     public Block getBlock(Vector2 target) {
         return mapTiles[(int) target.x][(int) target.y];

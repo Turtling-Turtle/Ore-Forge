@@ -1,7 +1,5 @@
 package ore.forge;
 
-
-
 import ore.forge.Items.Item;
 
 import java.util.ArrayList;

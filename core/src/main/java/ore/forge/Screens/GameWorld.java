@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ore.forge.*;
+import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.Player.InputHandler;
@@ -22,14 +23,14 @@ public class GameWorld extends CustomScreen{
     public Actor a;
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
-    private Label.LabelStyle L = new Label.LabelStyle(font2, Color.GREEN);
+    private final Label.LabelStyle L = new Label.LabelStyle(font2, Color.GREEN);
 
-    private Label money = new Label("", L);
+    private final Label money = new Label("", L);
 
-    private UserInterface userInterface;
-    private Texture buildModeTexture = new Texture(Gdx.files.internal("PlayerSelect.png"));
-    private Texture blockTexture = new Texture(Gdx.files.internal("RockTile.png"));
-    private Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
+    private final UserInterface userInterface;
+    private final Texture buildModeTexture = new Texture(Gdx.files.internal("PlayerSelect.png"));
+    private final Texture blockTexture = new Texture(Gdx.files.internal("RockTile.png"));
+    private final Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
 
 
     public GameWorld(TheTycoonGame game, ResourceManager resourceManager) {
@@ -71,7 +72,10 @@ public class GameWorld extends CustomScreen{
         for (Item item : itemTracker.getPlacedItems()) {
             if (item instanceof Dropper) {
                 ((Dropper) item).update(delta);
+            } else if(item instanceof Conveyor) {
+                ((Conveyor) item).update();//Might use this.
             }
+
             batch.draw(item.getTexture(),
                     item.getVector2().x,
                     item.getVector2().y,
@@ -94,7 +98,7 @@ public class GameWorld extends CustomScreen{
         if (inputHandler.isBuilding()) {
             batch.setColor(1f, 1, 1f, 0.9f);
             for (int i = 0; i < gameWorld.mapTiles.length; i++) {
-                for (int j = 0; j < gameWorld.mapTiles[i].length; j++) {
+                for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
                     batch.draw(buildModeTexture, i, j, 1, 1);
                 }
             }

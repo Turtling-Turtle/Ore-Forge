@@ -169,8 +169,6 @@ public class Inventory {
             return itemName;
         }
 
-
-
         public void setItemName(String itemName) {
             this.itemName = itemName;
         }
@@ -193,4 +191,3 @@ public class Inventory {
     }
 
 }
-

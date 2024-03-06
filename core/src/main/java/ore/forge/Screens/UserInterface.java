@@ -24,17 +24,17 @@ import java.util.ArrayList;
 
 //@author Nathan Ulmen
 public class UserInterface {
-    private static OreRealm oreRealm = OreRealm.getSingleton();
+    private static final OreRealm oreRealm = OreRealm.getSingleton();
     private float updateInterval = 0;
-    private Runtime runtime = Runtime.getRuntime();
-    private static Player player = Player.getSingleton();
+    private final Runtime runtime = Runtime.getRuntime();
+    private static final Player player = Player.getSingleton();
     private com.badlogic.gdx.scenes.scene2d.ui.ScrollPane scrollPane;
     public Stage stage;
     private Table table;
     private ImageButton imageButton;//Icon for
     private TextField textField;//Search Bar;
     private ArrayList<InventoryNode> inventoryNodes;
-    private ProgressBar oreLimit;
+    private final ProgressBar oreLimit;
     private OrthographicCamera camera;
     private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre;
     private Vector3 mouse;
@@ -108,15 +108,18 @@ public class UserInterface {
     }
 
     public void draw(float deltaT) {
+        updateInterval += deltaT;
         camera.update();
-        fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
-        memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory())/1024/1024) + " MB");
-        this.mouseCoords.setText("X: " + (int)mouse.x + " Y: " + (int)mouse.y);
-        wallet.setText("$ " + player.getWallet());
-        specialPoints.setText("SP: " + player.getSpecialPoints());
-        activeOre.setText("Active Ore: " + oreRealm.activeOre.size());
+        if (updateInterval > 0.05f) {
+            fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+            memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory())/1024/1024) + " MB");
+            this.mouseCoords.setText("X: " + (int)mouse.x + " Y: " + (int)mouse.y);
+            wallet.setText("$ " + player.getWallet());
+            specialPoints.setText("SP: " + player.getSpecialPoints());
+            activeOre.setText("Active Ore: " + oreRealm.activeOre.size());
+            updateInterval = 0f;
+        }
         stage.draw();
-        updateInterval = 0f;
     }
 
     private void createWallet(Label.LabelStyle style) {
