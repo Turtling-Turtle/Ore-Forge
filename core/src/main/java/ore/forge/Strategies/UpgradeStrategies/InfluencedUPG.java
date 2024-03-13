@@ -29,12 +29,14 @@ public class InfluencedUPG implements UpgradeStrategy{
             case UPGRADE_COUNT -> ore.getUpgradeCount() * methodOfModification.getModifier();
             case ACTIVE_ORE -> oreRealm.activeOre.size() * methodOfModification.getModifier();
             case PLACED_ITEMS -> ItemTracker.getSingleton().getPlacedItems().size() * methodOfModification.getModifier();
-            case PRESTIGE_LEVEL -> Player.getSingleton().getPrestigeLevel() * methodOfModification.getModifier();
-            case SPECIAL_POINTS -> Player.getSingleton().getSpecialPoints() * methodOfModification.getModifier();
-            case WALLET -> Player.getSingleton().getWallet() * methodOfModification.getModifier();
+            case PRESTIGE_LEVEL -> player.getPrestigeLevel() * methodOfModification.getModifier();
+            case SPECIAL_POINTS -> player.getSpecialPoints() * methodOfModification.getModifier();
+            case WALLET -> player.getWallet() * methodOfModification.getModifier();
         };
+        double original = methodOfModification.getModifier();
         methodOfModification.setModifier(finalModifier);
         methodOfModification.applyTo(ore);
+        methodOfModification.setModifier(original);
     }
 
 }

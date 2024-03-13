@@ -67,6 +67,12 @@
 },
 {
 	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Test",
+	"type": "Upgrader",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
 	"itemName": "Ultra Conveyor",
 	"type": "Conveyor",
 	"totalOwned": 0

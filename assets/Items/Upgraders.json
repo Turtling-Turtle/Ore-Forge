@@ -99,6 +99,63 @@
       "maxUpgrades": 1,
       "isResetter": false
     }
+  },
+  {
+    "name": "Test",
+    "description": "TEst",
+    "blockLayout": [
+      [1, 1],
+      [1, 1]
+    ],
+    "tier": "COMMON",
+    "isShopItem": false,
+    "itemValue": 0.0,
+    "conveyorSpeed": 8.0,
+    "upgrade": {
+      "type": "BundledUPG",
+      "upgStrat1": {
+        "type": "ConditionalUPG",
+        "condition": "TEMPERATURE",
+        "comparison": "GREATER_THAN",
+        "threshold": 100.0,
+        "ifModifier": {
+          "type": "BundledUPG",
+          "upgStrat1": {
+            "type": "MultiplyUPG",
+            "valueToModify": "ORE_VALUE",
+            "modifier": 8.0
+          },
+          "upgStrat2": {
+            "type": "AddUPG",
+            "valueToModify": "TEMPERATURE",
+            "modifier": 60.0
+          }
+        },
+        "elseModifier": {
+          "type": "AddUPG",
+          "valueToModify": "TEMPERATURE",
+          "modifier": 30.0
+        }
+      },
+      "upgStrat2": {
+        "type": "AddUPG",
+        "valueToModify": "MULTIORE",
+        "modifier": 1.0
+      },
+      "upgStrat3": {
+        "type": "AddUPG",
+        "valueToModify": "ORE_VALUE",
+        "modifier": 1000.0
+      },
+      "upgStrat4": {
+        "type": "ResetterUPG"
+      }
+    },
+    "upgradeTag": {
+      "name": "Test",
+      "maxUpgrades": 1,
+      "isResetter": true
+    }
   }
 
 ]
