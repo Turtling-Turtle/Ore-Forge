@@ -158,13 +158,13 @@ public class ResourceManager {
             case "ResetterUPG" :
                 return new ResetterUPG();
             case "AddUPG" :
-                return new AddUPG(upgradeStrategyJson.getDouble("modifier"), AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+                return new AddUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
             case "MultiplyUPG" :
-                return new MultiplyUPG(upgradeStrategyJson.getDouble("modifier"), AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+                return new MultiplyUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
             case "SubtractUPG" :
-                return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+                return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
             case "InfluencedUPG" :
-                return new InfluencedUPG(upgradeStrategyJson.getDouble("modifier"), AbstractUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")), InfluencedUPG.ValuesOfInfluence.valueOf(upgradeStrategyJson.getString("ValueOfInfluence")));
+                return new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.valueOf(upgradeStrategyJson.getString("valueOfInfluence")), (BasicUpgrade) createUpgradeStrategy(upgradeStrategyJson.get("upgradeType")));
             case "ApplyEffect":
                 return new ApplyEffect(createOreStrategy(upgradeStrategyJson));
             case "EffectPurger":
@@ -185,9 +185,9 @@ public class ResourceManager {
             case "BundledEffect":
                 return createBundledEffect(oreStrategyJson);
             case "Inflamed":
-                return new Inflamed(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempIncrease"));
+                return new Inflamed(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempChange"));
             case "FrostBite":
-                return new FrostBite(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempDecrease"));
+                return new FrostBite(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempChange"));
             default:
                 throw new IllegalArgumentException("Unknown/Invalid Strategy: " + type);
         }

@@ -1,81 +1,40 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
-
 import ore.forge.ItemTracker;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
 
-public class InfluencedUPG extends AbstractUpgrade{
+//@author Nathan Ulmen
+//TODO: Figure out a way to make it so Its not only multiplication but also addition and subtraction.
+public class InfluencedUPG implements UpgradeStrategy{
     public enum ValuesOfInfluence {VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
+    private final ValuesOfInfluence influenceVal;
+    private final BasicUpgrade methodOfModification;
 
-    private ValuesOfInfluence influenceVal;
-    public InfluencedUPG(double mod, ValueToModify val, ValuesOfInfluence influencer) {
-        super(mod, val);
+    public InfluencedUPG(ValuesOfInfluence valueOfInfluence, BasicUpgrade methodOfModification) {
+        influenceVal = valueOfInfluence;
+        this.methodOfModification = methodOfModification;
     }
 
     @Override
     public void applyTo(Ore ore) {
-       calcModifier(ore);
-    }
-
-    private void calcModifier(Ore ore) {
-        double finalModifier;
-        switch (influenceVal) {
-            case VALUE:
-                finalModifier = ore.getOreValue() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case TEMPERATURE:
-                finalModifier = ore.getOreTemp() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case MULTIORE:
-                finalModifier = ore.getMultiOre() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case UPGRADE_COUNT:
-                finalModifier = ore.getUpgradeCount() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case ACTIVE_ORE:
-                finalModifier = OreRealm.getSingleton().activeOre.size() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case PLACED_ITEMS:
-                finalModifier = ItemTracker.getSingleton().getPlacedItems().size() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case PRESTIGE_LEVEL:
-                finalModifier = Player.getSingleton().getPrestigeLevel() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case SPECIAL_POINTS:
-                finalModifier = Player.getSingleton().getSpecialPoints() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-            case WALLET:
-                finalModifier = Player.getSingleton().getWallet() * getModifier();
-                upgrade(ore, finalModifier);
-                break;
-        }
-    }
-
-    private void upgrade(Ore ore, double finalModifier) {
-        switch (this.getValueToMod()) {
-            case ORE_VALUE:
-                ore.setOreValue(ore.getOreValue()* finalModifier);
-                break;
-            case TEMPERATURE:
-                ore.setTemp((int) (ore.getOreTemp() * finalModifier));
-                break;
-            case MULTIORE:
-                ore.setMultiOre((int) (ore.getMultiOre() * finalModifier));
-                break;
-        }
+        double finalModifier = switch (influenceVal) {
+            case VALUE -> ore.getOreValue() * methodOfModification.getModifier();
+            case TEMPERATURE -> ore.getOreTemp() * methodOfModification.getModifier();
+            case MULTIORE -> ore.getMultiOre() * methodOfModification.getModifier();
+            case UPGRADE_COUNT -> ore.getUpgradeCount() * methodOfModification.getModifier();
+            case ACTIVE_ORE -> oreRealm.activeOre.size() * methodOfModification.getModifier();
+            case PLACED_ITEMS -> ItemTracker.getSingleton().getPlacedItems().size() * methodOfModification.getModifier();
+            case PRESTIGE_LEVEL -> Player.getSingleton().getPrestigeLevel() * methodOfModification.getModifier();
+            case SPECIAL_POINTS -> Player.getSingleton().getSpecialPoints() * methodOfModification.getModifier();
+            case WALLET -> Player.getSingleton().getWallet() * methodOfModification.getModifier();
+        };
+        methodOfModification.setModifier(finalModifier);
+        methodOfModification.applyTo(ore);
     }
 
 }

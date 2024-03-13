@@ -1,12 +1,12 @@
 package ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS;
 
 
-import ore.forge.Strategies.UpgradeStrategies.AbstractUpgrade;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Ore;
 
 //Multiplies a value by a modifier
-public class MultiplyUPG extends AbstractUpgrade {
-    public MultiplyUPG(double modifier, AbstractUpgrade.ValueToModify value) {
+public class MultiplyUPG extends BasicUpgrade {
+    public MultiplyUPG(double modifier, BasicUpgrade.ValueToModify value) {
         super(modifier, value);
     }
 

@@ -6,4 +6,5 @@ import ore.forge.Ore;
 public interface UpgradeStrategy {
     void applyTo(Ore ore);
 
+
 }

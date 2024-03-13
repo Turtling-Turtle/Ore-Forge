@@ -1,13 +1,13 @@
 package ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS;
 
 
-import ore.forge.Strategies.UpgradeStrategies.AbstractUpgrade;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Ore;
 
 //Subtracts a modifier from a value.
-public class SubtractUPG extends AbstractUpgrade {
+public class SubtractUPG extends BasicUpgrade {
 
-    public SubtractUPG(double mod, AbstractUpgrade.ValueToModify val) {
+    public SubtractUPG(double mod, BasicUpgrade.ValueToModify val) {
         super(mod, val);
     }
 

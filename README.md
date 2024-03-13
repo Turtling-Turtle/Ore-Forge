@@ -31,3 +31,12 @@ Useful Gradle tasks and flags:
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
+
+## The Game
+
+In Ore Forge your goal is to build a tycoon that makes money. You can then reinvest this money back into your tycoon 
+by either buying items that you can add to your tycoon or by using it to Prestige. When you Prestige all your
+non-prestige proof items are destroyed, but you gain a powerful Prestige tier Item. As your prestige level increase the price to
+prestige will increase as well. 
+
+

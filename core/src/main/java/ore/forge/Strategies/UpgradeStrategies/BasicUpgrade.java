@@ -1,14 +1,23 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
-public abstract class AbstractUpgrade implements UpgradeStrategy {
+public abstract class BasicUpgrade implements UpgradeStrategy {
    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE}
-   private final double modifier;
-   private final ValueToModify value;
+   private double modifier;
+   private ValueToModify value;
 
-   public AbstractUpgrade(double mod, ValueToModify val) {
+   public BasicUpgrade(double mod, ValueToModify val) {
       modifier = mod;
       value = val;
    }
+
+   public void setModifier(double newVal) {
+       modifier = newVal;
+   }
+
+   public void setValueToModify(ValueToModify vtm) {
+       value = vtm;
+   }
+
 
    public double getModifier() {
        return modifier;

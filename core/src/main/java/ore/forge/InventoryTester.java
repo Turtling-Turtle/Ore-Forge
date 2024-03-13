@@ -36,10 +36,6 @@ public class InventoryTester {
         inventoryNodes.add(node1);
         inventoryNodes.add(node2);
         Inventory inventory = new Inventory(allItems, inventoryNodes);
-        for (int i = 0; i < 1_000; i++) {
-
-        }
-
 
 
 //        inventory.saveInventory();

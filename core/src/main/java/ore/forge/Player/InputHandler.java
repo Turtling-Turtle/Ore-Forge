@@ -10,7 +10,7 @@ import ore.forge.Strategies.OreStrategies.BundledEffect;
 import ore.forge.Strategies.OreStrategies.Inflamed;
 import ore.forge.Strategies.OreStrategies.OnUpgrade;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
-import ore.forge.Strategies.UpgradeStrategies.AbstractUpgrade;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.Map;
@@ -58,7 +58,7 @@ public class InputHandler {
             {0,1,1}
     };
 
-    UpgradeStrategy testUpgrade = new MultiplyUPG(3.0, AbstractUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy testUpgrade = new MultiplyUPG(3.0, BasicUpgrade.ValueToModify.ORE_VALUE);
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
     OreStrategy onnUpgrade = new OnUpgrade(1.1f, 1.5f);
     OreStrategy enflamed = new Inflamed(9999, 5);

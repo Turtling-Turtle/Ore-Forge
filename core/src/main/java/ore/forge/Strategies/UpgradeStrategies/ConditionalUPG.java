@@ -2,7 +2,9 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 
 import ore.forge.Ore;
+import ore.forge.Strategies.OreStrategies.OreStrategy;
 
+//@author Nathan Ulmen
 public class ConditionalUPG implements UpgradeStrategy{
     public enum Condition{VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
     public enum Comparison {GREATER_THAN, LESS_THAN, EQUAL_TO} //Type of comparison
@@ -42,23 +44,23 @@ public class ConditionalUPG implements UpgradeStrategy{
         switch (comparison) {
             case GREATER_THAN:
                 if(ore.getOreValue() >=threshold) {
-                   ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                   elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
                 break;
             case LESS_THAN:
                 if (ore.getOreValue()<= threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
                 break;
             case EQUAL_TO:
                 if (ore.getOreValue()== threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
                 break;
         }
@@ -68,23 +70,23 @@ public class ConditionalUPG implements UpgradeStrategy{
         switch (comparison) {
             case GREATER_THAN:
                 if(ore.getOreTemp() >=threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case LESS_THAN:
                 if (ore.getOreTemp()<= threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case EQUAL_TO:
                 if (ore.getOreTemp()== threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
         }
@@ -94,23 +96,23 @@ public class ConditionalUPG implements UpgradeStrategy{
         switch (comparison) {
             case GREATER_THAN:
                 if(ore.getMultiOre() >=threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case LESS_THAN:
                 if (ore.getMultiOre()<= threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case EQUAL_TO:
                 if (ore.getMultiOre()== threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
         }
@@ -119,24 +121,24 @@ public class ConditionalUPG implements UpgradeStrategy{
     private void upgradeCountComp(Ore ore) {
         switch (comparison) {
             case GREATER_THAN:
-                if( ore.getUpgradeCount()>=threshold) {
-                    ifModifier.applyTo(ore);
+                if(ore.getUpgradeCount()>=threshold) {
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case LESS_THAN:
                 if (ore.getUpgradeCount()<= threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
             case EQUAL_TO:
                 if (ore.getUpgradeCount()== threshold) {
-                    ifModifier.applyTo(ore);
+                    ifModifierApply(ore);
                 } else {
-                    elseModifier.applyTo(ore);
+                    elseModifierApply(ore);
                 }
             break;
         }
@@ -146,6 +148,22 @@ public class ConditionalUPG implements UpgradeStrategy{
         return getClass().getSimpleName() + "\tCondition: " + condition + "\tComparison: " + comparison +
             "\nThreshold: " + threshold +
             "\tifModifier: " + ifModifier.toString() + "\telseModifier: " + elseModifier.toString();
+    }
+
+    private boolean isNull(UpgradeStrategy strat) {
+        return strat == null;
+    }
+
+    private void ifModifierApply(Ore ore) {
+        if (!isNull(ifModifier)) {
+            ifModifier.applyTo(ore);
+        }
+    }
+
+    private void elseModifierApply(Ore ore) {
+        if (!isNull(elseModifier)) {
+            elseModifier.applyTo(ore);
+        }
     }
 
 }

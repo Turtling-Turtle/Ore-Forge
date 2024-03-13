@@ -16,9 +16,12 @@
       },
       "upgStrat2": {
         "type": "InfluencedUPG",
-        "modifier": 0.1,
-        "ValueToModify": "ORE_VALUE",
-        "ValueOfInfluence": "UPGRADE_COUNT"
+        "upgradeType": {
+          "type": "MultiplyUPG",
+          "modifier": 0.1,
+          "ValueToModify": "ORE_VALUE"
+        },
+        "valueOfInfluence": "UPGRADE_COUNT"
       },
       "upgStrat3": {
         "type": null
@@ -88,7 +91,7 @@
           "type": "ApplyEffect",
             "strategyType": "Inflamed",
             "duration": 8.0,
-            "tempIncrease": 10
+            "tempChange": 10
         }
     },
     "upgradeTag": {

@@ -57,25 +57,6 @@
     }
   },
   {
-    "name": "Wubium Mine",
-    "description": "\"That's one fast mine.\"",
-    "blockLayout": [
-      [0,3,0],
-      [0,0,0],
-      [0,0,0]
-    ],
-    "tier": "EXOTIC",
-    "itemValue": 0,
-    "oreName": "Wubite",
-    "oreValue": 1000000.0,
-    "oreTemp": 0,
-    "multiOre": 1,
-    "dropInterval": 0.04,
-    "oreStrategy": {
-      "strategyType": null
-    }
-  },
-  {
   "name": "Wubium Mine",
   "description": "That's one quick mine.",
   "blockLayout": [
@@ -95,7 +76,7 @@
       "oreStrat1": {
         "strategyType": "Inflamed",
           "duration": 8,
-          "tempIncrease": 10
+          "tempChange": 10
       },
       "oreStrat2" : {
         "strategyType": null

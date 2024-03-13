@@ -1,12 +1,12 @@
 package ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS;
 
-import ore.forge.Strategies.UpgradeStrategies.AbstractUpgrade;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Ore;
 
 //Adds a modifier to a value.
-public class AddUPG extends AbstractUpgrade {
+public class AddUPG extends BasicUpgrade {
 
-    public AddUPG(double mod, AbstractUpgrade.ValueToModify val) {
+    public AddUPG(double mod, BasicUpgrade.ValueToModify val) {
         super(mod, val);
     }
 
