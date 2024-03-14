@@ -7,5 +7,6 @@ public interface OreStrategy {
 
     OreStrategy clone();
 
+    //Strategies, Burning, Frozen, Immunity to specific status effects, invincibility, radiation??, Upgrade over time effects/modify value over time,
 
 }

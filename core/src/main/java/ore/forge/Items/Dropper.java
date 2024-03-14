@@ -48,7 +48,7 @@ public class Dropper extends Item {
     }
 
 
-    public void update(float deltaTime) {//Needs some refinement...
+    public void update(float deltaTime) {//Needs some refinement..., should also make it so low frame rates dont limit drop rate. ...
         boolean canReset = false;
         timeSinceLast += deltaTime;
         if (timeSinceLast >= dropInterval) {

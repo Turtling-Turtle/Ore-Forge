@@ -146,8 +146,8 @@ public class ConditionalUPG implements UpgradeStrategy{
 
     public String toString() {
         return getClass().getSimpleName() + "\tCondition: " + condition + "\tComparison: " + comparison +
-            "\nThreshold: " + threshold +
-            "\tifModifier: " + ifModifier.toString() + "\telseModifier: " + elseModifier.toString();
+            "\tThreshold: " + threshold +
+            "\n\nifModifier: " + ifModifier.toString() + "\n\nelseModifier: " + elseModifier.toString();
     }
 
     private boolean isNull(UpgradeStrategy strat) {
