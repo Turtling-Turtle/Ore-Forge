@@ -5,7 +5,8 @@ import ore.forge.Ore;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
 //@author Nathan Ulmen
-public class ConditionalUPG implements UpgradeStrategy{
+//TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
+public class ConditionalUPG implements UpgradeStrategy {
     public enum Condition{VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
     public enum Comparison {GREATER_THAN, LESS_THAN, EQUAL_TO} //Type of comparison
     private final Condition condition;

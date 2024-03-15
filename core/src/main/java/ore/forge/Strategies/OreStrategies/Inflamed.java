@@ -4,6 +4,7 @@ import ore.forge.Ore;
 import ore.forge.OreRealm;
 
 public class Inflamed implements OreStrategy, Cloneable{
+
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
     private final float duration;
     private float currentTime;
