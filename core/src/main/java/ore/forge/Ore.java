@@ -6,9 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
+import java.util.*;
 
 public class Ore {
     protected static Map map = Map.getSingleton();
@@ -25,6 +23,7 @@ public class Ore {
     private Direction direction;
     private final Texture texture;
     private final ArrayList<OreStrategy> effects;
+    private final Stack<OreStrategy> removalStack;
 
     public Ore() {
         this.oreValue = 0;
@@ -39,6 +38,7 @@ public class Ore {
         texture = new Texture(Gdx.files.internal("Ruby2.png"));
         direction = Direction.NORTH;
         effects = new ArrayList<>();
+        removalStack = new Stack<>();
         history = new BitSet();
 
     }
@@ -46,6 +46,9 @@ public class Ore {
     public void move(float deltaTime) {
         for (OreStrategy effect : effects) {
             effect.activate(deltaTime, this);
+        }
+        while (!removalStack.empty()) {
+            effects.remove(removalStack.pop());
         }
        if (position.x != destination.x || position.y != destination.y)  {
            switch (direction) {
@@ -157,8 +160,8 @@ public class Ore {
         }
     }
 
-    public void removeEffect(String effectToRemove) {
-        effects.remove(effectToRemove);
+    public void removeEffect(OreStrategy effectToRemove) {//Might not work the way intended.
+        removalStack.add(effectToRemove);
     }
 
     public void purgeEffects() {

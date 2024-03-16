@@ -48,22 +48,21 @@ public class Dropper extends Item {
     }
 
 
-    public void update(float deltaTime) {//Needs some refinement..., should also make it so low frame rates dont limit drop rate. ...
-        boolean canReset = false;
+    public void update(float deltaTime) {
         timeSinceLast += deltaTime;
-        if (timeSinceLast >= dropInterval) {
-            for (Block[] blocks : blockConfig) {
-                for (int j = 0; j < blocks.length; j++) {
-                    if (blocks[j] instanceof DropperBlock) {
-                        if (((DropperBlock) blocks[j]).dropOre()) {
-                            canReset = true;
-                        }
-                    }
+        while(timeSinceLast >= dropInterval) {
+            dropOre();
+            timeSinceLast -= dropInterval;
+        }
+    }
+
+    private void dropOre() {
+        for (Block[] blocks : blockConfig) {
+            for (Block block : blocks) {
+                if (block instanceof DropperBlock) {
+                    ((DropperBlock) block).dropOre();
                 }
             }
-        }
-        if (canReset) {
-            timeSinceLast = 0f;
         }
     }
 

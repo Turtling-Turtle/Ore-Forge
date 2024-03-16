@@ -24,7 +24,6 @@ public class Inflamed implements OreStrategy, Cloneable{
         } else {
             ore.setTemp(ore.getOreTemp() + tempIncrease * deltaTime);
         }
-
     }
 
     @Override

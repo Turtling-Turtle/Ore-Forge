@@ -22,12 +22,12 @@ public interface OreStrategy {
     //Before death/destruction from another effect or upgrade? will consume a charge to prevent death. X charges.
         //Maybe have a version where ore is invincible under specific conditions?
 
-    //Over time effects that modify Ore Properties:
+    //Over time effects that modify Ore Properties: DONE
         //Implementation idea 1: Over time effects will take an upgrade effect. Upgrade effect will be activated on an interval, similar to how droppers produce ore.
 
-    //Effect that checks to see if a specific property is modified.
-        //EX: if Ore is upgraded by X upgrader do X.
-        //Implementation Idea: Update on Interval? Every X seconds check to see if property is modified. If condition is true do X else do Y.
+    //EFFECT THAT CHECKS TO SEE IF A SPECIFIC PROPERTY IS MODIFIED.
+        //EX: IF ORE IS UPGRADED BY X UPGRADER DO X.
+        //IMPLEMENTATION IDEA: UPDATE ON INTERVAL? EVERY X SECONDS CHECK TO SEE IF PROPERTY IS MODIFIED. IF CONDITION IS TRUE DO X ELSE DO Y.
 
 // ----------------------------------------------------------------------------------
 

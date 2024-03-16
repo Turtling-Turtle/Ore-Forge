@@ -2,7 +2,6 @@ package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
 import ore.forge.Items.Item;
-import ore.forge.Strategies.DropperStrategies.DropperStrategy;
 import ore.forge.OreRealm;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
@@ -33,12 +32,10 @@ public class DropperBlock extends Block {
         timeSinceLast = 0f;
     }
 
-    public boolean dropOre() {
+    public void dropOre() {
         Block blockInFront = map.getBlockInFront(vector2, direction);
             if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
                 OreStrategy effect = null;
-
-
 //                strategy.createOre(oreRealm.giveOre());
 
                 if (strategy != null) {
@@ -50,9 +47,7 @@ public class DropperBlock extends Block {
                         .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
 //                blockInFront.setFull(true);
 //                totalOreDropped++;
-                return true;
             }
-        return false;
     }
 
 

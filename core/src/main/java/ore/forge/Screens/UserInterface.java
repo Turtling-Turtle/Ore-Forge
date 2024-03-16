@@ -21,6 +21,7 @@ import ore.forge.TheTycoonGame;
 import javax.swing.text.NumberFormatter;
 import java.awt.TextField;
 import java.util.ArrayList;
+import java.util.Formatter;
 
 //@author Nathan Ulmen
 public class UserInterface {
@@ -39,6 +40,7 @@ public class UserInterface {
     private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre;
     private Vector3 mouse;
     private NumberFormatter numberFormatter;
+
 
     public UserInterface(Inventory inventory) {
         table = new Table();
@@ -114,7 +116,7 @@ public class UserInterface {
             fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory())/1024/1024) + " MB");
             this.mouseCoords.setText("X: " + (int)mouse.x + " Y: " + (int)mouse.y);
-            wallet.setText("$ " + player.getWallet());
+            wallet.setText("$ " + String.format("%.2e", player.getWallet()));
             specialPoints.setText("SP: " + player.getSpecialPoints());
             activeOre.setText("Active Ore: " + oreRealm.activeOre.size());
             updateInterval = 0f;
