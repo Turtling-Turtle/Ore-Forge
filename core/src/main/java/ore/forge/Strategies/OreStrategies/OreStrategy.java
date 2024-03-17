@@ -7,6 +7,10 @@ public interface OreStrategy {
 
     OreStrategy clone();
 
+    boolean isEndStepEffect();
+
+    String toString();
+
     //Strategies, Burning, Frozen, Immunity to specific status effects, invincibility, radiation??, Upgrade over time effects/modify value over time,
 
     //Burning:
@@ -15,6 +19,8 @@ public interface OreStrategy {
     //Frozen:
     //Ore is frozen. While frozen ore temperature decreases by X. Moves slower?
 
+    //Ore can only be cannot be burning and frozen at the same time.
+
     //Immunity:
     //Immune to specific effects like fire or frozen. Charges???
 
@@ -22,7 +28,7 @@ public interface OreStrategy {
     //Before death/destruction from another effect or upgrade? will consume a charge to prevent death. X charges.
         //Maybe have a version where ore is invincible under specific conditions?
 
-    //Over time effects that modify Ore Properties: DONE
+    //Over time effects that modify Ore Properties:
         //Implementation idea 1: Over time effects will take an upgrade effect. Upgrade effect will be activated on an interval, similar to how droppers produce ore.
 
     //EFFECT THAT CHECKS TO SEE IF A SPECIFIC PROPERTY IS MODIFIED.

@@ -59,10 +59,10 @@ public class InputHandler {
     };
 
     UpgradeStrategy multiplyOveTime = new MultiplyUPG(1.02, BasicUpgrade.ValueToModify.ORE_VALUE);
-    OreStrategy upgradeOverTime = new OverTimeValueModifier(1.5f, 30, multiplyOveTime);
+    OreStrategy upgradeOverTime = new UpgradeOverTimeEffect(1f, 30, multiplyOveTime);
 
     UpgradeStrategy multiplyMultiOreOverTime = new MultiplyUPG(2, BasicUpgrade.ValueToModify.MULTIORE);
-    OreStrategy upgradeOverTime2 = new OverTimeValueModifier(.1f, 10, multiplyMultiOreOverTime);
+    OreStrategy upgradeOverTime2 = new UpgradeOverTimeEffect(1f, 30, multiplyMultiOreOverTime);
     UpgradeStrategy applyeEffect2 = new ApplyEffect(upgradeOverTime2);
     UpgradeStrategy testUpgrade = new MultiplyUPG(3.0, BasicUpgrade.ValueToModify.ORE_VALUE);
     UpgradeStrategy applyEffect = new ApplyEffect(upgradeOverTime);
@@ -70,11 +70,13 @@ public class InputHandler {
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
-    OreStrategy enflamed = new Inflamed(9999, 5);
+    OreStrategy enflamed = new Inflamed(10, 5);
     UpgradeStrategy multiOreOverTime= new AddUPG(10, BasicUpgrade.ValueToModify.MULTIORE);
-    OreStrategy overTime = new OverTimeValueModifier(1, 10, multiOreOverTime);
+    OreStrategy overTime = new UpgradeOverTimeEffect(1, 10, multiOreOverTime);
+    OreStrategy frostBite = new FrostBite(10, 10);
+    OreStrategy invincibility = new Invulnerability(1, 99999999f);
 
-    OreStrategy bundled = new BundledEffect(null, enflamed, overTime, null);
+    OreStrategy bundled = new BundledEffect(upgradeOverTime2, frostBite, invincibility, null);
 
     public InputHandler() {
         mouseScreen = new Vector3();
@@ -108,14 +110,14 @@ public class InputHandler {
             //buildMode, active item becomes conveyor
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 5);
+                heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Ore", 20, 1, 1, 0.05f, bundled);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 1f, bundled);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {

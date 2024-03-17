@@ -17,8 +17,6 @@ public class OreRealm {
         stackOfOre = new Stack<>();
         activeOre = new ArrayList<>(Constants.ORE_LIMIT);
         removalStack = new Stack<>();
-
-
     }
 
     public static OreRealm getSingleton() {
@@ -33,6 +31,10 @@ public class OreRealm {
         return stackOfOre.pop();
     }
 
+    public Ore peek() {
+        return stackOfOre.peek();
+    }
+
     public void populate() {
         for (int i = 0; i < Constants.ORE_LIMIT; i++) {
             stackOfOre.push(new Ore());
@@ -40,8 +42,10 @@ public class OreRealm {
     }
 
     public void takeOre(Ore ore) {
-       removalStack.add(ore);
-       stackOfOre.push(ore);
+        if (!removalStack.contains(ore)) {
+            removalStack.add(ore);
+            stackOfOre.push(ore);
+        }
     }
 
     public void updateActiveOre() {

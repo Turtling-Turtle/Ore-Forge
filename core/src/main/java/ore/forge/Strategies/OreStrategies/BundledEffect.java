@@ -2,8 +2,8 @@ package ore.forge.Strategies.OreStrategies;
 
 import ore.forge.Ore;
 
-public class BundledEffect implements OreStrategy{
-    private OreStrategy[] strategies;
+public class BundledEffect implements OreStrategy {
+    private final OreStrategy[] strategies;
 
     public BundledEffect(OreStrategy effect1, OreStrategy effect2, OreStrategy effect3, OreStrategy effect4) {
         strategies = new OreStrategy[4];
@@ -28,7 +28,6 @@ public class BundledEffect implements OreStrategy{
                 strategies[i].activate(deltaT, ore);
             }
         }
-
     }
 
     @Override
@@ -42,11 +41,23 @@ public class BundledEffect implements OreStrategy{
         return clone;
     }
 
+    @Override
+    public boolean isEndStepEffect() {
+        return false;
+    }
+
+    public OreStrategy[] getStrategies() {
+        return strategies;
+    }
+
     public String toString() {
-        StringBuilder s = null;
+        StringBuilder s = new StringBuilder();
         for (OreStrategy strategy : strategies) {
-            s.append(strategy.toString());
+            if (strategy != null) {
+                s.append(strategy);
+            }
         }
         return String.valueOf(s);
     }
+
 }

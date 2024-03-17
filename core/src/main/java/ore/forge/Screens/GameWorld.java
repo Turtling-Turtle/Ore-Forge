@@ -64,7 +64,7 @@ public class GameWorld extends CustomScreen{
         //Draw world tiles.
         for (int i = 0; i < gameWorld.mapTiles.length; i++) {
             for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
-                batch.draw(blockTexture, i, j, 1, 1);
+                batch.draw(blockTexture, i, j, 1f, 1f);
             }
         }
 
@@ -107,8 +107,8 @@ public class GameWorld extends CustomScreen{
 
         //Draw Active Ore
         for (Ore ore : oreRealm.activeOre) {
-            ore.move(delta);
-            batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1, 1);
+            ore.act(delta);
+            batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
         }
         oreRealm.updateActiveOre();
 

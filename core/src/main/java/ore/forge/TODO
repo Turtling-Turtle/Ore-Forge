@@ -1,3 +1,28 @@
 Look into implementing MongoDB so I can "update" and add new items to game.
 
 Look into making a "content browser" where you can browse other items that people have created.
+
+Look into writing a "physics" driven system for ore movement.
+
+        Handle physics on a seperate thread so that it can but updated on a fixed interval.
+        Use interpolation via integration if I decide to do this so that physics wont look weird with different frame rates.
+        vs.
+        Handle physics on current/same thread but it looses some "precision".
+
+
+        General Tools:
+        Equations of motion.
+
+        Ore Collision, have no clue how to handle this.
+            -Conservation of momentum and collision in 2D
+
+
+1. Is this even a good Idea?
+
+2. Is it possible to write one that has a time complexity less than n^2?
+
+3.
+
+
+
+

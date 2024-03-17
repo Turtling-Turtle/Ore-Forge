@@ -1,8 +1,6 @@
 package ore.forge.Items.Blocks;
 
 
-import com.badlogic.gdx.Gdx;
-import ore.forge.Direction;
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
@@ -16,12 +14,6 @@ public class FurnaceBlock extends Block implements Worker{
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     protected static Player player = Player.getSingleton();
     private final int specialPointReward;
-
-    public FurnaceBlock(Direction direction, int x, int y, UpgradeStrategy upgrade) {
-        super(direction, x, y);
-        this.upgrade = upgrade;
-        specialPointReward = 0;
-    }
 
     public FurnaceBlock(Item parentItem, UpgradeStrategy upgrade, int specialPointReward) {
         super(parentItem);
@@ -43,13 +35,9 @@ public class FurnaceBlock extends Block implements Worker{
     }
 
     private void calculateSpecialReward(Ore ore) {
-        for (int i = 0; i < ore.getMultiOre(); i++) {
-            ((Furnace) parentItem).incrementProgress();
-            if (((Furnace)parentItem).getRewardProgess() >= ((Furnace)parentItem).getRewardThreshold()) {
-                player.addSpecialPoints(specialPointReward);
-                ((Furnace)parentItem).setProgress(((Furnace) parentItem).getRewardProgess() % ((Furnace) parentItem).getRewardThreshold());
-            }
-        }
+        ((Furnace)parentItem).setProgress(((Furnace) parentItem).getRewardProgess() + ore.getMultiOre());
+        player.addSpecialPoints(specialPointReward *(int) Math.floor(((Furnace) parentItem).getRewardProgess() / ((Furnace) parentItem).getRewardThreshold()));
+        ((Furnace) parentItem).setProgress(ore.getMultiOre() % ((Furnace) parentItem).getRewardThreshold());
     }
 
 }

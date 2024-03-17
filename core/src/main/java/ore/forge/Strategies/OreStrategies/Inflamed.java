@@ -3,24 +3,27 @@ package ore.forge.Strategies.OreStrategies;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 
-public class Inflamed implements OreStrategy, Cloneable{
-
-    protected static final OreRealm oreRealm = OreRealm.getSingleton();
-    private final float duration;
-    private float currentTime;
+public class Inflamed implements OreStrategy {
+    private float duration;
     private final float tempIncrease;
 
     public Inflamed(float duration, float tempIncrease) {
-        currentTime = 0f;
         this.duration = duration;
         this.tempIncrease = tempIncrease;
     }
 
+    public Inflamed(Inflamed clone) {
+       this.duration = clone.duration;
+       this.tempIncrease = clone.tempIncrease;
+    }
+
+
     @Override
     public void activate(float deltaTime, Ore ore) {
-        currentTime += deltaTime;
-        if (currentTime > duration) {
-            oreRealm.takeOre(ore);
+        duration -= deltaTime;
+        if (duration <=0) {
+            ore.setIsDying(true);
+            ore.removeEffect(this);
         } else {
             ore.setTemp(ore.getOreTemp() + tempIncrease * deltaTime);
         }
@@ -28,11 +31,12 @@ public class Inflamed implements OreStrategy, Cloneable{
 
     @Override
     public OreStrategy clone() {
-        try {
-            return (OreStrategy) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        return new Inflamed(this);
+    }
+
+    @Override
+    public boolean isEndStepEffect() {
+        return false;
     }
 
     @Override

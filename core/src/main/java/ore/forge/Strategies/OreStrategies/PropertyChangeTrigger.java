@@ -15,6 +15,11 @@ public class PropertyChangeTrigger implements OreStrategy {
 
     }
 
+    public PropertyChangeTrigger(PropertyChangeTrigger clone) {
+
+    }
+
+
     @Override
     public void activate(float deltaT, Ore ore) {
 
@@ -22,6 +27,11 @@ public class PropertyChangeTrigger implements OreStrategy {
 
     @Override
     public OreStrategy clone() {
-        return null;
+        return new PropertyChangeTrigger(this);
+    }
+
+    @Override
+    public boolean isEndStepEffect() {
+        return false;
     }
 }

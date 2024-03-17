@@ -2,7 +2,9 @@ package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
 import ore.forge.Items.Item;
+import ore.forge.Ore;
 import ore.forge.OreRealm;
+import ore.forge.Strategies.OreStrategies.BundledEffect;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
 //@author Nathan Ulmen
@@ -34,21 +36,20 @@ public class DropperBlock extends Block {
 
     public void dropOre() {
         Block blockInFront = map.getBlockInFront(vector2, direction);
-            if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
-                OreStrategy effect = null;
-//                strategy.createOre(oreRealm.giveOre());
-
-                if (strategy != null) {
-                    effect = strategy.clone();
-                }
-                oreRealm.giveOre()
-                        .setVector(vector2)
-                        .applyBaseStats(oreValue, oreTemp, multiOre, oreName, effect)
-                        .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
+        if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
+            OreStrategy effect;
+            if (strategy == null) {
+                effect = null;
+            } else {
+                effect = strategy.clone();
+            }
+            oreRealm.giveOre()
+                    .setVector(vector2)
+                    .applyBaseStats(oreValue, oreTemp, multiOre, oreName, effect)
+                    .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
 //                blockInFront.setFull(true);
 //                totalOreDropped++;
-            }
+        }
     }
-
 
 }
