@@ -32,6 +32,8 @@ public class Ore {
     private Direction direction;
     private boolean isDoomed;
     private float mass;
+    private final float updateInterval; //Interval for how often effects are updated.
+    private float current;
 
     public Ore() {
         this.oreValue = 0;
@@ -52,6 +54,7 @@ public class Ore {
         acceleration = new Vector2(1, 1);
         velocity = new Vector2();
         force = new Vector2();
+        updateInterval = 0.1f;//effects are updated 10 times every second.
     }
 
     //position = Vᵢ* Δt + 0.5 * a * Δt^2
@@ -77,17 +80,23 @@ public class Ore {
     }
 
     public void act(float deltaTime) {
-        updateEffects(deltaTime);
+        current += deltaTime;
+        if (current >= updateInterval) {
+           updateEffects(deltaTime);
+        }
         if (position.x != destination.x || position.y != destination.y) {
             move(deltaTime);
         } else {
             activateBlock();
         }
         //End Step effects like invincibility;
-        for(OreStrategy strat : effects) {
-            if (strat.isEndStepEffect()) {
-               strat.activate(deltaTime, this);
+        if (current >= updateInterval) {
+            for(OreStrategy strat : effects) {
+                if (strat.isEndStepEffect()) {
+                    strat.activate(deltaTime, this);
+                }
             }
+            current = 0f;
         }
         if (isDoomed) {
             oreRealm.takeOre(this);
@@ -166,7 +175,7 @@ public class Ore {
     }
 
     public void activateBlock() {
-        Gdx.app.log("Ore" , this.toString());
+//        Gdx.app.log("Ore" , this.toString());
         if ((map.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
             ((Worker) map.getBlock(position)).handle(this);
         } else {
@@ -295,6 +304,7 @@ public class Ore {
         effects.clear();
         removalStack.clear();
         isDoomed = false;
+        current = 0f;
         resetAllTags();
     }
 
