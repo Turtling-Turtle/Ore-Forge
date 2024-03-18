@@ -5,13 +5,18 @@ package ore.forge;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.mongodb.client.*;
 import ore.forge.Player.Player;
 import ore.forge.Screens.*;
+import org.bson.Document;
 
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
@@ -29,6 +34,7 @@ public class OreForge extends Game {
 	private SpriteBatch spriteBatch;
 
 	public void create() {
+        mongoConnect();
 		BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
 		Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 		fpsCounter = new Label("", fpsStyle);
@@ -85,6 +91,24 @@ public class OreForge extends Game {
 	public MainMenu getMainMenuScreen() {
 		return mainMenuScreen;
 	}
+
+    public void mongoConnect() {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("OreForge");
+        MongoCollection<Document> collection = database.getCollection("Conveyors");
+        Json json = new Json();
+        json.setOutputType(JsonWriter.OutputType.json);
+        FileHandle fileHandle = Gdx.files.local("MongoTEST.json");
+
+        fileHandle.writeString("[\n", false);
+        for (Document document : collection.find()) {
+            document.remove("_id");
+            String jsonString = json.prettyPrint(document.toJson());
+            fileHandle.writeString(jsonString +",\n", true);
+        }
+        fileHandle.writeString("]", true);
+        mongoClient.close();
+    }
 
 
 
