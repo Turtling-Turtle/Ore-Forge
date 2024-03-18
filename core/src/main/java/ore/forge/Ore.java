@@ -7,7 +7,10 @@ import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreStrategies.BundledEffect;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Stack;
 
 public class Ore {
     protected static Map map = Map.getSingleton();
@@ -15,6 +18,9 @@ public class Ore {
     private final BitSet history;
     private final HashMap<String, UpgradeTag> tagMap;
     private final Vector2 position, destination;
+    private Vector2 velocity;
+    private Vector2 acceleration;
+    private Vector2 force;
     private final Texture texture;
     private final ArrayList<OreStrategy> effects;
     private final Stack<OreStrategy> removalStack;
@@ -24,7 +30,8 @@ public class Ore {
     private float oreTemperature;
     private float moveSpeed, speedScalar;
     private Direction direction;
-    private boolean isDying;
+    private boolean isDoomed;
+    private float mass;
 
     public Ore() {
         this.oreValue = 0;
@@ -33,7 +40,7 @@ public class Ore {
         this.upgradeCount = 0;
         this.multiOre = 1;
         this.speedScalar = 1;
-        this.isDying = false;
+        this.isDoomed = false;
         tagMap = new HashMap<>();
         position = new Vector2();
         destination = new Vector2();
@@ -42,8 +49,31 @@ public class Ore {
         effects = new ArrayList<>();
         removalStack = new Stack<>();
         history = new BitSet();
+        acceleration = new Vector2(1, 1);
+        velocity = new Vector2();
+        force = new Vector2();
+    }
 
+    //position = Vᵢ* Δt + 0.5 * a * Δt^2
+    //velocity final = Vᵢ + a * Δt
+    // a = F/m
+    //momentum = m * v
+    public void updatePosition(float deltaTime) {
+        acceleration.y = force.y/ mass;
+        //Find final velocity in y direction.
+        velocity.y = velocity.y + acceleration.y * deltaTime;
+        position.y = velocity.y * deltaTime + .5f * acceleration.y * (deltaTime*deltaTime);
 
+        //Find final velocity in x Direction.
+        acceleration.x = force.x / mass;
+        velocity.x = velocity.x + acceleration.x * deltaTime;
+        position.x = velocity.x * deltaTime + .5f * acceleration.x * (deltaTime*deltaTime);
+
+    }
+
+    public void setForce(Vector2 vector2) {
+        this.force.x = vector2.x;
+        this.force.y = vector2.y;
     }
 
     public void act(float deltaTime) {
@@ -59,7 +89,7 @@ public class Ore {
                strat.activate(deltaTime, this);
             }
         }
-        if (isDying) {
+        if (isDoomed) {
             oreRealm.takeOre(this);
         }
 
@@ -140,7 +170,7 @@ public class Ore {
         if ((map.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
             ((Worker) map.getBlock(position)).handle(this);
         } else {
-            isDying = true;
+            isDoomed = true;
             oreRealm.takeOre(this);
         }
     }
@@ -186,12 +216,12 @@ public class Ore {
         }
     }
 
-    public boolean isDying() {
-        return isDying;
+    public boolean isDoomed() {
+        return isDoomed;
     }
 
     public void setIsDying(boolean state) {
-        isDying = state;
+        isDoomed = state;
     }
 
     public void setSpeedScalar(float newScalar) {
@@ -264,7 +294,7 @@ public class Ore {
         this.speedScalar = 1;
         effects.clear();
         removalStack.clear();
-        isDying = false;
+        isDoomed = false;
         resetAllTags();
     }
 

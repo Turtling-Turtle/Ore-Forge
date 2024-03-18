@@ -10,6 +10,7 @@ public class Block {
 
     protected static Map map = Map.getSingleton();
     public final Vector2 vector2;
+    protected final Vector2 force;
 
     protected Direction direction;
     private boolean isProcessBlock, isFull;
@@ -21,6 +22,7 @@ public class Block {
         vector2 = new Vector2();
         vector2.set(x,y);
         this.direction = direction;
+        force = new Vector2();
     }
 
     public Block(Item parentItem) {
@@ -29,6 +31,7 @@ public class Block {
         isProcessBlock = false;
         name = parentItem.getName() + " " + this.getClass().getSimpleName();
         this.direction = parentItem.getDirection();
+        force = new Vector2(2, 3);
     }
 
     public Block setVector2(float X, float Y) {

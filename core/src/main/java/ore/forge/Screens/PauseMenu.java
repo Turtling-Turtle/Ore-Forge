@@ -9,12 +9,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
+import ore.forge.OreForge;
 import ore.forge.Player.Player;
 import ore.forge.ResourceManager;
-import ore.forge.TheTycoonGame;
 
 
 public class PauseMenu extends CustomScreen {
@@ -32,7 +35,7 @@ public class PauseMenu extends CustomScreen {
     private final FPSLogger fpsLogger= new FPSLogger();
 
 
-    public PauseMenu(final TheTycoonGame game, final ResourceManager resourceManager) {
+    public PauseMenu(final OreForge game, final ResourceManager resourceManager) {
         super(game, resourceManager);
 
         table = new Table();

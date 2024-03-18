@@ -3,13 +3,13 @@ package ore.forge.Items.Blocks;
 
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Direction;
-import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
 import ore.forge.Ore;
 
 //@author Nathan Ulmen
 public class ConveyorBlock extends Block implements Worker {
     private float speed;
+    private Vector2 force;
 
     public ConveyorBlock(Direction direction, int x, int y) {
         super(direction, x, y);
@@ -49,6 +49,7 @@ public class ConveyorBlock extends Block implements Worker {
                     x--;
                     break;
             }
+//            ore.setForce(force);
             ore.setDestination(new Vector2(x,y), speed, direction);
         }
     }

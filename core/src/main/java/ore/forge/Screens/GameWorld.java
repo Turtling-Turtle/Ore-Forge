@@ -33,7 +33,7 @@ public class GameWorld extends CustomScreen{
     private final Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
 
 
-    public GameWorld(TheTycoonGame game, ResourceManager resourceManager) {
+    public GameWorld(OreForge game, ResourceManager resourceManager) {
         super(game, resourceManager);
         batch = new SpriteBatch(3_000);
         inputHandler = new InputHandler();

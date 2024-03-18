@@ -2,9 +2,7 @@ package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
 import ore.forge.Items.Item;
-import ore.forge.Ore;
 import ore.forge.OreRealm;
-import ore.forge.Strategies.OreStrategies.BundledEffect;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 
 //@author Nathan Ulmen

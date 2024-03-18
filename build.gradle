@@ -70,6 +70,9 @@ subprojects {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
+  dependencies {
+    implementation 'org.mongodb:mongodb-driver-sync:5.0.0'
+  }
 }
 
 eclipse.project.name = 'OreForge' + '-parent'

@@ -9,19 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import ore.forge.OreForge;
 import ore.forge.ResourceManager;
-import ore.forge.TheTycoonGame;
 
 
 public abstract class CustomScreen implements Screen {
 
-    protected final TheTycoonGame game;
+    protected final OreForge game;
     protected final ResourceManager resourceManager;
     protected OrthographicCamera camera;
     protected Viewport viewport;
     protected Stage stage;
 
-    public CustomScreen(final TheTycoonGame game, final ResourceManager resourceManager) {
+    public CustomScreen(final OreForge game, final ResourceManager resourceManager) {
         this.game = game;
         this.resourceManager = resourceManager;
 

@@ -1,7 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS;
 
-import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Ore;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 
 //Adds a modifier to a value.
 public class AddUPG extends BasicUpgrade {

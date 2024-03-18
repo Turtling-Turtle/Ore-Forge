@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.Items.*;
+import ore.forge.Map;
+import ore.forge.OreForge;
 import ore.forge.Strategies.OreStrategies.*;
 import ore.forge.Strategies.UpgradeStrategies.ApplyEffect;
 import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
@@ -13,8 +15,6 @@ import ore.forge.Strategies.UpgradeStrategies.BundledUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
-import ore.forge.Map;
-import ore.forge.TheTycoonGame;
 import ore.forge.UpgradeTag;
 
 import java.util.Stack;
@@ -95,7 +95,7 @@ public class InputHandler {
         mouseWorld.set(camera.unproject(mouseScreen));
     }
 
-    public void handleInput(float deltaT, OrthographicCamera camera, TheTycoonGame game) {
+    public void handleInput(float deltaT, OrthographicCamera camera, OreForge game) {
         handleMovement(deltaT, camera);
         handleZoom(deltaT, camera);
 

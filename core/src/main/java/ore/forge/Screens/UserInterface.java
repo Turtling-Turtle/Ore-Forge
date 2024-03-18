@@ -8,20 +8,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.Constants;
+import ore.forge.OreForge;
 import ore.forge.OreRealm;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
-import ore.forge.TheTycoonGame;
 
 import javax.swing.text.NumberFormatter;
 import java.awt.TextField;
 import java.util.ArrayList;
-import java.util.Formatter;
 
 //@author Nathan Ulmen
 public class UserInterface {
@@ -54,7 +54,7 @@ public class UserInterface {
         oreLimit = new ProgressBar(0, Constants.ORE_LIMIT, 1, false, style);
     }
 
-    public UserInterface(TheTycoonGame game, Vector3 mouse) {
+    public UserInterface(OreForge game, Vector3 mouse) {
         numberFormatter = new NumberFormatter();
 
         this.mouse = mouse;

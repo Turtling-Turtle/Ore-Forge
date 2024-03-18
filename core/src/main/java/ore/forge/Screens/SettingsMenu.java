@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
+import ore.forge.OreForge;
 import ore.forge.ResourceManager;
-import ore.forge.TheTycoonGame;
 
 //TODO:
 //SetResolution, Enable VSYNC, Show FPS, AntiAliasing?, Sound options for music and sfx.
@@ -31,7 +34,7 @@ public class SettingsMenu extends CustomScreen {
 //    private SelectBox<String> selectBox = new SelectBox<>();
 
 
-    public SettingsMenu(final TheTycoonGame game, final ResourceManager resourceManager) {
+    public SettingsMenu(final OreForge game, final ResourceManager resourceManager) {
         super(game, resourceManager);
         //VSYNC TOGGLE
         checkBox = ButtonHelper.createCheckBox("", Color.BLACK, 128, 128);

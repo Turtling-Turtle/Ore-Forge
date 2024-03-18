@@ -7,7 +7,10 @@ import com.badlogic.gdx.utils.JsonWriter;
 import ore.forge.Constants;
 import ore.forge.Items.Item;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 //@author Nathan Ulmen
 public class Inventory {

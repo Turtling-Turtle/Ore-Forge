@@ -3,10 +3,10 @@ package ore.forge.Items.Blocks;
 
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
-import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
+import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
 //@author Nathan Ulmen
 public class FurnaceBlock extends Block implements Worker{

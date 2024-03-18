@@ -1,7 +1,6 @@
 package ore.forge.Strategies.OreStrategies;
 
 import ore.forge.Ore;
-import ore.forge.OreRealm;
 
 public class Inflamed implements OreStrategy {
     private float duration;

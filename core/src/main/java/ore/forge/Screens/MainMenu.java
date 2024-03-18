@@ -9,15 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
+import ore.forge.OreForge;
 import ore.forge.Player.Player;
 import ore.forge.ResourceManager;
-import ore.forge.TheTycoonGame;
 
 public class MainMenu extends CustomScreen {
     private final TextButton start, exit, settings;
     private final Table table;
 
-    public MainMenu(final TheTycoonGame game, final ResourceManager resourceManager) {
+    public MainMenu(final OreForge game, final ResourceManager resourceManager) {
         super(game, resourceManager);
 
         Gdx.input.setInputProcessor(this.stage);
