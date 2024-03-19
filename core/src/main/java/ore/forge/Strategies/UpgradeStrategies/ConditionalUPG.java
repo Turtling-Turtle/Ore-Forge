@@ -6,6 +6,9 @@ import ore.forge.Ore;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.BinaryOperator;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.Predicate;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
@@ -17,6 +20,7 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final UpgradeStrategy ifModifier;
     private final UpgradeStrategy elseModifier;
     private final double threshold;
+    private Predicate<Integer> predicate;
 
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
         ifModifier = ifMod;
@@ -41,7 +45,7 @@ public class ConditionalUPG implements UpgradeStrategy {
             return null;
         }
         try {
-            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgradeType"));
+            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgrade"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
             return (UpgradeStrategy) constructor.newInstance(jsonValue.get(field));
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException |

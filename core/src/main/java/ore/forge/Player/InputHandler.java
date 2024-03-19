@@ -12,8 +12,6 @@ import ore.forge.Strategies.OreStrategies.*;
 import ore.forge.Strategies.UpgradeStrategies.ApplyEffect;
 import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.BundledUPG;
-import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
-import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.UpgradeTag;
 
@@ -58,20 +56,20 @@ public class InputHandler {
             {0,1,1}
     };
 
-    UpgradeStrategy multiplyOveTime = new MultiplyUPG(1.02, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy multiplyOveTime = new BasicUpgrade(1.02, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
     OreStrategy upgradeOverTime = new UpgradeOverTimeEffect(1f, 30, multiplyOveTime);
 
-    UpgradeStrategy multiplyMultiOreOverTime = new MultiplyUPG(2, BasicUpgrade.ValueToModify.MULTIORE);
+    UpgradeStrategy multiplyMultiOreOverTime = new BasicUpgrade(2, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.MULTIORE);
     OreStrategy upgradeOverTime2 = new UpgradeOverTimeEffect(1f, 30, multiplyMultiOreOverTime);
     UpgradeStrategy applyeEffect2 = new ApplyEffect(upgradeOverTime2);
-    UpgradeStrategy testUpgrade = new MultiplyUPG(3.0, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
     UpgradeStrategy applyEffect = new ApplyEffect(upgradeOverTime);
     UpgradeStrategy bundledUPG = new BundledUPG(testUpgrade, applyEffect, applyeEffect2, null);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
     OreStrategy enflamed = new Inflamed(10, 5);
-    UpgradeStrategy multiOreOverTime= new AddUPG(10, BasicUpgrade.ValueToModify.MULTIORE);
+    UpgradeStrategy multiOreOverTime= new BasicUpgrade(10, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.MULTIORE);
     OreStrategy overTime = new UpgradeOverTimeEffect(1, 10, multiOreOverTime);
     OreStrategy frostBite = new FrostBite(10, 10);
     OreStrategy invincibility = new Invulnerability(1, 99999999f);

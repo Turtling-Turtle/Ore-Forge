@@ -44,7 +44,7 @@ public class BundledUPG implements UpgradeStrategy{
         Class<?> aClass;
         try {
             try {
-                aClass = Class.forName(jsonValue.get(valueToGet).getString("upgradeType"));
+                aClass = Class.forName(jsonValue.get(valueToGet).getString("upgradeName"));
             } catch (NullPointerException e) {
                 return null;
             }

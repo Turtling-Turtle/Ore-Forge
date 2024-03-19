@@ -9,6 +9,7 @@ import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.DoubleBinaryOperator;
 
 public class TheShop {
     static float deltaTime;
@@ -22,29 +23,24 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-        Class<?> clasz = null;
-        try {
-            clasz = Class.forName("ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG");
-            System.out.println(clasz.getConstructor(JsonValue.class));
-            Constructor<?> constructor = clasz.getConstructor(double.class, BasicUpgrade.ValueToModify.class);
-            Object o = constructor.newInstance(4, BasicUpgrade.ValueToModify.ORE_VALUE);
-            System.out.println(o.toString());
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        }
-
+        double value1 = 100;
+        double value2 = 50;
+        DoubleBinaryOperator operator = null;
+        String methodOfModification = "multiplication";
+        operator = switch (methodOfModification) {
+            case "addition" -> (a, b) -> a + b;
+            case "multiplication" -> (a, b) -> a * b;
+            case "subtraction" -> (a, b) -> a - b;
+            case "division" -> (a,b) -> a / b;
+            default -> operator;
+        };
+        System.out.println(operator.applyAsDouble(value1, value2));
     }
 
     public TheShop() {
 
     }
+
+
 
 }

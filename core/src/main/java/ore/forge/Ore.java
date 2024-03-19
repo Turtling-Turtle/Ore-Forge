@@ -18,9 +18,9 @@ public class Ore {
     private final BitSet history;
     private final HashMap<String, UpgradeTag> tagMap;
     private final Vector2 position, destination;
-    private Vector2 velocity;
-    private Vector2 acceleration;
-    private Vector2 force;
+    private final Vector2 velocity;
+    private final Vector2 acceleration;
+    private final Vector2 force;
     private final Texture texture;
     private final ArrayList<OreStrategy> effects;
     private final Stack<OreStrategy> removalStack;

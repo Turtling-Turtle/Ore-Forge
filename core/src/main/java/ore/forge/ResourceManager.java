@@ -14,10 +14,6 @@ import ore.forge.Strategies.OreStrategies.FrostBite;
 import ore.forge.Strategies.OreStrategies.Inflamed;
 import ore.forge.Strategies.OreStrategies.OreStrategy;
 import ore.forge.Strategies.UpgradeStrategies.*;
-import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
-import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
-import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.SubtractUPG;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -98,7 +94,7 @@ public class ResourceManager {
             parseBlockLayout(jsonValue.get("blockLayout")),
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
-//            loadWithReflection(jsonValue.get("upgrade"), "type"),
+//            loadWithReflection(jsonValue.get("upgrade"), "upgradeName"),
             createUpgradeStrategy(jsonValue.get("upgrade")),
             jsonValue.getInt("specialPointReward"),
             jsonValue.getInt("rewardThreshold")
@@ -115,7 +111,7 @@ public class ResourceManager {
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
             jsonValue.getFloat("conveyorSpeed"),
-            loadWithReflection(jsonValue.get("upgrade"), "upgradeType"),
+            loadWithReflection(jsonValue.get("upgrade"), "upgradeName"),
 //            createUpgradeStrategy(jsonValue.get("upgrade")),
             createUpgradeTag(jsonValue.get("upgradeTag"))
         );
@@ -179,12 +175,12 @@ public class ResourceManager {
                 return createBundledUPG(upgradeStrategyJson);
             case "ResetterUPG" :
                 return new ResetterUPG();
-            case "AddUPG" :
-                return new AddUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
-            case "MultiplyUPG" :
-                return new MultiplyUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
-            case "SubtractUPG" :
-                return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+//            case "AddUPG" :
+//                return new AddUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+//            case "MultiplyUPG" :
+//                return new MultiplyUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
+//            case "SubtractUPG" :
+//                return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
             case "InfluencedUPG" :
                 return new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.valueOf(upgradeStrategyJson.getString("valueOfInfluence")), (BasicUpgrade) createUpgradeStrategy(upgradeStrategyJson.get("upgradeType")));
             case "ApplyEffect":
