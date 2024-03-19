@@ -18,6 +18,7 @@ import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.SubtractUPG;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +98,7 @@ public class ResourceManager {
             parseBlockLayout(jsonValue.get("blockLayout")),
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
+//            loadWithReflection(jsonValue.get("upgrade"), "type"),
             createUpgradeStrategy(jsonValue.get("upgrade")),
             jsonValue.getInt("specialPointReward"),
             jsonValue.getInt("rewardThreshold")
@@ -113,7 +115,7 @@ public class ResourceManager {
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
             jsonValue.getFloat("conveyorSpeed"),
-            loadWithReflection(jsonValue.get("upgrade")),
+            loadWithReflection(jsonValue.get("upgrade"), "upgradeType"),
 //            createUpgradeStrategy(jsonValue.get("upgrade")),
             createUpgradeTag(jsonValue.get("upgradeTag"))
         );
@@ -148,19 +150,18 @@ public class ResourceManager {
         return blockLayout;
     }
 
-    private UpgradeStrategy loadWithReflection(JsonValue jsonValue) {
+    private UpgradeStrategy loadWithReflection(JsonValue jsonValue, String field) {
         try {
-            System.out.println(jsonValue.getString("type"));
-            return (UpgradeStrategy) Class.forName(jsonValue.getString("type")).getConstructor(JsonValue.class).newInstance(jsonValue);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+            jsonValue.getString(field);
+        } catch (NullPointerException e) {
+            return null;
+        }
+        try {
+            Class<?> aClass = Class.forName(jsonValue.getString(field));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            return (UpgradeStrategy) constructor.newInstance(jsonValue);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

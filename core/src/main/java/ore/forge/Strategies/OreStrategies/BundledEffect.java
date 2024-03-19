@@ -3,6 +3,7 @@ package ore.forge.Strategies.OreStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class BundledEffect implements OreStrategy {
@@ -37,23 +38,18 @@ public class BundledEffect implements OreStrategy {
         }
     }
 
-    private OreStrategy createOreStrategyOreNull(JsonValue param, String valueToGet) {
+    private OreStrategy createOreStrategyOreNull(JsonValue jsonValue, String valueToGet) {
         try {
-            try {
-                Class<?> clasz = Class.forName(param.getString(valueToGet));
-                return (OreStrategy) clasz.getConstructor(JsonValue.class).newInstance(param);
-            } catch (NullPointerException e) {
-                return null;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+            jsonValue.get(valueToGet);
+        } catch (NullPointerException e) {
+            return null;
+        }
+        try {
+            Class<?> aClass = Class.forName(jsonValue.get(valueToGet).getString("effectType"));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            return (OreStrategy) constructor.newInstance(jsonValue.get(valueToGet));
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

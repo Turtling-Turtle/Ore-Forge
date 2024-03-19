@@ -27,40 +27,28 @@ public class ConditionalUPG implements UpgradeStrategy {
     }
 
     public ConditionalUPG(JsonValue jsonValue) {
-        try {
-            Class<?> aClass= Class.forName(jsonValue.get("ifModifier").getString("type"));
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            ifModifier = (UpgradeStrategy) constructor.newInstance(jsonValue.get("ifModifier"));
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(jsonValue.get("elseModifier").getString("type"));
-        try {
-            elseModifier = (UpgradeStrategy) Class.forName(jsonValue.get("elseModifier").getString("type")).getConstructor(JsonValue.class).newInstance(jsonValue.get("elseModifier"));
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        ifModifier = createOrNull(jsonValue, "ifModifier");
+        elseModifier = createOrNull(jsonValue, "elseModifier");
         this.threshold = jsonValue.getDouble("threshold");
         this.condition = Condition.valueOf(jsonValue.getString("condition"));
         this.comparison = Comparison.valueOf(jsonValue.getString("comparison"));
     }
 
+    private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
+        try {
+            jsonValue.get(field);
+        } catch (NullPointerException e) {
+            return null;
+        }
+        try {
+            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgradeType"));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            return (UpgradeStrategy) constructor.newInstance(jsonValue.get(field));
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void applyTo(Ore ore) {

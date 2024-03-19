@@ -44,21 +44,14 @@ public class BundledUPG implements UpgradeStrategy{
         Class<?> aClass;
         try {
             try {
-                aClass = Class.forName(jsonValue.get(valueToGet).getString("type"));
+                aClass = Class.forName(jsonValue.get(valueToGet).getString("upgradeType"));
             } catch (NullPointerException e) {
                 return null;
             }
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
             return (UpgradeStrategy) constructor.newInstance(jsonValue.get(valueToGet));
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

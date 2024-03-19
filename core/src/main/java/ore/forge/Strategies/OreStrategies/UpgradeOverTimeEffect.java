@@ -1,9 +1,11 @@
 package ore.forge.Strategies.OreStrategies;
 
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
@@ -20,10 +22,10 @@ public class UpgradeOverTimeEffect implements OreStrategy {
     }
 
     public UpgradeOverTimeEffect(JsonValue jsonValue) {
-        Object upgradeStrategy;
         try {
-            Class<?> clasz = Class.forName(jsonValue.getString("type"));
-            upgradeStrategy = clasz.getConstructor(JsonValue.class).newInstance(jsonValue);
+            Class<?> aClass = Class.forName(jsonValue.getString("type"));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            this.strategy = (UpgradeStrategy) constructor.newInstance(jsonValue);
         } catch (ClassNotFoundException
                  | NoSuchMethodException
                  | InvocationTargetException
@@ -31,7 +33,6 @@ public class UpgradeOverTimeEffect implements OreStrategy {
                  | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        this.strategy = (UpgradeStrategy) upgradeStrategy;
         this.duration = jsonValue.getFloat("duration");
         this.interval = jsonValue.getFloat("interval");
         this.currentTime = 0;
