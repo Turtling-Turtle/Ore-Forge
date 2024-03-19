@@ -1,5 +1,6 @@
 package ore.forge.Strategies.OreStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 public interface OreStrategy {
@@ -8,8 +9,6 @@ public interface OreStrategy {
     OreStrategy clone();
 
     boolean isEndStepEffect();
-
-    String toString();
 
     //Strategies, Burning, Frozen, Immunity to specific status effects, invincibility, radiation??, Upgrade over time effects/modify value over time,
 

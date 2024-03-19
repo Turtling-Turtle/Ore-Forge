@@ -27,7 +27,11 @@ public class PropertyChangeTrigger implements OreStrategy {
 
     @Override
     public OreStrategy clone() {
-        return new PropertyChangeTrigger(this);
+        try {
+            return (OreStrategy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -1,5 +1,14 @@
 package ore.forge;
 
+
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Strategies.OreStrategies.Invulnerability;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class TheShop {
     static float deltaTime;
     static boolean isRunning;
@@ -12,13 +21,24 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-
-        for (int i = 0; i < conveyorConfig.length; i++) {
-            for (int j = 0; j < conveyorConfig[i].length; j++) {
-                System.out.print(conveyorConfig[i][j]);
-            }
-            System.out.println();
+        Class<?> clasz = null;
+        try {
+            clasz = Class.forName("ore.forge.Strategies.OreStrategies.Invulnerability");
+            Constructor<?> constructor = clasz.getConstructor(int.class, float.class);
+            Object o = constructor.newInstance(4, 30f);
+            System.out.println(o.toString());
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     public TheShop() {

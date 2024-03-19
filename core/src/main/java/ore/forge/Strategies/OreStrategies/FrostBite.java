@@ -1,5 +1,6 @@
 package ore.forge.Strategies.OreStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 public class FrostBite implements OreStrategy {
@@ -13,9 +14,9 @@ public class FrostBite implements OreStrategy {
 
     }
 
-    public FrostBite(FrostBite clone) {
-        this.duration = clone.duration;
-        this.tempDecrease = clone.tempDecrease;
+    public FrostBite(JsonValue jsonValue) {
+        this.duration = jsonValue.getFloat("duration");
+        this.tempDecrease = jsonValue.getFloat("tempDecrease");
     }
 
 
@@ -33,7 +34,11 @@ public class FrostBite implements OreStrategy {
 
     @Override
     public OreStrategy clone() {
-       return new FrostBite(this);
+        try {
+            return (OreStrategy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

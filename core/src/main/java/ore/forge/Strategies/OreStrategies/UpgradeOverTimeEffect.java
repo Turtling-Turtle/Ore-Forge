@@ -39,7 +39,11 @@ public class UpgradeOverTimeEffect implements OreStrategy {
 
     @Override
     public OreStrategy clone() {
-        return new UpgradeOverTimeEffect(this);
+        try {
+            return (OreStrategy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -48,7 +52,7 @@ public class UpgradeOverTimeEffect implements OreStrategy {
     }
 
     public String toString() {
-        return "\n" +getClass().getSimpleName() + "\tDuration: " + duration +
-            "\tInterval: " + interval + "\nUpgradeStrategy: " + strategy.toString();
+        return "\n" +getClass().getSimpleName() + "\tInterval: " + interval +
+            "\tDuration: " + duration + "\nUpgradeStrategy: " + strategy.toString();
     }
 }
