@@ -1,5 +1,6 @@
 package ore.forge.Strategies.OreStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 public class Inflamed implements OreStrategy {
@@ -11,9 +12,9 @@ public class Inflamed implements OreStrategy {
         this.tempIncrease = tempIncrease;
     }
 
-    public Inflamed(Inflamed clone) {
-       this.duration = clone.duration;
-       this.tempIncrease = clone.tempIncrease;
+    public Inflamed(JsonValue jsonValue) {
+       this.duration = jsonValue.getFloat("duration");
+       this.tempIncrease = jsonValue.getFloat("tempIncrease");
     }
 
 
@@ -30,7 +31,11 @@ public class Inflamed implements OreStrategy {
 
     @Override
     public OreStrategy clone() {
-        return new Inflamed(this);
+        try {
+            return  (OreStrategy) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

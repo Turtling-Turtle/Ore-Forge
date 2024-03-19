@@ -4,6 +4,7 @@ package ore.forge;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Strategies.OreStrategies.Invulnerability;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,9 +24,10 @@ public class TheShop {
         };
         Class<?> clasz = null;
         try {
-            clasz = Class.forName("ore.forge.Strategies.OreStrategies.Invulnerability");
-            Constructor<?> constructor = clasz.getConstructor(int.class, float.class);
-            Object o = constructor.newInstance(4, 30f);
+            clasz = Class.forName("ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG");
+            System.out.println(clasz.getConstructor(JsonValue.class));
+            Constructor<?> constructor = clasz.getConstructor(double.class, BasicUpgrade.ValueToModify.class);
+            Object o = constructor.newInstance(4, BasicUpgrade.ValueToModify.ORE_VALUE);
             System.out.println(o.toString());
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);

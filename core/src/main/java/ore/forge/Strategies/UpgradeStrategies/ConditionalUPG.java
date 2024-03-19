@@ -1,7 +1,11 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
@@ -21,6 +25,42 @@ public class ConditionalUPG implements UpgradeStrategy {
         this.condition = condition;
         this.comparison = comparison;
     }
+
+    public ConditionalUPG(JsonValue jsonValue) {
+        try {
+            Class<?> aClass= Class.forName(jsonValue.get("ifModifier").getString("type"));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            ifModifier = (UpgradeStrategy) constructor.newInstance(jsonValue.get("ifModifier"));
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(jsonValue.get("elseModifier").getString("type"));
+        try {
+            elseModifier = (UpgradeStrategy) Class.forName(jsonValue.get("elseModifier").getString("type")).getConstructor(JsonValue.class).newInstance(jsonValue.get("elseModifier"));
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        this.threshold = jsonValue.getDouble("threshold");
+        this.condition = Condition.valueOf(jsonValue.getString("condition"));
+        this.comparison = Comparison.valueOf(jsonValue.getString("comparison"));
+    }
+
 
     @Override
     public void applyTo(Ore ore) {

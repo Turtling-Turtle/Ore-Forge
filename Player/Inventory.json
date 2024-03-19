@@ -13,12 +13,6 @@
 },
 {
 	"class": "ore.forge.Player.Inventory$InventoryData",
-	"itemName": "Basic Upgrader",
-	"type": "Upgrader",
-	"totalOwned": 0
-},
-{
-	"class": "ore.forge.Player.Inventory$InventoryData",
 	"itemName": "Diamond Dropper",
 	"type": "Dropper",
 	"totalOwned": 0
@@ -43,12 +37,6 @@
 },
 {
 	"class": "ore.forge.Player.Inventory$InventoryData",
-	"itemName": "Renewal Forge",
-	"type": "Upgrader",
-	"totalOwned": 0
-},
-{
-	"class": "ore.forge.Player.Inventory$InventoryData",
 	"itemName": "Searing Winds",
 	"type": "Upgrader",
 	"totalOwned": 0
@@ -67,7 +55,7 @@
 },
 {
 	"class": "ore.forge.Player.Inventory$InventoryData",
-	"itemName": "Test",
+	"itemName": "Test 2",
 	"type": "Upgrader",
 	"totalOwned": 0
 },

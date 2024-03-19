@@ -1,6 +1,9 @@
 package ore.forge.Strategies.OreStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class BundledEffect implements OreStrategy {
     private final OreStrategy[] strategies;
@@ -13,8 +16,12 @@ public class BundledEffect implements OreStrategy {
         strategies[3] = effect4;
     }
 
-    public BundledEffect() {
+    public BundledEffect(JsonValue jsonValue) {
         strategies = new OreStrategy[4];
+        strategies[0] = createOreStrategyOreNull(jsonValue, "effect1");
+        strategies[1] = createOreStrategyOreNull(jsonValue, "effect2");
+        strategies[2] = createOreStrategyOreNull(jsonValue, "effect3");
+        strategies[3] = createOreStrategyOreNull(jsonValue, "effect4");
     }
 
     private void setEffect(int i, OreStrategy effect) {
@@ -30,15 +37,30 @@ public class BundledEffect implements OreStrategy {
         }
     }
 
+    private OreStrategy createOreStrategyOreNull(JsonValue param, String valueToGet) {
+        try {
+            try {
+                Class<?> clasz = Class.forName(param.getString(valueToGet));
+                return (OreStrategy) clasz.getConstructor(JsonValue.class).newInstance(param);
+            } catch (NullPointerException e) {
+                return null;
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public OreStrategy clone() {
-        BundledEffect clone = new BundledEffect();
-        for (int i = 0; i < strategies.length; i++) {
-            if (strategies[i] != null) {
-                clone.setEffect(i, strategies[i].clone());
-            }
-        }
-        return clone;
+        return this;
     }
 
     @Override

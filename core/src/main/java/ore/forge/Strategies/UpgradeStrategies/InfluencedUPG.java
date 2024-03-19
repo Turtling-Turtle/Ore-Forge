@@ -1,9 +1,12 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.ItemTracker;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
+
+import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
 //TODO: Figure out a way to make it so Its not only multiplication but also addition and subtraction.
@@ -18,6 +21,23 @@ public class InfluencedUPG implements UpgradeStrategy{
     public InfluencedUPG(ValuesOfInfluence valueOfInfluence, BasicUpgrade methodOfModification) {
         influenceVal = valueOfInfluence;
         this.methodOfModification = methodOfModification;
+    }
+
+    public InfluencedUPG(JsonValue jsonValue) {
+        influenceVal = ValuesOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
+        try {
+            methodOfModification = (BasicUpgrade) Class.forName(jsonValue.getString("type")).getConstructor(JsonValue.class).newInstance(jsonValue);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

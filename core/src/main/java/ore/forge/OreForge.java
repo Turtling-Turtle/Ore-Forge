@@ -34,7 +34,7 @@ public class OreForge extends Game {
 	private SpriteBatch spriteBatch;
 
 	public void create() {
-        mongoConnect();
+//        mongoConnect();
 		BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
 		Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 		fpsCounter = new Label("", fpsStyle);

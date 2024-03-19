@@ -18,6 +18,7 @@ import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.AddUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.MultiplyUPG;
 import ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS.SubtractUPG;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,12 +34,14 @@ public class ResourceManager {
         jsonReader = new JsonReader();
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
+        long t1 = System.currentTimeMillis();
         loadItems(Constants.CONVEYORS_FP);
         loadItems(Constants.DROPPERS_FP);
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
+        System.out.println("Load completed in: " + (System.currentTimeMillis() -t1) + " ms");
         for (Item item: allItems.values()) {
-            Gdx.app.log("Item", item.toString());
+            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
             System.out.println();
         }
     }
@@ -110,7 +113,8 @@ public class ResourceManager {
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
             jsonValue.getFloat("conveyorSpeed"),
-            createUpgradeStrategy(jsonValue.get("upgrade")),
+            loadWithReflection(jsonValue.get("upgrade")),
+//            createUpgradeStrategy(jsonValue.get("upgrade")),
             createUpgradeTag(jsonValue.get("upgradeTag"))
         );
         allItems.put(upgrader.getName(), upgrader);
@@ -144,7 +148,24 @@ public class ResourceManager {
         return blockLayout;
     }
 
-    private UpgradeStrategy createUpgradeStrategy(JsonValue upgradeStrategyJson) {//This should be improved to be more flexible but don't know how.
+    private UpgradeStrategy loadWithReflection(JsonValue jsonValue) {
+        try {
+            System.out.println(jsonValue.getString("type"));
+            return (UpgradeStrategy) Class.forName(jsonValue.getString("type")).getConstructor(JsonValue.class).newInstance(jsonValue);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private UpgradeStrategy createUpgradeStrategy(JsonValue upgradeStrategyJson) {//This should be improved to be more flexible
         if (upgradeStrategyJson.getString("type") == null) {
             return null;
         }

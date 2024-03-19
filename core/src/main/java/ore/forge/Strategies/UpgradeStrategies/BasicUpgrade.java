@@ -1,5 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 public abstract class BasicUpgrade implements UpgradeStrategy {
    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE}
    private double modifier;
@@ -8,6 +10,11 @@ public abstract class BasicUpgrade implements UpgradeStrategy {
    public BasicUpgrade(double mod, ValueToModify val) {
       modifier = mod;
       value = val;
+   }
+
+   public BasicUpgrade(JsonValue jsonValue) {
+       modifier = jsonValue.getDouble("modifier");
+       value = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
    }
 
    public void setModifier(double newVal) {

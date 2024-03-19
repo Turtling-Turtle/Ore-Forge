@@ -1,6 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies.PrimaryUPGS;
 
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 
@@ -9,6 +10,10 @@ public class SubtractUPG extends BasicUpgrade {
 
     public SubtractUPG(double mod, BasicUpgrade.ValueToModify val) {
         super(mod, val);
+    }
+
+    public SubtractUPG(JsonValue jsonValue) {
+        super(jsonValue);
     }
 
     @Override
