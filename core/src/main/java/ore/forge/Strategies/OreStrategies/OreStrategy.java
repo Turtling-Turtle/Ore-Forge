@@ -1,6 +1,5 @@
 package ore.forge.Strategies.OreStrategies;
 
-import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 public interface OreStrategy {
@@ -12,10 +11,10 @@ public interface OreStrategy {
 
     //Strategies, Burning, Frozen, Immunity to specific status effects, invincibility, radiation??, Upgrade over time effects/modify value over time,
 
-    //Burning:
+    //Burning: DONE
     //Ore is lit on fire. While on fire its temperature increases by X. Destroyed after certain Time?
 
-    //Frozen:
+    //Frozen: DONE
     //Ore is frozen. While frozen ore temperature decreases by X. Moves slower?
 
     //Ore can only be cannot be burning and frozen at the same time.
