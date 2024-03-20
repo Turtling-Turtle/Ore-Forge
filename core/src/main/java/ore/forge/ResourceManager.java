@@ -9,11 +9,6 @@ import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
-import ore.forge.Strategies.OreStrategies.BundledEffect;
-import ore.forge.Strategies.OreStrategies.FrostBite;
-import ore.forge.Strategies.OreStrategies.Inflamed;
-import ore.forge.Strategies.OreStrategies.OreStrategy;
-import ore.forge.Strategies.UpgradeStrategies.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -32,10 +27,10 @@ public class ResourceManager {
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
         long t1 = System.currentTimeMillis();
-        loadItems(Constants.CONVEYORS_FP);
-        loadItems(Constants.DROPPERS_FP);
-        loadItems(Constants.UPGRADER_FP);
-        loadItems(Constants.FURNACE_FP);
+//        loadItems(Constants.CONVEYORS_FP);
+//        loadItems(Constants.DROPPERS_FP);
+//        loadItems(Constants.UPGRADER_FP);
+//        loadItems(Constants.FURNACE_FP);
         System.out.println("Load completed in: " + (System.currentTimeMillis() -t1) + " ms");
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());
@@ -81,7 +76,7 @@ public class ResourceManager {
             jsonValue.getInt("oreTemp"),
             jsonValue.getInt("multiOre"),
             jsonValue.getFloat("dropInterval"),
-            createOreStrategy(jsonValue.get("oreStrategy"))
+            loadViaReflection(jsonValue.get("oreStrategy"), "strategyName")
         );
         allItems.put(dropper.getName(), dropper);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
@@ -94,10 +89,9 @@ public class ResourceManager {
             parseBlockLayout(jsonValue.get("blockLayout")),
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
-//            loadWithReflection(jsonValue.get("upgrade"), "upgradeName"),
-            createUpgradeStrategy(jsonValue.get("upgrade")),
+            jsonValue.getInt("rewardThreshold"),
             jsonValue.getInt("specialPointReward"),
-            jsonValue.getInt("rewardThreshold")
+            loadViaReflection(jsonValue.get("upgrade"), "upgradeName")
         );
         allItems.put(furnace.getName(), furnace);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
@@ -111,9 +105,8 @@ public class ResourceManager {
             Item.Tier.valueOf(jsonValue.getString("tier")),
             jsonValue.getDouble("itemValue"),
             jsonValue.getFloat("conveyorSpeed"),
-            loadWithReflection(jsonValue.get("upgrade"), "upgradeName"),
-//            createUpgradeStrategy(jsonValue.get("upgrade")),
-            createUpgradeTag(jsonValue.get("upgradeTag"))
+            loadViaReflection(jsonValue.get("upgrade"), "upgradeName"),
+            new UpgradeTag(jsonValue.get("upgradeTag"))
         );
         allItems.put(upgrader.getName(), upgrader);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
@@ -146,7 +139,7 @@ public class ResourceManager {
         return blockLayout;
     }
 
-    private UpgradeStrategy loadWithReflection(JsonValue jsonValue, String field) {
+    private <E> E loadViaReflection(JsonValue jsonValue, String field) {
         try {
             jsonValue.getString(field);
         } catch (NullPointerException e) {
@@ -155,107 +148,11 @@ public class ResourceManager {
         try {
             Class<?> aClass = Class.forName(jsonValue.getString(field));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            return (UpgradeStrategy) constructor.newInstance(jsonValue);
+            return (E) constructor.newInstance(jsonValue);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private UpgradeStrategy createUpgradeStrategy(JsonValue upgradeStrategyJson) {//This should be improved to be more flexible
-        if (upgradeStrategyJson.getString("type") == null) {
-            return null;
-        }
-        String strategyType = upgradeStrategyJson.getString("type");
-
-        switch (strategyType) {
-            case "ConditionalUPG" :
-                return createConditionalUPG(upgradeStrategyJson);
-            case "BundledUPG" :
-                return createBundledUPG(upgradeStrategyJson);
-            case "ResetterUPG" :
-                return new ResetterUPG();
-//            case "AddUPG" :
-//                return new AddUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
-//            case "MultiplyUPG" :
-//                return new MultiplyUPG(upgradeStrategyJson.getDouble("modifier"), BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
-//            case "SubtractUPG" :
-//                return new SubtractUPG(upgradeStrategyJson.getDouble("modifier"),  BasicUpgrade.ValueToModify.valueOf(upgradeStrategyJson.getString("ValueToModify")));
-            case "InfluencedUPG" :
-                return new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.valueOf(upgradeStrategyJson.getString("valueOfInfluence")), (BasicUpgrade) createUpgradeStrategy(upgradeStrategyJson.get("upgradeType")));
-            case "ApplyEffect":
-                return new ApplyEffect(createOreStrategy(upgradeStrategyJson));
-            case "EffectPurger":
-                return new EffectPurger();//Not Implemented
-            case "TargetedCleanser":
-                return new TargetedCleanser();//Not Implemented
-            case "null" :
-                return null;
-            default:
-                throw new IllegalArgumentException("Unknown/Invalid Strategy: " + strategyType);
-        }
-    }
-
-    private OreStrategy createOreStrategy(JsonValue oreStrategyJson) {
-        if (oreStrategyJson.getString("strategyType") == null) {return null;}
-        String type = oreStrategyJson.getString("strategyType");
-        switch (type) {
-            case "BundledEffect":
-                return createBundledEffect(oreStrategyJson);
-            case "Inflamed":
-                return new Inflamed(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempChange"));
-            case "FrostBite":
-                return new FrostBite(oreStrategyJson.getFloat("duration"), oreStrategyJson.getFloat("tempChange"));
-            default:
-                throw new IllegalArgumentException("Unknown/Invalid Strategy: " + type);
-        }
-    }
-
-    private OreStrategy createBundledEffect(JsonValue param) {
-        OreStrategy oreStrategy1 = createOreStrategyOrNull(param, "oreStrat1");
-        OreStrategy oreStrategy2 = createOreStrategyOrNull(param, "oreStrat2");
-        OreStrategy oreStrategy3 = createOreStrategyOrNull(param, "oreStrat3");
-        OreStrategy oreStrategy4 = createOreStrategyOrNull(param, "oreStrat4");
-
-        return new BundledEffect(oreStrategy1, oreStrategy2, oreStrategy3, oreStrategy4);
-    }
-
-    private OreStrategy createOreStrategyOrNull(JsonValue param, String valueToGet) {
-        try {
-            return createOreStrategy(param.get(valueToGet));
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-    private UpgradeStrategy createConditionalUPG(JsonValue param) {
-        UpgradeStrategy ifModifier = createUpgradeStrategy(param.get("ifModifier"));
-        UpgradeStrategy elseModifier = createUpgradeStrategy(param.get("elseModifier"));
-        ConditionalUPG.Condition condition = ConditionalUPG.Condition.valueOf(param.getString("condition")); //Values must be the EXACT same as ENUM EX: GREATER_THAN = "GREATER_THAN"
-        ConditionalUPG.Comparison comparison = ConditionalUPG.Comparison.valueOf(param.getString("comparison"));
-        double threshold = param.getDouble("threshold");
-        return new ConditionalUPG(ifModifier, elseModifier, condition, threshold, comparison);
-    }
-
-    private UpgradeStrategy createBundledUPG(JsonValue param) {
-        UpgradeStrategy upgradeStrategy1 = createUpgradeStrategyOrNull(param,"upgStrat1");
-        UpgradeStrategy upgradeStrategy2 = createUpgradeStrategyOrNull(param, "upgStrat2");
-        UpgradeStrategy upgradeStrategy3 = createUpgradeStrategyOrNull(param, "upgStrat3");
-        UpgradeStrategy upgradeStrategy4 = createUpgradeStrategyOrNull(param, "upgStrat4");
-
-        return new BundledUPG(upgradeStrategy1, upgradeStrategy2, upgradeStrategy3, upgradeStrategy4);
-    }
-
-    private UpgradeStrategy createUpgradeStrategyOrNull(JsonValue param, String valueToGet) {
-        try {
-            return createUpgradeStrategy(param.get(valueToGet));
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-    private UpgradeTag createUpgradeTag(JsonValue jsonValue) {
-        return new UpgradeTag(jsonValue.getString("name"), jsonValue.getInt("maxUpgrades"), jsonValue.getBoolean("isResetter"));
     }
 
     public Inventory createInventory() {

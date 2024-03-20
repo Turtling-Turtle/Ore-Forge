@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.Function;
 
 public class TheShop {
     static float deltaTime;
@@ -23,18 +24,18 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-        double value1 = 100;
         double value2 = 50;
-        DoubleBinaryOperator operator = null;
-        String methodOfModification = "multiplication";
-        operator = switch (methodOfModification) {
-            case "addition" -> (a, b) -> a + b;
-            case "multiplication" -> (a, b) -> a * b;
-            case "subtraction" -> (a, b) -> a - b;
-            case "division" -> (a,b) -> a / b;
-            default -> operator;
+        double threshold = 100;
+
+        Function<Double, Boolean> comparator;
+        String string = null;
+        comparator = switch (string) {
+            case "Greater Than" -> (x) -> x > threshold;
+            case "Less Than" -> (x) -> x < threshold;
+            case "equal" -> (x) -> x == threshold;
+            default -> throw new IllegalStateException("Unexpected value: " + string);
         };
-        System.out.println(operator.applyAsDouble(value1, value2));
+        System.out.println(comparator.apply(value2));
     }
 
     public TheShop() {

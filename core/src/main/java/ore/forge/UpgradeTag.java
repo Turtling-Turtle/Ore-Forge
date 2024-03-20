@@ -1,5 +1,7 @@
 package ore.forge;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 //@author Nathan Ulmen
 public class UpgradeTag {
     private final String name;
@@ -21,7 +23,14 @@ public class UpgradeTag {
         this.isResetter = tagToClone.isResetter;
     }
 
-    public Boolean isResseter() {
+    public UpgradeTag(JsonValue jsonValue) {
+        this.name = jsonValue.getString("name");
+        this.maxUpgrades = jsonValue.getInt("maxUpgrades");
+        this.isResetter = jsonValue.getBoolean("isResetter");
+        currentUpgrades = 0;
+    }
+
+    public Boolean isResetter() {
         return isResetter;
     }
 

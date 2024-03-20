@@ -5,14 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import ore.forge.ButtonHelper;
 import ore.forge.Items.*;
 import ore.forge.Map;
 import ore.forge.OreForge;
 import ore.forge.Strategies.OreStrategies.*;
-import ore.forge.Strategies.UpgradeStrategies.ApplyEffect;
-import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
-import ore.forge.Strategies.UpgradeStrategies.BundledUPG;
-import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
+import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
 
 import java.util.Stack;
@@ -56,25 +54,16 @@ public class InputHandler {
             {0,1,1}
     };
 
-    UpgradeStrategy multiplyOveTime = new BasicUpgrade(1.02, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    OreStrategy upgradeOverTime = new UpgradeOverTimeEffect(1f, 30, multiplyOveTime);
 
-    UpgradeStrategy multiplyMultiOreOverTime = new BasicUpgrade(2, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.MULTIORE);
-    OreStrategy upgradeOverTime2 = new UpgradeOverTimeEffect(1f, 30, multiplyMultiOreOverTime);
-    UpgradeStrategy applyeEffect2 = new ApplyEffect(upgradeOverTime2);
     UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    UpgradeStrategy applyEffect = new ApplyEffect(upgradeOverTime);
-    UpgradeStrategy bundledUPG = new BundledUPG(testUpgrade, applyEffect, applyeEffect2, null);
+
+    UpgradeStrategy destroy = new DestructionUPG();
+    UpgradeStrategy conditional = new ConditionalUPG(testUpgrade, destroy, ConditionalUPG.Condition.VALUE, 100000*100000, ConditionalUPG.Comparison.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
-    OreStrategy enflamed = new Inflamed(10, 5);
-    UpgradeStrategy multiOreOverTime= new BasicUpgrade(10, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.MULTIORE);
-    OreStrategy overTime = new UpgradeOverTimeEffect(1, 10, multiOreOverTime);
-    OreStrategy frostBite = new FrostBite(10, 10);
-    OreStrategy invincibility = new Invulnerability(1, 99999999f);
+    OreStrategy invincibility = new Invulnerability(2, 99999999f);
 
-    OreStrategy bundled = new BundledEffect(upgradeOverTime2, frostBite, invincibility, null);
 
     public InputHandler() {
         mouseScreen = new Vector3();
@@ -115,21 +104,21 @@ public class InputHandler {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 1f, bundled);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 0.015f, invincibility);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
             //buildMode, active item becomes upgrader
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, bundledUPG, upgradeTag);
+                heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
             //buildmode, Active Item becomes Furnace
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, testUpgrade, 32, 5);
+                heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
             }
         }
         handlePlacement();
@@ -168,6 +157,7 @@ public class InputHandler {
     private void handlePlacement() {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildMode) {//Will need to update to perform inventory checks.
             heldItem.placeItem((int)mouseWorld.x, (int)mouseWorld.y);
+            ButtonHelper.playPlaceSound();
             switch (heldItem) {
                 case Upgrader upgrader -> heldItem = new Upgrader(upgrader);
                 case Furnace furnace -> heldItem = new Furnace(furnace);

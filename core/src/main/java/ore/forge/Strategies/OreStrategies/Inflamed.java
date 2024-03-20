@@ -22,7 +22,8 @@ public class Inflamed implements OreStrategy {
     public void activate(float deltaTime, Ore ore) {
         duration -= deltaTime;
         if (duration <=0) {
-            ore.setIsDying(true);
+            System.out.println("setting is doomed in Inflamed");
+            ore.setIsDoomed(true);
             ore.removeEffect(this);
         } else {
             ore.setTemp(ore.getOreTemp() + tempIncrease * deltaTime);

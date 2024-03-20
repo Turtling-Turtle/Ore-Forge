@@ -14,7 +14,7 @@ public class Furnace extends Item {
     private final UpgradeStrategy upgrade;
 
     //Used to create item from scratch.
-    public Furnace(String name, String description, int[][] blockLayout, Tier tier, double itemValue, UpgradeStrategy upgrade, int specialPointReward, int rewardThreshold) {
+    public Furnace(String name, String description, int[][] blockLayout, Tier tier, double itemValue, int specialPointReward, int rewardThreshold, UpgradeStrategy upgrade) {
         super(name, description, blockLayout, tier, itemValue);
         this.specialPointReward = specialPointReward;
         currentProgress = 0;

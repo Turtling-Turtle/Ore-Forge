@@ -21,27 +21,22 @@ public class InfluencedUPG implements UpgradeStrategy {
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
+    protected static final ItemTracker itemTracker = ItemTracker.getSingleton();
     private final ValuesOfInfluence valueOfInfluence;
-    private final BasicUpgrade methodOfModification;
-    private DoubleBinaryOperator influenceOperator;
+    private final BasicUpgrade upgrade;
+    private final DoubleBinaryOperator influenceOperator;
     private double minimumModifier, maxModifier, influenceScalar;
-
-    public InfluencedUPG(ValuesOfInfluence valueOfInfluence, BasicUpgrade methodOfModification) {
-        this.valueOfInfluence = valueOfInfluence;
-        this.methodOfModification = methodOfModification;
-    }
 
     public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operation operation) {
         this.valueOfInfluence = valuesOfInfluence;
-        this.methodOfModification = upgrade;
+        this.upgrade = upgrade;
         influenceOperator = switch (operation) {
             case ADD -> (x,y) -> x + y;
-            case SUBTRACT -> (x,y) -> x -y;
+            case SUBTRACT -> (x,y) -> x - y;
             case MULTIPLY -> (x,y) -> x * y;
             case DIVIDE -> (x,y) -> x / y;
             case MODULO -> (x, y) -> x % y;
         };
-
     }
 
     public InfluencedUPG(JsonValue jsonValue) {
@@ -49,59 +44,76 @@ public class InfluencedUPG implements UpgradeStrategy {
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            methodOfModification = (BasicUpgrade) constructor.newInstance(jsonValue.get("baseUpgrade"));
+            upgrade = (BasicUpgrade) constructor.newInstance(jsonValue.get("baseUpgrade"));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
             throw new RuntimeException(e);
+        }
+
+        influenceOperator = switch (BasicUpgrade.Operation.valueOf(jsonValue.getString("operation"))) {
+            case ADD -> (x,y) -> x + y;
+            case SUBTRACT -> (x,y) -> x - y;
+            case MULTIPLY -> (x,y) -> x * y;
+            case DIVIDE -> (x,y) -> x / y;
+            case MODULO -> (x, y) -> x % y;
+        };
+
+        //If field doesn't exist that means we need to set it to the defualt .
+        try {
+            minimumModifier = jsonValue.getDouble("minModifier");
+        } catch (NullPointerException e) {
+            minimumModifier = Double.MIN_VALUE;
+        }
+        try {
+            maxModifier = jsonValue.getDouble("maxModifier");
+        } catch (NullPointerException e) {
+            maxModifier = Double.MIN_VALUE;
+        }
+        try {
+            influenceScalar = jsonValue.getDouble("scalar");
+        } catch (NullPointerException e) {
+            influenceScalar = 1;
         }
     }
 
     @Override
     public void applyTo(Ore ore) {
-        double finalModifier = switch (valueOfInfluence) {
-            case VALUE -> ore.getOreValue() * methodOfModification.getModifier();
-            case TEMPERATURE -> ore.getOreTemp() * methodOfModification.getModifier();
-            case MULTIORE -> ore.getMultiOre() * methodOfModification.getModifier();
-            case UPGRADE_COUNT -> ore.getUpgradeCount() * methodOfModification.getModifier();
-            case ACTIVE_ORE -> oreRealm.activeOre.size() * methodOfModification.getModifier();
-            case PLACED_ITEMS -> ItemTracker.getSingleton().getPlacedItems().size() * methodOfModification.getModifier();
-            case PRESTIGE_LEVEL -> player.getPrestigeLevel() * methodOfModification.getModifier();
-            case SPECIAL_POINTS -> player.getSpecialPoints() * methodOfModification.getModifier();
-            case WALLET -> player.getWallet() * methodOfModification.getModifier();
-        };
-        double original = methodOfModification.getModifier();
-        methodOfModification.setModifier(finalModifier);
-        methodOfModification.applyTo(ore);
-        methodOfModification.setModifier(original);
-    }
-
-    public void apply(Ore ore) {
         //finalModifier = (modifier, influence) -> operation
-        //where operation is the multiply, add, subtract, divide.
-        double originalModifier = methodOfModification.getModifier();
-        double finalModifier = switch (valueOfInfluence) {
+        double originalModifier = upgrade.getModifier();
+        double finalModifier = influenceScalar * switch (valueOfInfluence) {
             case VALUE -> influenceOperator.applyAsDouble(originalModifier, ore.getOreValue());
             case TEMPERATURE -> influenceOperator.applyAsDouble(originalModifier, ore.getOreTemp());
             case MULTIORE -> influenceOperator.applyAsDouble(originalModifier, ore.getMultiOre());
             case UPGRADE_COUNT -> influenceOperator.applyAsDouble(originalModifier, ore.getUpgradeCount());
             case ACTIVE_ORE -> influenceOperator.applyAsDouble(originalModifier, oreRealm.activeOre.size());
-            case PLACED_ITEMS -> influenceOperator.applyAsDouble(originalModifier, ItemTracker.getSingleton().getPlacedItems().size());
+            case PLACED_ITEMS -> influenceOperator.applyAsDouble(originalModifier, itemTracker.getPlacedItems().size());
             case SPECIAL_POINTS -> influenceOperator.applyAsDouble(originalModifier, player.getSpecialPoints());
             case WALLET -> influenceOperator.applyAsDouble(originalModifier, player.getWallet());
             case PRESTIGE_LEVEL -> influenceOperator.applyAsDouble(originalModifier, player.getPrestigeLevel());
         };
 //        finalModifier = Math.max(minimumModifier, Math.min(finalModifier, maxModifier));
         if (finalModifier > maxModifier) {
-            methodOfModification.setModifier(maxModifier);
+            upgrade.setModifier(maxModifier);
         } else if (finalModifier < minimumModifier) {
-            methodOfModification.setModifier(minimumModifier);
+            upgrade.setModifier(minimumModifier);
         } else {
-            methodOfModification.setModifier(finalModifier);
+            upgrade.setModifier(finalModifier);
         }
 
 //        methodOfModification.setModifier(finalModifier);
-        methodOfModification.applyTo(ore);
-        methodOfModification.setModifier(originalModifier);
+        upgrade.applyTo(ore);
+        upgrade.setModifier(originalModifier);
+    }
+
+    @Override
+    public String toString() {
+        return "InfluencedUPG{" +
+            "valueOfInfluence=" + valueOfInfluence +
+            ", methodOfModification=" + upgrade +
+            ", influenceOperator=" + influenceOperator +
+            ", minimumModifier=" + minimumModifier +
+            ", maxModifier=" + maxModifier +
+            '}';
     }
 
 }

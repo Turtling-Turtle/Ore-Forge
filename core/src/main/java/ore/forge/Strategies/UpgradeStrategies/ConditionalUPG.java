@@ -6,9 +6,7 @@ import ore.forge.Ore;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.BinaryOperator;
-import java.util.function.DoubleBinaryOperator;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
@@ -20,7 +18,9 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final UpgradeStrategy ifModifier;
     private final UpgradeStrategy elseModifier;
     private final double threshold;
-    private Predicate<Integer> predicate;
+    private final Function<Double, Boolean> comparator;
+    private final Function<Ore, ?> propertyRetriever;
+
 
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
         ifModifier = ifMod;
@@ -28,6 +28,17 @@ public class ConditionalUPG implements UpgradeStrategy {
         this.threshold = threshold;
         this.condition = condition;
         this.comparison = comparison;
+        comparator = switch (comparison) {
+            case GREATER_THAN -> (x) -> x > threshold;
+            case LESS_THAN -> (x) -> x < threshold;
+            case EQUAL_TO -> (x) -> x == threshold;
+        };
+        propertyRetriever = switch (condition) {
+            case VALUE -> (Ore::getOreValue);
+            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
+            case TEMPERATURE -> (Ore::getOreTemp);
+            case MULTIORE -> (Ore::getMultiOre);
+        };
     }
 
     public ConditionalUPG(JsonValue jsonValue) {
@@ -36,6 +47,19 @@ public class ConditionalUPG implements UpgradeStrategy {
         this.threshold = jsonValue.getDouble("threshold");
         this.condition = Condition.valueOf(jsonValue.getString("condition"));
         this.comparison = Comparison.valueOf(jsonValue.getString("comparison"));
+        comparator = switch (Comparison.valueOf(jsonValue.getString("comparison"))) {
+            case GREATER_THAN -> (x) -> x > threshold;
+            case LESS_THAN -> (x) -> x < threshold;
+            case EQUAL_TO -> (x) -> x == threshold;
+        };
+
+        propertyRetriever = switch (Condition.valueOf(jsonValue.getString("condition"))) {
+            case VALUE -> (Ore::getOreValue);
+            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
+            case TEMPERATURE -> (Ore::getOreTemp);
+            case MULTIORE -> (Ore::getMultiOre);
+        };
+
     }
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
@@ -44,8 +68,9 @@ public class ConditionalUPG implements UpgradeStrategy {
         } catch (NullPointerException e) {
             return null;
         }
+
         try {
-            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgrade"));
+            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
             return (UpgradeStrategy) constructor.newInstance(jsonValue.get(field));
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException |
@@ -56,123 +81,10 @@ public class ConditionalUPG implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        switch (condition) {
-            case VALUE:
-                valueComp(ore);
-                break;
-            case TEMPERATURE:
-                tempComp(ore);
-                break;
-            case MULTIORE:
-                multiOreComp(ore);
-                break;
-            case UPGRADE_COUNT:
-                upgradeCountComp(ore);
-                break;
-        }
-    }
-
-    private void valueComp(Ore ore) {
-        switch (comparison) {
-            case GREATER_THAN:
-                if(ore.getOreValue() >=threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-                break;
-            case LESS_THAN:
-                if (ore.getOreValue()<= threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-                break;
-            case EQUAL_TO:
-                if (ore.getOreValue()== threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-                break;
-        }
-    }
-
-    private void tempComp(Ore ore) {
-        switch (comparison) {
-            case GREATER_THAN:
-                if(ore.getOreTemp() >=threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case LESS_THAN:
-                if (ore.getOreTemp()<= threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case EQUAL_TO:
-                if (ore.getOreTemp()== threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-        }
-    }
-
-    private void multiOreComp(Ore ore) {
-        switch (comparison) {
-            case GREATER_THAN:
-                if(ore.getMultiOre() >=threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case LESS_THAN:
-                if (ore.getMultiOre()<= threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case EQUAL_TO:
-                if (ore.getMultiOre()== threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-        }
-    }
-
-    private void upgradeCountComp(Ore ore) {
-        switch (comparison) {
-            case GREATER_THAN:
-                if(ore.getUpgradeCount()>=threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case LESS_THAN:
-                if (ore.getUpgradeCount()<= threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
-            case EQUAL_TO:
-                if (ore.getUpgradeCount()== threshold) {
-                    ifModifierApply(ore);
-                } else {
-                    elseModifierApply(ore);
-                }
-            break;
+        if (comparator.apply((Double) propertyRetriever.apply(ore))) {
+            ifModifier.applyTo(ore);
+        } else if (elseModifier != null){
+            elseModifier.applyTo(ore);
         }
     }
 
@@ -182,20 +94,5 @@ public class ConditionalUPG implements UpgradeStrategy {
             "\n\nifModifier: " + ifModifier.toString() + "\n\nelseModifier: " + elseModifier.toString();
     }
 
-    private boolean isNull(UpgradeStrategy strat) {
-        return strat == null;
-    }
-
-    private void ifModifierApply(Ore ore) {
-        if (!isNull(ifModifier)) {
-            ifModifier.applyTo(ore);
-        }
-    }
-
-    private void elseModifierApply(Ore ore) {
-        if (!isNull(elseModifier)) {
-            elseModifier.applyTo(ore);
-        }
-    }
 
 }

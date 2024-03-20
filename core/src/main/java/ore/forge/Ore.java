@@ -97,9 +97,9 @@ public class Ore {
                 }
             }
             current = 0f;
-        }
-        if (isDoomed) {
-            oreRealm.takeOre(this);
+            if (this.isDoomed()) {
+                oreRealm.takeOre(this);
+            }
         }
 
     }
@@ -179,8 +179,7 @@ public class Ore {
         if ((map.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
             ((Worker) map.getBlock(position)).handle(this);
         } else {
-            isDoomed = true;
-            oreRealm.takeOre(this);
+            setIsDoomed(true);
         }
     }
 
@@ -229,8 +228,9 @@ public class Ore {
         return isDoomed;
     }
 
-    public void setIsDying(boolean state) {
+    public void setIsDoomed(boolean state) {
         isDoomed = state;
+//        Gdx.app.log("State changed to: ", String.valueOf(isDoomed));
     }
 
     public void setSpeedScalar(float newScalar) {
@@ -315,7 +315,7 @@ public class Ore {
 
     public void resetNonResetterTags() {
         for (UpgradeTag tag : tagMap.values()) {
-            if (!tag.isResseter()) {
+            if (!tag.isResetter()) {
                 tag.reset();
             }
         }
@@ -337,6 +337,7 @@ public class Ore {
             .append("\tMulti-Ore: ").append(multiOre)
             .append("\tPos: ").append(position)
             .append("\tSpeed: ").append(moveSpeed)
+            .append("\tisDoomed: ").append(isDoomed)
             .append("\nEffects: ");
         for (OreStrategy effect : effects) {
             s.append("\n").append(effect.toString());

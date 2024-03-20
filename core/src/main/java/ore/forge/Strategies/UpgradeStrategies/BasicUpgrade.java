@@ -11,12 +11,14 @@ public class BasicUpgrade implements UpgradeStrategy {
    public enum Operation {ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO}
    private double modifier;
    private ValueToModify valueToModify;
-   private DoubleBinaryOperator operator;
+   private final DoubleBinaryOperator operation;
+   private final Operation operator;
 
 
    public BasicUpgrade(double mod, Operation operationType, ValueToModify valueToModify) {
+       operator = operationType;
        modifier = mod;
-       operator = switch (operationType) {
+       operation = switch (operationType) {
            case ADD -> (x,y) -> x + y;
            case SUBTRACT -> (x,y) -> x - y;
            case MULTIPLY -> (x,y) -> x * y;
@@ -30,7 +32,8 @@ public class BasicUpgrade implements UpgradeStrategy {
     public BasicUpgrade(JsonValue jsonValue) {
        modifier = jsonValue.getDouble("modifier");
        valueToModify = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
-       operator = switch (Operation.valueOf(jsonValue.getString("operation"))) {
+       operator = Operation.valueOf(jsonValue.getString("operation"));
+       operation = switch (Operation.valueOf(jsonValue.getString("operation"))) {
            case ADD -> (x, y) -> x + y;
            case SUBTRACT -> (x, y) -> x - y;
            case MULTIPLY -> (x, y) -> x * y;
@@ -42,9 +45,9 @@ public class BasicUpgrade implements UpgradeStrategy {
     @Override
     public void applyTo(Ore ore) {
         switch (valueToModify) {
-            case ORE_VALUE -> ore.setOreValue(operator.applyAsDouble(ore.getOreValue(), modifier));
-            case TEMPERATURE -> ore.setTemp((float) operator.applyAsDouble(ore.getOreTemp(), modifier));
-            case MULTIORE -> ore.setMultiOre((int) operator.applyAsDouble(ore.getMultiOre(), modifier));
+            case ORE_VALUE -> ore.setOreValue(operation.applyAsDouble(ore.getOreValue(), modifier));
+            case TEMPERATURE -> ore.setTemp((float) operation.applyAsDouble(ore.getOreTemp(), modifier));
+            case MULTIORE -> ore.setMultiOre((int) operation.applyAsDouble(ore.getMultiOre(), modifier));
         }
     }
 
@@ -66,7 +69,7 @@ public class BasicUpgrade implements UpgradeStrategy {
    }
 
    public String toString() {
-      return "Type: " + getClass().getSimpleName() + "\tVTM: " + valueToModify + "\tModifier: " + modifier;
+      return "Type: " + getClass().getSimpleName() + "\tVTM: " + valueToModify + "\tOperator: " + operator + "\tModifier: " + modifier;
    }
 
 }

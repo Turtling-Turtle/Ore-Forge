@@ -30,6 +30,8 @@ public class ButtonHelper {
     private static final String roundBold = "128xRoundBold";
 
     private static final Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/UIClick.wav"));
+    private static final Sound placeSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/impact.wav"));
+    private static final Sound specialPointReward = Gdx.audio.newSound(Gdx.files.internal("Sounds/outbreak_perk.mp3"));
 
 
     public ButtonHelper() {
@@ -127,6 +129,7 @@ public class ButtonHelper {
 
 
 
+        placeSound.setVolume(10, 20);
 
         hudTable.setFillParent(true);
         return inventoryButton;
@@ -174,6 +177,14 @@ public class ButtonHelper {
         checkBoxStyle.checkboxOn = getPatch(roundFull);
         checkBoxStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         return checkBoxStyle;
+    }
+
+    public static void playFurnaceSellSound() {
+        specialPointReward.play();
+    }
+
+    public static void playPlaceSound() {
+        placeSound.play();
     }
 
     public static BitmapFont getDefaultFont2() {

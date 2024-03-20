@@ -6,7 +6,7 @@ public class DestructionUPG implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        ore.setIsDying(true);
+        ore.setIsDoomed(true);
     }
 
 }
