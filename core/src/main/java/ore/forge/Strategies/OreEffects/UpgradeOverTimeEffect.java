@@ -1,6 +1,5 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
@@ -9,7 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
-public class UpgradeOverTimeEffect implements OreStrategy {
+public class UpgradeOverTimeEffect implements OreEffect {
     private final float interval;
     private float duration;
     private float currentTime;
@@ -23,9 +22,9 @@ public class UpgradeOverTimeEffect implements OreStrategy {
 
     public UpgradeOverTimeEffect(JsonValue jsonValue) {
         try {
-            Class<?> aClass = Class.forName(jsonValue.getString("type"));
+            Class<?> aClass = Class.forName(jsonValue.get("upgrade").getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            this.strategy = (UpgradeStrategy) constructor.newInstance(jsonValue);
+            this.strategy = (UpgradeStrategy) constructor.newInstance(jsonValue.get("upgrade"));
         } catch (ClassNotFoundException
                  | NoSuchMethodException
                  | InvocationTargetException
@@ -53,9 +52,9 @@ public class UpgradeOverTimeEffect implements OreStrategy {
 
 
     @Override
-    public OreStrategy clone() {
+    public OreEffect clone() {
         try {
-            return (OreStrategy) super.clone();
+            return (OreEffect) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

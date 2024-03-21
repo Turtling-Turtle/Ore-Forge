@@ -1,4 +1,4 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
@@ -6,11 +6,11 @@ import ore.forge.Ore;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class BundledEffect implements OreStrategy {
-    private final OreStrategy[] strategies;
+public class BundledEffect implements OreEffect {
+    private final OreEffect[] strategies;
 
-    public BundledEffect(OreStrategy effect1, OreStrategy effect2, OreStrategy effect3, OreStrategy effect4) {
-        strategies = new OreStrategy[4];
+    public BundledEffect(OreEffect effect1, OreEffect effect2, OreEffect effect3, OreEffect effect4) {
+        strategies = new OreEffect[4];
         strategies[0] = effect1;
         strategies[1] = effect2;
         strategies[2] = effect3;
@@ -18,14 +18,14 @@ public class BundledEffect implements OreStrategy {
     }
 
     public BundledEffect(JsonValue jsonValue) {
-        strategies = new OreStrategy[4];
+        strategies = new OreEffect[4];
         strategies[0] = createOreStrategyOreNull(jsonValue, "effect1");
         strategies[1] = createOreStrategyOreNull(jsonValue, "effect2");
         strategies[2] = createOreStrategyOreNull(jsonValue, "effect3");
         strategies[3] = createOreStrategyOreNull(jsonValue, "effect4");
     }
 
-    private void setEffect(int i, OreStrategy effect) {
+    private void setEffect(int i, OreEffect effect) {
         strategies[i] = effect;
     }
 
@@ -38,16 +38,16 @@ public class BundledEffect implements OreStrategy {
         }
     }
 
-    private OreStrategy createOreStrategyOreNull(JsonValue jsonValue, String valueToGet) {
+    private OreEffect createOreStrategyOreNull(JsonValue jsonValue, String valueToGet) {
         try {
             jsonValue.get(valueToGet);
         } catch (NullPointerException e) {
             return null;
         }
         try {
-            Class<?> aClass = Class.forName(jsonValue.get(valueToGet).getString("effectType"));
+            Class<?> aClass = Class.forName(jsonValue.get(valueToGet).getString("effectName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            return (OreStrategy) constructor.newInstance(jsonValue.get(valueToGet));
+            return (OreEffect) constructor.newInstance(jsonValue.get(valueToGet));
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -55,7 +55,7 @@ public class BundledEffect implements OreStrategy {
     }
 
     @Override
-    public OreStrategy clone() {
+    public OreEffect clone() {
         return this;
     }
 
@@ -64,13 +64,13 @@ public class BundledEffect implements OreStrategy {
         return false;
     }
 
-    public OreStrategy[] getStrategies() {
+    public OreEffect[] getStrategies() {
         return strategies;
     }
 
     public String toString() {
         StringBuilder s = new StringBuilder();
-        for (OreStrategy strategy : strategies) {
+        for (OreEffect strategy : strategies) {
             if (strategy != null) {
                 s.append(strategy);
             }

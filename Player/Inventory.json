@@ -1,1 +1,14 @@
-[]
+[
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Test",
+	"type": "Upgrader",
+	"totalOwned": 0
+},
+{
+	"class": "ore.forge.Player.Inventory$InventoryData",
+	"itemName": "Test 2",
+	"type": "Upgrader",
+	"totalOwned": 0
+}
+]

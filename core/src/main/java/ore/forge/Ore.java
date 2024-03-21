@@ -1,11 +1,10 @@
 package ore.forge;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Items.Blocks.Worker;
-import ore.forge.Strategies.OreStrategies.BundledEffect;
-import ore.forge.Strategies.OreStrategies.OreStrategy;
+import ore.forge.Strategies.OreEffects.BundledEffect;
+import ore.forge.Strategies.OreEffects.OreEffect;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -21,9 +20,9 @@ public class Ore {
     private final Vector2 velocity;
     private final Vector2 acceleration;
     private final Vector2 force;
-    private final Texture texture;
-    private final ArrayList<OreStrategy> effects;
-    private final Stack<OreStrategy> removalStack;
+    private Texture texture;
+    private final ArrayList<OreEffect> effects;
+    private final Stack<OreEffect> removalStack;
     private String oreName;
     private double oreValue;
     private int upgradeCount, multiOre, oreHistory;
@@ -46,7 +45,7 @@ public class Ore {
         tagMap = new HashMap<>();
         position = new Vector2();
         destination = new Vector2();
-        texture = new Texture(Gdx.files.internal("Ruby2.png"));
+//        texture = new Texture(Gdx.files.internal("Ruby2.png"));
         direction = Direction.NORTH;
         effects = new ArrayList<>();
         removalStack = new Stack<>();
@@ -91,7 +90,7 @@ public class Ore {
         }
         //End Step effects like invincibility;
         if (current >= updateInterval) {
-            for(OreStrategy strat : effects) {
+            for(OreEffect strat : effects) {
                 if (strat.isEndStepEffect()) {
                     strat.activate(deltaTime, this);
                 }
@@ -146,7 +145,7 @@ public class Ore {
     }
 
     private void updateEffects(float deltaTime) {
-        for (OreStrategy effect : effects) {
+        for (OreEffect effect : effects) {
             if (!effect.isEndStepEffect()) {
                 effect.activate(deltaTime, this);
             }
@@ -156,9 +155,9 @@ public class Ore {
         }
     }
 
-    public void applyEffect(OreStrategy strategy) {
+    public void applyEffect(OreEffect strategy) {
         if (strategy instanceof BundledEffect) {
-            for (OreStrategy effect : ((BundledEffect) strategy).getStrategies()) {
+            for (OreEffect effect : ((BundledEffect) strategy).getStrategies()) {
                 if (effect != null) {
                     applyEffect(effect);
                 }
@@ -191,7 +190,7 @@ public class Ore {
         moveSpeed = speedScalar * newSpeed;
     }
 
-    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, OreStrategy strategy) {
+    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, OreEffect strategy) {
         this.oreValue = oreValue;
         this.oreTemperature = oreTemp;
         this.multiOre = multiOre;
@@ -237,7 +236,7 @@ public class Ore {
         speedScalar = newScalar;
     }
 
-    public void removeEffect(OreStrategy effectToRemove) {
+    public void removeEffect(OreEffect effectToRemove) {
         assert effects.contains(effectToRemove);
         removalStack.add(effectToRemove);
     }
@@ -339,7 +338,7 @@ public class Ore {
             .append("\tSpeed: ").append(moveSpeed)
             .append("\tisDoomed: ").append(isDoomed)
             .append("\nEffects: ");
-        for (OreStrategy effect : effects) {
+        for (OreEffect effect : effects) {
             s.append("\n").append(effect.toString());
         }
         return String.valueOf(s);

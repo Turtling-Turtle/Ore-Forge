@@ -19,7 +19,7 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final UpgradeStrategy elseModifier;
     private final double threshold;
     private final Function<Double, Boolean> comparator;
-    private final Function<Ore, ?> propertyRetriever;
+    private final Function<Ore, Number> propertyRetriever;
 
 
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
@@ -33,6 +33,7 @@ public class ConditionalUPG implements UpgradeStrategy {
             case LESS_THAN -> (x) -> x < threshold;
             case EQUAL_TO -> (x) -> x == threshold;
         };
+
         propertyRetriever = switch (condition) {
             case VALUE -> (Ore::getOreValue);
             case UPGRADE_COUNT -> (Ore::getUpgradeCount);

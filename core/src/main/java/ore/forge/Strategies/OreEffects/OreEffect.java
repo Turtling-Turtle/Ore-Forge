@@ -1,11 +1,11 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
 import ore.forge.Ore;
 
-public interface OreStrategy {
+public interface OreEffect {
     void activate(float deltaT, Ore ore);
 
-    OreStrategy clone();
+    OreEffect clone();
 
     boolean isEndStepEffect();
 

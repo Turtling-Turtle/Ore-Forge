@@ -20,8 +20,10 @@ public class ResourceManager {
     private final JsonReader jsonReader;
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
+    private int loadCount;
 
     public ResourceManager() {
+        loadCount = 0;
         assetManager = new AssetManager();
         jsonReader = new JsonReader();
         allSounds = new HashMap<>();
@@ -29,13 +31,14 @@ public class ResourceManager {
         long t1 = System.currentTimeMillis();
 //        loadItems(Constants.CONVEYORS_FP);
 //        loadItems(Constants.DROPPERS_FP);
-//        loadItems(Constants.UPGRADER_FP);
+        loadItems(Constants.UPGRADER_FP);
 //        loadItems(Constants.FURNACE_FP);
-        System.out.println("Load completed in: " + (System.currentTimeMillis() -t1) + " ms");
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());
             System.out.println();
         }
+
+        System.out.println("Loaded " + loadCount + " items in: " + (System.currentTimeMillis() -t1) + " ms");
     }
 
     public void loadItems(String fileToParse) {
@@ -78,6 +81,7 @@ public class ResourceManager {
             jsonValue.getFloat("dropInterval"),
             loadViaReflection(jsonValue.get("oreStrategy"), "strategyName")
         );
+        loadCount++;
         allItems.put(dropper.getName(), dropper);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
     }
@@ -93,6 +97,7 @@ public class ResourceManager {
             jsonValue.getInt("specialPointReward"),
             loadViaReflection(jsonValue.get("upgrade"), "upgradeName")
         );
+        loadCount++;
         allItems.put(furnace.getName(), furnace);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
     }
@@ -108,6 +113,7 @@ public class ResourceManager {
             loadViaReflection(jsonValue.get("upgrade"), "upgradeName"),
             new UpgradeTag(jsonValue.get("upgradeTag"))
         );
+        loadCount++;
         allItems.put(upgrader.getName(), upgrader);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
     }
@@ -120,6 +126,7 @@ public class ResourceManager {
             jsonValue.getDouble("itemValue"),
             jsonValue.getFloat("conveyorSpeed")
         );
+        loadCount++;
         allItems.put(conveyor.getName(), conveyor);
         System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
     }

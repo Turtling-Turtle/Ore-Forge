@@ -1,9 +1,9 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
-public class FrostBite implements OreStrategy {
+public class FrostBite implements OreEffect {
     private float duration;
     private final float tempDecrease;
 
@@ -33,9 +33,9 @@ public class FrostBite implements OreStrategy {
     }
 
     @Override
-    public OreStrategy clone() {
+    public OreEffect clone() {
         try {
-            return (OreStrategy) super.clone();
+            return (OreEffect) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

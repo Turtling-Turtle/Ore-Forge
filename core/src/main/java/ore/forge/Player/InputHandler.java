@@ -9,7 +9,7 @@ import ore.forge.ButtonHelper;
 import ore.forge.Items.*;
 import ore.forge.Map;
 import ore.forge.OreForge;
-import ore.forge.Strategies.OreStrategies.*;
+import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
 
@@ -55,14 +55,14 @@ public class InputHandler {
     };
 
 
-    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, BasicUpgrade.Operation.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUPG();
     UpgradeStrategy conditional = new ConditionalUPG(testUpgrade, destroy, ConditionalUPG.Condition.VALUE, 100000*100000, ConditionalUPG.Comparison.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
-    OreStrategy invincibility = new Invulnerability(2, 99999999f);
+    OreEffect invincibility = new Invulnerability(12, 10f);
 
 
     public InputHandler() {

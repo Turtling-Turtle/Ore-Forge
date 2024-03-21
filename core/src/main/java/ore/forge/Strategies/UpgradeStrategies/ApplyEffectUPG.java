@@ -2,21 +2,21 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.OreStrategies.OreStrategy;
+import ore.forge.Strategies.OreEffects.OreEffect;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ApplyEffect implements UpgradeStrategy {
-    private final OreStrategy effect;
+public class ApplyEffectUPG implements UpgradeStrategy {
+    private final OreEffect effect;
 
-    public ApplyEffect(OreStrategy strategy) {
+    public ApplyEffectUPG(OreEffect strategy) {
         effect = strategy;
     }
 
-    public ApplyEffect(JsonValue jsonValue) {
+    public ApplyEffectUPG(JsonValue jsonValue) {
         try {
-            Class<?> clasz = Class.forName(jsonValue.getString("effectType"));
-            effect = (OreStrategy) clasz.getConstructor(JsonValue.class).newInstance(jsonValue);
+            Class<?> clasz = Class.forName(jsonValue.get("effectToApply").getString("effectName"));
+            effect = (OreEffect) clasz.getConstructor(JsonValue.class).newInstance(jsonValue.get("effectToApply"));
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);

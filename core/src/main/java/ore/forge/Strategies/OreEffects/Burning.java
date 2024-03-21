@@ -1,18 +1,18 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
-public class Inflamed implements OreStrategy {
+public class Burning implements OreEffect {
     private float duration;
     private final float tempIncrease;
 
-    public Inflamed(float duration, float tempIncrease) {
+    public Burning(float duration, float tempIncrease) {
         this.duration = duration;
         this.tempIncrease = tempIncrease;
     }
 
-    public Inflamed(JsonValue jsonValue) {
+    public Burning(JsonValue jsonValue) {
        this.duration = jsonValue.getFloat("duration");
        this.tempIncrease = jsonValue.getFloat("tempIncrease");
     }
@@ -22,7 +22,6 @@ public class Inflamed implements OreStrategy {
     public void activate(float deltaTime, Ore ore) {
         duration -= deltaTime;
         if (duration <=0) {
-            System.out.println("setting is doomed in Inflamed");
             ore.setIsDoomed(true);
             ore.removeEffect(this);
         } else {
@@ -31,9 +30,9 @@ public class Inflamed implements OreStrategy {
     }
 
     @Override
-    public OreStrategy clone() {
+    public OreEffect clone() {
         try {
-            return  (OreStrategy) super.clone();
+            return  (OreEffect) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

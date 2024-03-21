@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
-import ore.forge.Strategies.OreStrategies.OreStrategy;
+import ore.forge.Strategies.OreEffects.OreEffect;
 
 //@author Nathan Ulmen
 public class Dropper extends Item {
@@ -14,10 +14,10 @@ public class Dropper extends Item {
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
-    protected final OreStrategy oreEffects;
+    protected final OreEffect oreEffect;
 
     //Used to create from scratch.
-    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreStrategy oreStrategies) {
+    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
         super(name, description, blockLayout, tier, itemValue);
         this.dropInterval = dropInterval;
         this.oreName = oreName;
@@ -25,7 +25,7 @@ public class Dropper extends Item {
         this.oreTemp = oreTemp;
         this.multiOre = multiOre;
         timeSinceLast = 0;
-        this.oreEffects = oreStrategies;
+        this.oreEffect = oreStrategies;
 
         initBlockConfiguration(blockLayout);
         setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
@@ -40,7 +40,7 @@ public class Dropper extends Item {
         this.multiOre = itemToClone.multiOre;
         this.dropInterval = itemToClone.getDropInterval();
         this.timeSinceLast = 0f;
-        this.oreEffects = itemToClone.oreEffects;
+        this.oreEffect = itemToClone.oreEffect;
 
         initBlockConfiguration(numberConfig);
         alignWith(itemToClone.direction);
@@ -75,7 +75,7 @@ public class Dropper extends Item {
                         blockConfig[i][j] = new Block(this);
                         break;
                     case 3:
-                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, oreEffects);
+                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, oreEffect);
                         break;
                     case 1:
                     case 4:
@@ -107,8 +107,8 @@ public class Dropper extends Item {
         return timeSinceLast;
     }
 
-    public OreStrategy getOreEffects() {
-        return oreEffects;
+    public OreEffect getOreEffects() {
+        return oreEffect;
     }
 
     public float getDropInterval() {

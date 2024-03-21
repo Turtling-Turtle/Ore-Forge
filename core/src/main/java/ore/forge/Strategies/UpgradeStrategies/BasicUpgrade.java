@@ -8,17 +8,17 @@ import java.util.function.DoubleBinaryOperator;
 public class BasicUpgrade implements UpgradeStrategy {
    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE}
     //More VTMS: effect Duration, Speed,
-   public enum Operation {ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO}
+   public enum Operator {ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO}
    private double modifier;
-   private ValueToModify valueToModify;
+   private final ValueToModify valueToModify;
    private final DoubleBinaryOperator operation;
-   private final Operation operator;
+   private final Operator operator;
 
 
-   public BasicUpgrade(double mod, Operation operationType, ValueToModify valueToModify) {
-       operator = operationType;
+   public BasicUpgrade(double mod, Operator operatorType, ValueToModify valueToModify) {
+       operator = operatorType;
        modifier = mod;
-       operation = switch (operationType) {
+       operation = switch (operatorType) {
            case ADD -> (x,y) -> x + y;
            case SUBTRACT -> (x,y) -> x - y;
            case MULTIPLY -> (x,y) -> x * y;
@@ -32,8 +32,8 @@ public class BasicUpgrade implements UpgradeStrategy {
     public BasicUpgrade(JsonValue jsonValue) {
        modifier = jsonValue.getDouble("modifier");
        valueToModify = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
-       operator = Operation.valueOf(jsonValue.getString("operation"));
-       operation = switch (Operation.valueOf(jsonValue.getString("operation"))) {
+       operator = Operator.valueOf(jsonValue.getString("operation"));
+       operation = switch (Operator.valueOf(jsonValue.getString("operation"))) {
            case ADD -> (x, y) -> x + y;
            case SUBTRACT -> (x, y) -> x - y;
            case MULTIPLY -> (x, y) -> x * y;
@@ -51,21 +51,12 @@ public class BasicUpgrade implements UpgradeStrategy {
         }
     }
 
-    public void setModifier(double newVal) {
+   public void setModifier(double newVal) {
        modifier = newVal;
     }
 
-   public void setValueToModify(ValueToModify vtm) {
-       valueToModify = vtm;
-   }
-
-
    public double getModifier() {
        return modifier;
-   }
-
-   public ValueToModify getValueToMod() {
-       return valueToModify;
    }
 
    public String toString() {

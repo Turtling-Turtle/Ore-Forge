@@ -1,9 +1,9 @@
-package ore.forge.Strategies.OreStrategies;
+package ore.forge.Strategies.OreEffects;
 
 import ore.forge.Ore;
 
 //@author Nathan Ulmen
-public class PropertyChangeTrigger implements OreStrategy {
+public class PropertyChangeTrigger implements OreEffect {
     //what to do if true.
     //what to do if false
     //what to evaluate
@@ -26,9 +26,9 @@ public class PropertyChangeTrigger implements OreStrategy {
     }
 
     @Override
-    public OreStrategy clone() {
+    public OreEffect clone() {
         try {
-            return (OreStrategy) super.clone();
+            return (OreEffect) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

@@ -1,15 +1,6 @@
 package ore.forge;
 
 
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Strategies.OreStrategies.Invulnerability;
-import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
 
 public class TheShop {

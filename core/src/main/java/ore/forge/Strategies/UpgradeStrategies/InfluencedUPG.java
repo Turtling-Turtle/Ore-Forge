@@ -1,6 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.BinomialFunction;
 import ore.forge.ItemTracker;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
@@ -9,6 +10,7 @@ import ore.forge.Player.Player;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
@@ -16,6 +18,7 @@ import java.util.function.DoubleBinaryOperator;
 //	1. ValueOfInfluence - The Value that the adjustment is based on.
 //	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
 //A maximum and minimum value can be set to ensure a modifier stays within a range.
+//Equation for an INfluenced upgrade looks like this: FinalModifier = scalar * (valueOfInfluence [your operator] baseModifier)
 public class InfluencedUPG implements UpgradeStrategy {
     public enum ValuesOfInfluence {VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
@@ -27,10 +30,10 @@ public class InfluencedUPG implements UpgradeStrategy {
     private final DoubleBinaryOperator influenceOperator;
     private double minimumModifier, maxModifier, influenceScalar;
 
-    public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operation operation) {
+    public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operator operator) {
         this.valueOfInfluence = valuesOfInfluence;
         this.upgrade = upgrade;
-        influenceOperator = switch (operation) {
+        influenceOperator = switch (operator) {
             case ADD -> (x,y) -> x + y;
             case SUBTRACT -> (x,y) -> x - y;
             case MULTIPLY -> (x,y) -> x * y;
@@ -50,7 +53,7 @@ public class InfluencedUPG implements UpgradeStrategy {
             throw new RuntimeException(e);
         }
 
-        influenceOperator = switch (BasicUpgrade.Operation.valueOf(jsonValue.getString("operation"))) {
+        influenceOperator = switch (BasicUpgrade.Operator.valueOf(jsonValue.getString("operation"))) {
             case ADD -> (x,y) -> x + y;
             case SUBTRACT -> (x,y) -> x - y;
             case MULTIPLY -> (x,y) -> x * y;
@@ -61,17 +64,17 @@ public class InfluencedUPG implements UpgradeStrategy {
         //If field doesn't exist that means we need to set it to the defualt .
         try {
             minimumModifier = jsonValue.getDouble("minModifier");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e ) {
             minimumModifier = Double.MIN_VALUE;
         }
         try {
             maxModifier = jsonValue.getDouble("maxModifier");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             maxModifier = Double.MIN_VALUE;
         }
         try {
             influenceScalar = jsonValue.getDouble("scalar");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             influenceScalar = 1;
         }
     }
@@ -91,7 +94,6 @@ public class InfluencedUPG implements UpgradeStrategy {
             case WALLET -> influenceOperator.applyAsDouble(originalModifier, player.getWallet());
             case PRESTIGE_LEVEL -> influenceOperator.applyAsDouble(originalModifier, player.getPrestigeLevel());
         };
-//        finalModifier = Math.max(minimumModifier, Math.min(finalModifier, maxModifier));
         if (finalModifier > maxModifier) {
             upgrade.setModifier(maxModifier);
         } else if (finalModifier < minimumModifier) {
@@ -99,8 +101,6 @@ public class InfluencedUPG implements UpgradeStrategy {
         } else {
             upgrade.setModifier(finalModifier);
         }
-
-//        methodOfModification.setModifier(finalModifier);
         upgrade.applyTo(ore);
         upgrade.setModifier(originalModifier);
     }

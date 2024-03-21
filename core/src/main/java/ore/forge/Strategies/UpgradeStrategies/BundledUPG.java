@@ -28,8 +28,6 @@ public class BundledUPG implements UpgradeStrategy{
         upgradeStrategies[3] = createOrNull(jsonValue, "upgStrat4");
     }
 
-
-
     @Override
     public void applyTo(Ore ore) {
         for (UpgradeStrategy upgStrat : upgradeStrategies) {
