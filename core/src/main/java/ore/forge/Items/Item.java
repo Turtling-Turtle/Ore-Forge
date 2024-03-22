@@ -2,6 +2,7 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Direction;
 import ore.forge.ItemTracker;
 import ore.forge.Items.Blocks.Block;
@@ -38,6 +39,12 @@ public abstract class Item {
         this.tier = tier;
         this.itemValue = itemValue;
         this.direction = Direction.NORTH;
+    }
+
+    public Item(JsonValue jsonValue) {
+       this.name = jsonValue.getString("name");
+       this.description = jsonValue.getString("description");
+
     }
 
     public Item(Item itemToClone) {

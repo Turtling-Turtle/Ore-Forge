@@ -196,7 +196,8 @@ public class InputHandler {
             selectedItem = null;
         }
     }
-
+    //While held down
+    //if held
     public Item getHeldItem() {
         return heldItem;
     }

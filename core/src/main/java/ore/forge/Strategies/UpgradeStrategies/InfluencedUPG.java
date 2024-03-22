@@ -1,10 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.BinomialFunction;
-import ore.forge.ItemTracker;
-import ore.forge.Ore;
-import ore.forge.OreRealm;
+import ore.forge.*;
 import ore.forge.Player.Player;
 
 import java.lang.reflect.Constructor;
@@ -18,7 +15,6 @@ import java.util.function.Function;
 //	1. ValueOfInfluence - The Value that the adjustment is based on.
 //	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
 //A maximum and minimum value can be set to ensure a modifier stays within a range.
-//Equation for an INfluenced upgrade looks like this: FinalModifier = scalar * (valueOfInfluence [your operator] baseModifier)
 public class InfluencedUPG implements UpgradeStrategy {
     public enum ValuesOfInfluence {VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
@@ -40,6 +36,7 @@ public class InfluencedUPG implements UpgradeStrategy {
             case DIVIDE -> (x,y) -> x / y;
             case MODULO -> (x, y) -> x % y;
         };
+
     }
 
     public InfluencedUPG(JsonValue jsonValue) {
@@ -81,7 +78,7 @@ public class InfluencedUPG implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        //finalModifier = (modifier, influence) -> operation
+        // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
         double finalModifier = influenceScalar * switch (valueOfInfluence) {
             case VALUE -> influenceOperator.applyAsDouble(originalModifier, ore.getOreValue());

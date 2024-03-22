@@ -2,6 +2,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.BinomialFunction;
 import ore.forge.Ore;
 
 import java.lang.reflect.Constructor;
@@ -20,6 +21,7 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final double threshold;
     private final Function<Double, Boolean> comparator;
     private final Function<Ore, Number> propertyRetriever;
+    private final BinomialFunction<Ore, Function<Ore, Number>, Boolean> evaluator;
 
 
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
@@ -40,6 +42,8 @@ public class ConditionalUPG implements UpgradeStrategy {
             case TEMPERATURE -> (Ore::getOreTemp);
             case MULTIORE -> (Ore::getMultiOre);
         };
+
+        evaluator = (ore, propertyRetriever) -> comparator.apply((Double) propertyRetriever.apply(ore));
     }
 
     public ConditionalUPG(JsonValue jsonValue) {
@@ -61,6 +65,7 @@ public class ConditionalUPG implements UpgradeStrategy {
             case MULTIORE -> (Ore::getMultiOre);
         };
 
+        evaluator = (ore, propertyRetriever) -> comparator.apply((Double) propertyRetriever.apply(ore));
     }
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
@@ -82,11 +87,13 @@ public class ConditionalUPG implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        if (comparator.apply((Double) propertyRetriever.apply(ore))) {
+        if (evaluator.apply(ore, propertyRetriever)) {
             ifModifier.applyTo(ore);
-        } else if (elseModifier != null){
+        } else if (elseModifier != null) {
             elseModifier.applyTo(ore);
         }
+
+
     }
 
     public String toString() {
