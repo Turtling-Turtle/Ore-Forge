@@ -31,7 +31,7 @@ public class ResourceManager {
         long t1 = System.currentTimeMillis();
 //        loadItems(Constants.CONVEYORS_FP);
 //        loadItems(Constants.DROPPERS_FP);
-        loadItems(Constants.UPGRADER_FP);
+//        loadItems(Constants.UPGRADER_FP);
 //        loadItems(Constants.FURNACE_FP);
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());

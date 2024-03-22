@@ -24,6 +24,8 @@ public class InfluencedUPG implements UpgradeStrategy {
     private final ValuesOfInfluence valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final DoubleBinaryOperator influenceOperator;
+    private Function<Double, Number> operation;
+    private BinomialFunction<ValuesOfInfluence, Function<Double, Number>, Number> function;
     private double minimumModifier, maxModifier, influenceScalar;
 
     public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operator operator) {
@@ -35,6 +37,14 @@ public class InfluencedUPG implements UpgradeStrategy {
             case MULTIPLY -> (x,y) -> x * y;
             case DIVIDE -> (x,y) -> x / y;
             case MODULO -> (x, y) -> x % y;
+        };
+        double baseModifier = upgrade.getModifier();
+        operation= switch (operator) {
+            case ADD -> (x) -> x + baseModifier;
+            case SUBTRACT -> (x) -> x - baseModifier;
+            case MULTIPLY -> (x) -> x * baseModifier;
+            case DIVIDE -> (x) -> x / baseModifier;
+            case MODULO -> (x) -> x % baseModifier;
         };
 
     }
