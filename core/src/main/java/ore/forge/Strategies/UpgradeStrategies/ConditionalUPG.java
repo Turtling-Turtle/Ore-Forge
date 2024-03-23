@@ -69,11 +69,7 @@ public class ConditionalUPG implements UpgradeStrategy {
     }
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
-        try {
-            jsonValue.get(field);
-        } catch (NullPointerException e) {
-            return null;
-        }
+        if (jsonValue.get(field) == null) {return null;}
 
         try {
             Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgradeName"));

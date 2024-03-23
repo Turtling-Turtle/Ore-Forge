@@ -3,21 +3,24 @@ package ore.forge;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.mongodb.client.*;
 import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import org.bson.Document;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 //@author Nathan Ulmen
 public class ResourceManager {
     private final AssetManager assetManager;
-    private final JsonReader jsonReader;
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
@@ -25,13 +28,14 @@ public class ResourceManager {
     public ResourceManager() {
         loadCount = 0;
         assetManager = new AssetManager();
-        jsonReader = new JsonReader();
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
+
         long t1 = System.currentTimeMillis();
+//        mongoConnect();
 //        loadItems(Constants.CONVEYORS_FP);
 //        loadItems(Constants.DROPPERS_FP);
-//        loadItems(Constants.UPGRADER_FP);
+        loadItems(Constants.UPGRADER_FP);
 //        loadItems(Constants.FURNACE_FP);
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());
@@ -42,127 +46,38 @@ public class ResourceManager {
     }
 
     public void loadItems(String fileToParse) {
+        JsonReader jsonReader = new JsonReader();
         JsonValue fileContents = jsonReader.parse(Gdx.files.internal(fileToParse));
+        fileContents.child().remove();
+        System.out.println(fileContents);
         switch (fileToParse) {
             case Constants.DROPPERS_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    createDropper(jsonValue);
+                    addToAllItems(new Dropper(jsonValue));
                 }
-                break;
             case Constants.FURNACE_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    createFurnace(jsonValue);
+                    addToAllItems(new Furnace(jsonValue));
                 }
-                break;
             case Constants.UPGRADER_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    createUpgrader(jsonValue);
+                    addToAllItems(new Upgrader(jsonValue));
                 }
-                break;
             case Constants.CONVEYORS_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    createConveyor(jsonValue);
+                    addToAllItems(new Conveyor(jsonValue));
                 }
-                break;
-        }
+        };
     }
 
-    private void createDropper(JsonValue jsonValue) {
-        Dropper dropper = new Dropper(
-            jsonValue.getString("name"),
-            jsonValue.getString("description"),
-            parseBlockLayout(jsonValue.get("blockLayout")),
-            Item.Tier.valueOf(jsonValue.getString("tier")),
-            jsonValue.getDouble("itemValue"),
-            jsonValue.getString("oreName"),
-            jsonValue.getDouble("oreValue"),
-            jsonValue.getInt("oreTemp"),
-            jsonValue.getInt("multiOre"),
-            jsonValue.getFloat("dropInterval"),
-            loadViaReflection(jsonValue.get("oreStrategy"), "strategyName")
-        );
+    private void addToAllItems(Item item) {
+        allItems.put(item.getName(), item);
         loadCount++;
-        allItems.put(dropper.getName(), dropper);
-        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
-    }
-
-    private void createFurnace(JsonValue jsonValue) {
-        Furnace furnace = new Furnace(
-            jsonValue.getString("name"),
-            jsonValue.getString("description"),
-            parseBlockLayout(jsonValue.get("blockLayout")),
-            Item.Tier.valueOf(jsonValue.getString("tier")),
-            jsonValue.getDouble("itemValue"),
-            jsonValue.getInt("rewardThreshold"),
-            jsonValue.getInt("specialPointReward"),
-            loadViaReflection(jsonValue.get("upgrade"), "upgradeName")
-        );
-        loadCount++;
-        allItems.put(furnace.getName(), furnace);
-        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
-    }
-
-    private void createUpgrader(JsonValue jsonValue) {
-        Upgrader upgrader = new Upgrader(
-            jsonValue.getString("name"),
-            jsonValue.getString("description"),
-            parseBlockLayout(jsonValue.get("blockLayout")),
-            Item.Tier.valueOf(jsonValue.getString("tier")),
-            jsonValue.getDouble("itemValue"),
-            jsonValue.getFloat("conveyorSpeed"),
-            loadViaReflection(jsonValue.get("upgrade"), "upgradeName"),
-            new UpgradeTag(jsonValue.get("upgradeTag"))
-        );
-        loadCount++;
-        allItems.put(upgrader.getName(), upgrader);
-        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
-    }
-
-    private void createConveyor(JsonValue jsonValue) {
-        Conveyor conveyor = new Conveyor(jsonValue.getString("name"),
-            jsonValue.getString("description"),
-            parseBlockLayout(jsonValue.get("blockLayout")),
-            Item.Tier.valueOf(jsonValue.getString("tier")),
-            jsonValue.getDouble("itemValue"),
-            jsonValue.getFloat("conveyorSpeed")
-        );
-        loadCount++;
-        allItems.put(conveyor.getName(), conveyor);
-        System.out.println(Constants.GREEN + "Successfully Loaded: " + jsonValue.getString("name") + Constants.DEFAULT);
-    }
-
-    private int[][] parseBlockLayout(JsonValue jsonValue) {
-        int rows = jsonValue.size;
-        int columns = jsonValue.get(0).size;
-        int[][] blockLayout = new int[rows][columns];
-
-        for (int i = 0; i < rows; i++) {//each row in json blockLayout
-           JsonValue colum = jsonValue.get(i);//Json array representing current row
-            for (int j = 0; j < columns; j++) {//each element in current row
-                blockLayout[i][j] = colum.get(j).asInt();
-            }
-        }
-
-        return blockLayout;
-    }
-
-    private <E> E loadViaReflection(JsonValue jsonValue, String field) {
-        try {
-            jsonValue.getString(field);
-        } catch (NullPointerException e) {
-            return null;
-        }
-        try {
-            Class<?> aClass = Class.forName(jsonValue.getString(field));
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            return (E) constructor.newInstance(jsonValue);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                 ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println(Constants.GREEN + "Successfully Loaded: " + item.getName() + Constants.DEFAULT);
     }
 
     public Inventory createInventory() {
+        JsonReader jsonReader = new JsonReader();
         JsonValue fileContents= jsonReader.parse(Gdx.files.local(Constants.INVENTORY_FP));
         ArrayList<InventoryNode> inventoryNodes = new ArrayList<>();
         if (fileContents != null) {
@@ -198,6 +113,7 @@ public class ResourceManager {
     }
 
     public void loadPlayerStats(Player player) {
+        JsonReader jsonReader = new JsonReader();
         JsonValue fileContents = jsonReader.parse(Gdx.files.local(Constants.PLAYER_STATS_FP));
         if (fileContents != null) {
             player.setPrestigeLevel(fileContents.getInt("prestigeLevel"));
@@ -212,6 +128,66 @@ public class ResourceManager {
             player.setPrestigeCurrency(0);
             player.setMostMoneyObtained(0);
         }
+
+    }
+
+
+    public void mongoConnect() {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("OreForge");
+
+        updateFile("Conveyors", Constants.CONVEYORS_FP, database);
+        updateFile("Upgraders", Constants.UPGRADER_FP, database);
+        updateFile("Droppers", Constants.DROPPERS_FP, database);
+
+        mongoClient.close();
+
+    }
+
+    private void updateFile(String mongoCollection, String localFile, MongoDatabase database) {
+        MongoCollection<Document> collection = database.getCollection(mongoCollection);
+
+        Document version = collection.find().first();
+        String mongoJsonContent;
+        JsonReader jsonReader = new JsonReader();
+        JsonValue fileContents = jsonReader.parse(Gdx.files.internal(localFile));
+        if (version.getDouble("version") != fileContents.child().getDouble("version")) {
+            FindIterable<Document> documents = collection.find();
+            Json json = new Json();
+            json.setOutputType(JsonWriter.OutputType.json);
+            FileHandle fileHandle = Gdx.files.local(localFile);
+            long total = collection.countDocuments();
+            long count = 0;
+            String jsonString = "[\n";
+            for (Document document : documents) {
+                count++;
+                document.remove("_id");
+                jsonString += json.prettyPrint(document.toJson());
+                if (count < total) {
+                    jsonString += ",\n";
+                } else {
+                    jsonString += "\n";
+                }
+            }
+            jsonString += "]";
+            fileHandle.writeString(jsonString,false);
+        }
+//        boolean isDifferent = false;
+//        loop:
+//        for (Document document : documents) {
+//            document.remove("_id");
+//            mongoJsonContent = document.toJson();
+//            for (JsonValue jsonValue : fileContents) {
+//                if (!mongoJsonContent.toString().equals(jsonValue.toString())) {
+//                    isDifferent = true;
+//                    System.out.println(mongoJsonContent+ "\nDoes Not Equal: \n" + jsonValue);
+//                    break loop;
+//                }
+//            }
+//        }
+//        if (isDifferent) {
+//
+//        }
 
     }
 

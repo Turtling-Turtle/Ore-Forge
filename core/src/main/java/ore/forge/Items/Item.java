@@ -8,6 +8,9 @@ import ore.forge.ItemTracker;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Map;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 //@author Nathan Ulmen
 public abstract class Item {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE,EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
@@ -44,7 +47,11 @@ public abstract class Item {
     public Item(JsonValue jsonValue) {
        this.name = jsonValue.getString("name");
        this.description = jsonValue.getString("description");
-
+       this.numberConfig = parseBlockLayout(jsonValue.get("blockLayout"));
+       this.blockConfig = new Block[numberConfig.length][numberConfig[0].length];
+       this.tier = Tier.valueOf(jsonValue.getString("tier"));
+       this.itemValue = jsonValue.getDouble("itemValue");
+       this.direction = Direction.NORTH;
     }
 
     public Item(Item itemToClone) {
@@ -57,6 +64,21 @@ public abstract class Item {
         itemValue = itemToClone.itemValue;
         direction = Direction.NORTH;
         itemTexture = itemToClone.itemTexture;
+    }
+
+    private int[][] parseBlockLayout(JsonValue jsonValue) {
+        int rows = jsonValue.size;
+        int columns = jsonValue.get(0).size;
+        int[][] blockLayout = new int[rows][columns];
+
+        for (int i = 0; i < rows; i++) {//each row in json blockLayout
+            JsonValue colum = jsonValue.get(i);//Json array representing current row
+            for (int j = 0; j < columns; j++) {//each element in current row
+                blockLayout[i][j] = colum.get(j).asInt();
+            }
+        }
+
+        return blockLayout;
     }
 
     public void placeItem(int X, int Y) {
@@ -197,6 +219,23 @@ public abstract class Item {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+
+    protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
+        try {
+            jsonValue.getString(field);
+        } catch (NullPointerException e) {
+            return null;
+        }
+        try {
+            Class<?> aClass = Class.forName(jsonValue.getString(field));
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            return (E) constructor.newInstance(jsonValue);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String toString() {

@@ -28,11 +28,14 @@ public class Upgrader extends Item{
         setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
     }
 
-//    public Upgrader(JsonValue jsonValue) {
-//        super(jsonValue);
-//        this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
-//
-//    }
+    public Upgrader(JsonValue jsonValue) {
+        super(jsonValue);
+        this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
+        this.upgradeTag = new UpgradeTag(jsonValue.get("upgradeTag"));
+        this.upgrade = loadViaReflection(jsonValue.get("upgrade"), "upgradeName");
+        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
+        initBlockConfiguration(this.numberConfig);
+    }
 
     //Used to "clone" an item.
     public Upgrader(Upgrader itemToClone) {

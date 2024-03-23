@@ -24,8 +24,6 @@ public class InfluencedUPG implements UpgradeStrategy {
     private final ValuesOfInfluence valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final DoubleBinaryOperator influenceOperator;
-    private Function<Double, Number> operation;
-    private BinomialFunction<ValuesOfInfluence, Function<Double, Number>, Number> function;
     private double minimumModifier, maxModifier, influenceScalar;
 
     public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operator operator) {
@@ -37,14 +35,6 @@ public class InfluencedUPG implements UpgradeStrategy {
             case MULTIPLY -> (x,y) -> x * y;
             case DIVIDE -> (x,y) -> x / y;
             case MODULO -> (x, y) -> x % y;
-        };
-        double baseModifier = upgrade.getModifier();
-        operation= switch (operator) {
-            case ADD -> (x) -> x + baseModifier;
-            case SUBTRACT -> (x) -> x - baseModifier;
-            case MULTIPLY -> (x) -> x * baseModifier;
-            case DIVIDE -> (x) -> x / baseModifier;
-            case MODULO -> (x) -> x % baseModifier;
         };
 
     }
@@ -68,7 +58,7 @@ public class InfluencedUPG implements UpgradeStrategy {
             case MODULO -> (x, y) -> x % y;
         };
 
-        //If field doesn't exist that means we need to set it to the defualt .
+        //If field doesn't exist that means we need to set it to the "default" .
         try {
             minimumModifier = jsonValue.getDouble("minModifier");
         } catch (IllegalArgumentException e ) {
@@ -91,15 +81,15 @@ public class InfluencedUPG implements UpgradeStrategy {
         // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
         double finalModifier = influenceScalar * switch (valueOfInfluence) {
-            case VALUE -> influenceOperator.applyAsDouble(originalModifier, ore.getOreValue());
-            case TEMPERATURE -> influenceOperator.applyAsDouble(originalModifier, ore.getOreTemp());
-            case MULTIORE -> influenceOperator.applyAsDouble(originalModifier, ore.getMultiOre());
-            case UPGRADE_COUNT -> influenceOperator.applyAsDouble(originalModifier, ore.getUpgradeCount());
-            case ACTIVE_ORE -> influenceOperator.applyAsDouble(originalModifier, oreRealm.activeOre.size());
-            case PLACED_ITEMS -> influenceOperator.applyAsDouble(originalModifier, itemTracker.getPlacedItems().size());
-            case SPECIAL_POINTS -> influenceOperator.applyAsDouble(originalModifier, player.getSpecialPoints());
-            case WALLET -> influenceOperator.applyAsDouble(originalModifier, player.getWallet());
-            case PRESTIGE_LEVEL -> influenceOperator.applyAsDouble(originalModifier, player.getPrestigeLevel());
+            case VALUE -> influenceOperator.applyAsDouble(ore.getOreValue(), originalModifier);
+            case TEMPERATURE -> influenceOperator.applyAsDouble(ore.getOreTemp(), originalModifier);
+            case MULTIORE -> influenceOperator.applyAsDouble(ore.getMultiOre(), originalModifier);
+            case UPGRADE_COUNT -> influenceOperator.applyAsDouble(ore.getUpgradeCount(), originalModifier);
+            case ACTIVE_ORE -> influenceOperator.applyAsDouble(oreRealm.activeOre.size(), originalModifier);
+            case PLACED_ITEMS -> influenceOperator.applyAsDouble(itemTracker.getPlacedItems().size(), originalModifier);
+            case SPECIAL_POINTS -> influenceOperator.applyAsDouble(player.getSpecialPoints(), originalModifier);
+            case WALLET -> influenceOperator.applyAsDouble(player.getWallet(), originalModifier);
+            case PRESTIGE_LEVEL -> influenceOperator.applyAsDouble(player.getPrestigeLevel(), originalModifier);
         };
         if (finalModifier > maxModifier) {
             upgrade.setModifier(maxModifier);

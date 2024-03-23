@@ -1,0 +1,116 @@
+[
+  {
+  "version": 0.1
+  },
+  {
+    "name": "Test",
+    "description": "Tst",
+    "blockLayout": [
+      [
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0
+      ]
+    ],
+    "tier": "EXOTIC",
+    "isShopItem": false,
+    "itemValue": 0.0,
+    "conveyorSpeed": 12.0,
+    "upgrade": {
+      "upgradeName":"ore.forge.Strategies.UpgradeStrategies.InfluencedUPG",
+      "valueOfInfluence": "UPGRADE_COUNT",
+      "baseUpgrade": {
+        "upgradeName": "ore.forge.Strategies.UpgradeStrategies.BasicUpgrade",
+        "valueToModify": "ORE_VALUE",
+        "operation": "MULTIPLY",
+        "modifier": 10.0
+      },
+      "operation": "MODULO",
+      "maxModifier": 20.0,
+      "scalar": 0.5
+    },
+    "upgradeTag": {
+      "name": "Test",
+      "maxUpgrades": 1,
+      "isResetter": false
+    }
+  },
+  {
+    "name": "Test 2",
+    "description": "Test 2",
+    "blockLayout": [
+      [
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0
+      ]
+    ],
+    "tier": "UNCOMMON",
+    "isShopItem": false,
+    "itemValue": 0.0,
+    "conveyorSpeed": 12.0,
+    "upgrade": {
+      "upgradeName": "ore.forge.Strategies.UpgradeStrategies.ApplyEffectUPG",
+      "effectToApply": {
+        "effectName": "ore.forge.Strategies.OreEffects.BundledEffect",
+        "effect1": {
+          "effectName": "ore.forge.Strategies.OreEffects.UpgradeOverTimeEffect",
+          "upgrade": {
+            "upgradeName": "ore.forge.Strategies.UpgradeStrategies.BasicUpgrade",
+            "valueToModify": "MULTIORE",
+            "operation": "MODULO",
+            "modifier": 0.0
+          },
+          "duration": 10.0,
+          "interval": 2.0
+        },
+        "effect2": {
+          "effectName": "ore.forge.Strategies.OreEffects.Burning",
+          "duration": 10.0,
+          "tempIncrease": 10.0
+        },
+        "effect3": {
+          "effectName": "ore.forge.Strategies.OreEffects.FrostBite",
+          "duration": 0.0,
+          "tempDecrease": 2.0
+        },
+        "effect4": {
+          "effectName": "ore.forge.Strategies.OreEffects.Burning",
+          "duration": 0.0,
+          "tempIncrease": 120.0
+        }
+      }
+    },
+    "upgradeTag": {
+      "name": "Test 2",
+      "maxUpgrades": 1,
+      "isResetter": false
+    }
+  }
+]

@@ -2,6 +2,8 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -28,6 +30,20 @@ public class Dropper extends Item {
         this.oreEffect = oreStrategies;
 
         initBlockConfiguration(blockLayout);
+        setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
+    }
+
+    public Dropper(JsonValue jsonValue) {
+        super(jsonValue);
+        this.dropInterval = jsonValue.getFloat("dropInterval");
+        this.oreName = jsonValue.getString("oreName");
+        this.oreValue = jsonValue.getDouble("oreValue");
+        this.oreTemp = jsonValue.getInt("oreTemp");
+        this.multiOre = jsonValue.getInt("multiOre");
+        this.oreEffect = loadViaReflection(jsonValue.get("oreStrategy"), "effectName");
+        timeSinceLast = 0f;
+
+        initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
     }
 

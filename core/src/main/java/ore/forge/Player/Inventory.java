@@ -25,9 +25,22 @@ public class Inventory {
         sortByType();
     }
 
+//    public Inventory(String fileToParse, HashMap<String, Item> allItems) {
+//        inventoryNodes = new ArrayList<>();
+//        this.allItems = allItems;
+//        JsonReader jsonReader = new JsonReader();
+//        JsonValue fileContents = jsonReader.parse(Gdx.files.local(fileToParse));
+//        if (fileContents != null) {
+//            for (JsonValue jsonValue: fileContents) {
+//            }
+//        }
+//
+//    }
+
     public ArrayList<InventoryNode> getInventoryNodes() {
         return inventoryNodes;
     }
+
 
     public void printInventory() {
         for (InventoryNode node : inventoryNodes) {
@@ -55,6 +68,10 @@ public class Inventory {
         FileHandle fileHandle = Gdx.files.local(Constants.INVENTORY_FP);
         fileHandle.writeString(jsonOutput, false);
 //        System.out.println(jsonOutput);
+    }
+
+    public void loadInventory() {
+
     }
 
     public void sortByName() {

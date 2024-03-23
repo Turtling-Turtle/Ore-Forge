@@ -2,6 +2,7 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.Blocks.ConveyorBlock;
 
 //@author Nathan Ulmen
@@ -17,6 +18,11 @@ public class Conveyor extends Item{
         setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }
 
+    public Conveyor(JsonValue jsonValue) {
+        super(jsonValue);
+        this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
+        initBlockConfiguration(this.numberConfig);
+    }
     //Used to "clone" an item.
     public Conveyor(Conveyor itemToClone) {
         super(itemToClone);

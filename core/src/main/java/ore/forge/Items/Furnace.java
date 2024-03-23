@@ -2,6 +2,7 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.FurnaceBlock;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
@@ -21,6 +22,15 @@ public class Furnace extends Item {
         this.rewardThreshold = rewardThreshold;
         this.upgrade = upgrade;
         initBlockConfiguration(blockLayout);
+        setTexture(new Texture(Gdx.files.internal("Furnace.jpg")));
+    }
+
+    public Furnace(JsonValue jsonValue) {
+        super(jsonValue);
+        this.rewardThreshold = jsonValue.getInt("rewardThreshold");
+        this.specialPointReward = jsonValue.getInt("specialPointReward");
+        this.upgrade = loadViaReflection(jsonValue.get("upgrade"), "upgradeName");
+        initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Furnace.jpg")));
     }
 

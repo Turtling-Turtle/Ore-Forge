@@ -1,0 +1,38 @@
+[
+  {
+    "version": 0.01
+  },
+{
+"name": "Standard Conveyor",
+"description": "A standard conveyor belt for moving ores.",
+"blockLayout": [
+	[ 1, 1 ],
+	[ 1, 1 ]
+],
+"tier": "COMMON",
+"itemValue": 5,
+"conveyorSpeed": 1
+},
+{
+"name": "Fast Conveyor",
+"description": "Moves ores at high speed to increase processing time.",
+"blockLayout": [
+	[ 1, 1 ],
+	[ 1, 1 ]
+],
+"tier": "RARE",
+"itemValue": 20,
+"conveyorSpeed": 2
+},
+{
+"name": "Ultra Conveyor",
+"description": "The pinnacle of conveyor technology, greatly speeds up ore movement.",
+"blockLayout": [
+	[ 1, 1 ],
+	[ 1, 1 ]
+],
+"tier": "EPIC",
+"itemValue": 50,
+"conveyorSpeed": 3
+}
+]
