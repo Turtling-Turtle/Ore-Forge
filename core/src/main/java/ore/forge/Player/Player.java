@@ -2,8 +2,7 @@ package ore.forge.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.*;
 import ore.forge.Constants;
 
 //@author Nathan Ulmen
@@ -64,6 +63,32 @@ public class Player {
         FileHandle fileHandle = Gdx.files.local(Constants.PLAYER_STATS_FP);
 
         fileHandle.writeString(jsonOutput, false);
+    }
+
+    public void loadSaveData() {
+        JsonReader jsonReader = new JsonReader();
+        JsonValue fileContents;
+        try {
+            fileContents = jsonReader.parse(Gdx.files.local(Constants.PLAYER_STATS_FP));
+        } catch (SerializationException e) {
+            System.out.println(Constants.PLAYER_STATS_FP + " was not present");
+            fileContents = null;
+        }
+        if (fileContents != null) {
+            prestigeLevel = fileContents.getInt("prestigeLevel");
+            wallet = fileContents.getDouble("wallet");
+            specialPoints = fileContents.getLong("specialPoints");
+            prestigeCurrency = fileContents.getInt("prestigeCurrency");
+            mostMoneyObtained = fileContents.getDouble("mostMoneyObtained");
+        } else {
+            //Set Default Stats
+            prestigeLevel = 0;
+            wallet = 50;
+            specialPoints = 0;
+            prestigeCurrency = 0;
+            mostMoneyObtained = 50;
+        }
+
     }
 
     public double getWallet() {

@@ -51,6 +51,7 @@ public abstract class Item {
        this.blockConfig = new Block[numberConfig.length][numberConfig[0].length];
        this.tier = Tier.valueOf(jsonValue.getString("tier"));
        this.itemValue = jsonValue.getDouble("itemValue");
+       this.vector2 = new Vector2();
        this.direction = Direction.NORTH;
     }
 

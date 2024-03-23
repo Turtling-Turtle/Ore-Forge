@@ -14,10 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.mongodb.client.*;
+import ore.forge.Player.Inventory;
 import ore.forge.Player.Player;
 import ore.forge.Screens.*;
 import org.bson.Document;
 
+//@author Nathan Ulmen
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
 	private ResourceManager resourceManager;
@@ -41,7 +43,7 @@ public class OreForge extends Game {
 		fpsCounter.setFontScale(0.6f);
 		fpsCounter.setPosition(99, 100);
 		fpsCounter.setVisible(false);
-        OreRealm.getSingleton().populate();
+
 
 
 
@@ -56,9 +58,9 @@ public class OreForge extends Game {
 
 		spriteBatch = new SpriteBatch();
 		resourceManager = new ResourceManager();
-		Player.getSingleton().inventory = resourceManager.createInventory();
-		resourceManager.loadPlayerStats(Player.getSingleton());
-//		userInterface = new UserInterface(player.getInventory());
+        OreRealm.getSingleton().populate(); //Create all ore.
+        Player.getSingleton().inventory = new Inventory(resourceManager);
+        Player.getSingleton().loadSaveData();
 		mainMenuScreen = new MainMenu(this, resourceManager);
 		settingsMenu = new SettingsMenu(this, resourceManager);
 		gameWorld = new GameWorld(this, resourceManager);

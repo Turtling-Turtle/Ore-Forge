@@ -3,6 +3,7 @@ package ore.forge.Player;
 
 import ore.forge.Items.*;
 
+//@author Nathan Ulmen
 public class InventoryNode {
     private final String nodeName;
     private int totalOwned;//Accounts for the number placed on base and the number in the inventory. Decremented when sold or incremented when a new item is obtained.

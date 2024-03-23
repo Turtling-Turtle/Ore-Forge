@@ -167,6 +167,11 @@ public class Ore {
         }
     }
 
+    public OreEffect getEffect() {
+//        return effects.get()
+        return null;
+    }
+
     public void setDestination(Vector2 target, float speed, Direction direction) {
         this.destination.set(target);
         this.direction = direction;

@@ -2,15 +2,13 @@ package ore.forge.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.*;
 import ore.forge.Constants;
 import ore.forge.Items.Item;
+import ore.forge.ResourceManager;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.StringBuilder;
+import java.util.*;
 
 //@author Nathan Ulmen
 public class Inventory {
@@ -25,27 +23,14 @@ public class Inventory {
         sortByType();
     }
 
-//    public Inventory(String fileToParse, HashMap<String, Item> allItems) {
-//        inventoryNodes = new ArrayList<>();
-//        this.allItems = allItems;
-//        JsonReader jsonReader = new JsonReader();
-//        JsonValue fileContents = jsonReader.parse(Gdx.files.local(fileToParse));
-//        if (fileContents != null) {
-//            for (JsonValue jsonValue: fileContents) {
-//            }
-//        }
-//
-//    }
+    public Inventory(ResourceManager resourceManager) {
+        inventoryNodes = new ArrayList<>();
+        allItems = resourceManager.getAllItems();
+        loadInventory();
+    }
 
     public ArrayList<InventoryNode> getInventoryNodes() {
         return inventoryNodes;
-    }
-
-
-    public void printInventory() {
-        for (InventoryNode node : inventoryNodes) {
-            System.out.println("Name: " + node.getHeldItem().getName() + "\tNumber Owned: " + node.getTotalOwned());
-        }
     }
 
     public void saveInventory() {
@@ -71,7 +56,54 @@ public class Inventory {
     }
 
     public void loadInventory() {
+        JsonReader jsonReader = new JsonReader();
+        JsonValue fileContents = jsonReader.parse(Gdx.files.local(Constants.INVENTORY_FP));
+        boolean isPresent = true;
 
+        try {
+            fileContents = jsonReader.parse(Gdx.files.local(Constants.INVENTORY_FP));
+        } catch (SerializationException e) {
+            System.out.println("No Inventory Present.");
+            isPresent = false;
+        }
+
+
+        if (isPresent) {
+            int owned;
+            String itemName;
+            //Go through each item in saved inventory and initialize node from allItems
+            for (JsonValue jsonValue: fileContents) {
+                if (allItems.containsKey(jsonValue.getString("itemName"))) {
+                    owned = jsonValue.getInt("totalOwned");
+                    itemName = jsonValue.getString("itemName");
+                    InventoryNode node = new InventoryNode(allItems.get(itemName), owned);
+                    inventoryNodes.add(node);
+                } else {
+                    System.out.println(Constants.RED + jsonValue.getString("itemName") + "is not a valid Item" + Constants.DEFAULT);
+                }
+            }
+        } else {
+            //create the default/beginner inventory.
+        }
+
+        //Add nodes for new Items that didn't exist previously.
+        Stack<InventoryNode> nodesToAdd = new Stack<>();
+        for (Item item : allItems.values()) {
+            for(InventoryNode node: inventoryNodes) {
+                if (node.getName().equals(item.getName())) {
+                    nodesToAdd.push(new InventoryNode(item, 0));
+                }
+            }
+        }
+        while (!nodesToAdd.empty()) {
+            inventoryNodes.add(nodesToAdd.pop());
+        }
+    }
+
+    public void printInventory() {
+        for (InventoryNode node : inventoryNodes) {
+            System.out.println("Name: " + node.getHeldItem().getName() + "\tNumber Owned: " + node.getTotalOwned());
+        }
     }
 
     public void sortByName() {
