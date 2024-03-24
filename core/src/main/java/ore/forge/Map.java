@@ -3,6 +3,7 @@ package ore.forge;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
+import ore.forge.Items.Item;
 
 public class Map {
     protected static Map mapSingleton = new Map();
@@ -67,6 +68,12 @@ public class Map {
         mapTiles[X][Y] = null;
     }
 
+    public Item getItem(int X, int Y) {
+        if (mapTiles[X][Y] != null) {
+            return mapTiles[X][Y].getParentItem();
+        }
+        return null;
+    }
     public <E extends Worker> Worker getWorker(Vector2 target) {
         return (Worker) mapTiles[(int) target.x][(int) target.y];
     }

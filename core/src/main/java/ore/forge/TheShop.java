@@ -1,13 +1,15 @@
 package ore.forge;
 
 
+import ore.forge.Items.Item;
+
+import java.util.HashMap;
 import java.util.function.Function;
 
 import static ore.forge.Strategies.UpgradeStrategies.BasicUpgrade.Operator.ADD;
-
+//@author Nathan Ulmen
 public class TheShop {
-    static float deltaTime;
-    static boolean isRunning;
+    private final HashMap<String, Item> allItems;
     public static void main(String[] args) {
         //You have the origin of an obejct (which is the position)
         // You have the area of an object
@@ -17,19 +19,6 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-        double value2 = 50;
-        double threshold = 100;
-        Function<Double, Number> operation;
-        double baseModifier = 10;
-        operation = switch ("add") {
-            case "add" -> (x) -> x + baseModifier;
-            case "subtract" -> (x) -> x - baseModifier;
-            case "multiply" -> (x) -> x * baseModifier;
-            case "divide" -> (x) -> x / baseModifier;
-            case "modulo" -> (x) -> x % baseModifier;
-            default -> throw new IllegalStateException("Unexpected value: " + "add");
-        };
-        System.out.println(operation.apply(100.0));
 //        Function<Double, Boolean> comparator;
 //        String string = null;
 //        comparator = switch (string) {
@@ -41,9 +30,10 @@ public class TheShop {
 //        System.out.println(comparator.apply(value2));
     }
 
-    public TheShop() {
-
+    public TheShop(ResourceManager resourceManager) {
+        allItems = resourceManager.getAllItems();
     }
+
 
 
 

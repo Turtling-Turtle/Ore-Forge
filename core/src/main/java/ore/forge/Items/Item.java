@@ -1,7 +1,9 @@
 package ore.forge.Items;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Direction;
 import ore.forge.ItemTracker;
@@ -10,6 +12,7 @@ import ore.forge.Map;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 //@author Nathan Ulmen
 public abstract class Item {
@@ -84,17 +87,13 @@ public abstract class Item {
 
     public void placeItem(int X, int Y) {
         if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return;
-
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
-
         int xCoord, yCoord;//vector coords
-
         //item coords
         this.vector2.x = X;
         this.vector2.y = Y;
         itemTracker.add(this);
-
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
@@ -108,6 +107,75 @@ public abstract class Item {
 
         }
     }
+
+    public void placeItem(Vector3 vector) {
+        int X = (int) vector.x;
+        int Y = (int) vector.y;
+
+        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return;
+
+        int rows = blockConfig.length;
+        int columns = blockConfig[0].length;
+        int xCoord, yCoord;//vector coords
+        //item coords
+        this.vector2.x = X;
+        this.vector2.y = Y;
+        itemTracker.add(this);
+        for (int i = 0; i < rows; i++) {
+            for (int j = columns-1; j >= 0; j--) {
+                xCoord = X + j;
+                yCoord = (Y + rows -i -1);
+                if (map.getBlock(xCoord, yCoord) != null && map.getBlock(xCoord, yCoord).getParentItem()!= this) {
+                    map.getBlock(xCoord, yCoord).getParentItem().removeItem();
+                }
+                blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
+                map.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+            }
+
+        }
+    }
+
+    public boolean placeItem(Vector3 vector3, ArrayList<Item> previousItems) { //THis is scuffed AF.
+        int X = (int) vector3.x;
+        int Y = (int) vector3.y;
+
+        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return false;
+        if (map.getItem(X, Y) != null && previousItems.contains(map.getItem(X, Y))) return false;
+        int rows = blockConfig.length;
+        int columns = blockConfig[0].length;
+        int xCoord, yCoord;//vector coords
+        //item coords
+        this.vector2.x = X;
+        this.vector2.y = Y;
+
+        //Check to make sure we wont "collide" with any items in previousItems
+        for (int i = 0; i < rows; i++) {
+            for (int j = columns-1; j >= 0; j--) {
+                xCoord = X + j;
+                yCoord = (Y + rows -i -1);
+                if (map.getBlock(xCoord, yCoord) != null) {
+                    if (previousItems.contains(map.getItem(xCoord, yCoord))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        itemTracker.add(this);
+        for (int i = 0; i < rows; i++) {
+            for (int j = columns-1; j >= 0; j--) {
+                xCoord = X + j;
+                yCoord = (Y + rows -i -1);
+                if (map.getBlock(xCoord, yCoord) != null && map.getBlock(xCoord, yCoord).getParentItem()!= this && !previousItems.contains(map.getItem(xCoord, yCoord))) {
+                    map.getBlock(xCoord, yCoord).getParentItem().removeItem();
+                }
+                blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
+                map.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+            }
+        }
+        return true;
+    }
+
 
     public void removeItem() {
         itemTracker.remove(this);
@@ -221,7 +289,6 @@ public abstract class Item {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
-
 
     protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
         try {

@@ -13,6 +13,7 @@ import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 //@author Nathan Ulmen
@@ -26,7 +27,9 @@ public class InputHandler {
     public Stack<Item> recentlyPlaced;
     private InventoryNode heldNode;
     private boolean isSelecting;
+    private boolean isHeldDown;
     public Rectangle selectionRectangle;
+    private ArrayList<Item> contiguousPlacedItems;
 
     public int[][] upgraderConfig = {//Test values
 //            { 0, 1, 1, 0},
@@ -64,6 +67,15 @@ public class InputHandler {
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
+    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    OreEffect upgradeOverTime = new UpgradeOverTimeEffect(1, 10E10f, simpleMultiply);
+
+    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy influencedUpgrade = new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, BasicUpgrade.Operator.MULTIPLY);
+    OreEffect influencedUpgradeOverTime = new UpgradeOverTimeEffect(1, 2E10f, influencedUpgrade);
+
+    OreEffect dropperStrat = new BundledEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
+
 
     public InputHandler() {
         mouseScreen = new Vector3();
@@ -72,6 +84,8 @@ public class InputHandler {
         buildMode = false;
         isSelecting = false;
         selectionRectangle = new Rectangle();
+        contiguousPlacedItems = new ArrayList<>();
+        recentlyPlaced = new Stack<>();
     }
 
     public void updateMouse(OrthographicCamera camera) {
@@ -104,7 +118,7 @@ public class InputHandler {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 0.015f, invincibility);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 1.f, dropperStrat);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
@@ -121,7 +135,8 @@ public class InputHandler {
                 heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
             }
         }
-        handlePlacement();
+//        normalPlacement();
+        handleDragPlacement();
         handleObserverMode();
     }
 
@@ -154,23 +169,55 @@ public class InputHandler {
 
     }
 
-    private void handlePlacement() {
+    private void normalPlacement() {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildMode) {//Will need to update to perform inventory checks.
-            heldItem.placeItem((int)mouseWorld.x, (int)mouseWorld.y);
-            ButtonHelper.playPlaceSound();
-            switch (heldItem) {
-                case Upgrader upgrader -> heldItem = new Upgrader(upgrader);
-                case Furnace furnace -> heldItem = new Furnace(furnace);
-                case Dropper dropper -> heldItem = new Dropper(dropper);
-                case Conveyor conveyor -> heldItem = new Conveyor(conveyor);
-                default -> throw new IllegalStateException("Unexpected value: " + heldItem);
-            }
+            heldItem.placeItem(mouseWorld);
+            updateHeldItem();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.R) && buildMode) {
             heldItem.rotateClockwise();
         }
+    }
 
+    private void handleDragPlacement() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R) && buildMode) {
+            heldItem.rotateClockwise();
+        }
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && buildMode) {
+            isHeldDown = true;
+            //1st Attempt to placeItem, Check/compare to all previously placed items in this "session" of drag placement
+            if (heldItem.placeItem(mouseWorld, contiguousPlacedItems)) {
+                contiguousPlacedItems.add(heldItem);
+                updateHeldItem();
+            }
+        } else {
+            isHeldDown = false;
+            contiguousPlacedItems.clear();
+//            normalPlacement();
+        }
+        undo();
+    }
 
+    private void updateHeldItem() {
+        ButtonHelper.playPlaceSound();
+        recentlyPlaced.push(heldItem);
+        switch (heldItem) {
+            case Upgrader upgrader -> heldItem = new Upgrader(upgrader);
+            case Furnace furnace -> heldItem = new Furnace(furnace);
+            case Dropper dropper -> heldItem = new Dropper(dropper);
+            case Conveyor conveyor -> heldItem = new Conveyor(conveyor);
+            default -> throw new IllegalStateException("Unexpected value: " + heldItem);
+        }
+    }
+
+    private void undo() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && buildMode) {
+            if (recentlyPlaced.peek() != null) {
+                recentlyPlaced.pop().removeItem();
+            }
+        } else if (!buildMode) {
+            recentlyPlaced.clear();
+        }
     }
 
     private void handleObserverMode(){
@@ -196,6 +243,7 @@ public class InputHandler {
             selectedItem = null;
         }
     }
+
     //While held down
     //if held
     public Item getHeldItem() {

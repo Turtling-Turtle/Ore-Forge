@@ -8,7 +8,6 @@ import ore.forge.Ore;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
-
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
 public class ConditionalUPG implements UpgradeStrategy {
@@ -22,7 +21,6 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final Function<Double, Boolean> comparator;
     private final Function<Ore, Number> propertyRetriever;
     private final BinomialFunction<Ore, Function<Ore, Number>, Boolean> evaluator;
-
 
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
         ifModifier = ifMod;
@@ -68,6 +66,17 @@ public class ConditionalUPG implements UpgradeStrategy {
         evaluator = (ore, propertyRetriever) -> comparator.apply((Double) propertyRetriever.apply(ore));
     }
 
+    @Override
+    public void applyTo(Ore ore) {
+        if (evaluator.apply(ore, propertyRetriever)) {
+            ifModifier.applyTo(ore);
+        } else if (elseModifier != null) {
+            elseModifier.applyTo(ore);
+        }
+
+
+    }
+
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
         if (jsonValue.get(field) == null) {return null;}
 
@@ -79,17 +88,6 @@ public class ConditionalUPG implements UpgradeStrategy {
                  IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void applyTo(Ore ore) {
-        if (evaluator.apply(ore, propertyRetriever)) {
-            ifModifier.applyTo(ore);
-        } else if (elseModifier != null) {
-            elseModifier.applyTo(ore);
-        }
-
-
     }
 
     public String toString() {

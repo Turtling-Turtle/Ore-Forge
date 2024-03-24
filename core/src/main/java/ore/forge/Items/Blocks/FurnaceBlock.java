@@ -38,9 +38,10 @@ public class FurnaceBlock extends Block implements Worker{
     }
 
     private void calculateSpecialReward(Ore ore) {
-        ((Furnace)parentItem).setProgress(((Furnace) parentItem).getRewardProgess() + ore.getMultiOre());
-        player.addSpecialPoints(specialPointReward *(int) Math.floor(((Furnace) parentItem).getRewardProgess() / ((Furnace) parentItem).getRewardThreshold()));
-        ((Furnace) parentItem).setProgress(ore.getMultiOre() % ((Furnace) parentItem).getRewardThreshold());
+        Furnace parentFurnace = (Furnace) parentItem;
+        parentFurnace.setProgress(parentFurnace.getRewardProgess() + ore.getMultiOre());
+        player.addSpecialPoints(specialPointReward *(int) (double) ((parentFurnace.getRewardProgess() / parentFurnace.getRewardThreshold())));
+        parentFurnace.setProgress(parentFurnace.getRewardProgess() % parentFurnace.getRewardThreshold());
     }
 
 }

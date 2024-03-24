@@ -159,7 +159,7 @@ public class Player {
         private double wallet;
         private int prestigeCurrency;
         private long specialPoints;
-
+        private double mostMoneyObtained;
 
         public void setPrestigeLevel(int prestigeLevel) {
             this.prestigeLevel = prestigeLevel;
@@ -181,7 +181,7 @@ public class Player {
             this.mostMoneyObtained = mostMoneyObtained;
         }
 
-        public double mostMoneyObtained;
+
 
     }
 

@@ -60,7 +60,6 @@ public class Dropper extends Item {
 
         initBlockConfiguration(numberConfig);
         alignWith(itemToClone.direction);
-//        this.printBlockConfig();
     }
 
 

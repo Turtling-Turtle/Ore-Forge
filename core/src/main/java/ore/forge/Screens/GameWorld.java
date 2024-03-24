@@ -62,79 +62,37 @@ public class GameWorld extends CustomScreen{
 
 
         //Draw world tiles.
-        for (int i = 0; i < gameWorld.mapTiles.length; i++) {
-            for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
-                batch.draw(blockTexture, i, j, 1f, 1f);
-            }
-        }
+        drawWorldTiles();
 
         //Draw placed items
-        for (Item item : itemTracker.getPlacedItems()) {
-            if (item instanceof Dropper) {
-                ((Dropper) item).update(delta);
-            } else if(item instanceof Conveyor) {
-                ((Conveyor) item).update();//Might use this.
-            }
-
-            batch.draw(item.getTexture(),
-                    item.getVector2().x,
-                    item.getVector2().y,
-                    item.getWidth()/2f,
-                    item.getHeight()/2f,
-                    item.getWidth(),
-                    item.getHeight(),
-                    1,
-                    1,
-                    item.getDirection().getAngle(),
-                    0,
-                    0,
-                    item.getTexture().getWidth(),
-                    item.getTexture().getHeight(),
-                    false,
-                    false);
-        }
+        drawPlacedItems(delta);
 
         //Draw BuildMode grid Lines
-        if (inputHandler.isBuilding()) {
-            batch.setColor(1f, 1, 1f, 0.9f);
-            for (int i = 0; i < gameWorld.mapTiles.length; i++) {
-                for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
-                    batch.draw(buildModeTexture, i, j, 1, 1);
-                }
-            }
-            batch.setColor(1, 1, 1, 1f);
-        }
+        drawBuildMode();
 
         //Draw Active Ore
-        for (Ore ore : oreRealm.activeOre) {
-            ore.act(delta);
-            batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
-        }
-        oreRealm.updateActiveOre();
+        drawActiveOre(delta);
 
 
         //Draw held item if build mode is active, needs some work.
-        if (inputHandler.isBuilding()) {
-            batch.setColor(.5f, 1, .5f, 0.5f);
-            batch.draw(inputHandler.getHeldItem().getTexture(),
-                    (int)inputHandler.mouseWorld.x,
-                    (int)inputHandler.mouseWorld.y,
-                    inputHandler.getHeldItem().getWidth()/2f,
-                    inputHandler.getHeldItem().getHeight()/2f,
-                    inputHandler.getHeldItem().getWidth(),
-                    inputHandler.getHeldItem().getHeight(),
-                    1,
-                    1,
-                    inputHandler.getHeldItem().getDirection().getAngle(),
-                    0,
-                    0,
-                    inputHandler.getHeldItem().getTexture().getWidth(),
-                    inputHandler.getHeldItem().getTexture().getHeight(),
-                    false,
-                    false);
-            batch.setColor(1, 1, 1, 1f);
-        }
+        drawHeldItem();
 
+        drawSelectedItem();
+//        System.out.println(oreRealm.activeOre.size());
+
+        batch.end();
+
+        userInterface.draw(delta);
+
+//        stage.draw();
+//        stage.act(delta);
+
+//        Gdx.app.log("Active Ore:", String.valueOf(oreRealm.activeOre.size()));
+//        Gdx.app.log("Player Wallet", String.valueOf(player.getWallet()));
+//        Gdx.app.log("Special Points", String.valueOf(player.getSpecialPoints()));
+    }
+
+    private void drawSelectedItem() {
         if (inputHandler.isSelecting()) {
             batch.setColor(.5f, 1, .5f, 0.5f);
             batch.draw(inputHandler.selectedItem.getTexture(),
@@ -155,18 +113,49 @@ public class GameWorld extends CustomScreen{
                     false);
             batch.setColor(1, 1, 1, 1f);
         }
-//        System.out.println(oreRealm.activeOre.size());
+    }
 
-        batch.end();
+    private void drawHeldItem() {
+        if (inputHandler.isBuilding()) {
+            batch.setColor(.5f, 1, .5f, 0.5f);
+            batch.draw(inputHandler.getHeldItem().getTexture(),
+                    (int)inputHandler.mouseWorld.x,
+                    (int)inputHandler.mouseWorld.y,
+                    inputHandler.getHeldItem().getWidth()/2f,
+                    inputHandler.getHeldItem().getHeight()/2f,
+                    inputHandler.getHeldItem().getWidth(),
+                    inputHandler.getHeldItem().getHeight(),
+                    1,
+                    1,
+                    inputHandler.getHeldItem().getDirection().getAngle(),
+                    0,
+                    0,
+                    inputHandler.getHeldItem().getTexture().getWidth(),
+                    inputHandler.getHeldItem().getTexture().getHeight(),
+                    false,
+                    false);
+            batch.setColor(1, 1, 1, 1f);
+        }
+    }
 
-        userInterface.draw(delta);
+    private void drawActiveOre(float delta) {
+        for (Ore ore : oreRealm.activeOre) {
+            ore.act(delta);
+            batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
+        }
+        oreRealm.updateActiveOre();
+    }
 
-//        stage.draw();
-//        stage.act(delta);
-
-//        Gdx.app.log("Active Ore:", String.valueOf(oreRealm.activeOre.size()));
-//        Gdx.app.log("Player Wallet", String.valueOf(player.getWallet()));
-//        Gdx.app.log("Special Points", String.valueOf(player.getSpecialPoints()));
+    private void drawBuildMode() {
+        if (inputHandler.isBuilding()) {
+            batch.setColor(1f, 1, 1f, 0.9f);
+            for (int i = 0; i < gameWorld.mapTiles.length; i++) {
+                for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
+                    batch.draw(buildModeTexture, i, j, 1, 1);
+                }
+            }
+            batch.setColor(1, 1, 1, 1f);
+        }
     }
 
     @Override
@@ -175,5 +164,41 @@ public class GameWorld extends CustomScreen{
         game.fpsCounter.setPosition(camera.position.x, camera.position.y);
         stage.addActor(game.fpsCounter);
     }
+
+    private void drawWorldTiles() {
+        for (int i = 0; i < gameWorld.mapTiles.length; i++) {
+            for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
+                batch.draw(blockTexture, i, j, 1f, 1f);
+            }
+        }
+    }
+
+    private void drawPlacedItems(float deltaTime) {
+        for (Item item : itemTracker.getPlacedItems()) {
+            if (item instanceof Dropper) {
+                ((Dropper) item).update(deltaTime);
+            } else if(item instanceof Conveyor) {
+                ((Conveyor) item).update();//Might use this.
+            }
+
+            batch.draw(item.getTexture(),
+                item.getVector2().x,
+                item.getVector2().y,
+                item.getWidth()/2f,
+                item.getHeight()/2f,
+                item.getWidth(),
+                item.getHeight(),
+                1,
+                1,
+                item.getDirection().getAngle(),
+                0,
+                0,
+                item.getTexture().getWidth(),
+                item.getTexture().getHeight(),
+                false,
+                false);
+        }
+    }
+
 
 }

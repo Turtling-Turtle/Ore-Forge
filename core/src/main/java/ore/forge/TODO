@@ -1,41 +1,17 @@
-Look into implementing MongoDB so I can "update" and add new items to game.
+Look into implementing MongoDB so I can "update" and add new items to game. MOSTLY DONE
 
 Look into making a "content browser" where you can browse other items that people have created.
 
-Look into writing a "physics" driven system for ore movement.
-
-        Handle physics on a seperate thread so that it can but updated on a fixed interval.
-        Use interpolation via integration if I decide to do this so that physics wont look weird with different frame rates.
-        vs.
-        Handle physics on current/same thread but it looses some "precision".
-                --Probably do this as its simpler and I dont think the loss in precision will be too impactful.
-
-
-        General Tools:
-        Equations of motion.
-        Ore Collision, have no clue how to handle this without writing an n^2 algo.
-            -Conservation of momentum and collision in 2D
-
-            ^^
-            ^^
-        >>>>^^
-        >>>>^^
-
-1. Is this even a good Idea? When should you write something yourself vs use an existing library
-
-2. How do you write one write one that has a time complexity less than n^2?
-
-3. Interface best practices?
-    1. Is it ok for some objects to not implement a method?
-    2. Strategy pattern is it ok to have lots of little simple classes?
-
-4. Iterating over position/more physics stuff.
-
-5. Class explosion from strategy design pattern. How long should a class be?
-
-6. Favorite/Preferred programming paradigm?
+Player:
 
 
 
 
 
+
+
+
+
+Things to Talk to professor about:
+
+For each optimization in act method of ore with for each loop.

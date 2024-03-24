@@ -53,7 +53,7 @@ public class Ore {
         acceleration = new Vector2(1, 1);
         velocity = new Vector2();
         force = new Vector2();
-        updateInterval = 0.1f;//effects are updated 10 times every second.
+        updateInterval = 0.01f;//effects are updated 10 times every second.
     }
 
     //position = Vᵢ* Δt + 0.5 * a * Δt^2
@@ -90,11 +90,17 @@ public class Ore {
         }
         //End Step effects like invincibility;
         if (current >= updateInterval) {
-            for(OreEffect strat : effects) {
-                if (strat.isEndStepEffect()) {
-                    strat.activate(deltaTime, this);
-                }
-            }
+//            for (int i = 0; i < effects.size(); i++) {
+//                if (effects.get(i).isEndStepEffect()) {
+//                    effects.get(i).activate(deltaTime, this);
+//                }
+//            }
+           updateEndStepEffects(deltaTime); //Faster to put into own method than doing the below.
+//            for(OreEffect strat : effects) {
+//                if (strat.isEndStepEffect()) {
+//                    strat.activate(deltaTime, this);
+//                }
+//            }
             current = 0f;
             if (this.isDoomed()) {
                 oreRealm.takeOre(this);
@@ -155,6 +161,13 @@ public class Ore {
         }
     }
 
+    private void updateEndStepEffects(float deltaTime) {
+        for (OreEffect effect : effects) {
+            if (effect.isEndStepEffect()) {
+                effect.activate(deltaTime, this);
+            }
+        }
+    }
     public void applyEffect(OreEffect strategy) {
         if (strategy instanceof BundledEffect) {
             for (OreEffect effect : ((BundledEffect) strategy).getStrategies()) {

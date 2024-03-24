@@ -7,7 +7,6 @@ import ore.forge.Player.Player;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.DoubleBinaryOperator;
-import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
@@ -24,7 +23,7 @@ public class InfluencedUPG implements UpgradeStrategy {
     private final ValuesOfInfluence valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final DoubleBinaryOperator influenceOperator;
-    private double minimumModifier, maxModifier, influenceScalar;
+    private final double minModifier, maxModifier, influenceScalar;
 
     public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operator operator) {
         this.valueOfInfluence = valuesOfInfluence;
@@ -37,9 +36,14 @@ public class InfluencedUPG implements UpgradeStrategy {
             case MODULO -> (x, y) -> x % y;
         };
 
+        minModifier = -1000;
+        maxModifier = 2000;
+        influenceScalar = 1;
+
     }
 
     public InfluencedUPG(JsonValue jsonValue) {
+        double temp;
         valueOfInfluence = ValuesOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
@@ -49,6 +53,7 @@ public class InfluencedUPG implements UpgradeStrategy {
                  ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
 
         influenceOperator = switch (BasicUpgrade.Operator.valueOf(jsonValue.getString("operation"))) {
             case ADD -> (x,y) -> x + y;
@@ -60,20 +65,23 @@ public class InfluencedUPG implements UpgradeStrategy {
 
         //If field doesn't exist that means we need to set it to the "default" .
         try {
-            minimumModifier = jsonValue.getDouble("minModifier");
+            temp = jsonValue.getDouble("minModifier");
         } catch (IllegalArgumentException e ) {
-            minimumModifier = Double.MIN_VALUE;
+            temp = Double.MIN_VALUE;
         }
+        minModifier = temp;
         try {
-            maxModifier = jsonValue.getDouble("maxModifier");
+            temp = jsonValue.getDouble("maxModifier");
         } catch (IllegalArgumentException e) {
-            maxModifier = Double.MIN_VALUE;
+            temp = Double.MIN_VALUE;
         }
+        maxModifier = temp;
         try {
-            influenceScalar = jsonValue.getDouble("scalar");
+            temp = jsonValue.getDouble("scalar");
         } catch (IllegalArgumentException e) {
-            influenceScalar = 1;
+            temp = 1;
         }
+        influenceScalar = temp;
     }
 
     @Override
@@ -93,8 +101,8 @@ public class InfluencedUPG implements UpgradeStrategy {
         };
         if (finalModifier > maxModifier) {
             upgrade.setModifier(maxModifier);
-        } else if (finalModifier < minimumModifier) {
-            upgrade.setModifier(minimumModifier);
+        } else if (finalModifier < minModifier) {
+            upgrade.setModifier(minModifier);
         } else {
             upgrade.setModifier(finalModifier);
         }
@@ -108,7 +116,7 @@ public class InfluencedUPG implements UpgradeStrategy {
             "valueOfInfluence=" + valueOfInfluence +
             ", methodOfModification=" + upgrade +
             ", influenceOperator=" + influenceOperator +
-            ", minimumModifier=" + minimumModifier +
+            ", minimumModifier=" + minModifier +
             ", maxModifier=" + maxModifier +
             '}';
     }
