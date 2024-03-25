@@ -112,7 +112,7 @@ public class UserInterface {
     public void draw(float deltaT) {
         updateInterval += deltaT;
         camera.update();
-        if (updateInterval > 0.05f) {
+        if (updateInterval > 0.1f) {
             fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory())/1024/1024) + " MB");
             this.mouseCoords.setText("X: " + (int)mouse.x + " Y: " + (int)mouse.y);

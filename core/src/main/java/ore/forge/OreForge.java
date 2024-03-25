@@ -61,10 +61,13 @@ public class OreForge extends Game {
         OreRealm.getSingleton().populate(); //Create all ore.
         Player.getSingleton().inventory = new Inventory(resourceManager);
         Player.getSingleton().loadSaveData();
+//        Map.getSingleton().loadState(resourceManager);
 		mainMenuScreen = new MainMenu(this, resourceManager);
 		settingsMenu = new SettingsMenu(this, resourceManager);
 		gameWorld = new GameWorld(this, resourceManager);
 		pauseMenu = new PauseMenu(this, resourceManager);
+
+
 
 		setScreen(mainMenuScreen);
 	}

@@ -3,10 +3,8 @@ package ore.forge;
 
 import ore.forge.Items.Item;
 
-import java.util.HashMap;
-import java.util.function.Function;
+import java.util.*;
 
-import static ore.forge.Strategies.UpgradeStrategies.BasicUpgrade.Operator.ADD;
 //@author Nathan Ulmen
 public class TheShop {
     private final HashMap<String, Item> allItems;
@@ -19,6 +17,11 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            UUID uuid = new UUID(random.nextInt(), random.nextInt());
+            System.out.println(uuid);
+        }
 //        Function<Double, Boolean> comparator;
 //        String string = null;
 //        comparator = switch (string) {
@@ -28,6 +31,7 @@ public class TheShop {
 //            default -> throw new IllegalStateException("Unexpected value: " + string);
 //        };
 //        System.out.println(comparator.apply(value2));
+        // Define the size of the list
     }
 
     public TheShop(ResourceManager resourceManager) {

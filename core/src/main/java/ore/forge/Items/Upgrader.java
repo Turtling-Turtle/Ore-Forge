@@ -24,7 +24,7 @@ public class Upgrader extends Item{
         this.conveyorSpeed = conveyorSpeed;
         this.upgrade = upgrade;
         this.upgradeTag = tag;
-        initBlockConfiguration(blockLayout);
+        initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
     }
 

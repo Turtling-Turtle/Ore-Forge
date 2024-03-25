@@ -1,6 +1,7 @@
 package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,9 +17,8 @@ import ore.forge.Player.Player;
 
 public class GameWorld extends CustomScreen{
     private final SpriteBatch batch;
-    protected static ItemTracker itemTracker = ItemTracker.getSingleton();
     protected static OreRealm oreRealm = OreRealm.getSingleton();
-    protected static Map gameWorld = Map.getSingleton();
+    public static ItemMap itemMap = ItemMap.getSingleton();
     protected static Player player = Player.getSingleton();
     public Actor a;
     private final InputHandler inputHandler;
@@ -62,7 +62,7 @@ public class GameWorld extends CustomScreen{
 
 
         //Draw world tiles.
-        drawWorldTiles();
+        drawWorldTiles(camera);
 
         //Draw placed items
         drawPlacedItems(delta);
@@ -116,6 +116,7 @@ public class GameWorld extends CustomScreen{
     }
 
     private void drawHeldItem() {
+//        for (Item item: inputHandler.getSelectedItems())
         if (inputHandler.isBuilding()) {
             batch.setColor(.5f, 1, .5f, 0.5f);
             batch.draw(inputHandler.getHeldItem().getTexture(),
@@ -149,8 +150,8 @@ public class GameWorld extends CustomScreen{
     private void drawBuildMode() {
         if (inputHandler.isBuilding()) {
             batch.setColor(1f, 1, 1f, 0.9f);
-            for (int i = 0; i < gameWorld.mapTiles.length; i++) {
-                for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
+            for (int i = 0; i < Constants.GRID_DIMENSIONS; i++) {
+                for (int j = 0; j < Constants.GRID_DIMENSIONS; j++) {
                     batch.draw(buildModeTexture, i, j, 1, 1);
                 }
             }
@@ -165,16 +166,17 @@ public class GameWorld extends CustomScreen{
         stage.addActor(game.fpsCounter);
     }
 
-    private void drawWorldTiles() {
-        for (int i = 0; i < gameWorld.mapTiles.length; i++) {
-            for (int j = 0; j < gameWorld.mapTiles[0].length; j++) {
-                batch.draw(blockTexture, i, j, 1f, 1f);
+    private void drawWorldTiles(Camera camera) {
+        //TODO: Implement culling to prevent drawing stuff cant see.
+        for (int i = 0; i < Constants.GRID_DIMENSIONS; i++) {
+            for (int j = 0; j < Constants.GRID_DIMENSIONS; j++) {
+                batch.draw(blockTexture, i, j, 1, 1);
             }
         }
     }
 
     private void drawPlacedItems(float deltaTime) {
-        for (Item item : itemTracker.getPlacedItems()) {
+        for (Item item : itemMap.getPlacedItems()) {
             if (item instanceof Dropper) {
                 ((Dropper) item).update(deltaTime);
             } else if(item instanceof Conveyor) {

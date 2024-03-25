@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class Ore {
-    protected static Map map = Map.getSingleton();
+    protected static ItemMap itemMap = ItemMap.getSingleton();
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     private final BitSet history;
     private final HashMap<String, UpgradeTag> tagMap;
@@ -53,7 +53,7 @@ public class Ore {
         acceleration = new Vector2(1, 1);
         velocity = new Vector2();
         force = new Vector2();
-        updateInterval = 0.01f;//effects are updated 10 times every second.
+        updateInterval = 0.01f;//effects are updated 100 times every second.
     }
 
     //position = Vᵢ* Δt + 0.5 * a * Δt^2
@@ -83,7 +83,7 @@ public class Ore {
         if (current >= updateInterval) {
            updateEffects(deltaTime);
         }
-        if (position.x != destination.x || position.y != destination.y) {
+        if (!position.equals(destination)) {
             move(deltaTime);
         } else {
             activateBlock();
@@ -193,8 +193,8 @@ public class Ore {
 
     public void activateBlock() {
 //        Gdx.app.log("Ore" , this.toString());
-        if ((map.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
-            ((Worker) map.getBlock(position)).handle(this);
+        if ((itemMap.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
+            ((Worker) itemMap.getBlock(position)).handle(this);
         } else {
             setIsDoomed(true);
         }

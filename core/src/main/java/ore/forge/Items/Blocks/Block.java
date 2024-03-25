@@ -3,12 +3,12 @@ package ore.forge.Items.Blocks;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Direction;
 import ore.forge.Items.Item;
-import ore.forge.Map;
+import ore.forge.ItemMap;
 
 //@author Nathan Ulmen
 public class Block {
 
-    protected static Map map = Map.getSingleton();
+    protected static ItemMap itemMap = ItemMap.getSingleton();
     public final Vector2 vector2;
     protected final Vector2 force;
 

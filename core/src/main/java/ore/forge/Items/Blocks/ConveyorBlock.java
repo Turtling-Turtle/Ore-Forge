@@ -25,7 +25,7 @@ public class ConveyorBlock extends Block implements Worker {
 
     @Override
     public void handle(Ore ore) {
-        Block blockInFront = map.getBlockInFront(vector2, direction);
+        Block blockInFront = itemMap.getBlockInFront(vector2, direction);
         if (blockInFront != null && blockInFront.isValid()) {
             ore.setDestination(blockInFront.getVector(), this.speed, this.direction);
             if (!(blockInFront instanceof FurnaceBlock)) {

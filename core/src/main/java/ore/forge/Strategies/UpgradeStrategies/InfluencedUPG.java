@@ -19,7 +19,7 @@ public class InfluencedUPG implements UpgradeStrategy {
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
-    protected static final ItemTracker itemTracker = ItemTracker.getSingleton();
+    protected static final ItemMap itemTracker = ItemMap.getSingleton();
     private final ValuesOfInfluence valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final DoubleBinaryOperator influenceOperator;

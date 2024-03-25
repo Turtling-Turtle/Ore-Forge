@@ -4,39 +4,19 @@ A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://git
 
 This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
 
-## Platforms
-
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3.
-
-## Gradle
-
-This project uses [Gradle](http://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
-
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/lib`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
-
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
-
 ## The Game
 
-In Ore Forge your goal is to build a tycoon that makes money. You can then reinvest this money back into your tycoon 
-by either buying items that you can add to your tycoon or by using it to Prestige. When you Prestige all your
-non-prestige proof items are destroyed, but you gain a powerful Prestige tier Item. As your prestige level increase the price to
-prestige will increase as well. 
+In Ore Forge you assemble your tycoon out of tons of unique items. Each time you prestige you gain access to increasingly
+powerful and unique items.
 
 
+### Controls:
+Build Mode:
+- Place an item using the left click on your mouse.
+- Rotate an item 90 degrees by pressing R
+- Undo an action by pressing Z
+
+Observer Mode:
+- Left-Click on an item to select it.
+- Selected items can be picked up by pressing R, bringing you back into build mode so that you can move it around.
+- You can press Z to remove the selected item from the tycoon.

@@ -33,7 +33,7 @@ public class ResourceManager {
 
         long t1 = System.currentTimeMillis();
 //        mongoConnect();
-//        loadItems(Constants.CONVEYORS_FP);
+        loadItems(Constants.CONVEYORS_FP);
 //        loadItems(Constants.DROPPERS_FP);
 //        loadItems(Constants.UPGRADER_FP);
 //        loadItems(Constants.FURNACE_FP);

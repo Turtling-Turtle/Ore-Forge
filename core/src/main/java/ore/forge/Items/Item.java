@@ -1,14 +1,12 @@
 package ore.forge.Items;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Direction;
-import ore.forge.ItemTracker;
 import ore.forge.Items.Blocks.Block;
-import ore.forge.Map;
+import ore.forge.ItemMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,9 +16,8 @@ import java.util.ArrayList;
 public abstract class Item {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE,EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
 
-    protected static final Map map = Map.getSingleton();
+    protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
 
-    protected static final ItemTracker itemTracker = ItemTracker.getSingleton();
 
     protected Block[][] blockConfig;
     protected int[][] numberConfig;
@@ -36,13 +33,13 @@ public abstract class Item {
     protected Vector2 vector2;
     protected String name, description;
 
-    public Item(String name, String description, int[][]blockLayout, Tier tier, double itemValue) {
+    public Item(String name, String description, int[][]blockLayout, Tier TIER, double itemValue) {
         this.name = name;
         this.description = description;
         vector2 = new Vector2();
         this.numberConfig = blockLayout;
         blockConfig = new Block[blockLayout.length][blockLayout[0].length];
-        this.tier = tier;
+        this.tier = TIER;
         this.itemValue = itemValue;
         this.direction = Direction.NORTH;
     }
@@ -86,23 +83,23 @@ public abstract class Item {
     }
 
     public void placeItem(int X, int Y) {
-        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return;
+        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return;
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
         int xCoord, yCoord;//vector coords
         //item coords
         this.vector2.x = X;
         this.vector2.y = Y;
-        itemTracker.add(this);
+        ITEM_MAP.add(this);
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
                 yCoord = (Y + rows -i -1);
-                if (map.getBlock(xCoord, yCoord) != null && map.getBlock(xCoord, yCoord).getParentItem()!= this) {
-                    map.getBlock(xCoord, yCoord).getParentItem().removeItem();
+                if (ITEM_MAP.getBlock(xCoord, yCoord) != null && ITEM_MAP.getBlock(xCoord, yCoord).getParentItem()!= this) {
+                    ITEM_MAP.getBlock(xCoord, yCoord).getParentItem().removeItem();
                 }
                 blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
-                map.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+                ITEM_MAP.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
             }
 
         }
@@ -112,7 +109,7 @@ public abstract class Item {
         int X = (int) vector.x;
         int Y = (int) vector.y;
 
-        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return;
+        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return;
 
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
@@ -120,16 +117,16 @@ public abstract class Item {
         //item coords
         this.vector2.x = X;
         this.vector2.y = Y;
-        itemTracker.add(this);
+        ITEM_MAP.add(this);
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
                 yCoord = (Y + rows -i -1);
-                if (map.getBlock(xCoord, yCoord) != null && map.getBlock(xCoord, yCoord).getParentItem()!= this) {
-                    map.getBlock(xCoord, yCoord).getParentItem().removeItem();
+                if (ITEM_MAP.getBlock(xCoord, yCoord) != null && ITEM_MAP.getBlock(xCoord, yCoord).getParentItem()!= this) {
+                    ITEM_MAP.getBlock(xCoord, yCoord).getParentItem().removeItem();
                 }
                 blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
-                map.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+                ITEM_MAP.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
             }
 
         }
@@ -139,8 +136,8 @@ public abstract class Item {
         int X = (int) vector3.x;
         int Y = (int) vector3.y;
 
-        if (X > map.mapTiles.length || X < 0 || Y > map.mapTiles[0].length || Y < 0) return false;
-        if (map.getItem(X, Y) != null && previousItems.contains(map.getItem(X, Y))) return false;
+        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return false;
+        if (ITEM_MAP.getItem(X, Y) != null && previousItems.contains(ITEM_MAP.getItem(X, Y))) return false;
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
         int xCoord, yCoord;//vector coords
@@ -153,24 +150,24 @@ public abstract class Item {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
                 yCoord = (Y + rows -i -1);
-                if (map.getBlock(xCoord, yCoord) != null) {
-                    if (previousItems.contains(map.getItem(xCoord, yCoord))) {
+                if (ITEM_MAP.getBlock(xCoord, yCoord) != null) {
+                    if (previousItems.contains(ITEM_MAP.getItem(xCoord, yCoord))) {
                         return false;
                     }
                 }
             }
         }
 
-        itemTracker.add(this);
+        ITEM_MAP.add(this);
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
                 yCoord = (Y + rows -i -1);
-                if (map.getBlock(xCoord, yCoord) != null && map.getBlock(xCoord, yCoord).getParentItem()!= this && !previousItems.contains(map.getItem(xCoord, yCoord))) {
-                    map.getBlock(xCoord, yCoord).getParentItem().removeItem();
+                if (ITEM_MAP.getBlock(xCoord, yCoord) != null && ITEM_MAP.getBlock(xCoord, yCoord).getParentItem()!= this && !previousItems.contains(ITEM_MAP.getItem(xCoord, yCoord))) {
+                    ITEM_MAP.getBlock(xCoord, yCoord).getParentItem().removeItem();
                 }
                 blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
-                map.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+                ITEM_MAP.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
             }
         }
         return true;
@@ -178,17 +175,17 @@ public abstract class Item {
 
 
     public void removeItem() {
-        itemTracker.remove(this);
+        ITEM_MAP.remove(this);
         int X = (int) vector2.x;
         int Y = (int) vector2.y;
         for (int i = 0; i < blockConfig.length; i++) {
             for (int j = 0; j < blockConfig[0].length ; j++) {
-                map.removeBlock( X+j, Y+i);
+                ITEM_MAP.removeBlock( X+j, Y+i);
             }
         }
     }
 
-    protected void alignWith(Direction direction) {
+    public void alignWith(Direction direction) {
         while (this.direction != direction) {
             this.rotateClockwise();
         }

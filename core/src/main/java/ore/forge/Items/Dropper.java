@@ -57,8 +57,7 @@ public class Dropper extends Item {
         this.dropInterval = itemToClone.getDropInterval();
         this.timeSinceLast = 0f;
         this.oreEffect = itemToClone.oreEffect;
-
-        initBlockConfiguration(numberConfig);
+        initBlockConfiguration(this.numberConfig);
         alignWith(itemToClone.direction);
     }
 

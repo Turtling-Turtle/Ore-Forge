@@ -34,5 +34,17 @@
 "tier": "EPIC",
 "itemValue": 50,
 "conveyorSpeed": 3
+},
+{
+  "name": "Basic Conveyor",
+  "description": "Test Conveyor",
+  "blockLayout": [
+    [ 1, 1 ],
+    [ 1, 1 ]
+  ],
+  "tier": "COMMON",
+  "isShopItem": false,
+  "itemValue": 0.0,
+  "conveyorSpeed": 2.0
 }
 ]

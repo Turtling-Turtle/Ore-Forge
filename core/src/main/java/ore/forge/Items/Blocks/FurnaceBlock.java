@@ -1,8 +1,6 @@
 package ore.forge.Items.Blocks;
 
 
-import com.badlogic.gdx.Gdx;
-import ore.forge.ButtonHelper;
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
 import ore.forge.Ore;

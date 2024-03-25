@@ -2,18 +2,18 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.Blocks.ConveyorBlock;
 
 //@author Nathan Ulmen
-public class Conveyor extends Item{
+public class Conveyor extends Item {
     private final float conveyorSpeed;
 
     //Used to create from scratch
     public Conveyor(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float speed){
         super(name, description, blockLayout, tier, itemValue);
         conveyorSpeed = speed;
-
         initBlockConfiguration(blockLayout);
         setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }

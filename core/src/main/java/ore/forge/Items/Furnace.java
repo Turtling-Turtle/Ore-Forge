@@ -41,7 +41,7 @@ public class Furnace extends Item {
        this.specialPointReward = itemToClone.specialPointReward;
        this.rewardThreshold = itemToClone.rewardThreshold;
        this.currentProgress = 0;
-       initBlockConfiguration(numberConfig);
+       initBlockConfiguration(this.numberConfig);
        alignWith(itemToClone.direction);
     }
 

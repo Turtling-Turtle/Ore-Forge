@@ -28,7 +28,7 @@ public class UpgradeBlock extends Block implements Worker {
 
     @Override
     public void handle(Ore ore) {
-        Block blockInFront = map.getBlockInFront(vector2, direction);
+        Block blockInFront = itemMap.getBlockInFront(vector2, direction);
         if(blockInFront != null && blockInFront.isValid()) {
             if (ore.getUpgradeTag(upgradeTag).getCurrentUpgrades() < upgradeTag.getMaxUpgrades()) {
                 upgrade.applyTo(ore);

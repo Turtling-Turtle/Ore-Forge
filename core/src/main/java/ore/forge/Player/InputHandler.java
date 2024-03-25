@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
 import ore.forge.Items.*;
-import ore.forge.Map;
+import ore.forge.ItemMap;
 import ore.forge.OreForge;
 import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
@@ -18,7 +18,8 @@ import java.util.Stack;
 
 //@author Nathan Ulmen
 public class InputHandler {
-    protected static final Map map = Map.getSingleton();
+    protected static final ItemMap itemMap = ItemMap.getSingleton();
+    protected static final Player player = Player.getSingleton();
     public Vector3 mouseScreen, mouseWorld;
     private final float cameraSpeed;
     private boolean buildMode;
@@ -29,7 +30,8 @@ public class InputHandler {
     private boolean isSelecting;
     private boolean isHeldDown;
     public Rectangle selectionRectangle;
-    private ArrayList<Item> contiguousPlacedItems;
+    private final ArrayList<Item> contiguousPlacedItems;
+    private final ArrayList<Item> selectedItems;
 
     public int[][] upgraderConfig = {//Test values
 //            { 0, 1, 1, 0},
@@ -86,6 +88,7 @@ public class InputHandler {
         selectionRectangle = new Rectangle();
         contiguousPlacedItems = new ArrayList<>();
         recentlyPlaced = new Stack<>();
+        selectedItems = new ArrayList<>();
     }
 
     public void updateMouse(OrthographicCamera camera) {
@@ -103,6 +106,7 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!buildMode) {
                 game.setScreen(game.pauseMenu);
+//                map.saveState();
             } else {
                 buildMode = false;
             }
@@ -169,16 +173,6 @@ public class InputHandler {
 
     }
 
-    private void normalPlacement() {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildMode) {//Will need to update to perform inventory checks.
-            heldItem.placeItem(mouseWorld);
-            updateHeldItem();
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R) && buildMode) {
-            heldItem.rotateClockwise();
-        }
-    }
-
     private void handleDragPlacement() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R) && buildMode) {
             heldItem.rotateClockwise();
@@ -193,7 +187,6 @@ public class InputHandler {
         } else {
             isHeldDown = false;
             contiguousPlacedItems.clear();
-//            normalPlacement();
         }
         undo();
     }
@@ -212,7 +205,7 @@ public class InputHandler {
 
     private void undo() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && buildMode) {
-            if (recentlyPlaced.peek() != null) {
+            if (!recentlyPlaced.isEmpty()) {
                 recentlyPlaced.pop().removeItem();
             }
         } else if (!buildMode) {
@@ -222,12 +215,13 @@ public class InputHandler {
 
     private void handleObserverMode(){
         if (!buildMode && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isInvalid() && map.getBlock(mouseWorld.x, mouseWorld.y) !=null) {
-                selectedItem = map.getBlock(mouseWorld.x, mouseWorld.y).getParentItem();
+            if (!isInvalid() && itemMap.getBlock(mouseWorld.x, mouseWorld.y) !=null) {
+                selectedItem = itemMap.getItem(mouseWorld);
                 isSelecting = true;
             } else {
                 isSelecting = false;
                 selectedItem = null;
+                contiguousPlacedItems.clear();
             }
         }
         if (isSelecting && Gdx.input.isKeyPressed(Input.Keys.R)) {//Start build mode with the selected item.
@@ -242,10 +236,12 @@ public class InputHandler {
             isSelecting = false;
             selectedItem = null;
         }
+        if (isSelecting && Gdx.input.isKeyPressed(Input.Keys.E)) {
+            //Logic for item specific effects.
+            //item.activate();
+        }
     }
 
-    //While held down
-    //if held
     public Item getHeldItem() {
         return heldItem;
     }
@@ -258,8 +254,12 @@ public class InputHandler {
         return isSelecting;
     }
 
-    private boolean isInvalid() {
-        return mouseWorld.x > map.mapTiles.length || mouseWorld.x < 0 || mouseWorld.y > map.mapTiles[0].length || mouseWorld.y < 0;
+    public ArrayList<Item> getSelectedItems() {
+        return selectedItems;
     }
+    private boolean isInvalid() {
+        return mouseWorld.x > itemMap.mapTiles.length || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length || mouseWorld.y < 0;
+    }
+
 
 }

@@ -33,7 +33,7 @@ public class DropperBlock extends Block {
     }
 
     public void dropOre() {
-        Block blockInFront = map.getBlockInFront(vector2, direction);
+        Block blockInFront = itemMap.getBlockInFront(vector2, direction);
         if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
             OreEffect effect;
             if (strategy == null) {

@@ -6,6 +6,35 @@ Player:
 
 
 
+Items:
+    --Implement Drawable for, get this, items im gonna draw.
+
+width & height.
+
+Conveyor:
+Conveyor Rails/guards
+Conveyor Itself
+Conveyor Arrow.
+
+Upgrader:
+Conveyor Rails/guards (5)
+Conveyor Itself (5)
+Conveyor Arrow. (3)
+Upgrade Beam.   (10)
+Upgrade Beam Posts (5)
+Accessory (5)
+Rest of upgrader. (4)
+
+
+Dropper:
+IDK at this point.
+Ejector, think nerf gun that shoots disks/crossbow/railgun?
+
+Furnace:
+"Sell spot"
+
+
+
 
 
 
