@@ -3,9 +3,12 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
+import ore.forge.Enums.BooleanOperator;
+import ore.forge.Enums.Operator;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
@@ -60,20 +63,20 @@ public class InputHandler {
     };
 
 
-    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUPG();
-    UpgradeStrategy conditional = new ConditionalUPG(testUpgrade, destroy, ConditionalUPG.Condition.VALUE, 100000*100000, ConditionalUPG.Comparison.GREATER_THAN);
+    UpgradeStrategy conditional = new ConditionalUPG(testUpgrade, destroy, ConditionalUPG.Condition.VALUE, 100000*100000, BooleanOperator.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
-    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
     OreEffect upgradeOverTime = new UpgradeOverTimeEffect(1, 10E10f, simpleMultiply);
 
-    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, BasicUpgrade.Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    UpgradeStrategy influencedUpgrade = new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, BasicUpgrade.Operator.MULTIPLY);
+    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy influencedUpgrade = new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
     OreEffect influencedUpgradeOverTime = new UpgradeOverTimeEffect(1, 2E10f, influencedUpgrade);
 
     OreEffect dropperStrat = new BundledEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
@@ -97,6 +100,10 @@ public class InputHandler {
         mouseScreen.z = 0;
 
         mouseWorld.set(camera.unproject(mouseScreen));
+//        mouseWorld.x = MathUtils.round(mouseWorld.x * 1.5f) / 1.5f;
+//        mouseWorld.y = MathUtils.round(mouseWorld.y * 1.5f) / 1.5f;
+//        mouseWorld.x = MathUtils.floor(mouseWorld.x);
+//        mouseWorld.y = MathUtils.floor(mouseWorld.y);
     }
 
     public void handleInput(float deltaT, OrthographicCamera camera, OreForge game) {
@@ -106,7 +113,7 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!buildMode) {
                 game.setScreen(game.pauseMenu);
-//                map.saveState();
+                itemMap.saveState();
             } else {
                 buildMode = false;
             }
@@ -122,7 +129,7 @@ public class InputHandler {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 1.f, dropperStrat);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 5f, dropperStrat);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {

@@ -1,7 +1,7 @@
 package ore.forge.Items.Blocks;
 
 import com.badlogic.gdx.math.Vector2;
-import ore.forge.Direction;
+import ore.forge.Enums.Direction;
 import ore.forge.Items.Item;
 import ore.forge.ItemMap;
 

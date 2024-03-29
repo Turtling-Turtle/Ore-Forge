@@ -1,7 +1,7 @@
 package ore.forge.Items.Blocks;
 
 
-import ore.forge.Direction;
+import ore.forge.Enums.Direction;
 import ore.forge.Items.Item;
 import ore.forge.Ore;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;

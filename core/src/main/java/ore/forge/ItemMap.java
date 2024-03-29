@@ -4,14 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.*;
+import ore.forge.Enums.Direction;
 import ore.forge.Items.*;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
 
+import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,11 +49,16 @@ public class ItemMap {
     }
 
     public Block getBlock(Vector2 target) {
+
+//        return mapTiles[(int) Math.floor(target.x)][(int) Math.floor(target.y)];
         return mapTiles[(int) target.x][(int) target.y];
     }
 
     public Block getBlock(float X, float Y) {
         return mapTiles[(int) X][(int) Y];
+//        int x = (int) Math.floor(X);
+//        int y = (int) Math.floor(Y);
+//        return mapTiles[x][y];
     }
 
     public void setBlock(float X, float Y, Block block) {
@@ -66,10 +70,11 @@ public class ItemMap {
     }
 
     public Item getItem(int X, int Y) {
-        if (mapTiles[X][Y] != null) {
-            return mapTiles[X][Y].getParentItem();
-        }
-        return null;
+//        if (mapTiles[X][Y] != null) {
+//            return mapTiles[X][Y].getParentItem();
+//        }
+//        return null;
+        return mapTiles[X][Y] != null ? mapTiles[X][Y].getParentItem() : null;
     }
 
     public Item getItem(Vector3 vector3) {
@@ -102,7 +107,12 @@ public class ItemMap {
         System.out.println("Made it to beginning of load State!");
         HashMap<String, Item> allItems = resourceManager.getAllItems();
         JsonReader jsonReader = new JsonReader();
-        JsonValue fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
+        JsonValue fileContents;
+        try {
+        fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
+        } catch (SerializationException e) {
+            return;
+        }
         String itemName;
         Item itemToPlace;
         for (JsonValue jsonValue : fileContents) {

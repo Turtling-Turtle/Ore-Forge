@@ -2,11 +2,14 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
+import ore.forge.Enums.Operator;
 import ore.forge.Player.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
@@ -22,28 +25,22 @@ public class InfluencedUPG implements UpgradeStrategy {
     protected static final ItemMap itemTracker = ItemMap.getSingleton();
     private final ValuesOfInfluence valueOfInfluence;
     private final BasicUpgrade upgrade;
-    private final DoubleBinaryOperator influenceOperator;
+    private final Operator operator;
     private final double minModifier, maxModifier, influenceScalar;
 
-    public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, BasicUpgrade.Operator operator) {
+    public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
         this.valueOfInfluence = valuesOfInfluence;
         this.upgrade = upgrade;
-        influenceOperator = switch (operator) {
-            case ADD -> (x,y) -> x + y;
-            case SUBTRACT -> (x,y) -> x - y;
-            case MULTIPLY -> (x,y) -> x * y;
-            case DIVIDE -> (x,y) -> x / y;
-            case MODULO -> (x, y) -> x % y;
-        };
 
-        minModifier = -1000;
+        minModifier = -1000; //Default values for testing.
         maxModifier = 2000;
         influenceScalar = 1;
+        this.operator = operator;
 
     }
 
     public InfluencedUPG(JsonValue jsonValue) {
-        double temp;
+
         valueOfInfluence = ValuesOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
@@ -54,28 +51,25 @@ public class InfluencedUPG implements UpgradeStrategy {
             throw new RuntimeException(e);
         }
 
-
-        influenceOperator = switch (BasicUpgrade.Operator.valueOf(jsonValue.getString("operation"))) {
-            case ADD -> (x,y) -> x + y;
-            case SUBTRACT -> (x,y) -> x - y;
-            case MULTIPLY -> (x,y) -> x * y;
-            case DIVIDE -> (x,y) -> x / y;
-            case MODULO -> (x, y) -> x % y;
-        };
+        operator = Operator.valueOf(jsonValue.getString("operation"));
 
         //If field doesn't exist that means we need to set it to the "default" .
+        double temp;
+
         try {
             temp = jsonValue.getDouble("minModifier");
         } catch (IllegalArgumentException e ) {
             temp = Double.MIN_VALUE;
         }
         minModifier = temp;
+
         try {
             temp = jsonValue.getDouble("maxModifier");
         } catch (IllegalArgumentException e) {
             temp = Double.MIN_VALUE;
         }
         maxModifier = temp;
+
         try {
             temp = jsonValue.getDouble("scalar");
         } catch (IllegalArgumentException e) {
@@ -89,16 +83,17 @@ public class InfluencedUPG implements UpgradeStrategy {
         // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
         double finalModifier = influenceScalar * switch (valueOfInfluence) {
-            case VALUE -> influenceOperator.applyAsDouble(ore.getOreValue(), originalModifier);
-            case TEMPERATURE -> influenceOperator.applyAsDouble(ore.getOreTemp(), originalModifier);
-            case MULTIORE -> influenceOperator.applyAsDouble(ore.getMultiOre(), originalModifier);
-            case UPGRADE_COUNT -> influenceOperator.applyAsDouble(ore.getUpgradeCount(), originalModifier);
-            case ACTIVE_ORE -> influenceOperator.applyAsDouble(oreRealm.activeOre.size(), originalModifier);
-            case PLACED_ITEMS -> influenceOperator.applyAsDouble(itemTracker.getPlacedItems().size(), originalModifier);
-            case SPECIAL_POINTS -> influenceOperator.applyAsDouble(player.getSpecialPoints(), originalModifier);
-            case WALLET -> influenceOperator.applyAsDouble(player.getWallet(), originalModifier);
-            case PRESTIGE_LEVEL -> influenceOperator.applyAsDouble(player.getPrestigeLevel(), originalModifier);
+            case VALUE -> operator.apply(ore.getOreValue(), originalModifier);
+            case TEMPERATURE -> operator.apply(ore.getOreTemp(), originalModifier);
+            case MULTIORE -> operator.apply(ore.getMultiOre(), originalModifier);
+            case UPGRADE_COUNT -> operator.apply(ore.getUpgradeCount(), originalModifier);
+            case ACTIVE_ORE -> operator.apply(oreRealm.activeOre.size(), originalModifier);
+            case PLACED_ITEMS -> operator.apply(itemTracker.getPlacedItems().size(), originalModifier);
+            case SPECIAL_POINTS -> operator.apply(player.getSpecialPoints(), originalModifier);
+            case WALLET -> operator.apply(player.getWallet(), originalModifier);
+            case PRESTIGE_LEVEL -> operator.apply(player.getPrestigeLevel(), originalModifier);
         };
+
         if (finalModifier > maxModifier) {
             upgrade.setModifier(maxModifier);
         } else if (finalModifier < minModifier) {
@@ -115,7 +110,7 @@ public class InfluencedUPG implements UpgradeStrategy {
         return "InfluencedUPG{" +
             "valueOfInfluence=" + valueOfInfluence +
             ", methodOfModification=" + upgrade +
-            ", influenceOperator=" + influenceOperator +
+            ", influenceOperator=" + operator +
             ", minimumModifier=" + minModifier +
             ", maxModifier=" + maxModifier +
             '}';

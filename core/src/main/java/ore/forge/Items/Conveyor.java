@@ -2,8 +2,9 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 
 //@author Nathan Ulmen
@@ -22,6 +23,7 @@ public class Conveyor extends Item {
         super(jsonValue);
         this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
         initBlockConfiguration(this.numberConfig);
+        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }
     //Used to "clone" an item.
     public Conveyor(Conveyor itemToClone) {
@@ -29,12 +31,13 @@ public class Conveyor extends Item {
         this.conveyorSpeed = itemToClone.conveyorSpeed;
         initBlockConfiguration(itemToClone.numberConfig);
         alignWith(itemToClone.direction);
+        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }
 
     public void update() {
-        for (int i = 0; i < blockConfig.length; i++) {
-            for (int j = 0; j < blockConfig[i].length; j++) {
-                blockConfig[i][j].setFull(false);
+        for (Block[] blocks : blockConfig) {
+            for (Block block: blocks) {
+                block.setFull(false);
             }
         }
     }
@@ -53,4 +56,83 @@ public class Conveyor extends Item {
         }
     }
 
+    @Override
+    public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+
+    }
+
+    /**
+     * Draws this drawable at the specified bounds. The drawable should be tinted with {@link Batch#getColor()}, possibly by
+     * mixing its own color.
+     *
+     * @param batch
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+
+    }
+
+    @Override
+    public float getLeftWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setLeftWidth(float leftWidth) {
+
+    }
+
+    @Override
+    public float getRightWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setRightWidth(float rightWidth) {
+
+    }
+
+    @Override
+    public float getTopHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setTopHeight(float topHeight) {
+
+    }
+
+    @Override
+    public float getBottomHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setBottomHeight(float bottomHeight) {
+
+    }
+
+    @Override
+    public float getMinWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setMinWidth(float minWidth) {
+
+    }
+
+    @Override
+    public float getMinHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setMinHeight(float minHeight) {
+
+    }
 }

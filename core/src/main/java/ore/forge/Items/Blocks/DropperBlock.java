@@ -1,8 +1,10 @@
 package ore.forge.Items.Blocks;
 
-import ore.forge.Direction;
+import ore.forge.Enums.Direction;
+import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.OreRealm;
+import ore.forge.Strategies.DropperStrategies.DropperStrategy;
 import ore.forge.Strategies.OreEffects.OreEffect;
 
 //@author Nathan Ulmen
@@ -13,6 +15,7 @@ public class DropperBlock extends Block {
     private double oreValue;
     private int oreTemp, multiOre, totalOreDropped;
     private OreEffect strategy;
+    private DropperStrategy dropperEffect;
     private float dropInterval;
     private float timeSinceLast;
 
@@ -33,6 +36,7 @@ public class DropperBlock extends Block {
     }
 
     public void dropOre() {
+        //TODO: Implement Dropper Effects.
         Block blockInFront = itemMap.getBlockInFront(vector2, direction);
         if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
             OreEffect effect;
@@ -41,13 +45,23 @@ public class DropperBlock extends Block {
             } else {
                 effect = strategy.clone();
             }
-            oreRealm.giveOre()
-                    .setVector(vector2)
-                    .applyBaseStats(oreValue, oreTemp, multiOre, oreName, effect)
-                    .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
-//                blockInFront.setFull(true);
-//                totalOreDropped++;
+//            if (dropperEffect != null) {
+//                dropperEffect.applyTo(oreRealm.peek(), (Dropper) this.parentItem);
+//            }
+            createOre(blockInFront, effect);
         }
+    }
+
+    private void createOre(Block blockInFront, OreEffect effect) {
+        oreRealm.giveOre()
+            .setVector(vector2)
+            .applyBaseStats(oreValue, oreTemp, multiOre, oreName, effect)
+            .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
+        increaseTotalOreDropped();
+    }
+
+    private void increaseTotalOreDropped() {
+        ((Dropper) parentItem).incrementTotalOreDropped();
     }
 
 }

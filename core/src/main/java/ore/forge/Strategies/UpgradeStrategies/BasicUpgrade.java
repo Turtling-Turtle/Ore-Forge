@@ -1,66 +1,60 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Enums.Operator;
 import ore.forge.Ore;
 
-import java.util.function.DoubleBinaryOperator;
+import java.util.function.Consumer;
 
+//@author Nathan Ulmen
 public class BasicUpgrade implements UpgradeStrategy {
-   public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE}
+    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE, SPEED}
     //More VTMS: effect Duration, Speed,
-   public enum Operator {ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO}
-   private double modifier;
-   private final ValueToModify valueToModify;
-   private final DoubleBinaryOperator operation;
-   private final Operator operator;
+    private double modifier;
+    private final ValueToModify valueToModify;
+    private final Consumer<Ore> upgradeFunction;
+    private final Operator operator;
 
 
-   public BasicUpgrade(double mod, Operator operatorType, ValueToModify valueToModify) {
-       operator = operatorType;
+    public BasicUpgrade(double mod, Operator operatorType, ValueToModify valueToModify) {
+       this.operator = operatorType;
        modifier = mod;
-       operation = switch (operatorType) {
-           case ADD -> (x,y) -> x + y;
-           case SUBTRACT -> (x,y) -> x - y;
-           case MULTIPLY -> (x,y) -> x * y;
-           case DIVIDE -> (x,y) -> x / y;
-           case MODULO -> (x, y) -> x % y;
-       };
        this.valueToModify = valueToModify;
-   }
-
+       upgradeFunction = returnUpgrade();
+    }
 
     public BasicUpgrade(JsonValue jsonValue) {
+       //TODO: add try and catch to jsonValues.
        modifier = jsonValue.getDouble("modifier");
        valueToModify = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
        operator = Operator.valueOf(jsonValue.getString("operation"));
-       operation = switch (Operator.valueOf(jsonValue.getString("operation"))) {
-           case ADD -> (x, y) -> x + y;
-           case SUBTRACT -> (x, y) -> x - y;
-           case MULTIPLY -> (x, y) -> x * y;
-           case DIVIDE -> (x, y) -> x / y;
-           case MODULO -> (x, y) -> x % y;
-       };
+       upgradeFunction = returnUpgrade();
     }
 
     @Override
     public void applyTo(Ore ore) {
-        switch (valueToModify) {
-            case ORE_VALUE -> ore.setOreValue(operation.applyAsDouble(ore.getOreValue(), modifier));
-            case TEMPERATURE -> ore.setTemp((float) operation.applyAsDouble(ore.getOreTemp(), modifier));
-            case MULTIORE -> ore.setMultiOre((int) operation.applyAsDouble(ore.getMultiOre(), modifier));
-        }
+       upgradeFunction.accept(ore);//applies the function to the ore
     }
 
-   public void setModifier(double newVal) {
+    private Consumer<Ore> returnUpgrade() {
+       return switch (valueToModify) {
+            case ORE_VALUE -> (Ore ore) -> ore.setOreValue(operator.apply(ore.getOreValue(), modifier));
+            case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(operator.apply(ore.getOreTemp(), modifier)));
+            case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(operator.apply(ore.getOreTemp(), modifier)));
+            case SPEED -> (Ore ore) -> ore.setSpeedScalar((float) operator.apply(ore.getSpeedScalar(), modifier));
+       };
+    }
+
+    public void setModifier(double newVal) {
        modifier = newVal;
     }
 
-   public double getModifier() {
+    public double getModifier() {
        return modifier;
-   }
+    }
 
-   public String toString() {
+    public String toString() {
       return "Type: " + getClass().getSimpleName() + "\tVTM: " + valueToModify + "\tOperator: " + operator + "\tModifier: " + modifier;
-   }
+    }
 
 }

@@ -2,37 +2,34 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.BinomialFunction;
+import ore.forge.Enums.BooleanOperator;
+import ore.forge.FunctionalInterfaces.BinomialFunction;
 import ore.forge.Ore;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
 public class ConditionalUPG implements UpgradeStrategy {
     public enum Condition {VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
-    public enum Comparison {GREATER_THAN, LESS_THAN, EQUAL_TO} //Type of comparison
     private final Condition condition;
-    private final Comparison comparison;
     private final UpgradeStrategy ifModifier;
     private final UpgradeStrategy elseModifier;
     private final double threshold;
-    private final Function<Double, Boolean> comparator;
+    private final BooleanOperator comparator;
     private final Function<Ore, Number> propertyRetriever;
     private final BinomialFunction<Ore, Function<Ore, Number>, Boolean> evaluator;
 
-    public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, Comparison comparison) {
+    public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, BooleanOperator comparison) {
         ifModifier = ifMod;
         elseModifier = elseMod;
         this.threshold = threshold;
         this.condition = condition;
-        this.comparison = comparison;
-        comparator = switch (comparison) {
-            case GREATER_THAN -> (x) -> x > threshold;
-            case LESS_THAN -> (x) -> x < threshold;
-            case EQUAL_TO -> (x) -> x == threshold;
-        };
+        this.comparator = comparison;
 
         propertyRetriever = switch (condition) {
             case VALUE -> (Ore::getOreValue);
@@ -41,7 +38,7 @@ public class ConditionalUPG implements UpgradeStrategy {
             case MULTIORE -> (Ore::getMultiOre);
         };
 
-        evaluator = (ore, propertyRetriever) -> comparator.apply((Double) propertyRetriever.apply(ore));
+        evaluator = (ore, propertyRetriever) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
     }
 
     public ConditionalUPG(JsonValue jsonValue) {
@@ -49,12 +46,7 @@ public class ConditionalUPG implements UpgradeStrategy {
         elseModifier = createOrNull(jsonValue, "elseModifier");
         this.threshold = jsonValue.getDouble("threshold");
         this.condition = Condition.valueOf(jsonValue.getString("condition"));
-        this.comparison = Comparison.valueOf(jsonValue.getString("comparison"));
-        comparator = switch (Comparison.valueOf(jsonValue.getString("comparison"))) {
-            case GREATER_THAN -> (x) -> x > threshold;
-            case LESS_THAN -> (x) -> x < threshold;
-            case EQUAL_TO -> (x) -> x == threshold;
-        };
+        this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
 
         propertyRetriever = switch (Condition.valueOf(jsonValue.getString("condition"))) {
             case VALUE -> (Ore::getOreValue);
@@ -63,7 +55,7 @@ public class ConditionalUPG implements UpgradeStrategy {
             case MULTIORE -> (Ore::getMultiOre);
         };
 
-        evaluator = (ore, propertyRetriever) -> comparator.apply((Double) propertyRetriever.apply(ore));
+        evaluator = (ore, propertyRetriever) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
     }
 
     @Override
@@ -74,8 +66,8 @@ public class ConditionalUPG implements UpgradeStrategy {
             elseModifier.applyTo(ore);
         }
 
-
     }
+
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
         if (jsonValue.get(field) == null) {return null;}
@@ -91,7 +83,7 @@ public class ConditionalUPG implements UpgradeStrategy {
     }
 
     public String toString() {
-        return getClass().getSimpleName() + "\tCondition: " + condition + "\tComparison: " + comparison +
+        return getClass().getSimpleName() + "\tCondition: " + condition + "\tComparison: " + comparator +
             "\tThreshold: " + threshold +
             "\n\nifModifier: " + ifModifier.toString() + "\n\nelseModifier: " + elseModifier.toString();
     }

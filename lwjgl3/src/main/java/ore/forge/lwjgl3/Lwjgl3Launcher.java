@@ -18,7 +18,7 @@ public class Lwjgl3Launcher {
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("OreForge");
-        config.useVsync(false);
+        config.useVsync(true);
 
         //// Limits FPS to the refresh rate of the currently active monitor.
         config.setForegroundFPS(100_000);

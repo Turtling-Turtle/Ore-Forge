@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ore.forge.*;
@@ -24,8 +26,8 @@ public class GameWorld extends CustomScreen{
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Label.LabelStyle L = new Label.LabelStyle(font2, Color.GREEN);
+    Sprite spire;
 
-    private final Label money = new Label("", L);
 
     private final UserInterface userInterface;
     private final Texture buildModeTexture = new Texture(Gdx.files.internal("PlayerSelect.png"));
@@ -39,6 +41,7 @@ public class GameWorld extends CustomScreen{
         inputHandler = new InputHandler();
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
+        spire = new Sprite();
 
 
 
@@ -98,8 +101,8 @@ public class GameWorld extends CustomScreen{
             batch.draw(inputHandler.selectedItem.getTexture(),
                     (int)inputHandler.selectedItem.getVector2().x,
                     (int)inputHandler.selectedItem.getVector2().y,
-                    inputHandler.selectedItem.getWidth()/2f,
-                    inputHandler.selectedItem.getHeight()/2f,
+                    (inputHandler.selectedItem.getWidth()/2f),
+                    (inputHandler.selectedItem.getHeight()/2f),
                     inputHandler.selectedItem.getWidth(),
                     inputHandler.selectedItem.getHeight(),
                     1,
@@ -116,14 +119,17 @@ public class GameWorld extends CustomScreen{
     }
 
     private void drawHeldItem() {
-//        for (Item item: inputHandler.getSelectedItems())
         if (inputHandler.isBuilding()) {
-            batch.setColor(.5f, 1, .5f, 0.5f);
-            batch.draw(inputHandler.getHeldItem().getTexture(),
-                    (int)inputHandler.mouseWorld.x,
-                    (int)inputHandler.mouseWorld.y,
-                    inputHandler.getHeldItem().getWidth()/2f,
-                    inputHandler.getHeldItem().getHeight()/2f,
+            batch.setColor(.5f, 1, .5f, .6f);
+                batch.draw(inputHandler.getHeldItem().getTexture(),
+                    (int)(inputHandler.mouseWorld.x),
+                    (int)(inputHandler.mouseWorld.y),
+//                    inputHandler.mouseWorld.x,
+//                    inputHandler.mouseWorld.y,
+//                    MathUtils.round(inputHandler.mouseWorld.x/ 1.5f) * 1.5f,
+//                    MathUtils.round(inputHandler.mouseWorld.y / 1.5f) * 1.5f,
+                    (inputHandler.getHeldItem().getWidth()/2f),
+                    (inputHandler.getHeldItem().getHeight()/2f),
                     inputHandler.getHeldItem().getWidth(),
                     inputHandler.getHeldItem().getHeight(),
                     1,
@@ -138,6 +144,11 @@ public class GameWorld extends CustomScreen{
             batch.setColor(1, 1, 1, 1f);
         }
     }
+
+
+
+
+
 
     private void drawActiveOre(float delta) {
         for (Ore ore : oreRealm.activeOre) {
@@ -167,7 +178,7 @@ public class GameWorld extends CustomScreen{
     }
 
     private void drawWorldTiles(Camera camera) {
-        //TODO: Implement culling to prevent drawing stuff cant see.
+        //TODO: Only draw what camera can see.
         for (int i = 0; i < Constants.GRID_DIMENSIONS; i++) {
             for (int j = 0; j < Constants.GRID_DIMENSIONS; j++) {
                 batch.draw(blockTexture, i, j, 1, 1);
@@ -176,6 +187,8 @@ public class GameWorld extends CustomScreen{
     }
 
     private void drawPlacedItems(float deltaTime) {
+        //TODO: Only Draw what camera can see.
+        //Solution to not drawing rectangular sprites correctly is the use Math.floor or Math.Round.
         for (Item item : itemMap.getPlacedItems()) {
             if (item instanceof Dropper) {
                 ((Dropper) item).update(deltaTime);
@@ -183,22 +196,42 @@ public class GameWorld extends CustomScreen{
                 ((Conveyor) item).update();//Might use this.
             }
 
-            batch.draw(item.getTexture(),
-                item.getVector2().x,
-                item.getVector2().y,
-                item.getWidth()/2f,
-                item.getHeight()/2f,
-                item.getWidth(),
-                item.getHeight(),
-                1,
-                1,
-                item.getDirection().getAngle(),
-                0,
-                0,
-                item.getTexture().getWidth(),
-                item.getTexture().getHeight(),
-                false,
-                false);
+            if (item.getWidth() == item.getHeight()) {
+                batch.draw(item.getTexture(),
+                    item.getVector2().x,
+                    item.getVector2().y,
+                    (float) (item.getWidth()/2f),
+                    (float) (item.getHeight()/2f),
+                    item.getWidth(),
+                    item.getHeight(),
+                    1,
+                    1,
+                    item.getDirection().getAngle(),
+                    0,
+                    0,
+                    item.getTexture().getWidth(),
+                    item.getTexture().getHeight(),
+                    false,
+                    false);
+            } else {
+                batch.draw(item.getTexture(),
+                    item.getVector2().x,
+                    item.getVector2().y,
+                    (item.getWidth()/2f),
+                    (item.getHeight()/2f),
+                    item.getWidth(),
+                    item.getHeight(),
+                    1,
+                    1,
+                    item.getDirection().getAngle(),
+                    0,
+                    0,
+                    item.getTexture().getWidth(),
+                    item.getTexture().getHeight(),
+                    false,
+                    false);
+            }
+
         }
     }
 

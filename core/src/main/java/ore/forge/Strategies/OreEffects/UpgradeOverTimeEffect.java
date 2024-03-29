@@ -20,6 +20,13 @@ public class UpgradeOverTimeEffect implements OreEffect {
         strategy = strategyToApply;
     }
 
+    public UpgradeOverTimeEffect(UpgradeOverTimeEffect clone) {
+        this.interval = clone.interval;
+        this.duration = clone.duration;
+        currentTime = 0f;
+        strategy = clone.strategy;
+    }
+
     public UpgradeOverTimeEffect(JsonValue jsonValue) {
         try {
             Class<?> aClass = Class.forName(jsonValue.get("upgrade").getString("upgradeName"));
@@ -50,14 +57,9 @@ public class UpgradeOverTimeEffect implements OreEffect {
         }
     }
 
-
     @Override
     public OreEffect clone() {
-        try {
-            return (OreEffect) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        return new UpgradeOverTimeEffect(this);
     }
 
     @Override

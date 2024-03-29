@@ -17,11 +17,24 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-        Random random = new Random();
-        for (int i = 0; i < 100; i++) {
-            UUID uuid = new UUID(random.nextInt(), random.nextInt());
-            System.out.println(uuid);
-        }
+//        for (int i = 0; i <= 100; i++) {
+//            if (i % 3 == 0 && i % 5 == 0) {
+//                System.out.println("FizzBuzz");
+//            } else if (i % 3 == 0) {
+//                System.out.println("Fizz");
+//            } else if (i % 5 == 0) {
+//                System.out.println("Buzz");
+//            } else {
+//                System.out.println(i);
+//            }
+//        }
+
+        int number2 = 2;
+        int number3 = 3;
+        number3 = number2;
+        number2++;
+        System.out.println(number3);
+        System.out.println(number2);
 //        Function<Double, Boolean> comparator;
 //        String string = null;
 //        comparator = switch (string) {

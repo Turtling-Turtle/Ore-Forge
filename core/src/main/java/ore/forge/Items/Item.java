@@ -3,8 +3,9 @@ package ore.forge.Items;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.TransformDrawable;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Direction;
+import ore.forge.Enums.Direction;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.ItemMap;
 
@@ -13,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 //@author Nathan Ulmen
-public abstract class Item {
+public abstract class Item implements TransformDrawable {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE,EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
 
     protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
@@ -45,14 +46,15 @@ public abstract class Item {
     }
 
     public Item(JsonValue jsonValue) {
-       this.name = jsonValue.getString("name");
-       this.description = jsonValue.getString("description");
-       this.numberConfig = parseBlockLayout(jsonValue.get("blockLayout"));
-       this.blockConfig = new Block[numberConfig.length][numberConfig[0].length];
-       this.tier = Tier.valueOf(jsonValue.getString("tier"));
-       this.itemValue = jsonValue.getDouble("itemValue");
-       this.vector2 = new Vector2();
-       this.direction = Direction.NORTH;
+        //TODO: Handle errors when creating from Json.
+        this.name = jsonValue.getString("name");
+        this.description = jsonValue.getString("description");
+        this.numberConfig = parseBlockLayout(jsonValue.get("blockLayout"));
+        this.blockConfig = new Block[numberConfig.length][numberConfig[0].length];
+        this.tier = Tier.valueOf(jsonValue.getString("tier"));
+        this.itemValue = jsonValue.getDouble("itemValue");
+        this.vector2 = new Vector2();
+        this.direction = Direction.NORTH;
     }
 
     public Item(Item itemToClone) {
@@ -68,6 +70,7 @@ public abstract class Item {
     }
 
     private int[][] parseBlockLayout(JsonValue jsonValue) {
+        //TODO: Add error handling.
         int rows = jsonValue.size;
         int columns = jsonValue.get(0).size;
         int[][] blockLayout = new int[rows][columns];
@@ -83,13 +86,14 @@ public abstract class Item {
     }
 
     public void placeItem(int X, int Y) {
-        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return;
+        if (X > ITEM_MAP.mapTiles.length-1 || X < 0 || Y > ITEM_MAP.mapTiles[0].length-1 || Y < 0) return;
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
-        int xCoord, yCoord;//vector coords
-        //item coords
+        //Coordinates of the Item. They are in the bottom left hand corner of it.
         this.vector2.x = X;
         this.vector2.y = Y;
+
+        int xCoord, yCoord;//Coords for blocks in item.
         ITEM_MAP.add(this);
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
@@ -105,59 +109,33 @@ public abstract class Item {
         }
     }
 
-    public void placeItem(Vector3 vector) {
-        int X = (int) vector.x;
-        int Y = (int) vector.y;
-
-        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return;
-
-        int rows = blockConfig.length;
-        int columns = blockConfig[0].length;
-        int xCoord, yCoord;//vector coords
-        //item coords
-        this.vector2.x = X;
-        this.vector2.y = Y;
-        ITEM_MAP.add(this);
-        for (int i = 0; i < rows; i++) {
-            for (int j = columns-1; j >= 0; j--) {
-                xCoord = X + j;
-                yCoord = (Y + rows -i -1);
-                if (ITEM_MAP.getBlock(xCoord, yCoord) != null && ITEM_MAP.getBlock(xCoord, yCoord).getParentItem()!= this) {
-                    ITEM_MAP.getBlock(xCoord, yCoord).getParentItem().removeItem();
-                }
-                blockConfig[i][j].setDirection(this.direction);//ensure direction is the same as parent item
-                ITEM_MAP.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
-            }
-
-        }
-    }
-
-    public boolean placeItem(Vector3 vector3, ArrayList<Item> previousItems) { //THis is scuffed AF.
+    public boolean placeItem(Vector3 vector3, ArrayList<Item> previousItems) {
+        //TODO: Re-write to not be so slow/bad.
         int X = (int) vector3.x;
         int Y = (int) vector3.y;
-
-        if (X > ITEM_MAP.mapTiles.length || X < 0 || Y > ITEM_MAP.mapTiles[0].length || Y < 0) return false;
-        if (ITEM_MAP.getItem(X, Y) != null && previousItems.contains(ITEM_MAP.getItem(X, Y))) return false;
-        int rows = blockConfig.length;
-        int columns = blockConfig[0].length;
-        int xCoord, yCoord;//vector coords
-        //item coords
+        if (X > ITEM_MAP.mapTiles.length-1 || X < 0 || Y > ITEM_MAP.mapTiles[0].length-1 || Y < 0) return false;
+        //Coordinates of the item. They are in the bottom left hand corner of it.
         this.vector2.x = X;
         this.vector2.y = Y;
 
-        //Check to make sure we wont "collide" with any items in previousItems
+        int rows = blockConfig.length;
+        int columns = blockConfig[0].length;
+
+        int xCoord, yCoord;//Coordinates of the blocks in the item.
+
+        //Check to make sure we won't "collide" with any items in previousItems and that it wont go out of bounds.
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
                 xCoord = X + j;
                 yCoord = (Y + rows -i -1);
+                if (xCoord > ITEM_MAP.mapTiles.length-1 || xCoord < 0 || yCoord > ITEM_MAP.mapTiles[0].length-1 || yCoord < 0) return false;
                 if (ITEM_MAP.getBlock(xCoord, yCoord) != null) {
-                    if (previousItems.contains(ITEM_MAP.getItem(xCoord, yCoord))) {
-                        return false;
-                    }
+                    if (previousItems.contains(ITEM_MAP.getItem(xCoord, yCoord))) { return false; }
                 }
             }
         }
 
+        //Now actually place the blocks down because we have determined that its "safe" to do so.
         ITEM_MAP.add(this);
         for (int i = 0; i < rows; i++) {
             for (int j = columns-1; j >= 0; j--) {
@@ -237,14 +215,12 @@ public abstract class Item {
         return blockConfig;
     }
 
-    public int getWidth() {
-        //return width
-        return blockConfig.length;
+    public float getWidth() {
+        return numberConfig.length; //Returns original width.
     }
 
-    public int getHeight() {
-        //return height
-        return blockConfig[0].length;
+    public float getHeight() {
+        return numberConfig[0].length; //returns original height.
     }
 
     public String getDescription() {
@@ -285,6 +261,14 @@ public abstract class Item {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public boolean isFacingWest() {
+        return direction == Direction.WEST;
+    }
+
+    public boolean isFacingSouth() {
+        return direction == Direction.SOUTH;
     }
 
     protected <E> E loadViaReflection(JsonValue jsonValue, String field) {

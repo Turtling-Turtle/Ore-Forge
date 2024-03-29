@@ -1,5 +1,6 @@
 package ore.forge.Strategies.OreEffects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
@@ -31,11 +32,7 @@ public class BundledEffect implements OreEffect {
 
     @Override
     public void activate(float deltaT, Ore ore) {
-        for (int i = 0; i < strategies.length; i++) {
-            if (strategies[i]!= null) {
-                strategies[i].activate(deltaT, ore);
-            }
-        }
+        throw new RuntimeException("WHY IS BUNDLED EFFECT being activated");
     }
 
     private OreEffect createOreStrategyOreNull(JsonValue jsonValue, String valueToGet) {

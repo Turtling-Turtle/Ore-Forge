@@ -1,4 +1,4 @@
-package ore.forge;
+package ore.forge.FunctionalInterfaces;
 
 @FunctionalInterface
 

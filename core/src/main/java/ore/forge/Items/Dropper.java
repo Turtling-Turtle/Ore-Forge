@@ -2,6 +2,8 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.utils.TransformDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Items.Blocks.Block;
@@ -16,6 +18,7 @@ public class Dropper extends Item {
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
+    private int totalOreDropped;
     protected final OreEffect oreEffect;
 
     //Used to create from scratch.
@@ -28,6 +31,7 @@ public class Dropper extends Item {
         this.multiOre = multiOre;
         timeSinceLast = 0;
         this.oreEffect = oreStrategies;
+        totalOreDropped = 0;
 
         initBlockConfiguration(blockLayout);
         setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
@@ -61,7 +65,7 @@ public class Dropper extends Item {
         alignWith(itemToClone.direction);
     }
 
-
+    //Check to see if we should produce an ore.
     public void update(float deltaTime) {
         timeSinceLast += deltaTime;
         while(timeSinceLast >= dropInterval) {
@@ -129,4 +133,92 @@ public class Dropper extends Item {
         return dropInterval;
     }
 
+    public void incrementTotalOreDropped() {
+        totalOreDropped++;
+    }
+
+    public int getTotalOreDropped() {
+        return totalOreDropped;
+    }
+
+    @Override
+    public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+
+    }
+
+    /**
+     * Draws this drawable at the specified bounds. The drawable should be tinted with {@link Batch#getColor()}, possibly by
+     * mixing its own color.
+     *
+     * @param batch
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+
+    }
+
+    @Override
+    public float getLeftWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setLeftWidth(float leftWidth) {
+
+    }
+
+    @Override
+    public float getRightWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setRightWidth(float rightWidth) {
+
+    }
+
+    @Override
+    public float getTopHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setTopHeight(float topHeight) {
+
+    }
+
+    @Override
+    public float getBottomHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setBottomHeight(float bottomHeight) {
+
+    }
+
+    @Override
+    public float getMinWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setMinWidth(float minWidth) {
+
+    }
+
+    @Override
+    public float getMinHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setMinHeight(float minHeight) {
+
+    }
 }

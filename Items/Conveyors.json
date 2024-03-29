@@ -45,6 +45,6 @@
   "tier": "COMMON",
   "isShopItem": false,
   "itemValue": 0.0,
-  "conveyorSpeed": 2.0
+  "conveyorSpeed": 1.0
 }
 ]
