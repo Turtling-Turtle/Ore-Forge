@@ -14,19 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 //@author Nathan Ulmen
-public abstract class Item implements TransformDrawable {
+public abstract class Item {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE,EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
-
     protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
-
-
     protected Block[][] blockConfig;
     protected int[][] numberConfig;
     //Example config
 //    { 0, 1, 1, 0},
 //    { 0, 2, 2, 0},
 //    { 0, 1, 1, 0},
-//    protected int width, height;
     protected Direction direction;
     protected double itemValue;
     protected Tier tier;

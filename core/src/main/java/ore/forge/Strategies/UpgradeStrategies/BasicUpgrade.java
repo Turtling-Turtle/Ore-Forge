@@ -20,15 +20,15 @@ public class BasicUpgrade implements UpgradeStrategy {
        this.operator = operatorType;
        modifier = mod;
        this.valueToModify = valueToModify;
-       upgradeFunction = returnUpgrade();
+       upgradeFunction = configureUpgradeFunction();
     }
 
     public BasicUpgrade(JsonValue jsonValue) {
-       //TODO: add try and catch to jsonValues.
+       //TODO: Introduce error handling for jsonValues.
        modifier = jsonValue.getDouble("modifier");
        valueToModify = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
        operator = Operator.valueOf(jsonValue.getString("operation"));
-       upgradeFunction = returnUpgrade();
+       upgradeFunction = configureUpgradeFunction();
     }
 
     @Override
@@ -36,7 +36,8 @@ public class BasicUpgrade implements UpgradeStrategy {
        upgradeFunction.accept(ore);//applies the function to the ore
     }
 
-    private Consumer<Ore> returnUpgrade() {
+    //Determines/sets the behavior of the upgradeFunction.
+    private Consumer<Ore> configureUpgradeFunction() {
        return switch (valueToModify) {
             case ORE_VALUE -> (Ore ore) -> ore.setOreValue(operator.apply(ore.getOreValue(), modifier));
             case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(operator.apply(ore.getOreTemp(), modifier)));
@@ -54,7 +55,7 @@ public class BasicUpgrade implements UpgradeStrategy {
     }
 
     public String toString() {
-      return "Type: " + getClass().getSimpleName() + "\tVTM: " + valueToModify + "\tOperator: " + operator + "\tModifier: " + modifier;
+        return "Type: " + getClass().getSimpleName() + "\tVTM: " + valueToModify + "\tOperator: " + operator + "\tModifier: " + modifier;
     }
 
 }

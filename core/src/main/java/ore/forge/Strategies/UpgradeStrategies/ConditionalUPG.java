@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static ore.forge.Strategies.UpgradeStrategies.BasicUpgrade.ValueToModify.SPEED;
+
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
 public class ConditionalUPG implements UpgradeStrategy {
@@ -24,36 +26,26 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final Function<Ore, Number> propertyRetriever;
     private final BinomialFunction<Ore, Function<Ore, Number>, Boolean> evaluator;
 
+    //Used for testing purposes.
     public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, BooleanOperator comparison) {
         ifModifier = ifMod;
         elseModifier = elseMod;
         this.threshold = threshold;
         this.condition = condition;
         this.comparator = comparison;
-
-        propertyRetriever = switch (condition) {
-            case VALUE -> (Ore::getOreValue);
-            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
-            case TEMPERATURE -> (Ore::getOreTemp);
-            case MULTIORE -> (Ore::getMultiOre);
-        };
+        propertyRetriever = configurePropertyRetriever(condition);
 
         evaluator = (ore, propertyRetriever) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
     }
 
+    //used to create from Json Data.
     public ConditionalUPG(JsonValue jsonValue) {
         ifModifier = createOrNull(jsonValue, "ifModifier");
         elseModifier = createOrNull(jsonValue, "elseModifier");
         this.threshold = jsonValue.getDouble("threshold");
         this.condition = Condition.valueOf(jsonValue.getString("condition"));
         this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
-
-        propertyRetriever = switch (Condition.valueOf(jsonValue.getString("condition"))) {
-            case VALUE -> (Ore::getOreValue);
-            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
-            case TEMPERATURE -> (Ore::getOreTemp);
-            case MULTIORE -> (Ore::getMultiOre);
-        };
+        propertyRetriever = configurePropertyRetriever(Condition.valueOf(jsonValue.getString("condition")));
 
         evaluator = (ore, propertyRetriever) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
     }
@@ -68,6 +60,14 @@ public class ConditionalUPG implements UpgradeStrategy {
 
     }
 
+    private Function<Ore, Number> configurePropertyRetriever(Condition condition) {
+        return switch (condition) {
+            case VALUE -> (Ore::getOreValue);
+            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
+            case TEMPERATURE -> (Ore::getOreTemp);
+            case MULTIORE -> (Ore::getMultiOre);
+        };
+    }
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
         if (jsonValue.get(field) == null) {return null;}

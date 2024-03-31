@@ -1,6 +1,5 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Nullable;
 import ore.forge.Ore;
@@ -8,6 +7,7 @@ import ore.forge.Ore;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+//@author Nathan Ulmen
 //Used To bundle multiple different upgrade strategies into one.
 public class BundledUPG implements UpgradeStrategy{
     private final UpgradeStrategy[] upgradeStrategies;
@@ -35,7 +35,6 @@ public class BundledUPG implements UpgradeStrategy{
                 upgStrat.applyTo(ore);
             }
         }
-
     }
 
     private UpgradeStrategy createOrNull(JsonValue jsonValue, String valueToGet) {

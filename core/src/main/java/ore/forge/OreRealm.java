@@ -10,8 +10,8 @@ import java.util.Stack;
 //@author Nathan Ulmen
 public class OreRealm {
     private static OreRealm oreRealmInstance = new OreRealm();
-    public final Stack<Ore> stackOfOre, removalStack;
-    public final ArrayList<Ore> activeOre;
+    private final Stack<Ore> stackOfOre, removalStack;
+    private final ArrayList<Ore> activeOre;
 
     public OreRealm() {
         stackOfOre = new Stack<>();
@@ -53,6 +53,14 @@ public class OreRealm {
             removalStack.peek().reset();
             activeOre.remove(removalStack.pop());
         }
+    }
+
+    public ArrayList<Ore> getActiveOre() {
+        return activeOre;
+    }
+
+    public Stack<Ore> getStackOfOre() {
+        return stackOfOre;
     }
 
     public String toString() {

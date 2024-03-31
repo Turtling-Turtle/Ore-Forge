@@ -43,56 +43,36 @@ public class GameWorld extends CustomScreen{
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
         spire = new Sprite();
 
-
-
         camera.position.set(Constants.GRID_DIMENSIONS/2f, Constants.GRID_DIMENSIONS/2f, 0f);
 
     }
 
     @Override
     public void render(float delta) {
-        //handle input
+        //updateMouse
         inputHandler.updateMouse(camera);
-//        game.fpsCounter.setPosition(camera.position.x, camera.position.y);
-//        Gdx.app.log("Mouse Coords", mouseWorld.toString());
+        //handleInput.
         inputHandler.handleInput(delta, camera, game);
-
+        //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
         //Draw game
         batch.begin();
-
-
         //Draw world tiles.
         drawWorldTiles(camera);
-
         //Draw placed items
         drawPlacedItems(delta);
-
         //Draw BuildMode grid Lines
         drawBuildMode();
-
         //Draw Active Ore
         drawActiveOre(delta);
-
-
         //Draw held item if build mode is active, needs some work.
         drawHeldItem();
-
         drawSelectedItem();
-//        System.out.println(oreRealm.activeOre.size());
 
         batch.end();
-
         userInterface.draw(delta);
-
-//        stage.draw();
-//        stage.act(delta);
-
-//        Gdx.app.log("Active Ore:", String.valueOf(oreRealm.activeOre.size()));
-//        Gdx.app.log("Player Wallet", String.valueOf(player.getWallet()));
-//        Gdx.app.log("Special Points", String.valueOf(player.getSpecialPoints()));
     }
 
     private void drawSelectedItem() {
@@ -145,13 +125,8 @@ public class GameWorld extends CustomScreen{
         }
     }
 
-
-
-
-
-
     private void drawActiveOre(float delta) {
-        for (Ore ore : oreRealm.activeOre) {
+        for (Ore ore : oreRealm.getActiveOre()) {
             ore.act(delta);
             batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
         }
@@ -195,45 +170,25 @@ public class GameWorld extends CustomScreen{
             } else if(item instanceof Conveyor) {
                 ((Conveyor) item).update();//Might use this.
             }
-
-            if (item.getWidth() == item.getHeight()) {
-                batch.draw(item.getTexture(),
-                    item.getVector2().x,
-                    item.getVector2().y,
-                    (float) (item.getWidth()/2f),
-                    (float) (item.getHeight()/2f),
-                    item.getWidth(),
-                    item.getHeight(),
-                    1,
-                    1,
-                    item.getDirection().getAngle(),
-                    0,
-                    0,
-                    item.getTexture().getWidth(),
-                    item.getTexture().getHeight(),
-                    false,
-                    false);
-            } else {
-                batch.draw(item.getTexture(),
-                    item.getVector2().x,
-                    item.getVector2().y,
-                    (item.getWidth()/2f),
-                    (item.getHeight()/2f),
-                    item.getWidth(),
-                    item.getHeight(),
-                    1,
-                    1,
-                    item.getDirection().getAngle(),
-                    0,
-                    0,
-                    item.getTexture().getWidth(),
-                    item.getTexture().getHeight(),
-                    false,
-                    false);
-            }
-
+            batch.draw(item.getTexture(),
+                item.getVector2().x,
+                item.getVector2().y,
+                (float) (item.getWidth() / 2f),
+                (float) (item.getHeight() / 2f),
+                item.getWidth(),
+                item.getHeight(),
+                1,
+                1,
+                item.getDirection().getAngle(),
+                0,
+                0,
+                item.getTexture().getWidth(),
+                item.getTexture().getHeight(),
+                false,
+                false);
         }
     }
+
 
 
 }

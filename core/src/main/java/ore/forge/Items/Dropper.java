@@ -10,16 +10,17 @@ import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.Strategies.OreEffects.OreEffect;
 
+import java.util.ArrayList;
+
 //@author Nathan Ulmen
 public class Dropper extends Item {
-
     protected final float ejectionSpeed = 6f;
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
     private int totalOreDropped;
-    protected final OreEffect oreEffect;
+    protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore.
 
     //Used to create from scratch.
     public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
@@ -84,6 +85,7 @@ public class Dropper extends Item {
         }
     }
 
+
     @Override
     public void initBlockConfiguration(int[][] numberConfig) {
         for (int i = 0; i < numberConfig.length; i++) {
@@ -121,10 +123,6 @@ public class Dropper extends Item {
         return multiOre;
     }
 
-    public float getTimeSinceLast() {
-        return timeSinceLast;
-    }
-
     public OreEffect getOreEffects() {
         return oreEffect;
     }
@@ -141,84 +139,4 @@ public class Dropper extends Item {
         return totalOreDropped;
     }
 
-    @Override
-    public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
-
-    }
-
-    /**
-     * Draws this drawable at the specified bounds. The drawable should be tinted with {@link Batch#getColor()}, possibly by
-     * mixing its own color.
-     *
-     * @param batch
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     */
-
-    @Override
-    public void draw(Batch batch, float x, float y, float width, float height) {
-
-    }
-
-    @Override
-    public float getLeftWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setLeftWidth(float leftWidth) {
-
-    }
-
-    @Override
-    public float getRightWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setRightWidth(float rightWidth) {
-
-    }
-
-    @Override
-    public float getTopHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setTopHeight(float topHeight) {
-
-    }
-
-    @Override
-    public float getBottomHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setBottomHeight(float bottomHeight) {
-
-    }
-
-    @Override
-    public float getMinWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setMinWidth(float minWidth) {
-
-    }
-
-    @Override
-    public float getMinHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setMinHeight(float minHeight) {
-
-    }
 }

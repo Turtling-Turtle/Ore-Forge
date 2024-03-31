@@ -118,7 +118,7 @@ public class UserInterface {
             this.mouseCoords.setText("X: " + (int)mouse.x + " Y: " + (int)mouse.y);
             wallet.setText("$ " + String.format("%.2e", player.getWallet()));
             specialPoints.setText("SP: " + player.getSpecialPoints());
-            activeOre.setText("Active Ore: " + oreRealm.activeOre.size());
+            activeOre.setText("Active Ore: " + oreRealm.getActiveOre().size());
             updateInterval = 0f;
         }
         stage.draw();

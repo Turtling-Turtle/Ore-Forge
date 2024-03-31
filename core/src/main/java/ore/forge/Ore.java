@@ -1,10 +1,7 @@
 package ore.forge;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import ore.forge.Enums.Direction;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledEffect;
@@ -15,7 +12,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Stack;
 
-public class Ore implements Drawable {
+public class Ore {
     protected static ItemMap itemMap = ItemMap.getSingleton();
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     private final BitSet history;
@@ -87,7 +84,7 @@ public class Ore implements Drawable {
         if (current >= updateInterval) {
            updateEffects(deltaTime);
         }
-        if (!position.equals(destination)) {
+        if (position.x != destination.x || position.y != destination.y) {
             move(deltaTime);
         } else {
             activateBlock();
@@ -173,14 +170,13 @@ public class Ore implements Drawable {
         }
     }
     public void applyEffect(OreEffect strategy) {
-        if (strategy instanceof BundledEffect) {
+        if (strategy instanceof BundledEffect) {//Base case
             for (OreEffect effect : ((BundledEffect) strategy).getStrategies()) {
                 if (effect != null) {
                     applyEffect(effect);
                 }
             }
         } else if (strategy != null) {
-            Gdx.app.log("Strategy BEING CLONED", strategy.toString());
             effects.add(strategy.clone());
         }
     }
@@ -197,7 +193,7 @@ public class Ore implements Drawable {
     }
 
     public void activateBlock() {
-        Gdx.app.log("Ore" , this.toString());
+//        Gdx.app.log("Ore" , this.toString());
         if ((itemMap.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
             ((Worker) itemMap.getBlock(position)).handle(this);
         } else {
@@ -372,79 +368,4 @@ public class Ore implements Drawable {
 
     }
 
-
-    /**
-     * Draws this drawable at the specified bounds. The drawable should be tinted with {@link Batch#getColor()}, possibly by
-     * mixing its own color.
-     *
-     * @param batch
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     */
-    @Override
-    public void draw(Batch batch, float x, float y, float width, float height) {
-
-    }
-
-    @Override
-    public float getLeftWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setLeftWidth(float leftWidth) {
-
-    }
-
-    @Override
-    public float getRightWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setRightWidth(float rightWidth) {
-
-    }
-
-    @Override
-    public float getTopHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setTopHeight(float topHeight) {
-
-    }
-
-    @Override
-    public float getBottomHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setBottomHeight(float bottomHeight) {
-
-    }
-
-    @Override
-    public float getMinWidth() {
-        return 0;
-    }
-
-    @Override
-    public void setMinWidth(float minWidth) {
-
-    }
-
-    @Override
-    public float getMinHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setMinHeight(float minHeight) {
-
-    }
 }

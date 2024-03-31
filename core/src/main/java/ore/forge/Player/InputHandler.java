@@ -129,7 +129,7 @@ public class InputHandler {
             //buildMode, active item becomes Dropper
             if (!buildMode) {
                 buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, 5f, dropperStrat);
+                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .5f, dropperStrat);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {

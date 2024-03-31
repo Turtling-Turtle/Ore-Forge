@@ -18,8 +18,11 @@ import java.util.function.Function;
 //	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
 //A maximum and minimum value can be set to ensure a modifier stays within a range.
 public class InfluencedUPG implements UpgradeStrategy {
-    public enum ValuesOfInfluence {VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
-        ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL}
+    public enum ValuesOfInfluence {
+        VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
+        ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL
+    }
+
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
     protected static final ItemMap itemTracker = ItemMap.getSingleton();
@@ -58,7 +61,7 @@ public class InfluencedUPG implements UpgradeStrategy {
 
         try {
             temp = jsonValue.getDouble("minModifier");
-        } catch (IllegalArgumentException e ) {
+        } catch (IllegalArgumentException e) {
             temp = Double.MIN_VALUE;
         }
         minModifier = temp;
@@ -66,7 +69,7 @@ public class InfluencedUPG implements UpgradeStrategy {
         try {
             temp = jsonValue.getDouble("maxModifier");
         } catch (IllegalArgumentException e) {
-            temp = Double.MIN_VALUE;
+            temp = Double.MAX_VALUE;
         }
         maxModifier = temp;
 
@@ -87,7 +90,7 @@ public class InfluencedUPG implements UpgradeStrategy {
             case TEMPERATURE -> operator.apply(ore.getOreTemp(), originalModifier);
             case MULTIORE -> operator.apply(ore.getMultiOre(), originalModifier);
             case UPGRADE_COUNT -> operator.apply(ore.getUpgradeCount(), originalModifier);
-            case ACTIVE_ORE -> operator.apply(oreRealm.activeOre.size(), originalModifier);
+            case ACTIVE_ORE -> operator.apply(oreRealm.getActiveOre().size(), originalModifier);
             case PLACED_ITEMS -> operator.apply(itemTracker.getPlacedItems().size(), originalModifier);
             case SPECIAL_POINTS -> operator.apply(player.getSpecialPoints(), originalModifier);
             case WALLET -> operator.apply(player.getWallet(), originalModifier);
@@ -101,6 +104,7 @@ public class InfluencedUPG implements UpgradeStrategy {
         } else {
             upgrade.setModifier(finalModifier);
         }
+
         upgrade.applyTo(ore);
         upgrade.setModifier(originalModifier);
     }

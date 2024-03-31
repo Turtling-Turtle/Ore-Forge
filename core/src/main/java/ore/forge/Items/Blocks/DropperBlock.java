@@ -1,5 +1,6 @@
 package ore.forge.Items.Blocks;
 
+import com.badlogic.gdx.Gdx;
 import ore.forge.Enums.Direction;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
@@ -37,8 +38,9 @@ public class DropperBlock extends Block {
 
     public void dropOre() {
         //TODO: Implement Dropper Effects.
+//        Gdx.app.log("Made it here", "idk");
         Block blockInFront = itemMap.getBlockInFront(vector2, direction);
-        if (!oreRealm.stackOfOre.isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
+        if (!oreRealm.getStackOfOre().isEmpty() && blockInFront != null && blockInFront.isProcessBlock()) {
             OreEffect effect;
             if (strategy == null) {
                 effect = null;
