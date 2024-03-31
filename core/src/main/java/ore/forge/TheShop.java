@@ -1,6 +1,7 @@
 package ore.forge;
 
 
+import ore.forge.Enums.Color;
 import ore.forge.Items.Item;
 
 import java.util.*;
@@ -11,30 +12,21 @@ public class TheShop {
     public static void main(String[] args) {
         //You have the origin of an obejct (which is the position)
         // You have the area of an object
-        //When you move you go through all entities and compare origin and position to the area of all other enteties.
+        //When you move you go through all entities and compare origin and position to the area of all other entities.
+
         int [][] conveyorConfig = {
                 {1, 1},
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-//        for (int i = 0; i <= 100; i++) {
-//            if (i % 3 == 0 && i % 5 == 0) {
-//                System.out.println("FizzBuzz");
-//            } else if (i % 3 == 0) {
-//                System.out.println("Fizz");
-//            } else if (i % 5 == 0) {
-//                System.out.println("Buzz");
-//            } else {
-//                System.out.println(i);
-//            }
-//        }
 
         int number2 = 2;
         int number3 = 3;
         number3 = number2;
         number2++;
-        System.out.println(number3);
+        System.out.println(Color.GREEN.colorId + number3 + Color.NONE.colorId);
         System.out.println(number2);
+
 //        Function<Double, Boolean> comparator;
 //        String string = null;
 //        comparator = switch (string) {
