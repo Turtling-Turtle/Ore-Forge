@@ -1,49 +1,26 @@
 package ore.forge.Enums;
 
-public enum Operator {
-    ADD {
-        @Override
-        public final double apply(double x, double y) {
-            return x + y;
-        }
-    },
-    SUBTRACT {
-        @Override
-        public final double apply(double x, double y) {
-            return x - y;
-        }
-    },
-    MULTIPLY {
-        @Override
-        public final double apply(double x, double y) {
-          return x * y;
-        }
-    },
-    DIVIDE {
-        @Override
-        public final double apply(double x, double y) {
-            return x / y;
-        }
-    },
-    EXPONENT {
-        @Override
-        public final double apply(double x, double y) {
-            return Math.pow(x, y);
-        }
-    },
-    ASSIGNMENT {//Used for setting values.
-        @Override
-        public final double apply(double x, double y) {
-          return y;
-      }
-    },
-    MODULO {
-        @Override
-        public final double apply(double x, double y) {
-            return x % y;
-        }
-    };
+import java.util.function.DoubleBinaryOperator;
 
-    public abstract double apply(double x, double y);
+public enum Operator {
+    ADD, SUBTRACT, MULTIPLY, DIVIDE, EXPONENT, ASSIGNMENT, MODULO;
+
+    public final double apply(double x, double y) {
+        return operator.applyAsDouble(x,y);
+    }
+
+    private final DoubleBinaryOperator operator;
+
+    Operator() {
+        operator = switch (this) {
+            case ADD -> (x,y) -> x + y;
+            case SUBTRACT -> (x,y) -> x - y;
+            case MULTIPLY -> (x,y) -> x * y;
+            case DIVIDE -> (x,y) -> x / y;
+            case EXPONENT -> (x, y) -> Math.pow(x, y);
+            case ASSIGNMENT -> (x,y) -> y;
+            case MODULO -> (x,y) -> x % y;
+        };
+    }
 
 }
