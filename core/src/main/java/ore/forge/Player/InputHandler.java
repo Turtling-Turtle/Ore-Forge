@@ -3,7 +3,6 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
@@ -21,18 +20,17 @@ import java.util.Stack;
 
 //@author Nathan Ulmen
 public class InputHandler {
+    private enum Mode {DEFAULT, BUILDING, SELECTING}
     protected static final ItemMap itemMap = ItemMap.getSingleton();
     protected static final Player player = Player.getSingleton();
-    public Vector3 mouseScreen, mouseWorld;
     private final float cameraSpeed;
-    private boolean buildMode;
+    public Vector3 mouseScreen, mouseWorld;
+    private Mode currentMode;
     private Item heldItem;
     public Item selectedItem;
-    public Stack<Item> recentlyPlaced;
-    private InventoryNode heldNode;
-    private boolean isSelecting;
-    private boolean isHeldDown;
+    private InventoryNode heldNode;//Will replace heldItem once I build inventory.
     public Rectangle selectionRectangle;
+    public Stack<Item> recentlyPlaced;
     private final ArrayList<Item> contiguousPlacedItems;
     private final ArrayList<Item> selectedItems;
 
@@ -86,12 +84,11 @@ public class InputHandler {
         mouseScreen = new Vector3();
         mouseWorld = new Vector3();
         cameraSpeed = 20f;
-        buildMode = false;
-        isSelecting = false;
         selectionRectangle = new Rectangle();
         contiguousPlacedItems = new ArrayList<>();
         recentlyPlaced = new Stack<>();
         selectedItems = new ArrayList<>();
+        currentMode = Mode.DEFAULT;
     }
 
     public void updateMouse(OrthographicCamera camera) {
@@ -110,45 +107,37 @@ public class InputHandler {
         handleMovement(deltaT, camera);
         handleZoom(deltaT, camera);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (!buildMode) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {//Check to see if escape is pressed.
+            if (currentMode != Mode.BUILDING) {
                 game.setScreen(game.pauseMenu);
                 itemMap.saveState();
             } else {
-                buildMode = false;
+                currentMode = Mode.DEFAULT;
             }
         }
+
+        itemSelect();
+        handlePlacement();
+        handleSelecting();
+    }
+
+    private void itemSelect() {
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
-            //buildMode, active item becomes conveyor
-            if (!buildMode) {
-                buildMode = true;
-                heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);
-            }
+            currentMode = Mode.BUILDING;
+            heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
-            //buildMode, active item becomes Dropper
-            if (!buildMode) {
-                buildMode = true;
-                heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .5f, dropperStrat);
-            }
+            currentMode = Mode.BUILDING;
+            heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .5f, dropperStrat);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
-            //buildMode, active item becomes upgrader
-            if (!buildMode) {
-                buildMode = true;
-                heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
-            }
+            currentMode = Mode.BUILDING;
+            heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
-            //buildmode, Active Item becomes Furnace
-            if (!buildMode) {
-                buildMode = true;
-                heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
-            }
+            currentMode = Mode.BUILDING;
+            heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
         }
-//        normalPlacement();
-        handleDragPlacement();
-        handleObserverMode();
     }
 
     private void handleMovement(float deltaTime, OrthographicCamera camera) {
@@ -180,22 +169,22 @@ public class InputHandler {
 
     }
 
-    private void handleDragPlacement() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R) && buildMode) {
-            heldItem.rotateClockwise();
-        }
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && buildMode) {
-            isHeldDown = true;
-            //1st Attempt to placeItem, Check/compare to all previously placed items in this "session" of drag placement
-            if (heldItem.placeItem(mouseWorld, contiguousPlacedItems)) {
-                contiguousPlacedItems.add(heldItem);
-                updateHeldItem();
+    private void handlePlacement() {
+        //If we are building we should check to see if we need to rotate the item and or place it.
+        if (currentMode == Mode.BUILDING) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) { heldItem.rotateClockwise(); }
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (heldItem.didPlace(mouseWorld, contiguousPlacedItems)) { //make sure the item was placed down
+                    contiguousPlacedItems.add(heldItem);
+                    updateHeldItem();
+                }
+            } else {
+                //Clear items as we are no longer holding down the place button.
+                contiguousPlacedItems.clear();
             }
-        } else {
-            isHeldDown = false;
-            contiguousPlacedItems.clear();
+            //check to see if undid any placements.
+            undo();
         }
-        undo();
     }
 
     private void updateHeldItem() {
@@ -211,42 +200,42 @@ public class InputHandler {
     }
 
     private void undo() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && buildMode) {
-            if (!recentlyPlaced.isEmpty()) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && !recentlyPlaced.isEmpty()) {
                 recentlyPlaced.pop().removeItem();
-            }
-        } else if (!buildMode) {
+        } else if (currentMode != Mode.BUILDING) {
             recentlyPlaced.clear();
         }
     }
 
-    private void handleObserverMode(){
-        if (!buildMode && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!isInvalid() && itemMap.getBlock(mouseWorld.x, mouseWorld.y) !=null) {
+    private void handleSelecting() {
+        if (currentMode != Mode.BUILDING && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (!isInvalid() && itemMap.getBlock(mouseWorld.x, mouseWorld.y) != null) {
                 selectedItem = itemMap.getItem(mouseWorld);
-                isSelecting = true;
-            } else {
-                isSelecting = false;
-                selectedItem = null;
-                contiguousPlacedItems.clear();
+                currentMode = Mode.SELECTING;
             }
         }
-        if (isSelecting && Gdx.input.isKeyPressed(Input.Keys.R)) {//Start build mode with the selected item.
-            isSelecting = false;
-            selectedItem.removeItem();
-            buildMode = true;
-            heldItem = selectedItem;
-            selectedItem = null;
+        if (currentMode == Mode.SELECTING) {
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {//Start build mode with the selected item.
+                selectedItem.removeItem();
+                heldItem = selectedItem;
+                selectedItem = null;
+                currentMode = Mode.BUILDING;
+                return; //Return because we are no longer selecting.
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.Z)) { //Remove the selected Item from the base.
+                selectedItem.removeItem();
+                selectedItem = null;
+                currentMode = Mode.DEFAULT;
+                return; //return because we are no longer selecting.
+
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                //Logic for item specific effects.
+                //item.activate();
+            }
         }
-        if (isSelecting && Gdx.input.isKeyPressed(Input.Keys.Z)) {
-            selectedItem.removeItem();
-            isSelecting = false;
-            selectedItem = null;
-        }
-        if (isSelecting && Gdx.input.isKeyPressed(Input.Keys.E)) {
-            //Logic for item specific effects.
-            //item.activate();
-        }
+
+
     }
 
     public Item getHeldItem() {
@@ -254,19 +243,21 @@ public class InputHandler {
     }
 
     public boolean isBuilding() {
-        return buildMode;
+        return currentMode == Mode.BUILDING;
     }
 
     public boolean isSelecting() {
-        return isSelecting;
+        return currentMode == Mode.SELECTING;
     }
 
     public ArrayList<Item> getSelectedItems() {
         return selectedItems;
     }
+
     private boolean isInvalid() {
         return mouseWorld.x > itemMap.mapTiles.length || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length || mouseWorld.y < 0;
     }
+
 
 
 }

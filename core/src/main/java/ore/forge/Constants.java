@@ -5,8 +5,6 @@ public class Constants {
     public static final int GRID_DIMENSIONS = 50;
     public static final int GRID_AREA = GRID_DIMENSIONS * GRID_DIMENSIONS;
 
-
-
     public static final String PLAYER_STATS_FP = "Player/PlayerSave.json";
     public static final String INVENTORY_FP = "Player/Inventory.json";
     public static final String UPGRADER_FP = "Items/Upgraders.json";

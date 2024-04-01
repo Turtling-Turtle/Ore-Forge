@@ -3,7 +3,6 @@ package ore.forge.Items;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.utils.TransformDrawable;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.Direction;
 import ore.forge.Items.Blocks.Block;
@@ -105,7 +104,7 @@ public abstract class Item {
         }
     }
 
-    public boolean placeItem(Vector3 vector3, ArrayList<Item> previousItems) {
+    public boolean didPlace(Vector3 vector3, ArrayList<Item> previousItems) {
         //TODO: Re-write to not be so slow/bad.
         int X = (int) vector3.x;
         int Y = (int) vector3.y;

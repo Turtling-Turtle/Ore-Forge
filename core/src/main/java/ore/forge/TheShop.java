@@ -1,7 +1,4 @@
 package ore.forge;
-
-
-import ore.forge.Enums.Color;
 import ore.forge.Items.Item;
 
 import java.util.*;
@@ -19,12 +16,12 @@ public class TheShop {
                 {1, 1},
                 {1, 1, 1, 1, 1, 1},
         };
-
+        int zero = 0;
         int number2 = 2;
         int number3 = 3;
         number3 = number2;
         number2++;
-        System.out.println(Color.GREEN.colorId + number3 + Color.NONE.colorId);
+        System.out.println(number2/zero);
         System.out.println(number2);
 
 //        Function<Double, Boolean> comparator;
