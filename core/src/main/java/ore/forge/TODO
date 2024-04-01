@@ -36,14 +36,7 @@ Furnace:
 
 TODO: Fix/guard against divide by zero errors in Upgrade Strategies.
 TODO: Change ore "state"(doomed etc) from boolean to Enum.
-TODO: Make state in input handler into enums.
-
-
-
 
 Things to Talk to professor about:
 
 For each optimization in act method of ore with for each loop.
-
-
-

@@ -1,6 +1,5 @@
 package ore.forge.Enums;
 
-import ore.forge.FunctionalInterfaces.BinomialFunction;
 
 public enum BooleanOperator {
     GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL_TO, LESS_THAN_EQUAL_TO, EQUAL_TO;

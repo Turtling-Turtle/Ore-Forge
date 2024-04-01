@@ -5,7 +5,6 @@ import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
 
-import java.util.function.Function;
 
 //Unknown if this will be used.
 public enum ValueOfInfluence {
