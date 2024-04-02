@@ -94,8 +94,8 @@ public class PauseMenu extends CustomScreen {
     public void show() {
         screenFadeIn(0.2f);
         Gdx.input.setInputProcessor(this.stage);
-        game.fpsCounter.setPosition(100, 100);
-        stage.addActor(game.fpsCounter);
+        game.memoryCounter.setPosition(100, 100);
+        stage.addActor(game.memoryCounter);
     }
 
     @Override

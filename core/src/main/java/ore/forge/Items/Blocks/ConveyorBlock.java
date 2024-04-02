@@ -51,6 +51,7 @@ public class ConveyorBlock extends Block implements Worker {
             }
 //            ore.setForce(force);
             ore.setDestination(new Vector2(x,y), speed, direction);
+//            ore.setDestination(blockInFront.getVector().x, blockInFront.getVector().y, speed, direction);
         }
     }
 

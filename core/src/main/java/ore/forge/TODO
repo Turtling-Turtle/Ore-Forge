@@ -40,3 +40,5 @@ TODO: Change ore "state"(doomed etc) from boolean to Enum.
 Things to Talk to professor about:
 
 For each optimization in act method of ore with for each loop.
+
+Just making the ore that is passed into an upgrade effect A property of the upgrade so that I don't have to pass it around.

@@ -212,6 +212,10 @@ public class InputHandler {
             if (!isInvalid() && itemMap.getBlock(mouseWorld.x, mouseWorld.y) != null) {
                 selectedItem = itemMap.getItem(mouseWorld);
                 currentMode = Mode.SELECTING;
+            } else {
+                currentMode = Mode.DEFAULT;
+                heldItem = null;
+                selectedItems.clear();
             }
         }
         if (currentMode == Mode.SELECTING) {

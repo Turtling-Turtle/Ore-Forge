@@ -1,13 +1,11 @@
 package ore.forge;
 import ore.forge.Enums.BooleanOperator;
-import ore.forge.Enums.Operator;
+import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.FunctionalInterfaces.BinomialFunction;
 import ore.forge.Items.Item;
-import ore.forge.Strategies.OreEffects.PropertyChangeTrigger;
-import ore.forge.Strategies.UpgradeStrategies.ConditionalUPG;
+import ore.forge.Strategies.OreEffects.ObserverEffect;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 //@author Nathan Ulmen
@@ -45,8 +43,8 @@ public class TheShop {
             double oreValue;
             float temperature;
             int multiOre;
-            ArrayList<PropertyChangeTrigger> listeners;
-            Stack<PropertyChangeTrigger> expiredListeners;
+            ArrayList<ObserverEffect> listeners;
+            Stack<ObserverEffect> expiredListeners;
 
             public double getOreValue() {
                 return oreValue;
@@ -66,19 +64,19 @@ public class TheShop {
             }
 
             public void notifyListeners(Object mutatedField) {
-                for(PropertyChangeTrigger trigger : listeners) {
+                for(ObserverEffect trigger : listeners) {
                     if (trigger.getObservedField().equals(mutatedField)) {
-                        trigger.activate(deltaT, this);
+//                        trigger.activate(deltaT, this);
                     }
                 }
                 clearOldListeners(); //remove listeners that have expired.
             }
 
-            public void addListeners(PropertyChangeTrigger listener) {
+            public void addListeners(ObserverEffect listener) {
                 listeners.add(listener);
             }
 
-            public void removeListeners(PropertyChangeTrigger target) {
+            public void removeListeners(ObserverEffect target) {
                 expiredListeners.add(target);
             }
 
@@ -114,9 +112,10 @@ public class TheShop {
                 //
                 public BinomialFunction<Conditions, Conditions, Boolean> comparator;
                 public Function<Ore, Boolean> comp;
+                Enum<?> anEnum;
 
                 public Conditions(BoolType type) {
-                   comp = switch (evalType) {
+                    comp = switch (evalType) {
                        case AND -> (Ore ore) -> simpleConditionOne.evaluate(ore) && simpleConditionTwo.evaluate(ore);
                        case OR -> (Ore ore) -> simpleConditionOne.evaluate(ore) || simpleConditionTwo.evaluate(ore);
                        default -> (Ore ore) -> simpleConditionOne.evaluate(ore) || simpleConditionTwo.evaluate(ore);

@@ -44,8 +44,8 @@ public abstract class CustomScreen implements Screen {
 
     @Override
     public void show() {
-        game.fpsCounter.setPosition(100, 100);
-        stage.addActor(game.fpsCounter);
+        game.memoryCounter.setPosition(100, 100);
+        stage.addActor(game.memoryCounter);
         screenFadeIn(0.1f);
     }
 

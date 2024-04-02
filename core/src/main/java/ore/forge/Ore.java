@@ -3,9 +3,11 @@ package ore.forge;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Enums.Direction;
+import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledEffect;
 import ore.forge.Strategies.OreEffects.OreEffect;
+import ore.forge.Strategies.OreEffects.ObserverEffect;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -24,6 +26,7 @@ public class Ore {
     private Texture texture;
     private final ArrayList<OreEffect> effects;
     private final Stack<OreEffect> removalStack;
+    private final ArrayList<ObserverEffect> observerEffects;
     private String oreName;
     private double oreValue;
     private int upgradeCount, multiOre, oreHistory;
@@ -34,6 +37,7 @@ public class Ore {
     private float mass;
     private final float updateInterval; //Interval for how often effects are updated.
     private float current;
+    private float deltaTime;
 
     public Ore() {
         this.oreValue = 0;
@@ -54,6 +58,7 @@ public class Ore {
         acceleration = new Vector2(1, 1);
         velocity = new Vector2();
         force = new Vector2();
+        observerEffects = new ArrayList<>();
         updateInterval = 0.01f;//effects are updated 100 times every second.
     }
 
@@ -61,28 +66,29 @@ public class Ore {
     //velocity final = Vᵢ + a * Δt
     // a = F/m
     //momentum = m * v
-    public void updatePosition(float deltaTime) {
-        acceleration.y = force.y/ mass;
-        //Find final velocity in y direction.
-        velocity.y = velocity.y + acceleration.y * deltaTime;
-        position.y = velocity.y * deltaTime + .5f * acceleration.y * (deltaTime*deltaTime);
-
-        //Find final velocity in x Direction.
-        acceleration.x = force.x / mass;
-        velocity.x = velocity.x + acceleration.x * deltaTime;
-        position.x = velocity.x * deltaTime + .5f * acceleration.x * (deltaTime*deltaTime);
-
-    }
-
-    public void setForce(Vector2 vector2) {
-        this.force.x = vector2.x;
-        this.force.y = vector2.y;
-    }
+//    public void updatePosition(float deltaTime) {
+//        acceleration.y = force.y/ mass;
+//        //Find final velocity in y direction.
+//        velocity.y = velocity.y + acceleration.y * deltaTime;
+//        position.y = velocity.y * deltaTime + .5f * acceleration.y * (deltaTime*deltaTime);
+//
+//        //Find final velocity in x Direction.
+//        acceleration.x = force.x / mass;
+//        velocity.x = velocity.x + acceleration.x * deltaTime;
+//        position.x = velocity.x * deltaTime + .5f * acceleration.x * (deltaTime*deltaTime);
+//
+//    }
+//
+//    public void setForce(Vector2 vector2) {
+//        this.force.x = vector2.x;
+//        this.force.y = vector2.y;
+//    }
 
     public void act(float deltaTime) {
+        this.deltaTime = deltaTime;
         current += deltaTime;
         if (current >= updateInterval) {
-           updateEffects(deltaTime);
+            updateEffects(deltaTime);
         }
         if (position.x != destination.x || position.y != destination.y) {
             move(deltaTime);
@@ -96,7 +102,7 @@ public class Ore {
 //                    effects.get(i).activate(deltaTime, this);
 //                }
 //            }
-           updateEndStepEffects(deltaTime); //Faster to put into own method than doing the below.
+            updateEndStepEffects(deltaTime); //Faster to put into own method than doing the below.
 //            for(OreEffect strat : effects) {
 //                if (strat.isEndStepEffect()) {
 //                    strat.activate(deltaTime, this);
@@ -157,6 +163,10 @@ public class Ore {
                 effect.activate(deltaTime, this);
             }
         }
+        removeOldEffects();
+    }
+
+    private void removeOldEffects() {
         while (!removalStack.empty()) {
             effects.remove(removalStack.pop());
         }
@@ -169,16 +179,29 @@ public class Ore {
             }
         }
     }
+
     public void applyEffect(OreEffect strategy) {
+        if (strategy == null) {
+            return;
+        } //Base case
         if (strategy instanceof BundledEffect) {//Base case
             for (OreEffect effect : ((BundledEffect) strategy).getStrategies()) {
-                if (effect != null) {
-                    applyEffect(effect);
-                }
+                applyEffect(effect);
             }
-        } else if (strategy != null) {
+        } else if (strategy instanceof ObserverEffect) {
+            observerEffects.add((ObserverEffect) strategy.clone());
+        } else {
             effects.add(strategy.clone());
         }
+    }
+
+    public void notifyObserverEffects(ValueOfInfluence mutatedField) {
+        for (ObserverEffect observer : observerEffects) {
+            if (observer.getObservedField() == mutatedField) {
+                observer.activate(deltaTime, this);
+            }
+        }
+        removeOldEffects();
     }
 
     public OreEffect getEffect() {
@@ -188,6 +211,12 @@ public class Ore {
 
     public void setDestination(Vector2 target, float speed, Direction direction) {
         this.destination.set(target);
+        this.direction = direction;
+        setMoveSpeed(speed);
+    }
+
+    public void setDestination(float x, float y, float speed, Direction direction) {
+        this.destination.set(x,y);
         this.direction = direction;
         setMoveSpeed(speed);
     }

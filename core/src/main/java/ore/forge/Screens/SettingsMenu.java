@@ -67,11 +67,11 @@ public class SettingsMenu extends CustomScreen {
             public void clicked(InputEvent event, float x, float y) {
                 ButtonHelper.getButtonClickSound().play();
                 if (fpsCheckBox.isChecked()) {
-                    game.fpsCounter.setVisible(true);
+                    game.memoryCounter.setVisible(true);
                     fpsCounterLabel.setText("FPS Counter: Enabled");
                     fpsCounterLabel.setColor(Color.GREEN);
                 } else {
-                    game.fpsCounter.setVisible(false);
+                    game.memoryCounter.setVisible(false);
                     fpsCounterLabel.setText("FPS Counter: Disabled");
                     fpsCounterLabel.setColor(Color.RED);
                 }
@@ -116,8 +116,8 @@ public class SettingsMenu extends CustomScreen {
     public void show() {
         screenFadeIn(0.2f);
         Gdx.input.setInputProcessor(this.stage);
-        game.fpsCounter.setPosition(100, 100);
-        stage.addActor(game.fpsCounter);
+        game.memoryCounter.setPosition(100, 100);
+        stage.addActor(game.memoryCounter);
     }
 
     /**

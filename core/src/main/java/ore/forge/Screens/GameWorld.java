@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ore.forge.*;
@@ -65,11 +64,14 @@ public class GameWorld extends CustomScreen{
         drawPlacedItems(delta);
         //Draw BuildMode grid Lines
         drawBuildMode();
-        //Draw Active Ore
-        drawActiveOre(delta);
-        //Draw held item if build mode is active, needs some work.
-        drawHeldItem();
+        //Draw selected Item
         drawSelectedItem();
+        //Draw active ore
+        drawActiveOre(delta);
+        //Draw Held Item.
+        drawHeldItem();
+        //Draw held item if build mode is active, needs some work.
+
 
         batch.end();
         userInterface.draw(delta);
@@ -148,8 +150,8 @@ public class GameWorld extends CustomScreen{
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this.stage);
-        game.fpsCounter.setPosition(camera.position.x, camera.position.y);
-        stage.addActor(game.fpsCounter);
+        game.memoryCounter.setPosition(camera.position.x, camera.position.y);
+        stage.addActor(game.memoryCounter);
     }
 
     private void drawWorldTiles(Camera camera) {

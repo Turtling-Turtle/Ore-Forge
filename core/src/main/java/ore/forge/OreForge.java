@@ -23,7 +23,7 @@ import org.bson.Document;
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
 	private ResourceManager resourceManager;
-	public Label fpsCounter;
+	public Label memoryCounter;
 	public Player player;
 
 
@@ -39,10 +39,10 @@ public class OreForge extends Game {
 //        mongoConnect();
 		BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
 		Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
-		fpsCounter = new Label("", fpsStyle);
-		fpsCounter.setFontScale(0.6f);
-		fpsCounter.setPosition(99, 100);
-		fpsCounter.setVisible(false);
+		memoryCounter = new Label("", fpsStyle);
+		memoryCounter.setFontScale(0.6f);
+		memoryCounter.setPosition(99, 100);
+		memoryCounter.setVisible(false);
 
 
 
@@ -75,7 +75,7 @@ public class OreForge extends Game {
 		// Clear the screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		fpsCounter.setText(((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024/1024) + "MB");
+		memoryCounter.setText(((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024/1024) + "MB");
 //		Gdx.app.log("MB", String.valueOf(((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1024/1024)));
 //        Gdx.app.log("FPS" , String.valueOf(Gdx.graphics.getFramesPerSecond()));
 		// Update and render the current screen
