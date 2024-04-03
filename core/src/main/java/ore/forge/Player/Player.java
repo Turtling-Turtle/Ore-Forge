@@ -15,11 +15,11 @@ public class Player {
     public Inventory inventory;
     private long numberOfTicks = 0;
 
-    public Player() {
+    private Player() {
 
     }
 
-    public Player(Inventory inventory) {
+    private Player(Inventory inventory) {
         this.inventory = inventory;
     }
 

@@ -7,16 +7,17 @@ import ore.forge.Player.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Consumer;
-import java.util.function.DoubleBinaryOperator;
-import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
 //An InfluencedUPG takes a BasicUPG and adjusts its modifier using 2 paramaters.
 //	1. ValueOfInfluence - The Value that the adjustment is based on.
 //	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
+
 //A maximum and minimum value can be set to ensure a modifier stays within a range.
+//An Influenced Upgrade takes a Basic upgrade and adjusts its modifier,
+//The finalModifier is equal to/ found by this equation: finalModifier = scalar * (ValueOfInfluence [operator] baseModifier)
+//You can also set min and maximum values for the finalModifier to ensure it isnt greater than or less than a specific value.
 public class InfluencedUPG implements UpgradeStrategy {
     public enum ValuesOfInfluence {
         VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,

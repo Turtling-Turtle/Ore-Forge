@@ -18,8 +18,13 @@ import java.util.HashMap;
 //The ItemMap is responsible for keeping track of placed items and retrieving the positions of their blocks
 public class ItemMap {
     protected static ItemMap itemMapSingleton = new ItemMap();
-    public final Block[][] mapTiles = new Block[Constants.GRID_DIMENSIONS][Constants.GRID_DIMENSIONS];
-    private final ArrayList<Item> placedItems = new ArrayList<>();
+    public final Block[][] mapTiles;
+    private final ArrayList<Item> placedItems;
+
+    private ItemMap() {
+        mapTiles = new Block[Constants.GRID_DIMENSIONS][Constants.GRID_DIMENSIONS];
+        placedItems = new ArrayList<>(50);
+    }
 
     public static ItemMap getSingleton() {
         if (itemMapSingleton == null) {
@@ -96,7 +101,6 @@ public class ItemMap {
            //print Item name, direction, and position.
             mapData.add(new MapData(item.getName(), item.getDirection(), item.getVector2()));
         }
-
         String jsonOutput = json.prettyPrint(mapData);
         FileHandle fileHandle = Gdx.files.local(Constants.BASE_LAYOUT_FP);
         fileHandle.writeString(jsonOutput, false);
@@ -104,21 +108,23 @@ public class ItemMap {
 
     public void loadState(ResourceManager resourceManager) {
         //TODO: Need to make sure that this goes through the players inventory so that they cant place items they dont have.
-        System.out.println("Made it to beginning of load State!");
+//        System.out.println("Made it to beginning of load State!");
         HashMap<String, Item> allItems = resourceManager.getAllItems();
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents;
         try {
         fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
         } catch (SerializationException e) {
-            return;
+            return;//Nothing to load so no we just leave the function.
         }
+
         String itemName;
         Item itemToPlace;
         for (JsonValue jsonValue : fileContents) {
             itemName = jsonValue.getString("itemName");
-            System.out.println(itemName);
-            System.out.println(allItems.get(itemName));
+//            System.out.println(itemName);
+//            System.out.println(allItems.get(itemName));
+            //Create the Item based on the Stored Version in All Items.
             itemToPlace = switch (allItems.get(itemName)) {
                 case Upgrader ignored -> new Upgrader((Upgrader) allItems.get(itemName));
                 case Furnace ignored -> new Furnace((Furnace) allItems.get(itemName));
@@ -126,9 +132,11 @@ public class ItemMap {
                 case Conveyor ignored -> new Conveyor((Conveyor) allItems.get(itemName));
                 default -> throw new IllegalStateException("Unexpected value: " + allItems.get(itemName));
             };
+            //read in the items coordinates and its Direction.
             int x = jsonValue.get("position").getInt("x");
             int y = jsonValue.get("position").getInt("y");
             itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")));
+            //place the item
             itemToPlace.placeItem(x,y);
             System.out.println(itemToPlace);
         }
@@ -159,9 +167,9 @@ public class ItemMap {
     }
 
     private class MapData {
-        public String itemName;
-        public Direction direction;
-        public Vector2 position;
+        private final String itemName;
+        private final Direction direction;
+        private final Vector2 position;
 
         public MapData(String itemName, Direction direction, Vector2 position) {
             this.itemName = itemName;

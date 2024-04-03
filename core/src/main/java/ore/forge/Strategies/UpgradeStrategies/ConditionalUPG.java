@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
+//A conditional upgrade will execute/apply one of two different upgrade strategies depending on the result of the condition it evaluates.
 public class ConditionalUPG implements UpgradeStrategy {
     public enum Condition {VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
 //    private final Enum<?> condition;

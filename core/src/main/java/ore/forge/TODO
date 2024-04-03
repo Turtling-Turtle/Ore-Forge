@@ -42,3 +42,39 @@ Things to Talk to professor about:
 For each optimization in act method of ore with for each loop.
 
 Just making the ore that is passed into an upgrade effect A property of the upgrade so that I don't have to pass it around.
+
+
+
+//Express Interest Here:
+    I would like to express my interest in the IT Software Development Internship at Idaho Central Credit Union.
+I am eager to learn about and participate in software development in whatever ways I can whether that be working to write the Software itself or even as someone who
+tests it.
+
+//Talk about misc stuff/ Why I want to work here:
+
+//Talk about School Here:
+    When I first started school my declared major my goal was to work on designing the hardware but after taking some
+of the Computer Science Courses I found out/discovered that the "craft" of programming was far more interesting to me.
+When I look back a year ago and reflect on what I knew about programming then vs what I know about programming now I am
+amazed at how much Ive learned. I know this is just the beginning and I hope that through this internship I will be able
+to learn even more about programming and software development.
+
+//Talk about Game/Portfolio Here:
+    In school I have studied/learned about object oriented programming, primarily through Java but also Python.
+In my spare time I have been working on writing a top down 2D Tycoon/Base Building game with Java using the LIBGDX Graphics framework.
+I feel like this personal project has contributed so much to what I have learned about programming. When I first started working on the
+project we were learning about inheritance and polymorphism in class and so I eagerly applied it to my game. Since then I have learned to
+favor composition and to be very careful when using inheritance. Through my game I also learnt about various different serialization formats
+such as JSON and XML. I decided to use JSON as my serialization format due to its readability and since then it guided/influenced me to
+write far more flexible/robust code. However due to the way that objects are structured in my game the JSON wasnt/isnt super easy to wright
+by hand so I decided to create a command line Python program that generates JSON data for Items by prompting the user. Once the game is fully complete I want to
+release the Python program so that other people can easily create their own custom items. Ive also integrated MongoDB into the program
+so that I can "update" the game with new items too.
+
+I am drawn to this position because I want to learn about how code is written differently different environments
+I also think that by participating in things like code reviews will expand my skill set.
+
+
+Sincerely,
+Nathan Ulmen
+

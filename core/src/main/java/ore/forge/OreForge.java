@@ -36,7 +36,6 @@ public class OreForge extends Game {
 	private SpriteBatch spriteBatch;
 
 	public void create() {
-//        mongoConnect();
 		BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
 		Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 		memoryCounter = new Label("", fpsStyle);
@@ -57,7 +56,7 @@ public class OreForge extends Game {
 		* */
 		spriteBatch = new SpriteBatch();
 		resourceManager = new ResourceManager();
-        OreRealm.getSingleton().populate(); //Create all ore.
+        OreRealm.getSingleton().populate(); //Create/pool all ore.
         Player.getSingleton().inventory = new Inventory(resourceManager);
         Player.getSingleton().loadSaveData();
 //        ItemMap.getSingleton().loadState(resourceManager);
@@ -95,25 +94,6 @@ public class OreForge extends Game {
 	public MainMenu getMainMenuScreen() {
 		return mainMenuScreen;
 	}
-
-    public void mongoConnect() {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("OreForge");
-        MongoCollection<Document> collection = database.getCollection("Conveyors");
-        Json json = new Json();
-        json.setOutputType(JsonWriter.OutputType.json);
-        FileHandle fileHandle = Gdx.files.local("MongoTEST.json");
-
-        fileHandle.writeString("[\n", false);
-        for (Document document : collection.find()) {
-            document.remove("_id");
-            String jsonString = json.prettyPrint(document.toJson());
-            fileHandle.writeString(jsonString +",\n", true);
-        }
-        fileHandle.writeString("]", true);
-        mongoClient.close();
-    }
-
 
 
 }

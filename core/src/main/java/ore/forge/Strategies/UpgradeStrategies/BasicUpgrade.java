@@ -9,16 +9,16 @@ import java.util.function.Consumer;
 //@author Nathan Ulmen
 public class BasicUpgrade implements UpgradeStrategy {
     public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE, SPEED}
-    //More VTMS: effect, Duration, Speed,
+    //More VTMS: effect, Duration.
     private double modifier;
     private final ValueToModify valueToModify;
     private final Consumer<Ore> upgradeFunction;
     private final Operator operator;
 
 
-    public BasicUpgrade(double modifier, Operator operatorType, ValueToModify valueToModify) {
+    public BasicUpgrade(double mod, Operator operatorType, ValueToModify valueToModify) {
        this.operator = operatorType;
-       this.modifier = modifier;
+       this.modifier = mod;
        this.valueToModify = valueToModify;
        upgradeFunction = configureUpgradeFunction();
     }

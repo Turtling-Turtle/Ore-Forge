@@ -37,8 +37,8 @@ public class SettingsMenu extends CustomScreen {
     public SettingsMenu(final OreForge game, final ResourceManager resourceManager) {
         super(game, resourceManager);
         //VSYNC TOGGLE
-        checkBox = ButtonHelper.createCheckBox("", Color.BLACK, 128, 128);
-        checkBox.setPosition(Gdx.graphics.getWidth()/3f, 1000);
+        checkBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth()/10f, Gdx.graphics.getWidth()/10f);
+        checkBox.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight()/1.5f);
         checkBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -60,8 +60,8 @@ public class SettingsMenu extends CustomScreen {
         Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 
         //FPS COUNTER OPTION
-        fpsCheckBox = ButtonHelper.createCheckBox("", Color.BLACK, 128, 128);
-        fpsCheckBox.setPosition(Gdx.graphics.getWidth()/3f, 850);
+        fpsCheckBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
+        fpsCheckBox.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight()/2f);
         fpsCheckBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -78,7 +78,7 @@ public class SettingsMenu extends CustomScreen {
             }
         });
 
-        backButton = ButtonHelper.createRoundTextButton("<------", Color.RED, 256, 128);
+        backButton = ButtonHelper.createRoundTextButton("<------", Color.RED, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
         backButton.setPosition(0, Gdx.graphics.getHeight()/1.1f);
         backButton.addListener(new ClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class SettingsMenu extends CustomScreen {
         vsync.setColor(Color.RED);
         //FpsButton Description
         fpsCounterLabel = new Label("FPS Counter: Disabled", fpsStyle);
-        fpsCounterLabel.setPosition(fpsCheckBox.getX()+fpsCheckBox.getWidth(), fpsCheckBox.getY()+checkBox.getHeight()*0.5f);
+        fpsCounterLabel.setPosition(fpsCheckBox.getX()+fpsCheckBox.getWidth(), fpsCheckBox.getY()+fpsCheckBox.getHeight()*0.5f);
         fpsCounterLabel.setColor(Color.RED);
 
 

@@ -13,7 +13,7 @@ public class OreRealm {
     private final Stack<Ore> stackOfOre, removalStack;
     private final ArrayList<Ore> activeOre;
 
-    public OreRealm() {
+    private OreRealm() {
         stackOfOre = new Stack<>();
         activeOre = new ArrayList<>(Constants.ORE_LIMIT);
         removalStack = new Stack<>();
