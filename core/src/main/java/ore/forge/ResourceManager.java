@@ -29,14 +29,8 @@ public class ResourceManager {
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
+//        mongoConnect();
 
-        mongoConnect();
-//        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> loadItems(Constants.CONVEYORS_FP));
-//        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> loadItems(Constants.DROPPERS_FP));
-//        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> loadItems(Constants.UPGRADER_FP));
-//        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> loadItems(Constants.FURNACE_FP));
-
-//        CompletableFuture.allOf(conveyorFuture, dropperFuture, upgraderFuture, furnaceFuture).join();
         long t1 = System.currentTimeMillis();
         loadItems(Constants.CONVEYORS_FP);
         loadItems(Constants.DROPPERS_FP);
@@ -47,8 +41,6 @@ public class ResourceManager {
 //            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
 //            System.out.println();
 //        }
-
-
     }
 
     public void loadItems(String fileToParse) {
@@ -96,10 +88,7 @@ public class ResourceManager {
         CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
         CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));
         CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> checkVersion("Droppers", Constants.DROPPERS_FP, database));
-//        updateLocalFile("Droppers", Constants.DROPPERS_FP, database);
-//        updateLocalFile("Furnaces", Constants.FURNACE_FP, database);
-//        updateLocalFile("Upgraders", Constants.UPGRADER_FP, database);
-//        updateLocalFile("Conveyors", Constants.CONVEYORS_FP, database);
+
         CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
         mongoClient.close();
         Gdx.app.log("Mongo Loader", Color.GREEN.colorId + "Verified local files in " + (System.currentTimeMillis() - t1) + "ms" + Color.NONE.colorId);

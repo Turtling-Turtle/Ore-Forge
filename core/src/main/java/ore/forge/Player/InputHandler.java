@@ -61,6 +61,9 @@ public class InputHandler {
     };
 
 
+
+    //Test objects:
+
     UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUpgrade();
@@ -122,6 +125,8 @@ public class InputHandler {
     }
 
     private void itemSelect() {
+        //Version with inventory would look like this:
+        //heldItem = Inventory.getNode.getItem.clone()
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
             currentMode = Mode.BUILDING;
             heldItem = new Conveyor("Test Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);

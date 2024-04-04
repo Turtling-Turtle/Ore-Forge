@@ -63,10 +63,10 @@ public class GameWorld extends CustomScreen{
         batch.begin();
         //Draw world tiles.
         drawWorldTiles(camera);
-        //Draw placed items
-        drawPlacedItems(delta);
         //Draw BuildMode grid Lines
         drawBuildMode();
+        //Draw placed items
+        drawPlacedItems(delta);
         //Draw selected Item
         drawSelectedItem();
         //Draw active ore
@@ -91,7 +91,7 @@ public class GameWorld extends CustomScreen{
 
     private void drawSelectedItem() {
         if (inputHandler.isSelecting()) {
-            batch.setColor(.5f, 1, .5f, 0.5f);
+            batch.setColor(.2f, 1, .2f, 0.5f);
             batch.draw(inputHandler.selectedItem.getTexture(),
                     (int)inputHandler.selectedItem.getVector2().x,
                     (int)inputHandler.selectedItem.getVector2().y,
@@ -114,7 +114,7 @@ public class GameWorld extends CustomScreen{
 
     private void drawHeldItem() {
         if (inputHandler.isBuilding()) {
-            batch.setColor(.5f, 1, .5f, .6f);
+            batch.setColor(.2f, 1, .2f, .6f);
                 batch.draw(inputHandler.getHeldItem().getTexture(),
                     (int)(inputHandler.mouseWorld.x),
                     (int)(inputHandler.mouseWorld.y),

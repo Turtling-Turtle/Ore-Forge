@@ -35,7 +35,7 @@ public class Dropper extends Item {
         totalOreDropped = 0;
 
         initBlockConfiguration(blockLayout);
-        setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
+        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
     }
 
     public Dropper(JsonValue jsonValue) {

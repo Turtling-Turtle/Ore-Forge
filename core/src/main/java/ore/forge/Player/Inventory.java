@@ -20,7 +20,7 @@ public class Inventory {
     public Inventory(ResourceManager resourceManager) {
         inventoryNodes = new ArrayList<>();
         allItems = resourceManager.getAllItems();
-        loadInventory();
+//        loadInventory();
     }
 
     public ArrayList<InventoryNode> getInventoryNodes() {
