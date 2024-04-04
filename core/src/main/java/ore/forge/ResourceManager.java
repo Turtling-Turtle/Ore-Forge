@@ -29,11 +29,17 @@ public class ResourceManager {
         allItems = new HashMap<>();
 
         long t1 = System.currentTimeMillis();
-        mongoConnect();
+//        mongoConnect();
+//        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> loadItems(Constants.CONVEYORS_FP));
+//        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> loadItems(Constants.DROPPERS_FP));
+//        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> loadItems(Constants.UPGRADER_FP));
+//        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> loadItems(Constants.FURNACE_FP));
+
+//        CompletableFuture.allOf(conveyorFuture, dropperFuture, upgraderFuture, furnaceFuture).join();
         loadItems(Constants.CONVEYORS_FP);
-//        loadItems(Constants.DROPPERS_FP);
-//        loadItems(Constants.UPGRADER_FP);
-//        loadItems(Constants.FURNACE_FP);
+        loadItems(Constants.DROPPERS_FP);
+        loadItems(Constants.UPGRADER_FP);
+        loadItems(Constants.FURNACE_FP);
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());
             System.out.println();
@@ -45,7 +51,7 @@ public class ResourceManager {
     public void loadItems(String fileToParse) {
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents = jsonReader.parse(Gdx.files.local(fileToParse));
-        fileContents.child().remove();//Remove Version field from file.
+        fileContents.child().remove();//Remove version field from file.
         switch (fileToParse) {
             case Constants.DROPPERS_FP:
                 for (JsonValue jsonValue : fileContents) {
@@ -82,16 +88,16 @@ public class ResourceManager {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("OreForge");
 
-        CompletableFuture.runAsync(() -> updateLocalFile("Conveyors", Constants.CONVEYORS_FP, database));
-        CompletableFuture.runAsync(() -> updateLocalFile("Upgraders", Constants.UPGRADER_FP, database));
-
         //Void specifies that this function isnt returning anything.
-//        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> updateLocalFile("Conveyors", Constants.CONVEYORS_FP, database));
-//        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> updateLocalFile("Upgraders", Constants.UPGRADER_FP, database));
-//        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> updateLocalFile("Furnaces", Constants.FURNACE_FP, database));
-//        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> updateLocalFile("Droppers", Constants.DROPPERS_FP, database));
-//        CompletableFuture.allOf(conveyorFuture, upgraderFuture).join();//This forces all ansync tasks to be completed before returning from this function.
-        CompletableFuture.allOf().join();
+        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> checkVersion("Conveyors", Constants.CONVEYORS_FP, database));
+        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
+        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));
+        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> checkVersion("Droppers", Constants.DROPPERS_FP, database));
+//        updateLocalFile("Droppers", Constants.DROPPERS_FP, database);
+//        updateLocalFile("Furnaces", Constants.FURNACE_FP, database);
+//        updateLocalFile("Upgraders", Constants.UPGRADER_FP, database);
+//        updateLocalFile("Conveyors", Constants.CONVEYORS_FP, database);
+        CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
         mongoClient.close();
         Gdx.app.log("Mongo Loader", "Verified files in " + (System.currentTimeMillis() - t1) + "ms");
     }
@@ -100,8 +106,14 @@ public class ResourceManager {
         return allItems;
     }
 
-    private void updateLocalFile(String mongoCollection, String localFile, MongoDatabase database) {
+    public HashMap<String, Item> copyAllItems() {
+        return new HashMap<>(allItems);
+    }
+
+    private void checkVersion(String mongoCollection, String localFile, MongoDatabase database) {
         MongoCollection<Document> collection = database.getCollection(mongoCollection);
+        // Project only the "version" field
+
         Document version = collection.find().first();
         JsonReader jsonReader = new JsonReader();
         JsonValue localFileContents;
@@ -117,16 +129,17 @@ public class ResourceManager {
 
 
         double dbVersion = -2;
+        Double dob = null;
         try {
             dbVersion = version.getDouble("version");
         } catch (NullPointerException e) {
-            throw new RuntimeException("Could not retrieve version from MongoDB collection: " + mongoCollection);
+            throw new RuntimeException("Could not retrieve version from MongoDB collection: " + mongoCollection + "\n" + e);
         }
 
         //If the versions are out of sync we Overwrite the current version on the local
         //machine with the version from MongoDB.
         if (dbVersion != localVersion) {
-            Gdx.app.log("Mongo Loader", localFile + " version did not align with " + mongoCollection + " version");
+            Gdx.app.log("Mongo Loader", localFile + " version did not align with " + mongoCollection + " collection version");
             downloadAndUpdate(localFile, collection);
         }
     }

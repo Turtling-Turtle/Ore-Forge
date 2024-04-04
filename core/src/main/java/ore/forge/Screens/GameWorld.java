@@ -16,6 +16,8 @@ import ore.forge.Items.Item;
 import ore.forge.Player.InputHandler;
 import ore.forge.Player.Player;
 
+import java.util.concurrent.CompletableFuture;
+
 public class GameWorld extends CustomScreen{
     private final SpriteBatch batch;
     protected static OreRealm oreRealm = OreRealm.getSingleton();
@@ -48,6 +50,7 @@ public class GameWorld extends CustomScreen{
 
     @Override
     public void render(float delta) {
+//        asyncAct(delta);
         //updateMouse
         inputHandler.updateMouse(camera);
         //handleInput.
@@ -75,6 +78,15 @@ public class GameWorld extends CustomScreen{
 
         batch.end();
         userInterface.draw(delta);
+    }
+
+    //According to profiling this is more efficient however idk if it causes race conditions and other errors
+    private void asyncAct(float delta) {
+        CompletableFuture.runAsync(() -> {
+            for (Ore ore: oreRealm.getActiveOre()) {
+                ore.act(delta);
+            }
+        });
     }
 
     private void drawSelectedItem() {

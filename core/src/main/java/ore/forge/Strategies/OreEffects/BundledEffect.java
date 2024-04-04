@@ -18,8 +18,18 @@ public class BundledEffect implements OreEffect {
         strategies[3] = effect4;
     }
 
+    public BundledEffect(OreEffect... effects) {
+        strategies = new OreEffect[effects.length];
+        for (int i = 0; i < strategies.length; i++) {
+            strategies[i] = effects[i];
+        }
+    }
+
     public BundledEffect(JsonValue jsonValue) {
-        strategies = new OreEffect[4];
+        strategies = new OreEffect[jsonValue.size];
+//        for (int i = 0; i < jsonValue.size; i++) {
+//            strategies[i] = createOreStrategyOreNull(jsonValue, "effect" + String.valueOf(i+1));
+//        }
         strategies[0] = createOreStrategyOreNull(jsonValue, "effect1");
         strategies[1] = createOreStrategyOreNull(jsonValue, "effect2");
         strategies[2] = createOreStrategyOreNull(jsonValue, "effect3");

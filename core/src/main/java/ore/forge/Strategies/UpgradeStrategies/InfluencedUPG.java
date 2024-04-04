@@ -114,7 +114,7 @@ public class InfluencedUPG implements UpgradeStrategy {
     public String toString() {
         return "InfluencedUPG{" +
             "valueOfInfluence=" + valueOfInfluence +
-            ", methodOfModification=" + upgrade +
+            ", \nmethodOfModification=" + upgrade +
             ", influenceOperator=" + operator +
             ", minimumModifier=" + minModifier +
             ", maxModifier=" + maxModifier +

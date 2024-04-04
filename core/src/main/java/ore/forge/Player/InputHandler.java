@@ -124,19 +124,19 @@ public class InputHandler {
     private void itemSelect() {
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Conveyor("Basic Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);
+            heldItem = new Conveyor("Test Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 8);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .5f, dropperStrat);
+            heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .1f, dropperStrat);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Upgrader("Basic Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
+            heldItem = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Furnace("Basic Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
+            heldItem = new Furnace("Test Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
         }
     }
 

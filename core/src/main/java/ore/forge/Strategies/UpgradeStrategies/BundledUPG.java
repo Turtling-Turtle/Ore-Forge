@@ -20,12 +20,24 @@ public class BundledUPG implements UpgradeStrategy{
         upgradeStrategies[3] = upgStrat4;
     }
 
+    public BundledUPG(UpgradeStrategy... upgradeStrategies) {
+        this.upgradeStrategies = new UpgradeStrategy[upgradeStrategies.length];
+        for (int i = 0; i < upgradeStrategies.length; i++) {
+            this.upgradeStrategies[i] = upgradeStrategies[i];
+        }
+    }
+
     public BundledUPG(JsonValue jsonValue) {
-        upgradeStrategies = new UpgradeStrategy[4];
-        upgradeStrategies[0] = createOrNull(jsonValue, "upgStrat1");
-        upgradeStrategies[1] = createOrNull(jsonValue, "upgStrat2");
-        upgradeStrategies[2] = createOrNull(jsonValue, "upgStrat3");
-        upgradeStrategies[3] = createOrNull(jsonValue, "upgStrat4");
+//        upgradeStrategies = new UpgradeStrategy[4];
+//        upgradeStrategies[0] = createOrNull(jsonValue, "upgStrat1");
+//        upgradeStrategies[1] = createOrNull(jsonValue, "upgStrat2");
+//        upgradeStrategies[2] = createOrNull(jsonValue, "upgStrat3");
+//        upgradeStrategies[3] = createOrNull(jsonValue, "upgStrat4");
+
+        this.upgradeStrategies = new UpgradeStrategy[jsonValue.size];
+        for (int i = 0; i < jsonValue.size; i++) {
+            this.upgradeStrategies[i] = createOrNull(jsonValue, "upgStrat" + String.valueOf(i+1));
+        }
     }
 
     @Override

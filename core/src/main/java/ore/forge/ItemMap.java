@@ -13,6 +13,7 @@ import ore.forge.Items.Blocks.Worker;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 //@author Nathan Ulmen
 //The ItemMap is responsible for keeping track of placed items and retrieving the positions of their blocks
@@ -94,7 +95,7 @@ public class ItemMap {
     }
 
     public void saveState() {
-        ArrayList<MapData> mapData = new ArrayList<>(50);
+        ArrayList<MapData> mapData = new ArrayList<>(placedItems.size());
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         for (Item item : placedItems) {
@@ -104,6 +105,10 @@ public class ItemMap {
         String jsonOutput = json.prettyPrint(mapData);
         FileHandle fileHandle = Gdx.files.local(Constants.BASE_LAYOUT_FP);
         fileHandle.writeString(jsonOutput, false);
+    }
+
+    private void asyncSave(ArrayList<Item> copiedList) {
+        
     }
 
     public void loadState(ResourceManager resourceManager) {

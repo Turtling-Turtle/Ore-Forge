@@ -25,7 +25,7 @@ public class Inventory {
 
     public Inventory(ResourceManager resourceManager) {
         inventoryNodes = new ArrayList<>();
-        allItems = resourceManager.getAllItems();
+        allItems = resourceManager.copyAllItems();
         loadInventory();
     }
 
@@ -41,11 +41,11 @@ public class Inventory {
         List<InventoryData> inventoryDataList = new ArrayList<>();
 
         for (InventoryNode node : inventoryNodes) {
-            InventoryData data = new InventoryData();
-            data.setItemName(node.getHeldItem().getName());
-            data.setType(node.getHeldItem().getClass().getSimpleName());
-            data.setTotalOwned(node.getTotalOwned());
-            inventoryDataList.add(data);
+            InventoryData nodeData = new InventoryData();
+            nodeData.setItemName(node.getHeldItem().getName());
+            nodeData.setType(node.getHeldItem().getClass().getSimpleName());
+            nodeData.setTotalOwned(node.getTotalOwned());
+            inventoryDataList.add(nodeData);
         }
 
 
@@ -83,13 +83,13 @@ public class Inventory {
                 }
             }
         } else {
-            //create the default/beginner inventory.
+            //TODO: create the default/beginner inventory.
         }
 
         //Add nodes for new Items that didn't exist previously.
         Stack<InventoryNode> nodesToAdd = new Stack<>();
         for (Item item : allItems.values()) {
-            for(InventoryNode node: inventoryNodes) {
+            for(InventoryNode node : inventoryNodes) {
                 if (node.getName().equals(item.getName())) {
                     nodesToAdd.push(new InventoryNode(item, 0));
                 }

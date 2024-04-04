@@ -83,4 +83,13 @@ public class Furnace extends Item {
         currentProgress++;
     }
 
+    @Override
+    public String toString() {
+        return "Furnace{" +
+            "currentProgress=" + currentProgress +
+            ", rewardThreshold=" + rewardThreshold +
+            ", specialPointReward=" + specialPointReward +
+            ", upgrade=" + upgrade +
+            '}';
+    }
 }

@@ -79,7 +79,7 @@ public class SettingsMenu extends CustomScreen {
         });
 
         backButton = ButtonHelper.createRoundTextButton("<------", Color.RED, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
-        backButton.setPosition(0, Gdx.graphics.getHeight()/1.1f);
+        backButton.setPosition(0, Gdx.graphics.getHeight()*.9f);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

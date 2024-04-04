@@ -81,11 +81,14 @@ public class ConditionalUPG implements UpgradeStrategy {
         }
     }
 
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + "\tCondition: " + condition + "\tComparison: " + comparator +
-            "\tThreshold: " + threshold +
-            "\n\nifModifier: " + ifModifier.toString() + "\n\nelseModifier: " + elseModifier.toString();
+        return "ConditionalUPG{" +
+            "condition=" + condition +
+            ", threshold=" + threshold +
+            ", comparator=" + comparator +
+            ", \n{ifModifier=" + ifModifier +  "}" +
+            ", \n{elseModifier=" + elseModifier + "}" +
+            '}';
     }
-
-
 }

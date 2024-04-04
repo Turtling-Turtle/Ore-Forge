@@ -75,8 +75,10 @@ public class Upgrader extends Item{
         return super.toString() + upgradeToString();
     }
 
+
     public String upgradeToString() {
-        return upgrade.toString();
+        return "\nupgrade= " + upgrade.toString();
     }
+
 
 }
