@@ -4,6 +4,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.BooleanOperator;
 import ore.forge.Ore;
+import ore.forge.Strategies.StrategyInitializer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
 //A conditional upgrade will execute/apply one of two different upgrade strategies depending on the result of the condition it evaluates.
-public class ConditionalUPG implements UpgradeStrategy {
+public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
     public enum Condition {VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
 //    private final Enum<?> condition;
     private final Condition condition;
@@ -22,9 +23,10 @@ public class ConditionalUPG implements UpgradeStrategy {
     private final BooleanOperator comparator;
     private final Function<Ore, Number> propertyRetriever;
     private final Function<Ore, Boolean> evaluator;
+    //private Ore oreToBeUpgraded;
 
     //Used for testing purposes.
-    public ConditionalUPG(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, BooleanOperator comparison) {
+    public ConditionalUpgrade(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, BooleanOperator comparison) {
         ifModifier = ifMod;
         elseModifier = elseMod;
         this.threshold = threshold;
@@ -36,9 +38,9 @@ public class ConditionalUPG implements UpgradeStrategy {
     }
 
     //used to create from JSON Data.
-    public ConditionalUPG(JsonValue jsonValue) {
-        ifModifier = createOrNull(jsonValue, "ifModifier");
-        elseModifier = createOrNull(jsonValue, "elseModifier");
+    public ConditionalUpgrade(JsonValue jsonValue) {
+        ifModifier = createOrNull(jsonValue, "ifModifier", "upgradeName");
+        elseModifier = createOrNull(jsonValue, "elseModifier", "upgradeName");
         this.threshold = jsonValue.getDouble("threshold");
         this.condition = Condition.valueOf(jsonValue.getString("condition"));
         this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
@@ -49,6 +51,7 @@ public class ConditionalUPG implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
+        //this.oreToBeUpgraded = ore;
         if (evaluator.apply(ore)) {
             ifModifier.applyTo(ore);
         } else if (elseModifier != null) {
@@ -64,21 +67,6 @@ public class ConditionalUPG implements UpgradeStrategy {
             case TEMPERATURE -> (Ore::getOreTemp);
             case MULTIORE -> (Ore::getMultiOre);
         };
-    }
-
-    private UpgradeStrategy createOrNull(JsonValue jsonValue, String field) {
-        if (jsonValue.get(field) == null) {
-            return null;
-        }
-
-        try {
-            Class<?> aClass = Class.forName(jsonValue.get(field).getString("upgradeName"));
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            return (UpgradeStrategy) constructor.newInstance(jsonValue.get(field));
-        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

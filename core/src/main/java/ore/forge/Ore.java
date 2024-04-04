@@ -5,9 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import ore.forge.Enums.Direction;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
-import ore.forge.Strategies.OreEffects.BundledEffect;
+import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.OreEffect;
-import ore.forge.Strategies.OreEffects.ObserverEffect;
+import ore.forge.Strategies.OreEffects.ObserverOreEffect;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -26,7 +26,7 @@ public class Ore {
     private Texture texture;
     private final ArrayList<OreEffect> effects;
     private final Stack<OreEffect> removalStack;
-    private final ArrayList<ObserverEffect> observerEffects;
+    private final ArrayList<ObserverOreEffect> observerEffects;
     private String oreName;
     private double oreValue;
     private int upgradeCount, multiOre, oreHistory;
@@ -184,19 +184,19 @@ public class Ore {
         if (strategy == null) {
             return;
         } //Base case
-        if (strategy instanceof BundledEffect) {//Base case
-            for (OreEffect effect : ((BundledEffect) strategy).getStrategies()) {
+        if (strategy instanceof BundledOreEffect) {//Base case
+            for (OreEffect effect : ((BundledOreEffect) strategy).getStrategies()) {
                 applyEffect(effect);
             }
-        } else if (strategy instanceof ObserverEffect) {
-            observerEffects.add((ObserverEffect) strategy.clone());
+        } else if (strategy instanceof ObserverOreEffect) {
+            observerEffects.add((ObserverOreEffect) strategy.clone());
         } else {
             effects.add(strategy.clone());
         }
     }
 
     public void notifyObserverEffects(ValueOfInfluence mutatedField) {
-        for (ObserverEffect observer : observerEffects) {
+        for (ObserverOreEffect observer : observerEffects) {
             if (observer.getObservedField() == mutatedField) {
                 observer.activate(deltaTime, this);
             }

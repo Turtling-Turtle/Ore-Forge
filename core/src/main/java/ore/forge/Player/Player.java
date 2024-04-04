@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import ore.forge.Constants;
+import ore.forge.ResourceManager;
 
 //@author Nathan Ulmen
 public class Player {
@@ -11,16 +12,12 @@ public class Player {
     private long specialPoints;
     private double wallet;
     private double mostMoneyObtained;
-    private static Player playerInstance;
-    public Inventory inventory;
+    private static Player playerInstance = new Player();
+    private Inventory inventory;
     private long numberOfTicks = 0;
 
     private Player() {
 
-    }
-
-    private Player(Inventory inventory) {
-        this.inventory = inventory;
     }
 
     public void addToWallet(double value) {
@@ -89,6 +86,10 @@ public class Player {
             mostMoneyObtained = 50;
         }
 
+    }
+
+    public void initInventory(ResourceManager resourceManager) {
+        inventory = new Inventory(resourceManager);
     }
 
     public double getWallet() {

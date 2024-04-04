@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 //An Influenced Upgrade takes a Basic upgrade and adjusts its modifier,
 //The finalModifier is equal to/ found by this equation: finalModifier = scalar * (ValueOfInfluence [operator] baseModifier)
 //You can also set min and maximum values for the finalModifier to ensure it isnt greater than or less than a specific value.
-public class InfluencedUPG implements UpgradeStrategy {
+public class InfluencedUpgrade implements UpgradeStrategy {
     public enum ValuesOfInfluence {
         VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
         ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL
@@ -32,7 +32,7 @@ public class InfluencedUPG implements UpgradeStrategy {
     private final Operator operator;
     private final double minModifier, maxModifier, influenceScalar;
 
-    public InfluencedUPG(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
+    public InfluencedUpgrade(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
         this.valueOfInfluence = valuesOfInfluence;
         this.upgrade = upgrade;
 
@@ -43,7 +43,7 @@ public class InfluencedUPG implements UpgradeStrategy {
 
     }
 
-    public InfluencedUPG(JsonValue jsonValue) {
+    public InfluencedUpgrade(JsonValue jsonValue) {
 
         valueOfInfluence = ValuesOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
         try {

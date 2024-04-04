@@ -7,7 +7,7 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
 //@author Nathan Ulmen
 //TODO: Invulnerability could have its implementation changed to be an ObserverEffect???
-public class ObserverEffect implements OreEffect {
+public class ObserverOreEffect implements OreEffect {
     private float duration;
     private int charges;
     private UpgradeStrategy upgradeStrategy;
@@ -15,17 +15,17 @@ public class ObserverEffect implements OreEffect {
     //Charges/number of times it will trigger.
     //Guard against infinite loops? (EX: don't want effects to trigger themselves over and over again.)
 
-    public ObserverEffect(float duration, int charges, UpgradeStrategy strategy) {
+    public ObserverOreEffect(float duration, int charges, UpgradeStrategy strategy) {
         this.duration = duration;
         this.charges = charges;
         this.upgradeStrategy = strategy;
     }
 
-    public ObserverEffect(JsonValue jsonValue) {
+    public ObserverOreEffect(JsonValue jsonValue) {
 
     }
 
-    public ObserverEffect(ObserverEffect clone) {
+    public ObserverOreEffect(ObserverOreEffect clone) {
 
     }
 

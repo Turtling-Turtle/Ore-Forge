@@ -17,15 +17,9 @@ public class Inventory {
 
     private final HashMap<String, Item> allItems;
 
-    public Inventory(HashMap<String,Item> allGameItems, ArrayList<InventoryNode> savedInventory) {
-        allItems = allGameItems;
-        inventoryNodes = savedInventory;
-        sortByType();
-    }
-
     public Inventory(ResourceManager resourceManager) {
         inventoryNodes = new ArrayList<>();
-        allItems = resourceManager.copyAllItems();
+        allItems = resourceManager.getAllItems();
         loadInventory();
     }
 
@@ -34,11 +28,12 @@ public class Inventory {
     }
 
     public void saveInventory() {
+        printInventory();
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         sortByName();
 
-        List<InventoryData> inventoryDataList = new ArrayList<>();
+        List<InventoryData> inventoryDataList = new ArrayList<>(inventoryNodes.size());
 
         for (InventoryNode node : inventoryNodes) {
             InventoryData nodeData = new InventoryData();
@@ -52,12 +47,12 @@ public class Inventory {
         String jsonOutput = json.prettyPrint(inventoryDataList);
         FileHandle fileHandle = Gdx.files.local(Constants.INVENTORY_FP);
         fileHandle.writeString(jsonOutput, false);
-//        System.out.println(jsonOutput);
     }
 
     public void loadInventory() {
+        System.out.println("loading inventory now!");
         JsonReader jsonReader = new JsonReader();
-        JsonValue fileContents = jsonReader.parse(Gdx.files.local(Constants.INVENTORY_FP));
+        JsonValue fileContents = null;
         boolean isPresent = true;
 
         try {
@@ -69,13 +64,11 @@ public class Inventory {
 
 
         if (isPresent) {
-            int owned;
-            String itemName;
             //Go through each item in saved inventory and initialize node from allItems
             for (JsonValue jsonValue: fileContents) {
                 if (allItems.containsKey(jsonValue.getString("itemName"))) {
-                    owned = jsonValue.getInt("totalOwned");
-                    itemName = jsonValue.getString("itemName");
+                    int owned = jsonValue.getInt("totalOwned");
+                    String itemName = jsonValue.getString("itemName");
                     InventoryNode node = new InventoryNode(allItems.get(itemName), owned);
                     inventoryNodes.add(node);
                 } else {
@@ -86,23 +79,36 @@ public class Inventory {
             //TODO: create the default/beginner inventory.
         }
 
+
+
+        //TODO: this is bugged right now, need to fix it so that it adds a new node if the item didn't exist previously correctly.
         //Add nodes for new Items that didn't exist previously.
         Stack<InventoryNode> nodesToAdd = new Stack<>();
-        for (Item item : allItems.values()) {
-            for(InventoryNode node : inventoryNodes) {
-                if (node.getName().equals(item.getName())) {
+        if (inventoryNodes.isEmpty()) {
+            for (Item item : allItems.values()) {
+                nodesToAdd.push(new InventoryNode(item, 0));
+            }
+        } else {
+            for (Item item : allItems.values()) {
+                for (InventoryNode node: inventoryNodes) {
                     nodesToAdd.push(new InventoryNode(item, 0));
                 }
             }
         }
-        while (!nodesToAdd.empty()) {
+
+        while (!nodesToAdd.isEmpty()) {
             inventoryNodes.add(nodesToAdd.pop());
         }
+
     }
 
     public void printInventory() {
         for (InventoryNode node : inventoryNodes) {
             System.out.println("Name: " + node.getHeldItem().getName() + "\tNumber Owned: " + node.getTotalOwned());
+        }
+
+        for (Item item : allItems.values()) {
+            System.out.println(item.getName());
         }
     }
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import com.mongodb.client.*;
+import ore.forge.Enums.Color;
 import ore.forge.Items.*;
 import org.bson.Document;
 
@@ -28,24 +29,26 @@ public class ResourceManager {
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
-        long t1 = System.currentTimeMillis();
-//        mongoConnect();
+
+        mongoConnect();
 //        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> loadItems(Constants.CONVEYORS_FP));
 //        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> loadItems(Constants.DROPPERS_FP));
 //        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> loadItems(Constants.UPGRADER_FP));
 //        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> loadItems(Constants.FURNACE_FP));
 
 //        CompletableFuture.allOf(conveyorFuture, dropperFuture, upgraderFuture, furnaceFuture).join();
+        long t1 = System.currentTimeMillis();
         loadItems(Constants.CONVEYORS_FP);
         loadItems(Constants.DROPPERS_FP);
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
-        for (Item item: allItems.values()) {
-            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
-            System.out.println();
-        }
+        Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + (System.currentTimeMillis()-t1) + " ms" + Color.NONE.colorId);
+//        for (Item item: allItems.values()) {
+//            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
+//            System.out.println();
+//        }
 
-        System.out.println("Loaded " + loadCount + " items in: " + (System.currentTimeMillis() -t1) + " ms");
+
     }
 
     public void loadItems(String fileToParse) {
@@ -55,31 +58,31 @@ public class ResourceManager {
         switch (fileToParse) {
             case Constants.DROPPERS_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    addToAllItems(new Dropper(jsonValue));
+                    addToAllItems(new Dropper(jsonValue), Color.PINK);
                 }
                 break;
             case Constants.FURNACE_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    addToAllItems(new Furnace(jsonValue));
+                    addToAllItems(new Furnace(jsonValue), Color.CYAN);
                 }
                 break;
             case Constants.UPGRADER_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    addToAllItems(new Upgrader(jsonValue));
+                    addToAllItems(new Upgrader(jsonValue), Color.BLUE);
                 }
                 break;
             case Constants.CONVEYORS_FP:
                 for (JsonValue jsonValue : fileContents) {
-                    addToAllItems(new Conveyor(jsonValue));
+                    addToAllItems(new Conveyor(jsonValue), Color.PURPLE);
                 }
                 break;
         }
     }
 
-    private void addToAllItems(Item item) {
+    private void addToAllItems(Item item, Color color) {
         allItems.put(item.getName(), item);
         loadCount++;
-        System.out.println(Constants.GREEN + "Successfully Loaded: " + item.getName() + Constants.DEFAULT);
+        Gdx.app.log(item.getClass().getSimpleName(), color.colorId + "Loaded " + item.getName() + Color.NONE.colorId);
     }
 
     private void mongoConnect() {
@@ -88,7 +91,7 @@ public class ResourceManager {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("OreForge");
 
-        //Void specifies that this function isnt returning anything.
+        //Void specifies that this function isnt returning anything, Async loading.
         CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> checkVersion("Conveyors", Constants.CONVEYORS_FP, database));
         CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
         CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));
@@ -99,7 +102,7 @@ public class ResourceManager {
 //        updateLocalFile("Conveyors", Constants.CONVEYORS_FP, database);
         CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
         mongoClient.close();
-        Gdx.app.log("Mongo Loader", "Verified files in " + (System.currentTimeMillis() - t1) + "ms");
+        Gdx.app.log("Mongo Loader", Color.GREEN.colorId + "Verified local files in " + (System.currentTimeMillis() - t1) + "ms" + Color.NONE.colorId);
     }
 
     public HashMap<String, Item> getAllItems() {
@@ -139,7 +142,7 @@ public class ResourceManager {
         //If the versions are out of sync we Overwrite the current version on the local
         //machine with the version from MongoDB.
         if (dbVersion != localVersion) {
-            Gdx.app.log("Mongo Loader", localFile + " version did not align with " + mongoCollection + " collection version");
+            Gdx.app.log("Mongo Loader", Color.YELLOW.colorId + localFile +  " version " + localVersion + " did not align with " + mongoCollection + " collection version" + dbVersion + Color.NONE.colorId);
             downloadAndUpdate(localFile, collection);
         }
     }

@@ -5,16 +5,16 @@ import ore.forge.Ore;
 
 import java.util.Random;
 
-public class RandomUPG implements UpgradeStrategy{
+public class RandomUpgrade implements UpgradeStrategy {
     private Random random;
     private final int bound;
 
 
-    public RandomUPG(JsonValue jsonValue) {
+    public RandomUpgrade(JsonValue jsonValue) {
         bound = jsonValue.getInt("bound");
     }
 
-    public RandomUPG(int bound) {
+    public RandomUpgrade(int bound) {
         random = new Random();
         this.bound = bound;
     }

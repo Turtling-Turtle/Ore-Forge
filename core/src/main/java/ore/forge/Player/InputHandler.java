@@ -63,21 +63,21 @@ public class InputHandler {
 
     UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
 
-    UpgradeStrategy destroy = new DestructionUPG();
-    UpgradeStrategy conditional = new ConditionalUPG(testUpgrade, destroy, ConditionalUPG.Condition.VALUE, 100000*100000, BooleanOperator.GREATER_THAN);
+    UpgradeStrategy destroy = new DestructionUpgrade();
+    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ConditionalUpgrade.Condition.VALUE, 100000*100000, BooleanOperator.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
     UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    OreEffect upgradeOverTime = new UpgradeOverTimeEffect(1, 10E10f, simpleMultiply);
+    OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
     UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    UpgradeStrategy influencedUpgrade = new InfluencedUPG(InfluencedUPG.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
-    OreEffect influencedUpgradeOverTime = new UpgradeOverTimeEffect(1, 2E10f, influencedUpgrade);
+    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(InfluencedUpgrade.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
+    OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 
-    OreEffect dropperStrat = new BundledEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
+    OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
 
 
     public InputHandler() {

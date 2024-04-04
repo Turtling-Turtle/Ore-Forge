@@ -8,26 +8,26 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
-public class UpgradeOverTimeEffect implements OreEffect {
+public class UpgradeOreEffect implements OreEffect {
     private final float interval;
     private float duration;
     private float currentTime;
     private final UpgradeStrategy strategy;
 
-    public UpgradeOverTimeEffect(float interval, float effectDuration, UpgradeStrategy strategyToApply) {
+    public UpgradeOreEffect(float interval, float effectDuration, UpgradeStrategy strategyToApply) {
         this.duration = effectDuration;
         this.interval = interval;
         strategy = strategyToApply;
     }
 
-    public UpgradeOverTimeEffect(UpgradeOverTimeEffect clone) {
+    public UpgradeOreEffect(UpgradeOreEffect clone) {
         this.interval = clone.interval;
         this.duration = clone.duration;
         currentTime = 0f;
         strategy = clone.strategy;
     }
 
-    public UpgradeOverTimeEffect(JsonValue jsonValue) {
+    public UpgradeOreEffect(JsonValue jsonValue) {
         try {
             Class<?> aClass = Class.forName(jsonValue.get("upgrade").getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
@@ -59,7 +59,7 @@ public class UpgradeOverTimeEffect implements OreEffect {
 
     @Override
     public OreEffect clone() {
-        return new UpgradeOverTimeEffect(this);
+        return new UpgradeOreEffect(this);
     }
 
     @Override

@@ -1,9 +1,8 @@
 package ore.forge;
 import ore.forge.Enums.BooleanOperator;
-import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.FunctionalInterfaces.BinomialFunction;
 import ore.forge.Items.Item;
-import ore.forge.Strategies.OreEffects.ObserverEffect;
+import ore.forge.Strategies.OreEffects.ObserverOreEffect;
 
 import java.util.*;
 import java.util.function.Function;
@@ -43,8 +42,8 @@ public class TheShop {
             double oreValue;
             float temperature;
             int multiOre;
-            ArrayList<ObserverEffect> listeners;
-            Stack<ObserverEffect> expiredListeners;
+            ArrayList<ObserverOreEffect> listeners;
+            Stack<ObserverOreEffect> expiredListeners;
 
             public double getOreValue() {
                 return oreValue;
@@ -64,7 +63,7 @@ public class TheShop {
             }
 
             public void notifyListeners(Object mutatedField) {
-                for(ObserverEffect trigger : listeners) {
+                for(ObserverOreEffect trigger : listeners) {
                     if (trigger.getObservedField().equals(mutatedField)) {
 //                        trigger.activate(deltaT, this);
                     }
@@ -72,11 +71,11 @@ public class TheShop {
                 clearOldListeners(); //remove listeners that have expired.
             }
 
-            public void addListeners(ObserverEffect listener) {
+            public void addListeners(ObserverOreEffect listener) {
                 listeners.add(listener);
             }
 
-            public void removeListeners(ObserverEffect target) {
+            public void removeListeners(ObserverOreEffect target) {
                 expiredListeners.add(target);
             }
 

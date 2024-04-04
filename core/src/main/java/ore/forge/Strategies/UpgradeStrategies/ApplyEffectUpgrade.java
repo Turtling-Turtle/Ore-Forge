@@ -6,14 +6,14 @@ import ore.forge.Strategies.OreEffects.OreEffect;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ApplyEffectUPG implements UpgradeStrategy {
+public class ApplyEffectUpgrade implements UpgradeStrategy {
     private final OreEffect effect;
 
-    public ApplyEffectUPG(OreEffect strategy) {
+    public ApplyEffectUpgrade(OreEffect strategy) {
         effect = strategy;
     }
 
-    public ApplyEffectUPG(JsonValue jsonValue) {
+    public ApplyEffectUpgrade(JsonValue jsonValue) {
         try {
             Class<?> clasz = Class.forName(jsonValue.get("effectToApply").getString("effectName"));
             effect = (OreEffect) clasz.getConstructor(JsonValue.class).newInstance(jsonValue.get("effectToApply"));
