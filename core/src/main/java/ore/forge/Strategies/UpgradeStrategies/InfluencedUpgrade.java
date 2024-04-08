@@ -25,11 +25,6 @@ import static ore.forge.Enums.ValueOfInfluence.*;
 //The finalModifier is equal to/ found by this equation: finalModifier = scalar * (ValueOfInfluence [operator] baseModifier)
 //You can also set min and maximum values for the finalModifier to ensure it isnt greater than or less than a specific value.
 public class InfluencedUpgrade implements UpgradeStrategy {
-    public enum ValuesOfInfluence {
-        VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT,
-        ACTIVE_ORE, PLACED_ITEMS, SPECIAL_POINTS, WALLET, PRESTIGE_LEVEL
-    }
-
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
     protected static final ItemMap itemTracker = ItemMap.getSingleton();
@@ -102,18 +97,8 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     public void applyTo(Ore ore) {
         // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
-        double finalModifier = influenceScalar * switch (valueOfInfluence) {
-            case ORE_VALUE-> operator.apply(ore.getOreValue(), originalModifier);
-            case TEMPERATURE -> operator.apply(ore.getOreTemp(), originalModifier);
-            case MULTIORE -> operator.apply(ore.getMultiOre(), originalModifier);
-            case UPGRADE_COUNT -> operator.apply(ore.getUpgradeCount(), originalModifier);
-            case ACTIVE_ORE -> operator.apply(oreRealm.getActiveOre().size(), originalModifier);
-            case PLACED_ITEMS -> operator.apply(itemTracker.getPlacedItems().size(), originalModifier);
-            case SPECIAL_POINTS -> operator.apply(player.getSpecialPoints(), originalModifier);
-            case WALLET -> operator.apply(player.getWallet(), originalModifier);
-            case PRESTIGE_LEVEL -> operator.apply(player.getPrestigeLevel(), originalModifier);
-            default -> throw new IllegalStateException("Unexpected value: " + valueOfInfluence);
-        };
+        double finalModifier = calculateFinalModifier(ore, originalModifier);
+
 
         if (finalModifier > maxModifier) {
             upgrade.setModifier(maxModifier);
@@ -125,6 +110,21 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
         upgrade.applyTo(ore);
         upgrade.setModifier(originalModifier);
+    }
+
+    private double calculateFinalModifier(Ore ore, double originalModifier) {
+        return influenceScalar * switch (valueOfInfluence) {
+            case ORE_VALUE-> operator.apply(ore.getOreValue(), originalModifier);
+            case TEMPERATURE -> operator.apply(ore.getOreTemp(), originalModifier);
+            case MULTIORE -> operator.apply(ore.getMultiOre(), originalModifier);
+            case UPGRADE_COUNT -> operator.apply(ore.getUpgradeCount(), originalModifier);
+            case ACTIVE_ORE -> operator.apply(oreRealm.getActiveOre().size(), originalModifier);
+            case PLACED_ITEMS -> operator.apply(itemTracker.getPlacedItems().size(), originalModifier);
+            case SPECIAL_POINTS -> operator.apply(player.getSpecialPoints(), originalModifier);
+            case WALLET -> operator.apply(player.getWallet(), originalModifier);
+            case PRESTIGE_LEVEL -> operator.apply(player.getPrestigeLevel(), originalModifier);
+            default -> throw new IllegalStateException("Unexpected value: " + valueOfInfluence);
+        };
     }
 
     @Override

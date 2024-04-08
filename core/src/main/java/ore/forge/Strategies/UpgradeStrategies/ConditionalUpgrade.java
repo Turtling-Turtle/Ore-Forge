@@ -63,6 +63,10 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
             exceptionThrown = true;
         }
 
+        if (jsonValue.get("threshold").isNumber()) {
+            System.out.println("Threshold is a number");
+        }
+
         if (exceptionThrown) { //This means our threshold isn't a double/fixed value.
             dynamicThreshold = configureKeyValue(jsonValue, "threshold");
             thresholdSupplier = configureSupplier(dynamicThreshold);
@@ -79,7 +83,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
 
     @Override
     public void applyTo(Ore ore) {
-        if (evaluator.apply(ore)) {//evaluator function is applied to ore
+        if (evaluator.apply(ore)) {//evaluator function is applied to ore, returning the result of evaluation
             trueBranchStrategy.applyTo(ore);
         } else if (falseBranchStrategy != null) {
             falseBranchStrategy.applyTo(ore);

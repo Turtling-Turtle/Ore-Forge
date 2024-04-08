@@ -34,7 +34,7 @@
     "multiOre": 1,
     "dropInterval": 2.0,
     "oreStrategy": {
-      "strategyType": null
+      "effectName": null
     }
   },
   {
@@ -53,7 +53,7 @@
     "multiOre": 1,
     "dropInterval": 5.0,
     "oreStrategy": {
-      "strategyType": null
+      "effectName": null
     }
   },
   {
@@ -74,18 +74,18 @@
   "oreStrategy": {
     "strategyType": "BundledEffect",
       "oreStrat1": {
-        "strategyType": "Inflamed",
+        "effectName": "Inflamed",
           "duration": 8,
           "tempChange": 10
       },
       "oreStrat2" : {
-        "strategyType": null
+        "effectName": null
       },
       "oreStrat3" : {
-        "strategyType": null
+        "effectName": null
       },
       "oreStrat4" : {
-        "strategyType": null
+        "effectName": null
       }
     }
   }
