@@ -2,21 +2,22 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.Operator;
+import ore.forge.Enums.OreProperty;
 import ore.forge.Ore;
 
 import java.util.function.Consumer;
 
 //@author Nathan Ulmen
 public class BasicUpgrade implements UpgradeStrategy {
-    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE, SPEED}
+//    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE, SPEED}
     //More VTMS: effect, Duration.
     private double modifier;
-    private final ValueToModify valueToModify;
+    private final OreProperty valueToModify;
     private final Consumer<Ore> upgradeFunction;
     private final Operator operator;
 
 
-    public BasicUpgrade(double mod, Operator operatorType, ValueToModify valueToModify) {
+    public BasicUpgrade(double mod, Operator operatorType, OreProperty valueToModify) {
        this.operator = operatorType;
        this.modifier = mod;
        this.valueToModify = valueToModify;
@@ -26,7 +27,7 @@ public class BasicUpgrade implements UpgradeStrategy {
     public BasicUpgrade(JsonValue jsonValue) {
        //TODO: Introduce error handling for jsonValues.
        modifier = jsonValue.getDouble("modifier");
-       valueToModify = ValueToModify.valueOf(jsonValue.getString("valueToModify"));
+       valueToModify = OreProperty.valueOf(jsonValue.getString("valueToModify"));
        operator = Operator.valueOf(jsonValue.getString("operation"));
        upgradeFunction = configureUpgradeFunction();
     }
@@ -43,6 +44,7 @@ public class BasicUpgrade implements UpgradeStrategy {
             case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(operator.apply(ore.getOreTemp(), modifier)));
             case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(operator.apply(ore.getOreTemp(), modifier)));
             case SPEED -> (Ore ore) -> ore.setSpeedScalar((float) operator.apply(ore.getSpeedScalar(), modifier));
+            case UPGRADE_COUNT -> throw new RuntimeException("Upgrade Count is not a valid value to Modify.");
        };
     }
 

@@ -14,7 +14,7 @@ public interface StrategyInitializer<E> {
             } catch (NullPointerException e) {
                 return null;
             }
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);//Retrieve the constructor that takes a JsonValue.
             return (E) constructor.newInstance(jsonValue.get(valueToGet));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {

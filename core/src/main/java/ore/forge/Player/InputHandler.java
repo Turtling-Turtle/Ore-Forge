@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
 import ore.forge.Enums.BooleanOperator;
 import ore.forge.Enums.Operator;
+import ore.forge.Enums.OreProperty;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
@@ -17,6 +18,8 @@ import ore.forge.UpgradeTag;
 
 import java.util.ArrayList;
 import java.util.Stack;
+
+import static ore.forge.Enums.OreProperty.ORE_VALUE;
 
 //@author Nathan Ulmen
 public class InputHandler {
@@ -64,20 +67,20 @@ public class InputHandler {
 
     //Test objects:
 
-    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUpgrade();
-    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ConditionalUpgrade.Condition.VALUE, 100000*100000, BooleanOperator.GREATER_THAN);
+    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ORE_VALUE, 100000*100000, null, BooleanOperator.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
-    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
+    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, Operator.MULTIPLY, ORE_VALUE);
     OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
-    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, BasicUpgrade.ValueToModify.ORE_VALUE);
-    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(InfluencedUpgrade.ValuesOfInfluence.VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
+    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, ORE_VALUE);
+    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(ORE_VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
     OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 
     OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);

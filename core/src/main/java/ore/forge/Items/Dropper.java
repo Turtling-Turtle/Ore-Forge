@@ -49,7 +49,7 @@ public class Dropper extends Item {
         timeSinceLast = 0f;
 
         initBlockConfiguration(this.numberConfig);
-        setTexture(new Texture(Gdx.files.internal("Dropper.jpg")));
+        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
     }
 
     //Used to "clone" an item.

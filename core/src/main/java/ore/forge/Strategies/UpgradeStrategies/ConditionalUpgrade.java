@@ -3,80 +3,128 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.BooleanOperator;
+import ore.forge.Enums.KeyValue;
+import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
-//A conditional upgrade will execute/apply one of two different upgrade strategies depending on the result of the condition it evaluates.
+//A conditional Upgrade takes two upgrade Strategies, a trueBranchStrategy and a falseBranchStrategy, a condition, threshold, and a comparison operator.
+//The condition is compared to the threshold using the comparison operator and depending on the result either the true or false branch is activated.
+//The condition is a KeyValue which means it can be a property of the ore being upgraded or a more universal value like active ore or player level.
+//The threshold can either be a predetermined fixed Value or a KeyValue.
 public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
-    public enum Condition {VALUE, UPGRADE_COUNT, TEMPERATURE, MULTIORE} //Condition to be evaluated
-//    private final Enum<?> condition;
-    private final Condition condition;
-    private final UpgradeStrategy ifModifier;
-    private final UpgradeStrategy elseModifier;
-    private final double threshold;
+    private final KeyValue condition; //Key Value includes OreProperties and
+    private final UpgradeStrategy trueBranchStrategy;
+    private final UpgradeStrategy falseBranchStrategy;
+    private final double fixedThreshold;
+    private final KeyValue dynamicThreshold;
     private final BooleanOperator comparator;
-    private final Function<Ore, Number> propertyRetriever;
+    private final Function<Ore, Number> conditionSupplier, thresholdSupplier;
     private final Function<Ore, Boolean> evaluator;
-    //private Ore oreToBeUpgraded;
 
     //Used for testing purposes.
-    public ConditionalUpgrade(UpgradeStrategy ifMod, UpgradeStrategy elseMod, Condition condition, double threshold, BooleanOperator comparison) {
-        ifModifier = ifMod;
-        elseModifier = elseMod;
-        this.threshold = threshold;
+    public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, KeyValue condition, double fixedThreshold, KeyValue dynamicThreshold, BooleanOperator comparison) {
+        trueBranchStrategy = trueBranch;
+        falseBranchStrategy = falseBranch;
+        this.fixedThreshold = fixedThreshold;
+        this.dynamicThreshold = dynamicThreshold;
         this.condition = condition;
         this.comparator = comparison;
-        propertyRetriever = configurePropertyRetriever(condition);
+        conditionSupplier = configureSupplier(condition);
 
-        evaluator = (Ore ore) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
-    }
-
-    //used to create from JSON Data.
-    public ConditionalUpgrade(JsonValue jsonValue) {
-        ifModifier = createOrNull(jsonValue, "ifModifier", "upgradeName");
-        elseModifier = createOrNull(jsonValue, "elseModifier", "upgradeName");
-        this.threshold = jsonValue.getDouble("threshold");
-        this.condition = Condition.valueOf(jsonValue.getString("condition"));
-        this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
-        propertyRetriever = configurePropertyRetriever(Condition.valueOf(jsonValue.getString("condition")));
-
-        evaluator = (Ore ore) -> comparator.evaluate((Double) propertyRetriever.apply(ore), this.threshold);
-    }
-
-    @Override
-    public void applyTo(Ore ore) {
-        //this.oreToBeUpgraded = ore;
-        if (evaluator.apply(ore)) {
-            ifModifier.applyTo(ore);
-        } else if (elseModifier != null) {
-            elseModifier.applyTo(ore);
+        if (dynamicThreshold != null) {
+            thresholdSupplier = configureSupplier(dynamicThreshold);
+            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), (Double) thresholdSupplier.apply(ore));
+        } else {
+            thresholdSupplier = null;
+            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), this.fixedThreshold);
         }
 
     }
 
-    private Function<Ore, Number> configurePropertyRetriever(Condition condition) {
-        return switch (condition) {
-            case VALUE -> (Ore::getOreValue);
-            case UPGRADE_COUNT -> (Ore::getUpgradeCount);
-            case TEMPERATURE -> (Ore::getOreTemp);
-            case MULTIORE -> (Ore::getMultiOre);
-        };
+    //used to create from JSON Data.
+    public ConditionalUpgrade(JsonValue jsonValue) {
+        trueBranchStrategy = createOrNull(jsonValue, "ifModifier", "upgradeName");
+        falseBranchStrategy = createOrNull(jsonValue, "elseModifier", "upgradeName");
+        this.condition = configureKeyValue(jsonValue, "condition");
+        this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
+        conditionSupplier = configureSupplier(condition);
+
+
+        boolean exceptionThrown = false;
+        try {
+            jsonValue.getDouble("threshold");
+        } catch (IllegalArgumentException ex) {
+            exceptionThrown = true;
+        }
+
+        if (exceptionThrown) { //This means our threshold isn't a double/fixed value.
+            dynamicThreshold = configureKeyValue(jsonValue, "threshold");
+            thresholdSupplier = configureSupplier(dynamicThreshold);
+            fixedThreshold = 1;
+            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), (Double) thresholdSupplier.apply(ore));
+        } else { //This means our threshold was a fixed value.
+            fixedThreshold = jsonValue.getDouble("threshold");
+            dynamicThreshold = null;
+            thresholdSupplier = null;
+            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), fixedThreshold);
+        }
+
+    }
+
+    @Override
+    public void applyTo(Ore ore) {
+        if (evaluator.apply(ore)) {//evaluator function is applied to ore
+            trueBranchStrategy.applyTo(ore);
+        } else if (falseBranchStrategy != null) {
+            falseBranchStrategy.applyTo(ore);
+        }
+    }
+
+    //Configures the behavior of a supplier function so that it returns the correct value.
+    private Function<Ore, Number> configureSupplier(KeyValue condition) {
+        if (condition instanceof OreProperty) {
+            return switch ((OreProperty)condition) {
+                case ORE_VALUE -> (Ore::getOreValue);
+                case SPEED -> (Ore::getMoveSpeed);
+                case UPGRADE_COUNT -> (Ore::getUpgradeCount);
+                case TEMPERATURE -> (Ore::getOreTemp);
+                case MULTIORE -> (Ore::getMultiOre);
+            };
+        } else if (condition instanceof ValueOfInfluence) {
+            return (Ore ore) -> ((ValueOfInfluence) condition).getAssociatedValue();
+        }
+        throw new RuntimeException(condition + "is not a valid value of Influence");
+    }
+
+    //Determines which enum that the KeyValue is from JSON.
+    private KeyValue configureKeyValue(JsonValue jsonValue, String fieldToGet) {
+        KeyValue tempCondition;
+        try {
+            tempCondition = OreProperty.valueOf(jsonValue.getString(fieldToGet));
+        } catch (IllegalArgumentException e) {
+            try {
+                tempCondition = ValueOfInfluence.valueOf(jsonValue.getString(fieldToGet));
+            }catch (IllegalArgumentException e2) {
+                throw new RuntimeException("Invalid Condition" + e2);
+            }
+        }
+        return tempCondition;
     }
 
     @Override
     public String toString() {
         return "ConditionalUPG{" +
             "condition=" + condition +
-            ", threshold=" + threshold +
+            ", threshold=" + fixedThreshold +
             ", comparator=" + comparator +
-            ", \n{ifModifier=" + ifModifier +  "}" +
-            ", \n{elseModifier=" + elseModifier + "}" +
+            ", \n{ifModifier=" + trueBranchStrategy +  "}" +
+            ", \n{elseModifier=" + falseBranchStrategy + "}" +
             '}';
     }
 }

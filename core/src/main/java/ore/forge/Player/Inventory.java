@@ -28,7 +28,7 @@ public class Inventory {
     }
 
     public void saveInventory() {
-        printInventory();
+//        printInventory();
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         sortByName();

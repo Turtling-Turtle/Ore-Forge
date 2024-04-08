@@ -2,11 +2,17 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
+import ore.forge.Enums.KeyValue;
 import ore.forge.Enums.Operator;
+import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Player.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import static ore.forge.Enums.OreProperty.*;
+import static ore.forge.Enums.ValueOfInfluence.*;
 
 //@author Nathan Ulmen
 //TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
@@ -27,12 +33,12 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     protected static final Player player = Player.getSingleton();
     protected static final OreRealm oreRealm = OreRealm.getSingleton();
     protected static final ItemMap itemTracker = ItemMap.getSingleton();
-    private final ValuesOfInfluence valueOfInfluence;
+    private final KeyValue valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final Operator operator;
     private final double minModifier, maxModifier, influenceScalar;
 
-    public InfluencedUpgrade(ValuesOfInfluence valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
+    public InfluencedUpgrade(KeyValue valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
         this.valueOfInfluence = valuesOfInfluence;
         this.upgrade = upgrade;
 
@@ -44,8 +50,18 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     }
 
     public InfluencedUpgrade(JsonValue jsonValue) {
+        KeyValue tempValueOfInfluence;
+        try {
+            tempValueOfInfluence = ValueOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
+        } catch (IllegalArgumentException e) {
+            try {
+                tempValueOfInfluence = OreProperty.valueOf(jsonValue.getString("valueOfInfluence"));
+            } catch (IllegalArgumentException e2) {
+                throw new RuntimeException("Invalid value of influence" + e2);
+            }
+        }
+        valueOfInfluence = tempValueOfInfluence;
 
-        valueOfInfluence = ValuesOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
@@ -87,7 +103,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
         double finalModifier = influenceScalar * switch (valueOfInfluence) {
-            case VALUE -> operator.apply(ore.getOreValue(), originalModifier);
+            case ORE_VALUE-> operator.apply(ore.getOreValue(), originalModifier);
             case TEMPERATURE -> operator.apply(ore.getOreTemp(), originalModifier);
             case MULTIORE -> operator.apply(ore.getMultiOre(), originalModifier);
             case UPGRADE_COUNT -> operator.apply(ore.getUpgradeCount(), originalModifier);
@@ -96,6 +112,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
             case SPECIAL_POINTS -> operator.apply(player.getSpecialPoints(), originalModifier);
             case WALLET -> operator.apply(player.getWallet(), originalModifier);
             case PRESTIGE_LEVEL -> operator.apply(player.getPrestigeLevel(), originalModifier);
+            default -> throw new IllegalStateException("Unexpected value: " + valueOfInfluence);
         };
 
         if (finalModifier > maxModifier) {

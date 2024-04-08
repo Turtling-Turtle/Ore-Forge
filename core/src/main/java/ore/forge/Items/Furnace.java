@@ -32,7 +32,7 @@ public class Furnace extends Item {
         this.specialPointReward = jsonValue.getInt("specialPointReward");
         this.upgrade = loadViaReflection(jsonValue.get("upgrade"), "upgradeName");
         initBlockConfiguration(this.numberConfig);
-        setTexture(new Texture(Gdx.files.internal("Furnace.jpg")));
+        setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }
 
     //Used to "clone" an item.
