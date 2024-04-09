@@ -1,70 +1,58 @@
 package ore.forge.Enums;
 
 import ore.forge.ItemMap;
+import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
-
+import ore.forge.Strategies.Operand;
 
 
 //Unknown if this will be used.
-public enum ValueOfInfluence implements KeyValue {
-//    ORE_VALUE {
-//        @Override
-//        public double getAssociatedValue(Ore ore) {
-//            return ore.getOreValue();
-//        }
-//    },
-//    ORE_TEMPERATURE {
-//        @Override
-//        public double getAssociatedValue(Ore ore) {
-//            return ore.getOreTemp();
-//        }
-//    },
-//    MULTIORE {
-//        @Override
-//        public double getAssociatedValue(Ore ore) {
-//            return ore.getOreValue();
-//        }
-//    },
-//    UPGRADE_COUNT{
-//        @Override
-//        public double getAssociatedValue(Ore ore) {
-//            return ore.getMultiOre();
-//        }
-//    },
+public enum ValueOfInfluence implements KeyValue, Operand {
     ACTIVE_ORE {
-        public double getAssociatedValue() {
-            return oreRealm.getActiveOre().size();
-        }
     },
     PLACED_ITEMS {
-        public double getAssociatedValue() {
-            return itemMap.getPlacedItems().size();
-        }
     },
     SPECIAL_POINTS {
-        public double getAssociatedValue() {
-            return player.getSpecialPoints();
-        }
     },
     WALLET {
-        public double getAssociatedValue() {
-            return player.getWallet();
-        }
     },
     PRESTIGE_LEVEL {
-        public double getAssociatedValue() {
-            return player.getPrestigeLevel();
-        }
     };
 
-    private static final OreRealm oreRealm = OreRealm.getSingleton();
-    private static final Player player = Player.getSingleton();
-    private static final ItemMap itemMap = ItemMap.getSingleton();
-    public abstract double getAssociatedValue();
+    @Override
+    public double getOperandValue(Ore ore) {
+        return doubleSupplier.getValue();
+    }
+
+    private interface DoubleSupplier {
+        double getValue();
+    }
+
+    private final OreRealm oreRealm = OreRealm.getSingleton();
+    private final Player player = Player.getSingleton();
+    private final ItemMap itemMap = ItemMap.getSingleton();
+    private final DoubleSupplier doubleSupplier;
+
+    public static boolean isValue(String value) {
+        return switch (value) {
+            case "ACTIVE_ORE", "PLACED_ITEMS", "SPECIAL_POINTS", "WALLET", "PRESTIGE_LEVEL" -> true;
+            default -> false;
+        };
+    }
+
+    public double getAssociatedValue() {
+        return doubleSupplier.getValue();
+    }
 
     ValueOfInfluence() {
-
+        doubleSupplier = switch (this) {
+            case ACTIVE_ORE -> () -> oreRealm.getActiveOre().size();
+            case PLACED_ITEMS -> () -> itemMap.getPlacedItems().size();
+            case SPECIAL_POINTS -> player::getSpecialPoints;
+            case WALLET -> player::getWallet;
+            case PRESTIGE_LEVEL -> player::getPrestigeLevel;
+        };
     }
 
 }

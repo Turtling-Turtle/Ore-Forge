@@ -11,6 +11,51 @@ public enum Operator {
 
     private final DoubleBinaryOperator operator;
 
+    public static Operator fromSymbol(char operatorSymbol) {
+        return switch (operatorSymbol) {
+            case '+' -> Operator.ADD;
+            case '-' -> Operator.SUBTRACT;
+            case '*' -> Operator.MULTIPLY;
+            case '/' -> Operator.DIVIDE;
+            case '^' -> Operator.EXPONENT;
+            case '=' -> Operator.ASSIGNMENT;
+            case '%' -> Operator.MODULO;
+            default -> throw new IllegalArgumentException("Invalid operator: " + operatorSymbol);
+        };
+    }
+
+    public static Operator fromSymbol(String operatorSymbol) {
+        return switch (operatorSymbol) {
+            case "+" -> Operator.ADD;
+            case "-" -> Operator.SUBTRACT;
+            case "*" -> Operator.MULTIPLY;
+            case "/" -> Operator.DIVIDE;
+            case "^" -> Operator.EXPONENT;
+            case "=" -> Operator.ASSIGNMENT;
+            case "%" -> Operator.MODULO;
+            default -> throw new IllegalArgumentException("Invalid operator: " + operatorSymbol);
+        };
+    }
+
+    public String asSymbol() {
+        return switch (this) {
+            case ADD -> "+";
+            case SUBTRACT -> "-";
+            case MULTIPLY -> "*";
+            case DIVIDE -> "/";
+            case EXPONENT -> "^";
+            case ASSIGNMENT -> "=";
+            case MODULO -> "%";
+        };
+    }
+
+    public static boolean isOperator(String symbol) {
+        return switch (symbol) {
+            case "+", "-" , "*", "/", "^", "=", "%" -> true;
+            default -> false;
+        };
+    }
+
     Operator() {
         operator = switch (this) {
             case ADD -> (x, y) -> x + y;

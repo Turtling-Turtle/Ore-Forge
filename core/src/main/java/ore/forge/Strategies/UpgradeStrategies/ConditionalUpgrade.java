@@ -55,24 +55,16 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
         this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
         conditionSupplier = configureSupplier(condition);
 
-
-        boolean exceptionThrown = false;
-        try {
-            jsonValue.getDouble("threshold");
-        } catch (IllegalArgumentException ex) {
-            exceptionThrown = true;
-        }
-
-        if (exceptionThrown) { //This means our threshold isn't a double/fixed value.
-            dynamicThreshold = configureKeyValue(jsonValue, "threshold");
-            thresholdSupplier = configureSupplier(dynamicThreshold);
-            fixedThreshold = 1;
-            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), (Double) thresholdSupplier.apply(ore));
-        } else { //This means our threshold was a fixed value.
+        if (jsonValue.get("threshold").isNumber()) {
             fixedThreshold = jsonValue.getDouble("threshold");
             dynamicThreshold = null;
             thresholdSupplier = null;
             evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), fixedThreshold);
+        } else {
+            dynamicThreshold = configureKeyValue(jsonValue, "threshold");
+            thresholdSupplier = configureSupplier(dynamicThreshold);
+            fixedThreshold = 1;
+            evaluator = (Ore ore) -> comparator.evaluate((Double) conditionSupplier.apply(ore), (Double) thresholdSupplier.apply(ore));
         }
 
     }
