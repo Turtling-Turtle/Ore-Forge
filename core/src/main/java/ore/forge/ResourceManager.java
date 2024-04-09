@@ -29,7 +29,7 @@ public class ResourceManager {
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
-//        mongoConnect();
+        mongoConnect();
 
         long t1 = System.currentTimeMillis();
         loadItems(Constants.CONVEYORS_FP);

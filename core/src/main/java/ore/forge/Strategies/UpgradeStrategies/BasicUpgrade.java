@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 //@author Nathan Ulmen
 public class BasicUpgrade implements UpgradeStrategy {
-//    public enum ValueToModify {ORE_VALUE, TEMPERATURE, MULTIORE, SPEED}
     //More VTMS: effect, Duration.
     private double modifier;
     private final OreProperty valueToModify;
