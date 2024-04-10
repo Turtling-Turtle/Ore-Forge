@@ -7,6 +7,7 @@ import ore.forge.Enums.Operator;
 import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Player.Player;
+import ore.forge.Strategies.Function;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +16,7 @@ import static ore.forge.Enums.OreProperty.*;
 import static ore.forge.Enums.ValueOfInfluence.*;
 
 //@author Nathan Ulmen
-//TODO: Figure Out a way to incorporate Effects, mass?, Name/OreType
+//TODO: Integrate Function to class.
 //An InfluencedUPG takes a BasicUPG and adjusts its modifier using 2 paramaters.
 //	1. ValueOfInfluence - The Value that the adjustment is based on.
 //	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
@@ -31,6 +32,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     private final KeyValue valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final Operator operator;
+    private Function upgradeFunction;
     private final double minModifier, maxModifier, influenceScalar;
 
     public InfluencedUpgrade(KeyValue valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
@@ -67,6 +69,8 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         }
 
         operator = Operator.valueOf(jsonValue.getString("operation"));
+
+        upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
 
         //If field doesn't exist that means we need to set it to the "default" .
         double temp;
