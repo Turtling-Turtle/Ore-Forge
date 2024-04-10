@@ -47,6 +47,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     }
 
     public InfluencedUpgrade(JsonValue jsonValue) {
+//        upgradeFunction = Function.parseFunction(jsonValue);
         KeyValue tempValueOfInfluence;
         try {
             tempValueOfInfluence = ValueOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
@@ -102,6 +103,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         // finalModifier = scalar * (valueOfInfluence [operator] baseModifier)
         double originalModifier = upgrade.getModifier();
         double finalModifier = calculateFinalModifier(ore, originalModifier);
+        //double finalModifier = upgradeFunction.calculate(ore);
 
 
         if (finalModifier > maxModifier) {

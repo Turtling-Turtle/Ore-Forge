@@ -6,7 +6,6 @@ import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,12 +15,11 @@ import java.util.regex.Pattern;
 //A function is composed of a left operand, right operand, and an operator.
 //An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
 //KeyValues are Enums. Each enum will call its associated method to get its value.
-    //EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(Ore ore) will return the value of the ore.
-//This class will parse out an equation from a String and return a function which takes an ore and returns a number.
-
-//Pseudo-Code Example:
-//Function parsedEquation;
-//String exampleEquation = "(((ORE_VALUE + 100)/2) - (ORE_VALUE * (TEMPERATURE / 10)))";
+//    EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
+//This class will parse out an equation from a String and return a function which takes an ore and returns a double.
+//
+//Example:
+//exampleEquation = "(((ORE_VALUE + 100)/2) - (ORE_VALUE * (TEMPERATURE / 10)))";
 //Left side:
     //function1= operator.apply(ORE_VALUE, 100);
     //function2 = operator.apply(function1, 2);
@@ -63,7 +61,7 @@ public class Function implements Operand {
         Stack<Operator> operatorStack = new Stack<>();
         while (matcher.find()) {
             String token = matcher.group();
-            if (token.equals("(")) { //Ignore
+            if (token.equals("(")) { //We Ignore '(' char
             } else if (token.equals(")")) {
                 Operand right = operandStack.pop();
                 Operand left = operandStack.pop();
@@ -121,30 +119,26 @@ public class Function implements Operand {
 
     //Method used for testing class
     public static void main(String[] args) {
-        String exampleEquation = "(((ORE_VALUE = 100) % 2) - (ORE_VALUE * (TEMPERATURE / 10)) + (MULTIORE * (100 ^ 2)))";
+//        String exampleEquation = "(((ORE_VALUE = 100) % 2) - (ORE_VALUE * (TEMPERATURE / 10)) + (MULTIORE * (100 ^ 2)))";
         //Key Values: ORE_VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT, SPEED, ACTIVE_ORE, PLACED_ITEMS, WALLET, PRESTIEGE_LEVEL, SPECIAL_POINTS
         //Operators: + , - , * , / , ^ , = , %
 
-        String yourFunction = "((ORE_VALUE * 2) + TEMPERATURE)";
-        Function yourFunc = parseFunction(yourFunction);
+        String function = "((ORE_VALUE * 2) + TEMPERATURE)";
+        String function2 = "((3.14 * 3) + ((200 ^ 1.02) % 5))";
+        Function funkyFunction = parseFunction(function);
+        Function numericFunction = parseFunction(function2);
 
 
 
         Ore ore = new Ore();
-        ore.applyBaseStats(1, 5 , 0 , "Name", null);
-        System.out.println(yourFunc);
-        System.out.println(yourFunc.calculate(ore));
-        double yourModifier = yourFunc.calculate(ore);
+        ore.applyBaseStats(20, 50 , 0 , "Tests", null);
+        //((20 * 2) + 50) = 90
+        System.out.println("ORE VALUE : " + ore.getOreValue());
+        System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());
+        System.out.println(function + " Evaluates to: " + funkyFunction.calculate(ore));
 
-
-
-//        long t1 = System.currentTimeMillis();
-//        ArrayList<Function> stored = new ArrayList<>(100_000);
-//        for (int i = 0; i < 1_000_000; i++) {
-//            stored.add(parseFunction(exampleEquation));
-//        }
-
-//        System.out.println(System.currentTimeMillis() - t1 + "ms to parse " + stored.size() + " functions");
+        System.out.println(function2 + " Evaluates to : " + numericFunction.calculate(ore));
+        double yourModifier = funkyFunction.calculate(ore);
 
 
 
