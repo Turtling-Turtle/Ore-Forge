@@ -37,10 +37,10 @@ public class ResourceManager {
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
         Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + (System.currentTimeMillis()-t1) + " ms" + Color.NONE.colorId);
-//        for (Item item: allItems.values()) {
-//            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
-//            System.out.println();
-//        }
+        for (Item item: allItems.values()) {
+            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
+            System.out.println();
+        }
     }
 
     public void loadItems(String fileToParse) {

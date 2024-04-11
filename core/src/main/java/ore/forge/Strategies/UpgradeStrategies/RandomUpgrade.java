@@ -24,8 +24,8 @@ public class RandomUpgrade implements UpgradeStrategy {
 
     }
 
-
+    @Override
     public String toString() {
-       return null;
+       return "[RandomUpgrade]";
     }
 }

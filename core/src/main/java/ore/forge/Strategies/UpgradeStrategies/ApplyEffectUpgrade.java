@@ -31,6 +31,6 @@ public class ApplyEffectUpgrade implements UpgradeStrategy {
 
     @Override
     public String toString() {
-        return  getClass().getSimpleName() + "\t" + effect.toString();
+        return  "[" + getClass().getSimpleName() + "]\t" + effect.toString();
     }
 }

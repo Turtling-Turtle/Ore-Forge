@@ -11,7 +11,7 @@ public class EffectPurger implements UpgradeStrategy{
     @Override
     public void applyTo(Ore ore) {
         ore.purgeEffects();
-        //might not need this....
+        //might not use this....
         ore.setIsDoomed(false);
     }
 

@@ -8,8 +8,7 @@ import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
-
-import java.util.function.Function;
+import ore.forge.Strategies.Function;
 
 //@author Nathan Ulmen
 //TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
@@ -19,13 +18,14 @@ import java.util.function.Function;
 //The threshold can either be a predetermined fixed Value or a KeyValue.
 public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
     private final KeyValue condition; //Key Value includes OreProperties and
+    private Function conditionFunction;
     private final UpgradeStrategy trueBranchStrategy;
     private final UpgradeStrategy falseBranchStrategy;
     private final double fixedThreshold;
     private final KeyValue dynamicThreshold;
     private final BooleanOperator comparator;
-    private final Function<Ore, Number> conditionSupplier, thresholdSupplier;
-    private final Function<Ore, Boolean> evaluator;
+    private final java.util.function.Function<Ore, Number> conditionSupplier, thresholdSupplier;
+    private final java.util.function.Function<Ore, Boolean> evaluator;
 
     //Used for testing purposes.
     public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, KeyValue condition, double fixedThreshold, KeyValue dynamicThreshold, BooleanOperator comparison) {
@@ -79,7 +79,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     }
 
     //Configures the behavior of a supplier function so that it returns the correct value.
-    private Function<Ore, Number> configureSupplier(KeyValue condition) {
+    private java.util.function.Function<Ore, Number> configureSupplier(KeyValue condition) {
         if (condition instanceof OreProperty) {
             return switch ((OreProperty)condition) {
                 case ORE_VALUE -> (Ore::getOreValue);
@@ -111,12 +111,11 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
 
     @Override
     public String toString() {
-        return "ConditionalUPG{" +
-            "condition=" + condition +
-            ", threshold=" + fixedThreshold +
-            ", comparator=" + comparator +
-            ", \n{ifModifier=" + trueBranchStrategy +  "}" +
-            ", \n{elseModifier=" + falseBranchStrategy + "}" +
-            '}';
+        return "[" + getClass().getSimpleName() + "]" +
+            " Condition:" + condition +
+            ", Threshold:" + fixedThreshold +
+            ", Comparator:" + comparator +
+            "\n\tTrueBranch:" + trueBranchStrategy +  "}" +
+            "\n\tFalseBranch:" + falseBranchStrategy + "}";
     }
 }

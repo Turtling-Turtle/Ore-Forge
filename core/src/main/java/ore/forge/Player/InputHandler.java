@@ -12,6 +12,7 @@ import ore.forge.Enums.OreProperty;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
+import ore.forge.Strategies.Function;
 import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
@@ -80,7 +81,8 @@ public class InputHandler {
     OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
     UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, ORE_VALUE);
-    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(ORE_VALUE, (BasicUpgrade) basicUpgrade, Operator.MULTIPLY);
+    Function influenceFunction = Function.parseFunction("((ORE_VALUE % 30) * 2)");
+    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade);
     OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 
     OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);

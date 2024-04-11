@@ -72,13 +72,11 @@ public class Upgrader extends Item{
 
     @Override
     public String toString() {
-        return super.toString() + upgradeToString();
+        return super.toString() +
+            "\n[Upgrade]: " + upgrade.toString();
     }
 
 
-    public String upgradeToString() {
-        return "\nupgrade= " + upgrade.toString();
-    }
 
 
 }
