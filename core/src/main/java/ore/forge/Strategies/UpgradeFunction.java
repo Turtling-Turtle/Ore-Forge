@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
     //function3 = operator.apply(TEMPERATURE, 10);
     //function4 = operator.apply(ORE_VALUE, f3);
 //parsedEquation = operator.apply(function2, function4);
-public class Function implements Operand {
+public class UpgradeFunction implements Operand {
     //Tokenization
     //Shunting Yard Algorithm
     //Stack Based-Parsing.
@@ -37,26 +37,26 @@ public class Function implements Operand {
     private final Operand leftOperand, rightOperand;
     private final Operator operator;
 
-    private Function(Operand leftOperand, Operand rightOperand, Operator operator) {
+    private UpgradeFunction(Operand leftOperand, Operand rightOperand, Operator operator) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
         this.operator = operator;
     }
 
     //Takes a Json Value, extracts the string from it, then creates a function object based on the extracted string
-    public static Function parseFunction(String equation) {
+    public static UpgradeFunction parseFunction(String equation) {
         equation = equation.replaceAll("\\s", ""); //get rid of spaces in Function string.
         Matcher matcher = pattern.matcher(equation);
         return parseFromTokens(matcher);
     }
 
     //Takes a Json Value, extracts the function string from it, then creates a function object based on the extracted string
-    public static Function parseFunction(JsonValue jsonValue) {
+    public static UpgradeFunction parseFunction(JsonValue jsonValue) {
         String equation = jsonValue.getString("upgradeFunction");
         return parseFunction(equation);
     }
 
-    private static Function parseFromTokens(Matcher matcher) {
+    private static UpgradeFunction parseFromTokens(Matcher matcher) {
         Stack<Operand> operandStack = new Stack<>();
         Stack<Operator> operatorStack = new Stack<>();
         while (matcher.find()) {
@@ -66,7 +66,7 @@ public class Function implements Operand {
                 Operand right = operandStack.pop();
                 Operand left = operandStack.pop();
                 Operator operator = operatorStack.pop();
-                operandStack.push(new Function(left, right, operator));
+                operandStack.push(new UpgradeFunction(left, right, operator));
             } else if (Operator.isOperator(token)) {
                 operatorStack.push(Operator.fromSymbol(token));
             } else if (OreProperty.isProperty(token)) {
@@ -79,7 +79,7 @@ public class Function implements Operand {
                 throw new RuntimeException("Unknown token: " + token);
             }
         }
-        return (Function) operandStack.pop();
+        return (UpgradeFunction) operandStack.pop();
     }
 
     @Override
@@ -125,20 +125,18 @@ public class Function implements Operand {
 
         String function = "((ORE_VALUE * 2) + TEMPERATURE)";
         String function2 = "((3.14 * 3) + ((200 ^ 1.02) % 5))";
-        Function funkyFunction = parseFunction(function);
-        Function numericFunction = parseFunction(function2);
-
-
+        UpgradeFunction funkyUpgradeFunction = parseFunction(function);
+        UpgradeFunction numericUpgradeFunction = parseFunction(function2);
 
         Ore ore = new Ore();
         ore.applyBaseStats(20, 50 , 0 , "Tests", null);
         //((20 * 2) + 50) = 90
         System.out.println("ORE VALUE : " + ore.getOreValue());
         System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());
-        System.out.println(function + " Evaluates to: " + funkyFunction.calculate(ore));
+        System.out.println(function + " Evaluates to: " + funkyUpgradeFunction.calculate(ore));
 
-        System.out.println(function2 + " Evaluates to : " + numericFunction.calculate(ore));
-        double yourModifier = funkyFunction.calculate(ore);
+        System.out.println(function2 + " Evaluates to : " + numericUpgradeFunction.calculate(ore));
+        double yourModifier = funkyUpgradeFunction.calculate(ore);
 
 
 

@@ -7,7 +7,7 @@ import ore.forge.Enums.Operator;
 import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Player.Player;
-import ore.forge.Strategies.Function;
+import ore.forge.Strategies.UpgradeFunction;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +32,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     private final KeyValue valueOfInfluence;
     private final BasicUpgrade upgrade;
     private final Operator operator;
-    private Function upgradeFunction;
+    private UpgradeFunction upgradeFunction;
     private final double minModifier, maxModifier, influenceScalar;
 
     public InfluencedUpgrade(KeyValue valuesOfInfluence, BasicUpgrade upgrade, Operator operator) {
@@ -71,7 +71,6 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
         operator = Operator.valueOf(jsonValue.getString("operation"));
 
-        upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
 
         //If field doesn't exist that means we need to set it to the "default" .
         double temp;
@@ -135,7 +134,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
     @Override
     public String toString() {
-        return "InfluencedUPG{" +
+        return "InfluencedUPG {" +
             "valueOfInfluence=" + valueOfInfluence +
             ", \nmethodOfModification=" + upgrade +
             ", influenceOperator=" + operator +
