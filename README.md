@@ -17,5 +17,4 @@ the python script adds it to directory automatically.)
 ### Key Components:
 * The [GameWorld](https://github.com/NathanUlmen/OreForge/blob/main/core/src/main/java/ore/forge/Screens/GameWorld.java) class is where the game is rendered and the game logic is driven from.
 * Under the [Strategies Folder](https://github.com/NathanUlmen/OreForge/tree/main/core/src/main/java/ore/forge/Strategies) you can find the classes that are responsible upgrade logic and effect logic.
-  * (I'm especially proud of this aspect of the project).
 * The [Ore](https://github.com/NathanUlmen/OreForge/blob/main/core/src/main/java/ore/forge/Ore.java) class is pretty important as it's what the game revolves around.
