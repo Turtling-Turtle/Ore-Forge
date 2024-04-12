@@ -6,6 +6,7 @@ import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
+import java.util.Random;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,8 +139,20 @@ public class Function implements Operand {
         System.out.println(function2 + " Evaluates to : " + numericUpgradeFunction.calculate(ore));
         double yourModifier = funkyUpgradeFunction.calculate(ore);
 
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //52
+        String nums = "0123456789";
 
-
+        //52^8
+        StringBuilder id = new StringBuilder();
+        Random rand = new Random();
+        for (int i = 0; i < 3; i++) {
+            id.append(nums.charAt(rand.nextInt(nums.length())));
+        }
+        id.append("-");
+        for (int i = 0; i < 8; i++) {
+            id.append(chars.charAt(rand.nextInt(chars.length())));
+        }
+        System.out.println(id);
 //        System.out.println(parseFunction(exampleEquation));
 //    [a-zA-Z_]+: This part matches one or more characters that are alphabetic (both uppercase and lowercase letters) or an underscore. This is used to match variable names like ORE_VALUE, TEMPERATURE, and MULTIORE.
 //    \\d+: This part matches one or more digits. It is used to match numbers like 100 and 2.

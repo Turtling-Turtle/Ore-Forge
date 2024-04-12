@@ -27,7 +27,8 @@ public abstract class Item {
     protected Tier tier;
     private Texture itemTexture;
     protected Vector2 vector2;
-    protected String name, description;
+    protected String name, description, id;
+
 
     public Item(String name, String description, int[][]blockLayout, Tier TIER, double itemValue) {
         this.name = name;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
 import ore.forge.Enums.BooleanOperator;
 import ore.forge.Enums.Operator;
-import ore.forge.Enums.OreProperty;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
