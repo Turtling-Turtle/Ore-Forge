@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 //KeyValues are Enums. Each enum will call its associated method to get its value.
 //    EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
 //This class will parse out an equation from a String and return a function which takes an ore and returns a double.
-//
+
 //Example:
 //exampleEquation = "(((ORE_VALUE + 100)/2) - (ORE_VALUE * (TEMPERATURE / 10)))";
 //Left side:
@@ -130,7 +130,7 @@ public class Function implements Operand {
         Function numericUpgradeFunction = parseFunction(function2);
 
         Ore ore = new Ore();
-        ore.applyBaseStats(20, 50 , 0 , "Tests", null);
+        ore.applyBaseStats(20, 50 , 0 , "Test", null);
         //((20 * 2) + 50) = 90
         System.out.println("ORE VALUE : " + ore.getOreValue());
         System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());
@@ -153,6 +153,7 @@ public class Function implements Operand {
             id.append(chars.charAt(rand.nextInt(chars.length())));
         }
         System.out.println(id);
+
 //        System.out.println(parseFunction(exampleEquation));
 //    [a-zA-Z_]+: This part matches one or more characters that are alphabetic (both uppercase and lowercase letters) or an underscore. This is used to match variable names like ORE_VALUE, TEMPERATURE, and MULTIORE.
 //    \\d+: This part matches one or more digits. It is used to match numbers like 100 and 2.
@@ -165,6 +166,7 @@ public class Function implements Operand {
 //    %: This part matches the percent sign %.
 //    =: This part matches the equal sign =.
 //    \\^: This part matches the caret ^.
+
 //        Matcher matcher = pattern.matcher(exampleEquation);
 //        while (matcher.find()) {
 //            String token = matcher.group();
