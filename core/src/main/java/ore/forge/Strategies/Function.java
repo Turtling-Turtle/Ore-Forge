@@ -6,6 +6,7 @@ import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
+import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -125,8 +126,7 @@ public class Function implements Operand {
 
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //52
         String nums = "0123456789";
-
-        //52^8
+        // 10^3 * 52^8 = total unique combinations
         StringBuilder id = new StringBuilder();
         Random rand = new Random();
         for (int i = 0; i < 3; i++) {

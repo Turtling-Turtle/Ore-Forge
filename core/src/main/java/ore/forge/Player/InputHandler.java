@@ -72,7 +72,7 @@ public class InputHandler {
     UpgradeStrategy destroy = new DestructionUpgrade();
     UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ORE_VALUE, 100000*100000, null, ComparisonOperator.GREATER_THAN);
 
-    UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
+    UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", "tst", 4, false);
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
@@ -81,7 +81,7 @@ public class InputHandler {
 
     UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, NumericOperator.MULTIPLY, ORE_VALUE);
     Function influenceFunction = Function.parseFunction("((ORE_VALUE % 30) * 2)");
-    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade);
+    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade, 0, 20.0);
     OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 
     OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
