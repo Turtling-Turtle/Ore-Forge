@@ -4,8 +4,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
 
-//@author Nathan Ulmen
-//Used To bundle multiple different upgrade strategies into one.
+/**@author Nathan Ulmen
+Used to wrap/bundled any number of upgrades into one.*/
 public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<UpgradeStrategy> {
     private final UpgradeStrategy[] upgradeStrategies;
 

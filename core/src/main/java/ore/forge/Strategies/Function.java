@@ -11,13 +11,13 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//@author Nathan Ulmen
-//A pair of parenthesis encapsulate a function.
-//A function is composed of a left operand, right operand, and an operator.
-//An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
-//KeyValues are Enums. Each enum will call its associated method to get its value.
-//EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
-//This class will parse an equation from a String and return a Function.
+/**@author Nathan Ulmen
+A pair of parenthesis encapsulate a function.
+A function is composed of a left operand, right operand, and an operator.
+An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
+KeyValues are Enums. Each enum will call its associated method to get its value.
+    EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
+This class will parse an equation from a String and return a Function.*/
 public class Function implements Operand {
     private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+|\\(|\\)|\\d+(\\.\\d+)?|\\+|-|\\*|/|=|%|\\^)"); //regex sucks
     private final Operand leftOperand, rightOperand;
@@ -42,7 +42,8 @@ public class Function implements Operand {
         return parseFromTokens(matcher);
     }
 
-    //Shunting Yard Algorithm: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+    /**Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
+     to parse the Function from the string.*/
     private static Function parseFromTokens(Matcher matcher) {
         Stack<Operand> operandStack = new Stack<>();
         Stack<NumericOperator> numericOperatorStack = new Stack<>();
@@ -70,12 +71,8 @@ public class Function implements Operand {
     }
 
     @Override
-    public double getOperandValue(Ore ore) {
-        return calculate(ore);
-    }
-
     public double calculate(Ore ore) {
-        return numericOperator.apply(leftOperand.getOperandValue(ore), rightOperand.getOperandValue(ore));
+        return numericOperator.apply(leftOperand.calculate(ore), rightOperand.calculate(ore));
     }
 
     public static boolean isNumeric(String string) {
@@ -92,9 +89,10 @@ public class Function implements Operand {
         return ("(" +leftOperand + " " + numericOperator.asSymbol() + " " + rightOperand + ")");
     }
 
+    /**Record class to keep track of primitive doubles*/
     private record FixedValue(double value) implements Operand {
         @Override
-        public double getOperandValue(Ore ore) {
+        public double calculate(Ore ore) {
             return value;
         }
 
@@ -116,7 +114,7 @@ public class Function implements Operand {
         Function numericUpgradeFunction = parseFunction(function2);
 
         Ore ore = new Ore();
-        ore.applyBaseStats(20, 50 , 0 , "Test", null);
+        ore.applyBaseStats(20, 50 , 0 , "Test", "idk", null);
         //((20 * 2) + 50) = 90
         System.out.println("ORE VALUE : " + ore.getOreValue());
         System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());

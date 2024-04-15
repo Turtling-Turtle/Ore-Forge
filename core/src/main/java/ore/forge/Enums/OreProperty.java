@@ -16,7 +16,7 @@ public enum OreProperty implements KeyValue, Operand {
     }
 
     @Override
-    public double getOperandValue(Ore ore) {
+    public double calculate(Ore ore) {
         return  supplier.getValue(ore);
     }
 

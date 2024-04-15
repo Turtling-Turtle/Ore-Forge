@@ -21,7 +21,7 @@ public enum ValueOfInfluence implements KeyValue, Operand {
     };
 
     @Override
-    public double getOperandValue(Ore ore) {
+    public double calculate(Ore ore) {
         return doubleSupplier.getValue();
     }
 

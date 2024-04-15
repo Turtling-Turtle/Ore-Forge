@@ -7,39 +7,23 @@ import ore.forge.Strategies.Function;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-//@author Nathan Ulmen
-//TODO: Integrate Function to class.
-//An InfluencedUPG takes a BasicUPG and adjusts its modifier using 2 paramaters.
-//	1. ValueOfInfluence - The Value that the adjustment is based on.
-//	2. Operation - How the ValueOfInfluence is applied to the the BasicUPGs modifier.
-
-//A maximum and minimum value can be set to ensure a modifier stays within a range.
-//An Influenced Upgrade takes a Basic upgrade and adjusts its modifier,
-//The finalModifier is equal to/ found by this equation: finalModifier = scalar * (ValueOfInfluence [operator] baseModifier)
-//You can also set min and maximum values for the finalModifier to ensure it isnt greater than or less than a specific value.
+/**@author Nathan Ulmen
+An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.
+A maximum and minimum value can be set to ensure the modifier stays within a specified range.*/
 public class InfluencedUpgrade implements UpgradeStrategy {
     private final BasicUpgrade upgrade;
     private final Function upgradeFunction;
     private final double minModifier, maxModifier;
 
-    //Used for testing.
-    public InfluencedUpgrade(Function upgradeFunction, BasicUpgrade upgrade) {
+    public InfluencedUpgrade(Function upgradeFunction, BasicUpgrade upgrade, double minModifier, double maxModifier) {
         this.upgrade = upgrade;
         this.upgradeFunction = upgradeFunction;
-        minModifier = -1000; //Default values for testing.
-        maxModifier = 2000;
-    }
-
-    private InfluencedUpgrade(InfluencedUpgrade influencedUpgradeClone) {
-        this.upgrade = influencedUpgradeClone.upgrade;//Don't need to clone
-        this.upgradeFunction = influencedUpgradeClone.upgradeFunction;
-        this.minModifier = influencedUpgradeClone.minModifier;
-        this.maxModifier = influencedUpgradeClone.maxModifier;
+        this.minModifier = minModifier;
+        this.maxModifier = maxModifier;
     }
 
     public InfluencedUpgrade(JsonValue jsonValue) {
         upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
-
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
@@ -48,8 +32,6 @@ public class InfluencedUpgrade implements UpgradeStrategy {
                  ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
         //If field doesn't exist that means we need to set it to the "default" .
         double temp;
         try {
@@ -58,7 +40,6 @@ public class InfluencedUpgrade implements UpgradeStrategy {
             temp = Double.MIN_VALUE;
         }
         minModifier = temp;
-
         try {
             temp = jsonValue.getDouble("maxModifier");
         } catch (IllegalArgumentException e) {
@@ -67,6 +48,12 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         maxModifier = temp;
     }
 
+    private InfluencedUpgrade(InfluencedUpgrade influencedUpgradeClone) {
+        this.upgrade = influencedUpgradeClone.upgrade;//Don't need to clone
+        this.upgradeFunction = influencedUpgradeClone.upgradeFunction;
+        this.minModifier = influencedUpgradeClone.minModifier;
+        this.maxModifier = influencedUpgradeClone.maxModifier;
+    }
 
     @Override
     public void applyTo(Ore ore) {
@@ -98,7 +85,6 @@ public class InfluencedUpgrade implements UpgradeStrategy {
             ", Upgrade Function: " + upgradeFunction +
             ", Minimum Modifier: " + minModifier +
             ", Max Modifier: " + maxModifier;
-
     }
 
 }

@@ -7,7 +7,8 @@ import ore.forge.Ore;
 
 import java.util.function.Consumer;
 
-//@author Nathan Ulmen
+/**@author Nathan Ulmen
+A Basic upgrade modifies an Ore property by applying the Modifier to it using a Numeric Operator.*/
 public class BasicUpgrade implements UpgradeStrategy {
     //More VTMS: effect, Duration.
     private double modifier;

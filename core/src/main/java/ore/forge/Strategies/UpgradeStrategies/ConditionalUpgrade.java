@@ -10,14 +10,14 @@ import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
 import ore.forge.Strategies.Function;
 
-//@author Nathan Ulmen
-//TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
-//A conditional Upgrade takes two upgrade Strategies, a trueBranchStrategy and a falseBranchStrategy, a condition, threshold, and a comparison operator.
-//The condition is compared to the threshold using the comparison operator and depending on the result either the true or false branch is activated.
-//The condition is a KeyValue which means it can be a property of the ore being upgraded or a more universal value like active ore or player level.
-//The threshold can either be a predetermined fixed Value or a KeyValue.
+/**@author Nathan Ulmen
+TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
+A conditional Upgrade takes two upgrade Strategies, a trueBranchStrategy and a falseBranchStrategy, a condition, threshold, and a comparison operator.
+The condition is compared to the threshold using the comparison operator and depending on the result either the true or false branch is activated.
+The condition is a KeyValue which means it can be a property of the ore being upgraded or a more universal value like active ore or player level.
+The threshold can either be a predetermined fixed Value or a KeyValue.*/
 public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
-    private final KeyValue condition; //Key Value includes OreProperties and
+    private final KeyValue condition; //Key Value includes OreProperties and ValueOfInfluence
     private Function conditionFunction;
     private final UpgradeStrategy trueBranchStrategy;
     private final UpgradeStrategy falseBranchStrategy;

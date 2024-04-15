@@ -6,6 +6,8 @@ import ore.forge.Strategies.OreEffects.OreEffect;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**@author Nathan Ulmen
+Applies an OreEffect to an ore.*/
 public class ApplyEffectUpgrade implements UpgradeStrategy {
     private final OreEffect effect;
 
