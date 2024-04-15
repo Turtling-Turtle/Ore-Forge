@@ -9,7 +9,7 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 //@author Nathan Ulmen
 //TODO: Invulnerability could have its implementation changed to be an ObserverEffect???
 public class ObserverOreEffect implements OreEffect , StrategyInitializer<UpgradeStrategy> {
-    //On upgrade(temp change, value change, multi-ore change, Speed Change, 
+    //On upgrade(temp change, value change, multi-ore change, Speed Change,
     private float duration;
     private int charges;
     private final UpgradeStrategy upgradeStrategy;
@@ -29,10 +29,11 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
         upgradeStrategy = createOrNull(jsonValue, "upgrade", "upgradeName");
     }
 
-    public ObserverOreEffect(ObserverOreEffect clone) {
+    //Clone Constructor
+    private ObserverOreEffect(ObserverOreEffect clone) {
         this.duration = clone.duration;
         this.charges = clone.charges;
-        this.upgradeStrategy = clone.upgradeStrategy;
+        this.upgradeStrategy = clone.upgradeStrategy.clone();
     }
 
     @Override
@@ -48,11 +49,7 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
 
     @Override
     public OreEffect clone() {
-        try {
-            return (OreEffect) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        return new ObserverOreEffect(this);
     }
 
     @Override

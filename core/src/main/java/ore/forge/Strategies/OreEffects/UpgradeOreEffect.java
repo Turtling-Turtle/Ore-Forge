@@ -20,11 +20,11 @@ public class UpgradeOreEffect implements OreEffect {
         strategy = strategyToApply;
     }
 
-    public UpgradeOreEffect(UpgradeOreEffect clone) {
+    private UpgradeOreEffect(UpgradeOreEffect clone) {
         this.interval = clone.interval;
         this.duration = clone.duration;
         currentTime = 0f;
-        strategy = clone.strategy;
+        strategy = clone.strategy.clone();
     }
 
     public UpgradeOreEffect(JsonValue jsonValue) {

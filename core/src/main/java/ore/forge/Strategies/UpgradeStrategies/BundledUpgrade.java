@@ -23,6 +23,14 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
         }
     }
 
+    //Clone constructor
+    private BundledUpgrade(BundledUpgrade bundledUpgradeClone) {
+        this.upgradeStrategies = new UpgradeStrategy[bundledUpgradeClone.upgradeStrategies.length];
+        for (int i = 0; i < bundledUpgradeClone.upgradeStrategies.length; i++) {
+            this.upgradeStrategies[i] = bundledUpgradeClone.upgradeStrategies[i].clone();
+        }
+    }
+
     @Override
     public void applyTo(Ore ore) {
         for (UpgradeStrategy upgStrat : upgradeStrategies) {
@@ -31,6 +39,12 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
             }
         }
     }
+
+    @Override
+    public UpgradeStrategy clone() {
+        return new BundledUpgrade(this);
+    }
+
 
     public String toString() {
         StringBuilder s = new StringBuilder();

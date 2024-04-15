@@ -16,6 +16,7 @@ public class Block {
     private boolean isProcessBlock, isFull;
 
     protected String name;
+    protected String id;
     protected Item parentItem;
 
     public Block(Direction direction, int x, int y) {
@@ -30,6 +31,7 @@ public class Block {
         vector2 = new Vector2();
         isProcessBlock = false;
         name = parentItem.getName() + " " + this.getClass().getSimpleName();
+        id = parentItem.getID();
         this.direction = parentItem.getDirection();
         force = new Vector2(2, 3);
     }

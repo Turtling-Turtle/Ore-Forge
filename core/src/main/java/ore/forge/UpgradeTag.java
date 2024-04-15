@@ -4,20 +4,22 @@ import com.badlogic.gdx.utils.JsonValue;
 
 //@author Nathan Ulmen
 public class UpgradeTag {
-    private final String name;
+    private final String name, id;
     private final int maxUpgrades;
     private int currentUpgrades;
     private final boolean isResetter;
 
-    public UpgradeTag(String name, int maxUpgrades, boolean isResetter) {
+    public UpgradeTag(String name, String id, int maxUpgrades, boolean isResetter) {
         this.name = name;
+        this.id = id;
         this.maxUpgrades = maxUpgrades;
         currentUpgrades = 0;
         this.isResetter = isResetter;
     }
 
     public UpgradeTag(UpgradeTag tagToClone) {
-        this.name = tagToClone.getName();
+        this.name = tagToClone.name;
+        this.id = tagToClone.id;
         this.maxUpgrades = tagToClone.getMaxUpgrades();
         currentUpgrades = 0;
         this.isResetter = tagToClone.isResetter;
@@ -25,6 +27,7 @@ public class UpgradeTag {
 
     public UpgradeTag(JsonValue jsonValue) {
         this.name = jsonValue.getString("name");
+        this.id = jsonValue.getString("id");
         this.maxUpgrades = jsonValue.getInt("maxUpgrades");
         this.isResetter = jsonValue.getBoolean("isResetter");
         currentUpgrades = 0;
@@ -32,6 +35,10 @@ public class UpgradeTag {
 
     public Boolean isResetter() {
         return isResetter;
+    }
+
+    public String getID() {
+        return id;
     }
 
     public String getName() {

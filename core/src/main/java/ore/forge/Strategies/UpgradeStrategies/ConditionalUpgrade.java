@@ -2,7 +2,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.BooleanOperator;
+import ore.forge.Enums.ComparisonOperator;
 import ore.forge.Enums.KeyValue;
 import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
@@ -23,12 +23,12 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     private final UpgradeStrategy falseBranchStrategy;
     private final double fixedThreshold;
     private final KeyValue dynamicThreshold;
-    private final BooleanOperator comparator;
+    private final ComparisonOperator comparator;
     private final java.util.function.Function<Ore, Number> conditionSupplier, thresholdSupplier;
     private final java.util.function.Function<Ore, Boolean> evaluator;
 
     //Used for testing purposes.
-    public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, KeyValue condition, double fixedThreshold, KeyValue dynamicThreshold, BooleanOperator comparison) {
+    public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, KeyValue condition, double fixedThreshold, KeyValue dynamicThreshold, ComparisonOperator comparison) {
         trueBranchStrategy = trueBranch;
         falseBranchStrategy = falseBranch;
         this.fixedThreshold = fixedThreshold;
@@ -52,7 +52,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
         trueBranchStrategy = createOrNull(jsonValue, "ifModifier", "upgradeName");
         falseBranchStrategy = createOrNull(jsonValue, "elseModifier", "upgradeName");
         this.condition = configureKeyValue(jsonValue, "condition");
-        this.comparator = BooleanOperator.valueOf(jsonValue.getString("comparison"));
+        this.comparator = ComparisonOperator.valueOf(jsonValue.getString("comparison"));
         conditionSupplier = configureSupplier(condition);
 
         if (jsonValue.get("threshold").isNumber()) {
@@ -69,6 +69,20 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
 
     }
 
+    //Clone constructor
+    private ConditionalUpgrade(ConditionalUpgrade conditionalUpgradeClone) {
+        this.condition = conditionalUpgradeClone.condition;
+        this.trueBranchStrategy = conditionalUpgradeClone.trueBranchStrategy.clone();
+        this.falseBranchStrategy = conditionalUpgradeClone.falseBranchStrategy.clone();
+        this.fixedThreshold = conditionalUpgradeClone.fixedThreshold;
+        this.dynamicThreshold = conditionalUpgradeClone.dynamicThreshold;
+        this.comparator = conditionalUpgradeClone.comparator;
+        this.conditionFunction = conditionalUpgradeClone.conditionFunction;
+        this.evaluator = conditionalUpgradeClone.evaluator;
+        this.conditionSupplier = conditionalUpgradeClone.conditionSupplier;
+        this.thresholdSupplier = conditionalUpgradeClone.thresholdSupplier;
+    }
+
     @Override
     public void applyTo(Ore ore) {
         if (evaluator.apply(ore)) {//evaluator function is applied to ore
@@ -76,6 +90,11 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
         } else if (falseBranchStrategy != null) {
             falseBranchStrategy.applyTo(ore);
         }
+    }
+
+    @Override
+    public UpgradeStrategy clone() {
+        return new ConditionalUpgrade(this);
     }
 
     //Configures the behavior of a supplier function so that it returns the correct value.

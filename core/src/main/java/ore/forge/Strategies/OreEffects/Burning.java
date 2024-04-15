@@ -4,24 +4,32 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 public class Burning implements OreEffect {
-    private float duration;
-    private final float tempIncrease;
+    private float currentDuration;
+    private final float tempIncrease, duration;
 
     public Burning(float duration, float tempIncrease) {
-        this.duration = duration;
+        this.currentDuration = duration;
+        this.duration = currentDuration;
         this.tempIncrease = tempIncrease;
     }
 
     public Burning(JsonValue jsonValue) {
-       this.duration = jsonValue.getFloat("duration");
+       this.currentDuration = jsonValue.getFloat("duration");
+       this.duration = currentDuration;
        this.tempIncrease = jsonValue.getFloat("tempIncrease");
     }
 
+    //Clone constructor
+    private Burning(Burning burning) {
+        this.currentDuration = burning.duration;
+        this.duration = burning.duration;
+        this.tempIncrease = burning.tempIncrease;
+    }
 
     @Override
     public void activate(float deltaTime, Ore ore) {
-        duration -= deltaTime;
-        if (duration <=0) {
+        currentDuration -= deltaTime;
+        if (currentDuration <=0) {
             ore.setIsDoomed(true);
             ore.removeEffect(this);
         } else {
@@ -31,11 +39,7 @@ public class Burning implements OreEffect {
 
     @Override
     public OreEffect clone() {
-        try {
-            return  (OreEffect) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        return new Burning(this);
     }
 
     @Override
@@ -45,6 +49,6 @@ public class Burning implements OreEffect {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "\tDuration: " + duration + "\tTemp Increase: " + tempIncrease;
+        return getClass().getSimpleName() + "\tDuration: " + currentDuration + "\tTemp Increase: " + tempIncrease;
     }
 }

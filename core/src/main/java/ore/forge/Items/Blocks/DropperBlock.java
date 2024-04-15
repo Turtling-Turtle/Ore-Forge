@@ -57,7 +57,7 @@ public class DropperBlock extends Block {
     private void createOre(Block blockInFront, OreEffect effect) {
         oreRealm.giveOre()
             .setVector(vector2)
-            .applyBaseStats(oreValue, oreTemp, multiOre, oreName, effect)
+            .applyBaseStats(oreValue, oreTemp, multiOre, oreName, id, effect)
             .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
         increaseTotalOreDropped();
     }

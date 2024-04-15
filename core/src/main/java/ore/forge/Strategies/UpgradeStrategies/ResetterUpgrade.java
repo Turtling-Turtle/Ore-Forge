@@ -19,6 +19,11 @@ public class ResetterUpgrade implements UpgradeStrategy{
     }
 
     @Override
+    public UpgradeStrategy clone() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return getClass().getSimpleName();
     }

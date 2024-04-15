@@ -44,6 +44,7 @@ public abstract class Item {
     public Item(JsonValue jsonValue) {
         //TODO: Handle errors when creating from Json.
         this.name = jsonValue.getString("name");
+        this.id = jsonValue.getString("id");
         this.description = jsonValue.getString("description");
         this.numberConfig = parseBlockLayout(jsonValue.get("blockLayout"));
         this.blockConfig = new Block[numberConfig.length][numberConfig[0].length];
@@ -56,6 +57,7 @@ public abstract class Item {
     public Item(Item itemToClone) {
         vector2 = new Vector2();
         name = itemToClone.name;
+        id = itemToClone.id;
         description = itemToClone.description;
         numberConfig = itemToClone.numberConfig;
         blockConfig = new Block[numberConfig.length][numberConfig[0].length];
@@ -247,6 +249,10 @@ public abstract class Item {
         return name;
     }
 
+    public String getID() {
+        return id;
+    }
+
     public Tier getTier() {
         return tier;
     }
@@ -284,7 +290,7 @@ public abstract class Item {
     }
 
     public String toString() {
-        return name + "\t" +description + vector2.toString();
+        return name + "\t" +description + "\tID: " + id + "\tposition:" + vector2.toString();
     }
 
 }

@@ -2,7 +2,7 @@ package ore.forge.Enums;
 
 import java.util.function.DoubleBinaryOperator;
 
-public enum Operator {
+public enum NumericOperator {
     ADD, SUBTRACT, MULTIPLY, DIVIDE, EXPONENT, ASSIGNMENT, MODULO;
 
     public final double apply(double x, double y) {
@@ -11,28 +11,28 @@ public enum Operator {
 
     private final DoubleBinaryOperator operator;
 
-    public static Operator fromSymbol(char operatorSymbol) {
+    public static NumericOperator fromSymbol(char operatorSymbol) {
         return switch (operatorSymbol) {
-            case '+' -> Operator.ADD;
-            case '-' -> Operator.SUBTRACT;
-            case '*' -> Operator.MULTIPLY;
-            case '/' -> Operator.DIVIDE;
-            case '^' -> Operator.EXPONENT;
-            case '=' -> Operator.ASSIGNMENT;
-            case '%' -> Operator.MODULO;
+            case '+' -> NumericOperator.ADD;
+            case '-' -> NumericOperator.SUBTRACT;
+            case '*' -> NumericOperator.MULTIPLY;
+            case '/' -> NumericOperator.DIVIDE;
+            case '^' -> NumericOperator.EXPONENT;
+            case '=' -> NumericOperator.ASSIGNMENT;
+            case '%' -> NumericOperator.MODULO;
             default -> throw new IllegalArgumentException("Invalid operator: " + operatorSymbol);
         };
     }
 
-    public static Operator fromSymbol(String operatorSymbol) {
+    public static NumericOperator fromSymbol(String operatorSymbol) {
         return switch (operatorSymbol) {
-            case "+" -> Operator.ADD;
-            case "-" -> Operator.SUBTRACT;
-            case "*" -> Operator.MULTIPLY;
-            case "/" -> Operator.DIVIDE;
-            case "^" -> Operator.EXPONENT;
-            case "=" -> Operator.ASSIGNMENT;
-            case "%" -> Operator.MODULO;
+            case "+" -> NumericOperator.ADD;
+            case "-" -> NumericOperator.SUBTRACT;
+            case "*" -> NumericOperator.MULTIPLY;
+            case "/" -> NumericOperator.DIVIDE;
+            case "^" -> NumericOperator.EXPONENT;
+            case "=" -> NumericOperator.ASSIGNMENT;
+            case "%" -> NumericOperator.MODULO;
             default -> throw new IllegalArgumentException("Invalid operator: " + operatorSymbol);
         };
     }
@@ -56,7 +56,7 @@ public enum Operator {
         };
     }
 
-    Operator() {
+    NumericOperator() {
         operator = switch (this) {
             case ADD -> (x, y) -> x + y;
             case SUBTRACT -> (x, y) -> x - y;

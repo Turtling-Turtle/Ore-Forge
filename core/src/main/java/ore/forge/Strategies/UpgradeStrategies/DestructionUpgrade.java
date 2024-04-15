@@ -9,4 +9,9 @@ public class DestructionUpgrade implements UpgradeStrategy {
         ore.setIsDoomed(true);
     }
 
+    @Override
+    public UpgradeStrategy clone() {
+        return this;
+    }
+
 }

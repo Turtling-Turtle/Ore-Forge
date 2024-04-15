@@ -15,4 +15,9 @@ public class EffectPurger implements UpgradeStrategy{
         ore.setIsDoomed(false);
     }
 
+    @Override
+    public UpgradeStrategy clone() {
+        return this;
+    }
+
 }

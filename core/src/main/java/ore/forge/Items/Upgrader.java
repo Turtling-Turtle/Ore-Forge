@@ -42,7 +42,7 @@ public class Upgrader extends Item{
     public Upgrader(Upgrader itemToClone) {
         super(itemToClone);
         this.conveyorSpeed = itemToClone.conveyorSpeed;
-        this.upgrade =  itemToClone.upgrade;
+        this.upgrade =  itemToClone.upgrade.clone();
         this.upgradeTag = itemToClone.upgradeTag;
         this.setTexture(itemToClone.getTexture());
         initBlockConfiguration(itemToClone.numberConfig);

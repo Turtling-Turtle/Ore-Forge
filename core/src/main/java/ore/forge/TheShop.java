@@ -1,5 +1,5 @@
 package ore.forge;
-import ore.forge.Enums.BooleanOperator;
+import ore.forge.Enums.ComparisonOperator;
 import ore.forge.FunctionalInterfaces.BinomialFunction;
 import ore.forge.Items.Item;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;
@@ -98,7 +98,7 @@ public class TheShop {
                 private Conditions simpleConditionOne;
                 private Conditions simpleConditionTwo;
                 private BoolType evalType;
-                BooleanOperator baseEvalType;
+                ComparisonOperator baseEvalType;
                 //A simple condition compares two values/things to one another, things like ore properties, player stats,
                 //items on base.
                 //A complex Condition can take two "simple" conditions. and evaluates them with a BoolType(AND/OR).

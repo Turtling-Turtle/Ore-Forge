@@ -1,7 +1,7 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.Operator;
+import ore.forge.Enums.NumericOperator;
 import ore.forge.Enums.OreProperty;
 import ore.forge.Ore;
 
@@ -13,11 +13,11 @@ public class BasicUpgrade implements UpgradeStrategy {
     private double modifier;
     private final OreProperty valueToModify;
     private final Consumer<Ore> upgradeFunction;
-    private final Operator operator;
+    private final NumericOperator numericOperator;
 
 
-    public BasicUpgrade(double mod, Operator operatorType, OreProperty valueToModify) {
-        this.operator = operatorType;
+    public BasicUpgrade(double mod, NumericOperator numericOperatorType, OreProperty valueToModify) {
+        this.numericOperator = numericOperatorType;
         this.modifier = mod;
         this.valueToModify = valueToModify;
         upgradeFunction = configureUpgradeFunction();
@@ -31,8 +31,16 @@ public class BasicUpgrade implements UpgradeStrategy {
             modifier = 1;
         }
         valueToModify = OreProperty.valueOf(jsonValue.getString("valueToModify"));
-        operator = Operator.valueOf(jsonValue.getString("operation"));
+        numericOperator = NumericOperator.valueOf(jsonValue.getString("operation"));
         upgradeFunction = configureUpgradeFunction();
+    }
+
+    //Clone constructor
+    private BasicUpgrade(BasicUpgrade upgrade) {
+        this.modifier = upgrade.modifier;
+        this.valueToModify = upgrade.valueToModify;
+        this.numericOperator = upgrade.numericOperator;
+        this.upgradeFunction = configureUpgradeFunction();
     }
 
     @Override
@@ -43,12 +51,16 @@ public class BasicUpgrade implements UpgradeStrategy {
     //Determines/sets the behavior of the upgradeFunction.
     private Consumer<Ore> configureUpgradeFunction() {
         return switch (valueToModify) {
-            case ORE_VALUE -> (Ore ore) -> ore.setOreValue(operator.apply(ore.getOreValue(), modifier));
-            case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(operator.apply(ore.getOreTemp(), modifier)));
-            case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(operator.apply(ore.getOreTemp(), modifier)));
-            case SPEED -> (Ore ore) -> ore.setSpeedScalar((float) operator.apply(ore.getSpeedScalar(), modifier));
+            case ORE_VALUE -> (Ore ore) -> ore.setOreValue(numericOperator.apply(ore.getOreValue(), modifier));
+            case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
+            case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
+            case SPEED -> (Ore ore) -> ore.setSpeedScalar((float) numericOperator.apply(ore.getSpeedScalar(), modifier));
             case UPGRADE_COUNT -> throw new RuntimeException("Upgrade Count is not a valid value to Modify.");
         };
+    }
+
+    public UpgradeStrategy clone() {
+        return new BasicUpgrade(this);
     }
 
     public void setModifier(double newVal) {
@@ -59,8 +71,8 @@ public class BasicUpgrade implements UpgradeStrategy {
         return modifier;
     }
 
-    public Operator getOperator() {
-        return operator;
+    public NumericOperator getOperator() {
+        return numericOperator;
     }
 
     public OreProperty getValueToModify() {
@@ -70,7 +82,7 @@ public class BasicUpgrade implements UpgradeStrategy {
     public String toString() {
         return "[" + getClass().getSimpleName() + "]" +
             "\tValue To Modify: " + valueToModify +
-            ", Operator: " + operator +
+            ", Operator: " + numericOperator +
             ", Modifier: " + modifier;
     }
 

@@ -2,11 +2,6 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
-import ore.forge.Enums.KeyValue;
-import ore.forge.Enums.Operator;
-import ore.forge.Enums.OreProperty;
-import ore.forge.Enums.ValueOfInfluence;
-import ore.forge.Player.Player;
 import ore.forge.Strategies.Function;
 
 import java.lang.reflect.Constructor;
@@ -35,18 +30,15 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         maxModifier = 2000;
     }
 
+    private InfluencedUpgrade(InfluencedUpgrade influencedUpgradeClone) {
+        this.upgrade = influencedUpgradeClone.upgrade;//Don't need to clone
+        this.upgradeFunction = influencedUpgradeClone.upgradeFunction;
+        this.minModifier = influencedUpgradeClone.minModifier;
+        this.maxModifier = influencedUpgradeClone.maxModifier;
+    }
+
     public InfluencedUpgrade(JsonValue jsonValue) {
-        upgradeFunction = Function.parseFunction(jsonValue);
-        KeyValue tempValueOfInfluence;
-        try {
-            tempValueOfInfluence = ValueOfInfluence.valueOf(jsonValue.getString("valueOfInfluence"));
-        } catch (IllegalArgumentException e) {
-            try {
-                tempValueOfInfluence = OreProperty.valueOf(jsonValue.getString("valueOfInfluence"));
-            } catch (IllegalArgumentException e2) {
-                throw new RuntimeException("Invalid value of influence" + e2);
-            }
-        }
+        upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
 
         try {
             Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
@@ -57,7 +49,6 @@ public class InfluencedUpgrade implements UpgradeStrategy {
             throw new RuntimeException(e);
         }
 
-//        upgrade = new BasicUpgrade(jsonValue.get("baseUpgrade"));
 
         //If field doesn't exist that means we need to set it to the "default" .
         double temp;
@@ -76,6 +67,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         maxModifier = temp;
     }
 
+
     @Override
     public void applyTo(Ore ore) {
         double originalModifier = upgrade.getModifier();
@@ -93,6 +85,10 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         upgrade.setModifier(originalModifier);
     }
 
+    @Override
+    public UpgradeStrategy clone() {
+        return this;
+    }
 
     @Override
     public String toString() {

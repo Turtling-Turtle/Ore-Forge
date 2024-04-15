@@ -1,7 +1,7 @@
 package ore.forge.Strategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.Operator;
+import ore.forge.Enums.NumericOperator;
 import ore.forge.Enums.OreProperty;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
@@ -16,39 +16,17 @@ import java.util.regex.Pattern;
 //A function is composed of a left operand, right operand, and an operator.
 //An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
 //KeyValues are Enums. Each enum will call its associated method to get its value.
-//    EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
-//This class will parse out an equation from a String and return a function which takes an ore and returns a double.
-
-//Example:
-//exampleEquation = "(((ORE_VALUE + 100)/2) - (ORE_VALUE * (TEMPERATURE / 10)))";
-//Left side:
-    //function1= operator.apply(ORE_VALUE, 100);
-    //function2 = operator.apply(function1, 2);
-//Right Side:
-    //function3 = operator.apply(TEMPERATURE, 10);
-    //function4 = operator.apply(ORE_VALUE, f3);
-//parsedEquation = operator.apply(function2, function4);
+//EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
+//This class will parse an equation from a String and return a Function.
 public class Function implements Operand {
-    //Tokenization
-    //Shunting Yard Algorithm
-    //Stack Based-Parsing.
-    //Recursive Decent Parsing.
-
     private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+|\\(|\\)|\\d+(\\.\\d+)?|\\+|-|\\*|/|=|%|\\^)"); //regex sucks
     private final Operand leftOperand, rightOperand;
-    private final Operator operator;
+    private final NumericOperator numericOperator;
 
-    private Function(Operand leftOperand, Operand rightOperand, Operator operator) {
+    public Function(Operand leftOperand, Operand rightOperand, NumericOperator numericOperator) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
-        this.operator = operator;
-    }
-
-    //Takes a Json Value, extracts the string from it, then creates a function object based on the extracted string
-    public static Function parseFunction(String equation) {
-        equation = equation.replaceAll("\\s", ""); //get rid of spaces in Function string.
-        Matcher matcher = pattern.matcher(equation);
-        return parseFromTokens(matcher);
+        this.numericOperator = numericOperator;
     }
 
     //Takes a Json Value, extracts the function string from it, then creates a function object based on the extracted string
@@ -57,19 +35,27 @@ public class Function implements Operand {
         return parseFunction(equation);
     }
 
+    //Takes a Json Value, extracts the string from it, then creates a Function object based on the extracted string
+    public static Function parseFunction(String equation) {
+        equation = equation.replaceAll("\\s", ""); //get rid of spaces in Function string.
+        Matcher matcher = pattern.matcher(equation);
+        return parseFromTokens(matcher);
+    }
+
+    //Shunting Yard Algorithm: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
     private static Function parseFromTokens(Matcher matcher) {
         Stack<Operand> operandStack = new Stack<>();
-        Stack<Operator> operatorStack = new Stack<>();
+        Stack<NumericOperator> numericOperatorStack = new Stack<>();
         while (matcher.find()) {
             String token = matcher.group();
             if (token.equals("(")) { //We Ignore '(' char
             } else if (token.equals(")")) {
                 Operand right = operandStack.pop();
                 Operand left = operandStack.pop();
-                Operator operator = operatorStack.pop();
-                operandStack.push(new Function(left, right, operator));
-            } else if (Operator.isOperator(token)) {
-                operatorStack.push(Operator.fromSymbol(token));
+                NumericOperator numericOperator = numericOperatorStack.pop();
+                operandStack.push(new Function(left, right, numericOperator));
+            } else if (NumericOperator.isOperator(token)) {
+                numericOperatorStack.push(NumericOperator.fromSymbol(token));
             } else if (OreProperty.isProperty(token)) {
                 operandStack.push(OreProperty.valueOf(token));
             } else if (ValueOfInfluence.isValue(token)) {
@@ -89,7 +75,7 @@ public class Function implements Operand {
     }
 
     public double calculate(Ore ore) {
-        return operator.apply(leftOperand.getOperandValue(ore), rightOperand.getOperandValue(ore));
+        return numericOperator.apply(leftOperand.getOperandValue(ore), rightOperand.getOperandValue(ore));
     }
 
     public static boolean isNumeric(String string) {
@@ -103,7 +89,7 @@ public class Function implements Operand {
 
     @Override
     public String toString() {
-        return ("(" +leftOperand + " " + operator.asSymbol() + " " + rightOperand + ")");
+        return ("(" +leftOperand + " " + numericOperator.asSymbol() + " " + rightOperand + ")");
     }
 
     private record FixedValue(double value) implements Operand {
@@ -120,7 +106,7 @@ public class Function implements Operand {
 
     //Method used for testing class
     public static void main(String[] args) {
-//        String exampleEquation = "(((ORE_VALUE = 100) % 2) - (ORE_VALUE * (TEMPERATURE / 10)) + (MULTIORE * (100 ^ 2)))";
+        //String exampleEquation = "(((ORE_VALUE = 100) % 2) - (ORE_VALUE * (TEMPERATURE / 10)) + (MULTIORE * (100 ^ 2)))";
         //Key Values: ORE_VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT, SPEED, ACTIVE_ORE, PLACED_ITEMS, WALLET, PRESTIEGE_LEVEL, SPECIAL_POINTS
         //Operators: + , - , * , / , ^ , = , %
 
@@ -153,26 +139,6 @@ public class Function implements Operand {
             id.append(chars.charAt(rand.nextInt(chars.length())));
         }
         System.out.println(id);
-
-//        System.out.println(parseFunction(exampleEquation));
-//    [a-zA-Z_]+: This part matches one or more characters that are alphabetic (both uppercase and lowercase letters) or an underscore. This is used to match variable names like ORE_VALUE, TEMPERATURE, and MULTIORE.
-//    \\d+: This part matches one or more digits. It is used to match numbers like 100 and 2.
-//    \\(: This part matches the opening parenthesis (.
-//    \\): This part matches the closing parenthesis ).
-//    \\+: This part matches the plus sign +.
-//    \\-: This part matches the minus sign -.
-//    \\*: This part matches the asterisk *.
-//    \\/: This part matches the forward slash /.
-//    %: This part matches the percent sign %.
-//    =: This part matches the equal sign =.
-//    \\^: This part matches the caret ^.
-
-//        Matcher matcher = pattern.matcher(exampleEquation);
-//        while (matcher.find()) {
-//            String token = matcher.group();
-//            System.out.println(token);
-//        }
-
     }
 
 }

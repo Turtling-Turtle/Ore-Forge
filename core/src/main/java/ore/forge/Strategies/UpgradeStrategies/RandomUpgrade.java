@@ -25,6 +25,11 @@ public class RandomUpgrade implements UpgradeStrategy {
     }
 
     @Override
+    public UpgradeStrategy clone() {
+        return null;
+    }
+
+    @Override
     public String toString() {
        return "[RandomUpgrade]";
     }

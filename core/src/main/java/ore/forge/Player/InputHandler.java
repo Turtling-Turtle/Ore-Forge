@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
-import ore.forge.Enums.BooleanOperator;
-import ore.forge.Enums.Operator;
+import ore.forge.Enums.ComparisonOperator;
+import ore.forge.Enums.NumericOperator;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
@@ -67,19 +67,19 @@ public class InputHandler {
 
     //Test objects:
 
-    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, Operator.MULTIPLY, ORE_VALUE);
+    UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, NumericOperator.MULTIPLY, ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUpgrade();
-    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ORE_VALUE, 100000*100000, null, BooleanOperator.GREATER_THAN);
+    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ORE_VALUE, 100000*100000, null, ComparisonOperator.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", 4, false);
 
     OreEffect invincibility = new Invulnerability(12, 10f);
 
-    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, Operator.MULTIPLY, ORE_VALUE);
+    UpgradeStrategy simpleMultiply = new BasicUpgrade(1.02, NumericOperator.MULTIPLY, ORE_VALUE);
     OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
-    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, Operator.MULTIPLY, ORE_VALUE);
+    UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, NumericOperator.MULTIPLY, ORE_VALUE);
     Function influenceFunction = Function.parseFunction("((ORE_VALUE % 30) * 2)");
     UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade);
     OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);

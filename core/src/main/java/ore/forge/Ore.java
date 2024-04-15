@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Enums.Direction;
 import ore.forge.Enums.ValueOfInfluence;
+import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.Items.Blocks.Worker;
+import ore.forge.Items.Dropper;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;
@@ -24,7 +26,7 @@ public class Ore {
     private final ArrayList<OreEffect> effects;
     private final Stack<OreEffect> removalStack;
     private final ArrayList<ObserverOreEffect> observerEffects;
-    private String oreName;
+    private String oreName, id;
     private double oreValue;
     private int upgradeCount, multiOre, oreHistory;
     private float oreTemperature;
@@ -39,6 +41,7 @@ public class Ore {
         this.oreValue = 0;
         this.oreTemperature = 0;
         this.oreName = "";
+        this.id = "";
         this.upgradeCount = 0;
         this.multiOre = 1;
         this.speedScalar = 1;
@@ -178,8 +181,9 @@ public class Ore {
         removeOldEffects();
     }
 
-    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, OreEffect strategy) {
+    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, String id, OreEffect strategy) {
         this.oreValue = oreValue;
+        this.id = id;
         this.oreTemperature = oreTemp;
         this.multiOre = multiOre;
         this.oreName = oreName;
@@ -225,12 +229,12 @@ public class Ore {
     }
 
     public void incrementTag(UpgradeTag tag) {
-        tagMap.get(tag.getName()).incrementCurrentUpgrades();
+        tagMap.get(tag.getID()).incrementCurrentUpgrades();
         upgradeCount++;
     }
 
     public UpgradeTag getUpgradeTag(UpgradeTag tag) {
-        String tagName = tag.getName();
+        String tagName = tag.getID();
         if (tagMap.containsKey(tagName)) {
             return tagMap.get(tagName);
         } else {
