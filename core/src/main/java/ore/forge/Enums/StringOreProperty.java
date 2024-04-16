@@ -11,22 +11,23 @@ public enum StringOreProperty implements StringOperand {
     TYPE;
 
     public static boolean isProperty(String property) {
-        return switch (property.toUpperCase().trim()) {
+        return switch (property.trim()) {
             case "NAME", "ID", "TYPE" -> true;
             default -> false;
         };
     }
 
     public static StringOreProperty fromString(String string) {
-        return switch (string.toUpperCase().toUpperCase().trim()) {
+        return switch (string.trim()) {
             case "NAME" -> StringOreProperty.NAME;
             case "ID" -> StringOreProperty.ID;
             case "TYPE" -> StringOreProperty.TYPE;
-            default -> throw new IllegalStateException("Unexpected value: " + string.toUpperCase());
+            default -> throw new IllegalStateException("Unexpected value: " + string.trim());
         };
     }
 
     private final Function<Ore, String> retriever;
+
     StringOreProperty() {
         retriever = switch (this) {
             case NAME -> Ore::getName;

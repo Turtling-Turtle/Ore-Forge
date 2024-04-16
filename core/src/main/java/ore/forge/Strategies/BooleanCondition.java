@@ -19,36 +19,29 @@ import java.util.regex.Pattern;
 * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
 * */
 
-// Functions embedded inside a condition must be wrapped by {}.
-
-//TODO: Create Regex expression for n
 public class BooleanCondition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
-    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?");
-//    private BooleanCondition[] conditions;
-//    private ComparisonOperator comparisonOperator;
-//    private LogicalOperator logicalOperator;
+    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?");
     private final Queue<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
-    public BooleanCondition(Queue<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
+    private BooleanCondition(Queue<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
         this.expressions = expressions;
         this.logicalOperators = logicalOperators;
     }
 
-    //TODO: Implement an internal state machine for what type to expect next.
+    //TODO: Implement an internal state machine for what type of Operand to expect next.
     public static BooleanCondition parseCondition(String condition) {
-        condition = condition.replace("\\s", "");
         Matcher matcher = pattern.matcher(condition);
         Stack<LogicalOperator> logicalOperators = new Stack<>();
         Stack<ComparisonOperator> comparisonOperators = new Stack<>();
         Stack<Object> operands = new Stack<>();
         while (matcher.find()) {
             String token = matcher.group();
-            token = token.replace("\\s", "").trim();
-            if (token.isEmpty()) {
+            token = token.trim();
+            if (token.isEmpty() || token.equals(" ")) {
                //ignore " "
             }else if (ComparisonOperator.isOperator(token)) {
                 comparisonOperators.push(ComparisonOperator.fromSymbol(token));
@@ -74,8 +67,6 @@ public class BooleanCondition {
     }
 
     private static BooleanCondition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
-        /*For every two operands in operands
-         build Boolean Expression out of their types and comparison operator*/
         Queue<BooleanExpression> expressionQueue = new Queue<>();
         while (!operands.isEmpty() && operands.size() - 2 >= 0) {
             if (operands.peek() instanceof NumericOperand) {
@@ -83,14 +74,12 @@ public class BooleanCondition {
                 ComparisonOperator comparisonOperator = comparisonOperators.pop();
                 NumericOperand left = (NumericOperand) operands.pop();
                 NumericExpression expression = new NumericExpression(left, right, comparisonOperator);
-                //put into queue...
                 expressionQueue.addFirst(expression);
             } else if (operands.peek() instanceof StringOperand) {
                 StringOperand right = (StringOperand) operands.pop();
                 StringOperand left = (StringOperand) operands.pop();
                 ComparisonOperator comparisonOperator = comparisonOperators.pop();
                 StringExpression expression = new StringExpression(left, right, comparisonOperator);
-                //Put into Queue
                 expressionQueue.addFirst(expression);
             }
 
@@ -162,10 +151,10 @@ public class BooleanCondition {
 //        Stack<LogicalOperator> logicalOperators = new Stack<>();
 //        logicalOperators.push(LogicalOperator.NOT);
         BooleanCondition condition = new BooleanCondition(expressionQueue, null);
-        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test ore";
+        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test";
         BooleanCondition condition2 = BooleanCondition.parseCondition(conditionString);
         Ore ore = new Ore();
-        ore.applyBaseStats(10, 0, 1, "test ore", "0", null);
+        ore.applyBaseStats(100, 0, 1, "test", "0", null);
         System.out.println(condition2.evaluate(ore));
     }
 

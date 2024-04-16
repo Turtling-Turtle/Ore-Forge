@@ -7,6 +7,7 @@ import ore.forge.Enums.KeyValue;
 import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
+import ore.forge.Strategies.BooleanCondition;
 import ore.forge.Strategies.StrategyInitializer;
 import ore.forge.Strategies.Function;
 
@@ -18,7 +19,6 @@ The condition is a KeyValue which means it can be a property of the ore being up
 The threshold can either be a predetermined fixed Value or a KeyValue.*/
 public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
     private final KeyValue condition; //Key Value includes OreProperties and ValueOfInfluence
-    private Function conditionFunction;
     private final UpgradeStrategy trueBranchStrategy;
     private final UpgradeStrategy falseBranchStrategy;
     private final double fixedThreshold;
@@ -26,6 +26,8 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     private final ComparisonOperator comparator;
     private final java.util.function.Function<Ore, Number> conditionSupplier, thresholdSupplier;
     private final java.util.function.Function<Ore, Boolean> evaluator;
+
+//    private final BooleanCondition upgradeCondition;
 
     //Used for testing purposes.
     public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, KeyValue condition, double fixedThreshold, KeyValue dynamicThreshold, ComparisonOperator comparison) {

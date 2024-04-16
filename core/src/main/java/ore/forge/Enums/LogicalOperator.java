@@ -26,7 +26,6 @@ public enum LogicalOperator {
     }
 
     public static boolean isOperator(String string) {
-        string = string.toUpperCase();
         return switch (string) {
             case "NOT", "!",  "XOR", "^", "AND", "&", "&&", "OR", "|", "||" -> true;
             default -> false;

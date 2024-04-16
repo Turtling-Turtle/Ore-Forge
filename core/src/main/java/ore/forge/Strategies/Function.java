@@ -44,6 +44,7 @@ public class Function implements NumericOperand {
 
     /**Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
      to parse the Function from the string.*/
+    //TODO: Implement an internal state machine for what type of Operand to expect next.
     private static Function parseFromTokens(Matcher matcher) {
         Stack<NumericOperand> operandStack = new Stack<>();
         Stack<NumericOperator> numericOperatorStack = new Stack<>();
