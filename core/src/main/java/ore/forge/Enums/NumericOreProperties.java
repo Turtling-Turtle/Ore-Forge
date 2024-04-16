@@ -1,10 +1,10 @@
 package ore.forge.Enums;
 
 import ore.forge.Ore;
-import ore.forge.Strategies.Operand;
+import ore.forge.Strategies.NumericOperand;
 
 
-public enum OreProperty implements KeyValue, Operand {
+public enum NumericOreProperties implements KeyValue, NumericOperand {
     ORE_VALUE,
     TEMPERATURE,
     MULTIORE,
@@ -33,7 +33,7 @@ public enum OreProperty implements KeyValue, Operand {
 
     private final ValueGetter supplier;
 
-    OreProperty() {
+    NumericOreProperties() {
         supplier = switch (this) {
             case ORE_VALUE -> (Ore::getOreValue);
             case TEMPERATURE -> (Ore::getOreTemp);

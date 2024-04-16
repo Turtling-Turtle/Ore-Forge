@@ -4,11 +4,11 @@ import ore.forge.ItemMap;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
-import ore.forge.Strategies.Operand;
+import ore.forge.Strategies.NumericOperand;
 
 
 //Unknown if this will be used.
-public enum ValueOfInfluence implements KeyValue, Operand {
+public enum ValueOfInfluence implements KeyValue, NumericOperand {
     ACTIVE_ORE {
     },
     PLACED_ITEMS {

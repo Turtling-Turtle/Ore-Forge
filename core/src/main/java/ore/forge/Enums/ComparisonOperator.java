@@ -2,7 +2,19 @@ package ore.forge.Enums;
 
 
 public enum ComparisonOperator {
-    GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL_TO, LESS_THAN_EQUAL_TO, EQUAL_TO, NOT_EQUAL_TO;
+    GREATER_THAN,
+    LESS_THAN,
+    GREATER_THAN_EQUAL_TO,
+    LESS_THAN_EQUAL_TO,
+    EQUAL_TO {
+        public boolean evaluateObject(Object a, Object b) {
+            return a.equals(b);
+        }
+    }, NOT_EQUAL_TO {
+        public boolean evaluateObject(Object a, Object b) {
+            return !a.equals(b);
+        }
+    };
 
     public final boolean evaluate(double left, double right) {
         return comparator.evaluate(left, right);

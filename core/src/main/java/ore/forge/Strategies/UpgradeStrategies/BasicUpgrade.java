@@ -2,7 +2,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.NumericOperator;
-import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Ore;
 
 import java.util.function.Consumer;
@@ -12,12 +12,12 @@ A Basic upgrade modifies an Ore property by applying the Modifier to it using a 
 public class BasicUpgrade implements UpgradeStrategy {
     //More VTMS: effect, Duration.
     private double modifier;
-    private final OreProperty valueToModify;
+    private final NumericOreProperties valueToModify;
     private final Consumer<Ore> upgradeFunction;
     private final NumericOperator numericOperator;
 
 
-    public BasicUpgrade(double mod, NumericOperator numericOperatorType, OreProperty valueToModify) {
+    public BasicUpgrade(double mod, NumericOperator numericOperatorType, NumericOreProperties valueToModify) {
         this.numericOperator = numericOperatorType;
         this.modifier = mod;
         this.valueToModify = valueToModify;
@@ -31,7 +31,7 @@ public class BasicUpgrade implements UpgradeStrategy {
         } catch (IllegalArgumentException e) {
             modifier = 1;
         }
-        valueToModify = OreProperty.valueOf(jsonValue.getString("valueToModify"));
+        valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
         numericOperator = NumericOperator.valueOf(jsonValue.getString("operation"));
         upgradeFunction = configureUpgradeFunction();
     }
@@ -76,7 +76,7 @@ public class BasicUpgrade implements UpgradeStrategy {
         return numericOperator;
     }
 
-    public OreProperty getValueToModify() {
+    public NumericOreProperties getValueToModify() {
         return valueToModify;
     }
 

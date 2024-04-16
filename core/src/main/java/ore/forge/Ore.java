@@ -300,7 +300,6 @@ public class Ore {
         oreValue = newValue;
     }
 
-
     public float getOreTemp() {
         return oreTemperature;
     }
@@ -311,6 +310,10 @@ public class Ore {
 
     public String getName() {
         return this.oreName;
+    }
+
+    public String getID() {
+        return this.id;
     }
 
     public int getUpgradeCount() {

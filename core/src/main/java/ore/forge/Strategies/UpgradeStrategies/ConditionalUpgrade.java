@@ -4,7 +4,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.ComparisonOperator;
 import ore.forge.Enums.KeyValue;
-import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
@@ -99,8 +99,8 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
 
     //Configures the behavior of a supplier function so that it returns the correct value.
     private java.util.function.Function<Ore, Number> configureSupplier(KeyValue condition) {
-        if (condition instanceof OreProperty) {
-            return switch ((OreProperty)condition) {
+        if (condition instanceof NumericOreProperties) {
+            return switch ((NumericOreProperties)condition) {
                 case ORE_VALUE -> (Ore::getOreValue);
                 case SPEED -> (Ore::getMoveSpeed);
                 case UPGRADE_COUNT -> (Ore::getUpgradeCount);
@@ -117,7 +117,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     private KeyValue configureKeyValue(JsonValue jsonValue, String fieldToGet) {
         KeyValue tempCondition;
         try {
-            tempCondition = OreProperty.valueOf(jsonValue.getString(fieldToGet));
+            tempCondition = NumericOreProperties.valueOf(jsonValue.getString(fieldToGet));
         } catch (IllegalArgumentException e) {
             try {
                 tempCondition = ValueOfInfluence.valueOf(jsonValue.getString(fieldToGet));

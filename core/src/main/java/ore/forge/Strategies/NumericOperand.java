@@ -2,6 +2,6 @@ package ore.forge.Strategies;
 
 import ore.forge.Ore;
 
-public interface Operand {
+public interface NumericOperand {
     double calculate(Ore ore);
 }

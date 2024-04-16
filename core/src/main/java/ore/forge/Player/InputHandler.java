@@ -19,7 +19,7 @@ import ore.forge.UpgradeTag;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import static ore.forge.Enums.OreProperty.ORE_VALUE;
+import static ore.forge.Enums.NumericOreProperties.ORE_VALUE;
 
 //@author Nathan Ulmen
 public class InputHandler {

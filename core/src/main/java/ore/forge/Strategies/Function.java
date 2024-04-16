@@ -2,11 +2,10 @@ package ore.forge.Strategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Enums.NumericOperator;
-import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
-import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -19,14 +18,14 @@ An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another
 KeyValues are Enums. Each enum will call its associated method to get its value.
     EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
 This class will parse an equation from a String and return a Function.*/
-public class Function implements Operand {
+public class Function implements NumericOperand {
     private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+|\\(|\\)|\\d+(\\.\\d+)?|\\+|-|\\*|/|=|%|\\^)"); //regex sucks
-    private final Operand leftOperand, rightOperand;
+    private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
-    public Function(Operand leftOperand, Operand rightOperand, NumericOperator numericOperator) {
-        this.leftOperand = leftOperand;
-        this.rightOperand = rightOperand;
+    public Function(NumericOperand leftNumericOperand, NumericOperand rightNumericOperand, NumericOperator numericOperator) {
+        this.leftNumericOperand = leftNumericOperand;
+        this.rightNumericOperand = rightNumericOperand;
         this.numericOperator = numericOperator;
     }
 
@@ -46,24 +45,24 @@ public class Function implements Operand {
     /**Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
      to parse the Function from the string.*/
     private static Function parseFromTokens(Matcher matcher) {
-        Stack<Operand> operandStack = new Stack<>();
+        Stack<NumericOperand> operandStack = new Stack<>();
         Stack<NumericOperator> numericOperatorStack = new Stack<>();
         while (matcher.find()) {
             String token = matcher.group();
             if (token.equals("(")) { //We Ignore '(' char
             } else if (token.equals(")")) {
-                Operand right = operandStack.pop();
-                Operand left = operandStack.pop();
+                NumericOperand right = operandStack.pop();
+                NumericOperand left = operandStack.pop();
                 NumericOperator numericOperator = numericOperatorStack.pop();
                 operandStack.push(new Function(left, right, numericOperator));
             } else if (NumericOperator.isOperator(token)) {
                 numericOperatorStack.push(NumericOperator.fromSymbol(token));
-            } else if (OreProperty.isProperty(token)) {
-                operandStack.push(OreProperty.valueOf(token));
+            } else if (NumericOreProperties.isProperty(token)) {
+                operandStack.push(NumericOreProperties.valueOf(token));
             } else if (ValueOfInfluence.isValue(token)) {
                 operandStack.push(ValueOfInfluence.valueOf(token));
             } else if (isNumeric(token)) {
-                operandStack.push(new FixedValue(Double.parseDouble(token)));
+                operandStack.push(new Constant(Double.parseDouble(token)));
             } else {
                 throw new RuntimeException("Unknown token: " + token);
             }
@@ -73,7 +72,7 @@ public class Function implements Operand {
 
     @Override
     public double calculate(Ore ore) {
-        return numericOperator.apply(leftOperand.calculate(ore), rightOperand.calculate(ore));
+        return numericOperator.apply(leftNumericOperand.calculate(ore), rightNumericOperand.calculate(ore));
     }
 
     public static boolean isNumeric(String string) {
@@ -87,11 +86,11 @@ public class Function implements Operand {
 
     @Override
     public String toString() {
-        return ("(" +leftOperand + " " + numericOperator.asSymbol() + " " + rightOperand + ")");
+        return ("(" + leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand + ")");
     }
 
     /**Record class to keep track of primitive doubles*/
-    private record FixedValue(double value) implements Operand {
+    public record Constant(double value) implements NumericOperand {
         @Override
         public double calculate(Ore ore) {
             return value;
@@ -109,7 +108,7 @@ public class Function implements Operand {
         //Key Values: ORE_VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT, SPEED, ACTIVE_ORE, PLACED_ITEMS, WALLET, PRESTIEGE_LEVEL, SPECIAL_POINTS
         //Operators: + , - , * , / , ^ , = , %
 
-        String function = "((ORE_VALUE * 2) + TEMPERATURE)";
+        String function = "((";
         String function2 = "((3.14 * 3) + ((200 ^ 1.02) % 5))";
         Function funkyUpgradeFunction = parseFunction(function);
         Function numericUpgradeFunction = parseFunction(function2);

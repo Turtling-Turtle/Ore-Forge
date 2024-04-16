@@ -6,7 +6,7 @@ public enum LogicalOperator {
     AND,
     OR;
 
-    private boolean evaluate(boolean left, boolean right) {
+    public boolean evaluate(boolean left, boolean right) {
         return operator.evaluate(left, right);
     }
 
@@ -36,7 +36,7 @@ public enum LogicalOperator {
     private final BooleanOperator operator;
     LogicalOperator() {
         operator = switch (this) {
-            case NOT -> (left, right) -> left != right;
+            case NOT -> (left, right) -> !right;
             case XOR -> (left, right) -> left ^ right;
             case AND -> (left, right) -> left && right;
             case OR -> (left, right) -> left || right;

@@ -1,43 +1,44 @@
 package ore.forge.Strategies;
 
+import com.badlogic.gdx.utils.Queue;
 import ore.forge.Enums.ComparisonOperator;
 import ore.forge.Enums.LogicalOperator;
-import ore.forge.Enums.OreProperty;
+import ore.forge.Enums.NumericOreProperties;
+import ore.forge.Enums.StringOreProperty;
 import ore.forge.Ore;
 
-import java.util.Objects;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
-*@author Nathan Ulmen
-* A condition evaluates an argument.
-* An argument can be numeric or string based(comparing IDs/oreType)
-* Supports logical Operators
+/**@author Nathan Ulmen
+* Represents a Boolean Expression, evaluates an argument, returning a booelan result.
+* Arguments can be numeric or String based(comparing IDs/names,types, etc.)
+* {@link ore.forge.Strategies.Function} are supported as operands/arguments and can be embeded into the expression as an argument however they must be wrapped in {}.
+* Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
+* Supported Comparsion Operators: >, <, >=, <=, ==, !=.
 * */
 
-// ,(comma) tells us to create sub expression,
-// ) tells us to end that expression
-// & and or tells
-// (x > y or y <= z & )
-// x > y and y <= z are both expressions
-// https://en.wikipedia.org/wiki/Order_of_operations#Programming_languages
-// https://stackoverflow.com/questions/12494568/boolean-operators-precedence
-//Priority for logical operators(left has the highest priority, left has lowest)
-// NOT(!) > XOR(^) > AND(&&) > OR(||)
-// >, <, ==, etc are "comparison"/"relational" operators, not the same as logical operators.
-// Expression for comparisons, XYXZ for Logical Operations
-// Functions embeded inside a condition must be wrapped by {}.
+// Functions embedded inside a condition must be wrapped by {}.
+
+//TODO: Create Regex expression for n
 public class BooleanCondition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
-    private final static Pattern pattern = Pattern.compile("");
-    private BooleanCondition[] conditions;
-    private ComparisonOperator comparisonOperator;
-    private LogicalOperator logicalOperator;
+    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?");
+//    private BooleanCondition[] conditions;
+//    private ComparisonOperator comparisonOperator;
+//    private LogicalOperator logicalOperator;
+    private final Queue<BooleanExpression> expressions;
+    private final Stack<LogicalOperator> logicalOperators;
 
+    public BooleanCondition(Queue<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
+        this.expressions = expressions;
+        this.logicalOperators = logicalOperators;
+    }
+
+    //TODO: Implement an internal state machine for what type to expect next.
     public static BooleanCondition parseCondition(String condition) {
         condition = condition.replace("\\s", "");
         Matcher matcher = pattern.matcher(condition);
@@ -46,28 +47,78 @@ public class BooleanCondition {
         Stack<Object> operands = new Stack<>();
         while (matcher.find()) {
             String token = matcher.group();
-            if (ComparisonOperator.isOperator(token)) {
+            token = token.replace("\\s", "").trim();
+            if (token.isEmpty()) {
+               //ignore " "
+            }else if (ComparisonOperator.isOperator(token)) {
                 comparisonOperators.push(ComparisonOperator.fromSymbol(token));
             } else if (LogicalOperator.isOperator(token)) {
                 logicalOperators.push(LogicalOperator.fromString(token));
-            } else if (OreProperty.isProperty(token)) {
-                operands.push(OreProperty.valueOf(token));
+            } else if (NumericOreProperties.isProperty(token)) {
+                operands.push(NumericOreProperties.valueOf(token));
             } else if (Function.isNumeric(token)) {
-                operands.push(Double.parseDouble(token));
+                operands.push(new Function.Constant(Double.parseDouble(token)));
             } else if (token.contains("{") && token.contains("}")) {
                 token = token.replace("{", "").replace("}", "");
                 Function function = Function.parseFunction(token);
                 operands.push(function);
+            } else if (StringOreProperty.isProperty(token)) {
+                 operands.push(StringOreProperty.fromString(token));
+            } else {
+                StringConstant constant = new StringConstant(token);
+                operands.push(constant);
             }
         }
-        return null;
-        //now that it's been parsed into RPN we can "compile" it.
+        return buildFromRPN(logicalOperators, comparisonOperators, operands);
+
     }
 
+    private static BooleanCondition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
+        /*For every two operands in operands
+         build Boolean Expression out of their types and comparison operator*/
+        Queue<BooleanExpression> expressionQueue = new Queue<>();
+        while (!operands.isEmpty() && operands.size() - 2 >= 0) {
+            if (operands.peek() instanceof NumericOperand) {
+                NumericOperand right = (NumericOperand) operands.pop();
+                ComparisonOperator comparisonOperator = comparisonOperators.pop();
+                NumericOperand left = (NumericOperand) operands.pop();
+                NumericExpression expression = new NumericExpression(left, right, comparisonOperator);
+                //put into queue...
+                expressionQueue.addFirst(expression);
+            } else if (operands.peek() instanceof StringOperand) {
+                StringOperand right = (StringOperand) operands.pop();
+                StringOperand left = (StringOperand) operands.pop();
+                ComparisonOperator comparisonOperator = comparisonOperators.pop();
+                StringExpression expression = new StringExpression(left, right, comparisonOperator);
+                //Put into Queue
+                expressionQueue.addFirst(expression);
+            }
 
+        }
+        return new BooleanCondition(expressionQueue, logicalOperators);
+    }
 
-    public boolean evaluate() {
-        return true;
+    public boolean evaluate(Ore ore) {
+        Stack<Boolean> results = new Stack<>();
+        for (BooleanExpression expression : expressions) {
+            results.push(expression.evaluate(ore));
+        }
+        if (logicalOperators != null && !logicalOperators.isEmpty()) {
+            for (LogicalOperator operator : logicalOperators) {
+                switch (operator) {
+                    case AND, OR, XOR:
+                        Boolean right = results.pop();
+                        Boolean left = results.pop();
+                        results.push(operator.evaluate(left, right));
+                        break;
+                    case NOT:
+                        Boolean result = results.pop();
+                        results.push(operator.evaluate(false, result));
+                        break;
+                }
+            }
+        }
+        return results.pop();
     }
 
     @Override
@@ -75,31 +126,47 @@ public class BooleanCondition {
         return super.toString();
     }
 
-    public static void main(String[] args) {
-
+    public record StringConstant(String string) implements StringOperand{
+        @Override
+        public String asString(Ore ore) {
+            return string;
+        }
     }
 
-    private class NumericExpression implements BooleanExpression {
-        private final Operand left, right;
-        private final ComparisonOperator comparisonOperator;
-
-        public NumericExpression(Operand left, Operand right, ComparisonOperator operator) {
-            this.left = left;
-            this.right = right;
-            this.comparisonOperator = operator;
-        }
-
+    public record NumericExpression(NumericOperand left, NumericOperand right, ComparisonOperator operator) implements BooleanExpression {
         public boolean evaluate(Ore ore) {
-            return comparisonOperator.evaluate(left.calculate(ore), right.calculate(ore));
+            return operator.evaluate(left.calculate(ore), right.calculate(ore));
         }
 
     }
 
-    private record StringExpression(String left, String right) implements BooleanExpression {
+    public record StringExpression(StringOperand left, StringOperand right, ComparisonOperator operator) implements BooleanExpression {
         @Override
         public boolean evaluate(Ore ore) {
-            return left.equals(right);
+            if (operator == ComparisonOperator.EQUAL_TO) {
+                return left.asString(ore).equals(right.asString(ore));
+            } else if (operator == ComparisonOperator.NOT_EQUAL_TO) {
+                return !left.asString(ore).equals(right.asString(ore));
+            } else {
+                throw new RuntimeException("invalid comparison operator: " + operator);
+            }
         }
+    }
+
+    public static void main(String[] args) {
+        StringConstant stringConstant = new StringConstant("Yes");
+        StringConstant stringConstant2 = new StringConstant("No");
+        StringExpression stringExpression = new StringExpression(stringConstant, stringConstant2, ComparisonOperator.EQUAL_TO);
+        Queue<BooleanExpression> expressionQueue = new Queue<>();
+        expressionQueue.addFirst(stringExpression);
+//        Stack<LogicalOperator> logicalOperators = new Stack<>();
+//        logicalOperators.push(LogicalOperator.NOT);
+        BooleanCondition condition = new BooleanCondition(expressionQueue, null);
+        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test ore";
+        BooleanCondition condition2 = BooleanCondition.parseCondition(conditionString);
+        Ore ore = new Ore();
+        ore.applyBaseStats(10, 0, 1, "test ore", "0", null);
+        System.out.println(condition2.evaluate(ore));
     }
 
 }
