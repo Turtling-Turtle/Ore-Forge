@@ -46,6 +46,17 @@ public enum ComparisonOperator {
         };
     }
 
+    public String asSymbol() {
+        return switch (this) {
+            case GREATER_THAN -> ">";
+            case LESS_THAN -> "<";
+            case GREATER_THAN_EQUAL_TO -> ">=";
+            case LESS_THAN_EQUAL_TO -> "<=";
+            case EQUAL_TO -> "==";
+            case NOT_EQUAL_TO -> "!=";
+        };
+    }
+
 
     ComparisonOperator() {
         comparator = switch (this) {

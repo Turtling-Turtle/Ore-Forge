@@ -2,21 +2,20 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
+import ore.forge.Enums.NumericOperator;
+import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Strategies.Function;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**@author Nathan Ulmen
 An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.
 A maximum and minimum value can be set to ensure the modifier stays within a specified range.*/
 public class InfluencedUpgrade implements UpgradeStrategy {
-    private final BasicUpgrade upgrade;
+    private final BasicUpgrade baseUpgrade;
     private final Function upgradeFunction;
     private final double minModifier, maxModifier;
 
     public InfluencedUpgrade(Function upgradeFunction, BasicUpgrade upgrade, double minModifier, double maxModifier) {
-        this.upgrade = upgrade;
+        this.baseUpgrade = upgrade;
         this.upgradeFunction = upgradeFunction;
         this.minModifier = minModifier;
         this.maxModifier = maxModifier;
@@ -24,14 +23,11 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
     public InfluencedUpgrade(JsonValue jsonValue) {
         upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
-        try {
-            Class<?> aClass = Class.forName(jsonValue.get("baseUpgrade").getString("upgradeName"));
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-            upgrade = (BasicUpgrade) constructor.newInstance(jsonValue.get("baseUpgrade"));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                 ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
+        NumericOperator operator = NumericOperator.valueOf(jsonValue.getString("numericOperator"));
+        NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
+        baseUpgrade = new BasicUpgrade(0, operator, valueToModify);
+
         //If field doesn't exist that means we need to set it to the "default" .
         double temp;
         try {
@@ -49,7 +45,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     }
 
     private InfluencedUpgrade(InfluencedUpgrade influencedUpgradeClone) {
-        this.upgrade = influencedUpgradeClone.upgrade;//Don't need to clone
+        this.baseUpgrade = influencedUpgradeClone.baseUpgrade;//Don't need to clone
         this.upgradeFunction = influencedUpgradeClone.upgradeFunction;
         this.minModifier = influencedUpgradeClone.minModifier;
         this.maxModifier = influencedUpgradeClone.maxModifier;
@@ -57,19 +53,19 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        double originalModifier = upgrade.getModifier();
+        double originalModifier = baseUpgrade.getModifier();
         double newModifier = upgradeFunction.calculate(ore);
 
         if (newModifier > maxModifier) {
-            upgrade.setModifier(maxModifier);
+            baseUpgrade.setModifier(maxModifier);
         } else if (newModifier < minModifier) {
-            upgrade.setModifier(minModifier);
+            baseUpgrade.setModifier(minModifier);
         } else {
-            upgrade.setModifier(newModifier);
+            baseUpgrade.setModifier(newModifier);
         }
 
-        upgrade.applyTo(ore);
-        upgrade.setModifier(originalModifier);
+        baseUpgrade.applyTo(ore);
+        baseUpgrade.setModifier(originalModifier);
     }
 
     @Override
@@ -80,8 +76,8 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     @Override
     public String toString() {
         return "[" + this.getClass().getSimpleName()+ "]" +
-            "\tOperator Type: " + upgrade.getOperator() +
-            ", Value To Modify: " + upgrade.getValueToModify() +
+            "\tOperator Type: " + baseUpgrade.getOperator() +
+            ", Value To Modify: " + baseUpgrade.getValueToModify() +
             ", Upgrade Function: " + upgradeFunction +
             ", Minimum Modifier: " + minModifier +
             ", Max Modifier: " + maxModifier;

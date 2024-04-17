@@ -11,7 +11,7 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.UpgradeTag;
 
 //@author Nathan Ulmen
-public class Upgrader extends Item{
+public class Upgrader extends Item {
 
     private final UpgradeTag upgradeTag;
 

@@ -12,12 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**@author Nathan Ulmen
-A pair of parenthesis encapsulate a function.
-A function is composed of a left operand, right operand, and an operator.
-An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
-KeyValues are Enums. Each enum will call its associated method to get its value.
-    EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
-This class will parse an equation from a String and return a Function.*/
+* A pair of parenthesis encapsulate a function.
+* A function is composed of a left operand, right operand, and an operator.
+* An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
+* KeyValues are Enums. Each enum will call its associated method to get its value.
+*   EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
+* This class will parse an equation from a String and return a Function.
+*/
 public class Function implements NumericOperand {
     private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+|\\(|\\)|\\d+(\\.\\d+)?|\\+|-|\\*|/|=|%|\\^)"); //regex sucks
     private final NumericOperand leftNumericOperand, rightNumericOperand;

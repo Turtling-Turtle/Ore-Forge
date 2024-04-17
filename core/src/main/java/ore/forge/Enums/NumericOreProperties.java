@@ -17,7 +17,7 @@ public enum NumericOreProperties implements KeyValue, NumericOperand {
 
     @Override
     public double calculate(Ore ore) {
-        return  supplier.getValue(ore);
+        return supplier.getValue(ore);
     }
 
     private interface ValueGetter {

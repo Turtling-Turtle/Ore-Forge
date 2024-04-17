@@ -32,6 +32,15 @@ public enum LogicalOperator {
         };
     }
 
+    public String toString() {
+        return switch (this) {
+            case NOT -> "!";
+            case XOR -> "^";
+            case AND -> "&&";
+            case OR -> "||";
+        };
+    }
+
     private final BooleanOperator operator;
     LogicalOperator() {
         operator = switch (this) {

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
-import ore.forge.Enums.ComparisonOperator;
 import ore.forge.Enums.NumericOperator;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
@@ -70,7 +69,6 @@ public class InputHandler {
     UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, NumericOperator.MULTIPLY, ORE_VALUE);
 
     UpgradeStrategy destroy = new DestructionUpgrade();
-    UpgradeStrategy conditional = new ConditionalUpgrade(testUpgrade, destroy, ORE_VALUE, 100000*100000, null, ComparisonOperator.GREATER_THAN);
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", "tst", 4, false);
 
@@ -141,7 +139,7 @@ public class InputHandler {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, conditional, upgradeTag);
+            heldItem = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, null, upgradeTag);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
             currentMode = Mode.BUILDING;

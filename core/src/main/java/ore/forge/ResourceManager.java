@@ -1,7 +1,6 @@
 package ore.forge;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
@@ -14,22 +13,21 @@ import java.lang.StringBuilder;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
-//@author Nathan Ulmen
-
-//Resource Manager is responsible for loading assets.
+/**@author Nathan Ulmen
+ * The Resource Manager is responsible for verifying and loading Item data and other assets and keeps a list of all
+ * valid Items.
+ * */
 public class ResourceManager {
-    private final AssetManager assetManager;
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
 
     public ResourceManager() {
         loadCount = 0;
-        assetManager = new AssetManager();
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
-//        mongoConnect();
+        mongoConnect();
 
         long t1 = System.currentTimeMillis();
         loadItems(Constants.CONVEYORS_FP);
@@ -109,7 +107,7 @@ public class ResourceManager {
         Document version = collection.find().first();
         JsonReader jsonReader = new JsonReader();
         JsonValue localFileContents;
-        double localVersion = -1;//set to initially to ensure that it will never equal a mongoDB version by accident
+        double localVersion = -1;//set value to -1 to ensure that it will never equal a mongoDB version by accident
 
         //Try to find the local document and its version. If it's not present we will automatically get
         //the most up-to-date version from MongoDB.
@@ -121,7 +119,6 @@ public class ResourceManager {
 
 
         double dbVersion = -2;
-        Double dob = null;
         try {
             dbVersion = version.getDouble("version");
         } catch (NullPointerException e) {
