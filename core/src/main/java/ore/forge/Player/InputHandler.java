@@ -18,6 +18,7 @@ import ore.forge.UpgradeTag;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import static ore.forge.Enums.NumericOperator.ADD;
 import static ore.forge.Enums.NumericOreProperties.ORE_VALUE;
 
 //@author Nathan Ulmen
@@ -43,11 +44,11 @@ public class InputHandler {
             {2,2},
             {1,1},
     };
-    public int [][] conveyorConfig = {
+    public int[][] conveyorConfig = {
             {1, 1},
             {1, 1},
     };
-    public int [][] furnaceConfig = {
+    public int[][] furnaceConfig = {
             {4, 4},
             {4, 4},
     };
@@ -68,7 +69,6 @@ public class InputHandler {
 
     UpgradeStrategy testUpgrade = new BasicUpgrade(3.0, NumericOperator.MULTIPLY, ORE_VALUE);
 
-    UpgradeStrategy destroy = new DestructionUpgrade();
 
     UpgradeTag upgradeTag = new UpgradeTag("Basic Upgrade Tag", "tst", 4, false);
 

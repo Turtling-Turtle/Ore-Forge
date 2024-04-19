@@ -1,54 +1,92 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Enums.ComparisonOperator;
+import ore.forge.Enums.NumericOperator;
+import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Ore;
+import ore.forge.Strategies.Condition;
 import ore.forge.Strategies.Function;
 
 //@author Nathan Ulmen
 //An incremental upgrade increases and or decreases it modifier everytime a condition is met
 // The "step" (how much the modifier changes) can be determined by a Function, or it can be a fixed amount.
 // The modifier can be reset to its default/starting value once it reaches a specific threshold.
+
+//Upgrade that increases its modifier by
 public class IncrementalUpgrade implements UpgradeStrategy {
-    private double initialModifier;
-    private Function stepCondition, thresholdCondition, trueBranchStep, falseBranchStep;
-    private BasicUpgrade upgrade;
+    private final double baseModifier;
+    private final NumericOperator trueBranchOperator, falseBranchOperator;
+    private final BasicUpgrade baseUpgrade;
+    private final Condition triggerCondition;
+    private final Function trueIncrement, falseIncrement, threshold;
+//    private final ComparisonOperator thresholdComparator;
 
-    public IncrementalUpgrade() {
-
+    public IncrementalUpgrade(double baseModifier, NumericOperator trueBranchOperator, NumericOperator falseBranchOperator, BasicUpgrade baseUpgrade, Condition triggerCondition, Function trueIncrement, Function falseIncrement, Function threshold, ComparisonOperator thresholdComparator) {
+        this.baseModifier = baseModifier;
+        this.trueBranchOperator = trueBranchOperator;
+        this.falseBranchOperator = falseBranchOperator;
+        this.baseUpgrade = baseUpgrade;
+        this.triggerCondition = triggerCondition;
+        this.trueIncrement = trueIncrement;
+        this.falseIncrement = falseIncrement;
+        this.threshold = threshold;
+//        this.thresholdComparator = thresholdComparator;
     }
 
     public IncrementalUpgrade(JsonValue jsonValue) {
+        baseModifier = jsonValue.getDouble("baseModifier");
+        trueBranchOperator = NumericOperator.valueOf(jsonValue.getString("trueBranchOperator"));
+        falseBranchOperator = NumericOperator.valueOf(jsonValue.getString("falseBranchOperator"));
+//        this.thresholdComparator = thresholdComparator;
+
+        NumericOperator operator = NumericOperator.valueOf(jsonValue.getString("numericOperator"));
+        NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
+        baseUpgrade = new BasicUpgrade(baseModifier, operator, valueToModify);
+
+        Condition temp;
+        try {
+            temp = Condition.parseCondition(jsonValue.getString("triggerCondition"));
+        } catch (IllegalArgumentException e) {
+            temp = null;
+        }
+        triggerCondition = temp;
+
+        trueIncrement = Function.parseFunction(jsonValue.getString("trueStep"));
+        falseIncrement = Function.parseFunction(jsonValue.getString("falseStep"));
+        threshold = Function.parseFunction(jsonValue.getString("threshold"));
 
     }
 
     private IncrementalUpgrade(IncrementalUpgrade upgradeToClone) {
-        this.initialModifier = upgradeToClone.initialModifier;
-        this.stepCondition = upgradeToClone.stepCondition;
-        this.thresholdCondition = upgradeToClone.thresholdCondition;
-        this.trueBranchStep = upgradeToClone.trueBranchStep;
-        this.falseBranchStep = upgradeToClone.falseBranchStep;
-        this.upgrade = (BasicUpgrade) upgradeToClone.upgrade.clone();//Clone the basic upgrade.
-        this.upgrade.setModifier(initialModifier);
+        this.baseModifier = upgradeToClone.baseModifier;
+        this.trueBranchOperator = upgradeToClone.trueBranchOperator;
+        this.falseBranchOperator = upgradeToClone.falseBranchOperator;
+        this.baseUpgrade = (BasicUpgrade) upgradeToClone.baseUpgrade.clone();
+        this.triggerCondition = upgradeToClone.triggerCondition;
+        this.trueIncrement = upgradeToClone.trueIncrement;
+        this.falseIncrement = upgradeToClone.falseIncrement;
+        this.threshold = upgradeToClone.threshold;
+
+//        this.thresholdComparator = thresholdComparator;
     }
 
     @Override
     public void applyTo(Ore ore) {
         double newModifier;
-//        if (stepCondition is True) {
-//              newModifier = trueBranchStep;
-//        } else {
-//              newModifier = falseBranchStep;
-//        }
-
-        /*
-        if(newModifier thresholdCondition){
-            newModifier = initialModifier
+        if (triggerCondition == null || triggerCondition.evaluate(ore)) { //Condition can be null/nonexistent
+            newModifier = trueBranchOperator.apply(baseUpgrade.getModifier(), trueIncrement.calculate(ore));
+        } else {
+            newModifier = falseBranchOperator.apply(baseUpgrade.getModifier(), falseIncrement.calculate(ore));//Branch can be null/nonexistent
         }
 
-        upgrade.setModifier(newModifier);
-        upgrade.applyTo(ore);
+        if (Math.abs(newModifier) > threshold.calculate(ore)) {
+            newModifier = baseModifier;
+        }
 
-        */
+        baseUpgrade.setModifier(newModifier);
+        baseUpgrade.applyTo(ore);
+
     }
 
     public UpgradeStrategy clone() {
@@ -57,12 +95,6 @@ public class IncrementalUpgrade implements UpgradeStrategy {
 
     @Override
     public String toString() {
-        return "[" + this.getClass().getSimpleName() + "]" +
-            "\t initialModifier=" + initialModifier +
-            ", stepCondition=" + stepCondition +
-            ", thresholdCondition=" + thresholdCondition +
-            ", trueBranchStep=" + trueBranchStep +
-            ", falseBranchStep=" + falseBranchStep +
-            ", upgrade=" + upgrade;
+        return "[" + this.getClass().getSimpleName() + "]";
     }
 }

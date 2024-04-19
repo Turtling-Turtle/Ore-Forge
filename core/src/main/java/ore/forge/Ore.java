@@ -16,7 +16,10 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Stack;
 
+/**@author Nathan Ulmen
+ * */
 public class Ore {
+    //Ore can be classified by name, id, type. Ores can have multiple types.
     protected static ItemMap itemMap = ItemMap.getSingleton();
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     private final BitSet history;
@@ -316,6 +319,10 @@ public class Ore {
         return this.id;
     }
 
+    public float getDeltaTime() {
+        return deltaTime;
+    }
+
     public int getUpgradeCount() {
         return upgradeCount;
     }
@@ -355,3 +362,5 @@ public class Ore {
     }
 
 }
+
+
