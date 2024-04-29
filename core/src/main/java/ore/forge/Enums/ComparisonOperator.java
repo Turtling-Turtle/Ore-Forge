@@ -6,15 +6,8 @@ public enum ComparisonOperator {
     LESS_THAN,
     GREATER_THAN_EQUAL_TO,
     LESS_THAN_EQUAL_TO,
-    EQUAL_TO {
-        public boolean evaluateObject(Object a, Object b) {
-            return a.equals(b);
-        }
-    }, NOT_EQUAL_TO {
-        public boolean evaluateObject(Object a, Object b) {
-            return !a.equals(b);
-        }
-    };
+    EQUAL_TO ,
+    NOT_EQUAL_TO;
 
     public final boolean evaluate(double left, double right) {
         return comparator.evaluate(left, right);
@@ -56,7 +49,6 @@ public enum ComparisonOperator {
             case NOT_EQUAL_TO -> "!=";
         };
     }
-
 
     ComparisonOperator() {
         comparator = switch (this) {

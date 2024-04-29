@@ -15,4 +15,5 @@ public enum Direction {
     public int getAngle() {
         return angle;
     }
+
 }

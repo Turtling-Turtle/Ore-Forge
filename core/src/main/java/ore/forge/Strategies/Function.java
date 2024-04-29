@@ -6,7 +6,6 @@ import ore.forge.Enums.NumericOreProperties;
 import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
-import java.util.Random;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +19,12 @@ import java.util.regex.Pattern;
 * This class will parse an equation from a String and return a Function.
 */
 public class Function implements NumericOperand {
-    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+|\\(|\\)|\\d+(\\.\\d+)?|\\+|-|\\*|/|=|%|\\^)"); //regex sucks
+    /*
+    ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
+    ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, -.1, 12.7 etc.
+    |\\(|\\)|\\+|-|\\*|/|=|%|\\^ Matches for Operators (+, -, *, /, =, %, ^)
+    */
+    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)|\\(|\\)|\\+|-|\\*|/|=|%|\\^"); //regex sucks
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -38,7 +42,7 @@ public class Function implements NumericOperand {
 
     //Takes a Json Value, extracts the string from it, then creates a Function object based on the extracted string
     public static Function parseFunction(String equation) {
-        equation = equation.replaceAll("\\s", ""); //get rid of spaces in Function string.
+        equation = equation.replaceAll("(\\d+)([-+])(\\d+)", "$1 $2 $3"); //get rid of spaces in Function string.
         Matcher matcher = pattern.matcher(equation);
         return parseFromTokens(matcher);
     }
@@ -69,6 +73,7 @@ public class Function implements NumericOperand {
                 throw new RuntimeException("Unknown token: " + token);
             }
         }
+        assert numericOperatorStack.isEmpty();
         return (Function) operandStack.pop();
     }
 
@@ -110,34 +115,19 @@ public class Function implements NumericOperand {
         //Key Values: ORE_VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT, SPEED, ACTIVE_ORE, PLACED_ITEMS, WALLET, PRESTIEGE_LEVEL, SPECIAL_POINTS
         //Operators: + , - , * , / , ^ , = , %
 
-        String function = "((";
-        String function2 = "((3.14 * 3) + ((200 ^ 1.02) % 5))";
-        Function funkyUpgradeFunction = parseFunction(function);
+//        String function2 = "((3.14 * -3) + ((200 ^ 1.02) % 5))";
+        String function2 = "(((ORE_VALUE*2) + 20) / (MULTIORE*2))";
         Function numericUpgradeFunction = parseFunction(function2);
 
+
         Ore ore = new Ore();
-        ore.applyBaseStats(20, 50 , 0 , "Test", "idk", null);
+        ore.applyBaseStats(20, 50 , 1 , "Test", "idk", null);
         //((20 * 2) + 50) = 90
         System.out.println("ORE VALUE : " + ore.getOreValue());
         System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());
-        System.out.println(function + " Evaluates to: " + funkyUpgradeFunction.calculate(ore));
 
         System.out.println(function2 + " Evaluates to : " + numericUpgradeFunction.calculate(ore));
-        double yourModifier = funkyUpgradeFunction.calculate(ore);
 
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //52
-        String nums = "0123456789";
-        // 10^3 * 52^8 = total unique combinations
-        StringBuilder id = new StringBuilder();
-        Random rand = new Random();
-        for (int i = 0; i < 3; i++) {
-            id.append(nums.charAt(rand.nextInt(nums.length())));
-        }
-        id.append("-");
-        for (int i = 0; i < 8; i++) {
-            id.append(chars.charAt(rand.nextInt(chars.length())));
-        }
-        System.out.println(id);
     }
 
 }

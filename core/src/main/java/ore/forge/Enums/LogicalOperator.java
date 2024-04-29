@@ -19,15 +19,15 @@ public enum LogicalOperator {
         return switch (string) {
             case "NOT", "!" -> LogicalOperator.NOT;
             case "XOR", "^" -> LogicalOperator.XOR;
-            case "AND", "&", "&&" -> LogicalOperator.AND;
-            case "OR", "|", "||" -> LogicalOperator.OR;
+            case "AND", "&&" -> LogicalOperator.AND;
+            case "OR", "||" -> LogicalOperator.OR;
             default -> throw new IllegalStateException("Unexpected value: " + string);
         };
     }
 
     public static boolean isOperator(String string) {
         return switch (string) {
-            case "NOT", "!",  "XOR", "^", "AND", "&", "&&", "OR", "|", "||" -> true;
+            case "NOT", "!",  "XOR", "^", "AND", "&&", "OR", "||" -> true;
             default -> false;
         };
     }

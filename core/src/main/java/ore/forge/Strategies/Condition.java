@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /** @author Nathan Ulmen
 * Represents a Boolean Expression, evaluates an argument, returning a booelan result.
 * Arguments can be numeric or String based(comparing IDs/names,types, etc.)
-* {@link ore.forge.Strategies.Function} are supported as operands/arguments and can be embeded into the expression as an argument however they must be wrapped in {}.
+* {@link ore.forge.Strategies.Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
 * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
 * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
 */
@@ -20,7 +20,7 @@ public class Condition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
-    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?");
+    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?"); //Might be broken because I updated Function Regex
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 

@@ -28,17 +28,17 @@ public class InfluencedUpgrade implements UpgradeStrategy {
         NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
         baseUpgrade = new BasicUpgrade(0, operator, valueToModify);
 
-        //If field doesn't exist that means we need to set it to the "default" .
+        //If field doesn't exist or is null that means we need to set it to the "default" .
         double temp;
         try {
             temp = jsonValue.getDouble("minModifier");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             temp = Double.MIN_VALUE;
         }
         minModifier = temp;
         try {
             temp = jsonValue.getDouble("maxModifier");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             temp = Double.MAX_VALUE;
         }
         maxModifier = temp;

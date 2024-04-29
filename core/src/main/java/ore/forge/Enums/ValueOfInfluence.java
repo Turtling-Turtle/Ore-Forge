@@ -8,7 +8,7 @@ import ore.forge.Strategies.NumericOperand;
 
 
 //Unknown if this will be used.
-public enum ValueOfInfluence implements KeyValue, NumericOperand {
+public enum ValueOfInfluence implements NumericOperand {
     ACTIVE_ORE {
     },
     PLACED_ITEMS {

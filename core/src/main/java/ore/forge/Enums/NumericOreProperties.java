@@ -4,7 +4,7 @@ import ore.forge.Ore;
 import ore.forge.Strategies.NumericOperand;
 
 
-public enum NumericOreProperties implements KeyValue, NumericOperand {
+public enum NumericOreProperties implements NumericOperand {
     ORE_VALUE,
     TEMPERATURE,
     MULTIORE,
