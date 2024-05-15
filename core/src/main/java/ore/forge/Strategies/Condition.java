@@ -84,29 +84,29 @@ public class Condition {
         return new Condition(expressionQueue, logicalOperators);
     }
 
+//    TODO FIX BUG with indexes and everything.
     public boolean evaluate(Ore ore) {
-        int index = 0;
-        boolean[] results = new boolean[expressions.size() + 1];//emulates a stack, so we can work with boolean primitive.
+        int top = 0;
+        boolean[] results = new boolean[expressions.size()];//emulates a stack, so we can work with boolean primitive.
         for (BooleanExpression expression : expressions) {
-            results[index++] = expression.evaluate(ore);
+            results[top++] = expression.evaluate(ore);
         }
         if (logicalOperators != null && !logicalOperators.isEmpty()) {
             for (LogicalOperator operator : logicalOperators) {
                 switch (operator) {
                     case AND, OR, XOR:
-                        boolean right = results[index--];
-                        boolean left = results[index--];
-                        results[index++] = operator.evaluate(left, right);
+                        boolean right = results[--top];
+                        boolean left = results[--top];
+                        results[top++] = operator.evaluate(left, right);
                         break;
                     case NOT:
-                        boolean result = results[index--];
-                        results[index++] = operator.evaluate(false, result); //Not.evaluate() method only evaluates right argument
+                        boolean result = results[--top];
+                        results[top++] = operator.evaluate(false, result); //Not.evaluate() method only evaluates right argument
                         break;
                 }
             }
         }
-        assert index == 0;
-        return results[index];
+        return results[--top];
     }
 
     @Override
@@ -174,7 +174,9 @@ public class Condition {
 //        Stack<LogicalOperator> logicalOperators = new Stack<>();
 //        logicalOperators.push(LogicalOperator.NOT);
 //        Condition condition = new Condition(expressionQueue, null);
-        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test";
+
+        String conditionString = "MULTIORE < 3";
+//        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test";
         Condition condition2 = Condition.parseCondition(conditionString);
         Ore ore = new Ore();
         ore.applyBaseStats(100, 0, 1, "test", "0", null);

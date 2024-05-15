@@ -26,8 +26,6 @@ public class GameWorld extends CustomScreen{
     public Actor a;
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
-    private final Label.LabelStyle L = new Label.LabelStyle(font2, Color.GREEN);
-    Sprite spire;
 
 
     private final UserInterface userInterface;
@@ -42,7 +40,6 @@ public class GameWorld extends CustomScreen{
         inputHandler = new InputHandler();
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
-        spire = new Sprite();
 
         camera.position.set(Constants.GRID_DIMENSIONS/2f, Constants.GRID_DIMENSIONS/2f, 0f);
 

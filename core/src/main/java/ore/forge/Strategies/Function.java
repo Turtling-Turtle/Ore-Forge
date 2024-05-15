@@ -24,7 +24,7 @@ public class Function implements NumericOperand {
     ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, -.1, 12.7 etc.
     |\\(|\\)|\\+|-|\\*|/|=|%|\\^ Matches for Operators (+, -, *, /, =, %, ^)
     */
-    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)|\\(|\\)|\\+|-|\\*|/|=|%|\\^"); //regex sucks
+    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|\\+|-|\\*|/|=|%|\\^");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -116,7 +116,12 @@ public class Function implements NumericOperand {
         //Operators: + , - , * , / , ^ , = , %
 
 //        String function2 = "((3.14 * -3) + ((200 ^ 1.02) % 5))";
-        String function2 = "(((ORE_VALUE*2) + 20) / (MULTIORE*2))";
+
+//        String function2 = "(((ORE_VALUE*2) + 20) / (MULTIORE*2))";
+
+//        String function2 = "(((((((((ORE_VALUE*2)*2)*2)- 2)*2)*2)- 99E99)- 2909)+39999E200)";
+        String function2 = "(-2--3)";
+//        String function2 = "ORE_VALUE * 2) + 20) + ((((ORE_VALUE * 2))";
         Function numericUpgradeFunction = parseFunction(function2);
 
 
