@@ -10,14 +10,15 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**@author Nathan Ulmen
-* A pair of parenthesis encapsulate a function.
-* A function is composed of a left operand, right operand, and an operator.
-* An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
-* KeyValues are Enums. Each enum will call its associated method to get its value.
-*   EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
-* This class will parse an equation from a String and return a Function.
-*/
+/**
+ * @author Nathan Ulmen
+ * A pair of parenthesis encapsulate a function.
+ * A function is composed of a left operand, right operand, and an operator.
+ * An operand can be a KeyValue, Fixed number(double, int, float, etc.), or another Function.
+ * KeyValues are Enums. Each enum will call its associated method to get its value.
+ * EX: if the enum is ORE_VALUE then calling ORE_VALUE.getAssociatedValue(ore) will return the value of the ore.
+ * This class will parse an equation from a String and return a Function.
+ */
 public class Function implements NumericOperand {
     /*
     ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
@@ -47,10 +48,50 @@ public class Function implements NumericOperand {
         return parseFromTokens(matcher);
     }
 
-    /**Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
-     to parse the Function from the string.*/
-    //TODO: Implement an internal state machine for what type of Operand to expect next.
+    /**
+     * Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
+     * to parse the Function from the string.
+     */
     private static Function parseFromTokens(Matcher matcher) {
+        Stack<NumericOperand> operandStack = new Stack<>();
+        Stack<NumericOperator> operatorStack = new Stack<>();
+        while (matcher.find()) {
+            String token = matcher.group();
+            if (isNumeric(token)) {
+                operandStack.push(new Constant(Double.parseDouble(token)));
+            } else if (NumericOreProperties.isProperty(token)) {
+                operandStack.push(NumericOreProperties.valueOf(token));
+            } else if (ValueOfInfluence.isValue(token)) {
+                operandStack.push(ValueOfInfluence.valueOf(token));
+            } else if (token.equals("(")) {
+                operatorStack.push(null); //push to simulate the parenthesis
+            } else if (token.equals(")")) {
+                while (operatorStack.peek() != null) {
+                    operandStack.push(createFunction(operandStack, operatorStack));
+                }
+                operatorStack.pop();//remove the null
+            } else if (NumericOperator.isOperator(token)) {
+                NumericOperator operator = NumericOperator.fromSymbol(token);
+                while (!operatorStack.isEmpty() && operatorStack.peek() != null &&
+                    ((operator.getAssociativity() == NumericOperator.Associativity.LEFT && operator.getPrecedence() <= operatorStack.peek().getPrecedence()) ||
+                        (operator.getAssociativity() == NumericOperator.Associativity.RIGHT && operator.getPrecedence() < operatorStack.peek().getPrecedence()))) {
+                    operandStack.push(createFunction(operandStack, operatorStack));
+                }
+                operatorStack.push(operator);
+            } else {
+                throw new IllegalArgumentException("Unknown token: " + token);
+            }
+        }
+
+        while (!operatorStack.isEmpty()) {
+            operandStack.push(createFunction(operandStack, operatorStack));
+        }
+
+        return (Function) operandStack.pop();
+    }
+
+    @Deprecated
+    private static Function deprecated(Matcher matcher) {
         Stack<NumericOperand> operandStack = new Stack<>();
         Stack<NumericOperator> numericOperatorStack = new Stack<>();
         while (matcher.find()) {
@@ -77,6 +118,13 @@ public class Function implements NumericOperand {
         return (Function) operandStack.pop();
     }
 
+    private static NumericOperand createFunction(Stack<NumericOperand> operandStack, Stack<NumericOperator> operatorStack) {
+        NumericOperand right = operandStack.pop();
+        NumericOperand left = operandStack.pop();
+        NumericOperator functionOperator = operatorStack.pop();
+        return new Function(left, right, functionOperator);
+    }
+
     @Override
     public double calculate(Ore ore) {
         return numericOperator.apply(leftNumericOperand.calculate(ore), rightNumericOperand.calculate(ore));
@@ -96,7 +144,9 @@ public class Function implements NumericOperand {
         return ("(" + leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand + ")");
     }
 
-    /**Record class to keep track of primitive doubles*/
+    /**
+     * Record class to keep track of primitive doubles
+     */
     public record Constant(double value) implements NumericOperand {
         @Override
         public double calculate(Ore ore) {

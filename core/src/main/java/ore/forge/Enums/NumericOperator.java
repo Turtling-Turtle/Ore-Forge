@@ -8,8 +8,11 @@ public enum NumericOperator {
     public final double apply(double x, double y) {
         return operator.applyAsDouble(x, y);
     }
+    public enum Associativity {LEFT, RIGHT}
 
     private final DoubleBinaryOperator operator;
+    private final Associativity associativity;
+    private final int precedence;
 
     public static NumericOperator fromSymbol(char operatorSymbol) {
         return switch (operatorSymbol) {
@@ -56,6 +59,14 @@ public enum NumericOperator {
         };
     }
 
+    public Associativity getAssociativity() {
+        return associativity;
+    }
+
+    public int getPrecedence() {
+        return precedence;
+    }
+
     NumericOperator() {
         operator = switch (this) {
             case ADD -> (x, y) -> x + y;
@@ -66,6 +77,18 @@ public enum NumericOperator {
             case ASSIGNMENT -> (x, y) -> y;
             case MODULO -> (x, y) -> x % y;
         };
+        associativity = switch (this) {
+            case ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO -> Associativity.LEFT;
+            case EXPONENT, ASSIGNMENT -> Associativity.RIGHT;
+        };
+        precedence = switch (this) {
+            case ADD, SUBTRACT -> 2;
+            case MULTIPLY, DIVIDE, MODULO -> 3;
+            case EXPONENT -> 4;
+            case ASSIGNMENT -> 0;
+        };
+
+
     }
 
 }

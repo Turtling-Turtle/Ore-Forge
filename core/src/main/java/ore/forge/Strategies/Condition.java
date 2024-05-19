@@ -1,13 +1,10 @@
 package ore.forge.Strategies;
 
-import com.badlogic.gdx.utils.Queue;
 import ore.forge.Enums.*;
 import ore.forge.Ore;
-import ore.forge.Stopwatch;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +19,8 @@ public class Condition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
-    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_ ]+|\\d+(\\\\.\\\\d+)?"); //Might be broken because I updated Function Regex
+    //TODO: Regex expression wont identify names that have spaces in them. EX: Iron Ore vs
+    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)"); //Might be broken because I updated Function Regex
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
@@ -164,42 +162,6 @@ public class Condition {
         public String toString() {
             return left + " " + operator.asSymbol() + " " + right;
         }
-    }
-
-    public static void main(String[] args) {
-        StringConstant stringConstant = new StringConstant("Yes");
-        StringConstant stringConstant2 = new StringConstant("No");
-        StringExpression stringExpression = new StringExpression(stringConstant, stringConstant2, ComparisonOperator.EQUAL_TO);
-        Queue<BooleanExpression> expressionQueue = new Queue<>();
-        expressionQueue.addFirst(stringExpression);
-        ArrayList<Condition> holder = new ArrayList<>(100_000);
-//        Stack<LogicalOperator> logicalOperators = new Stack<>();
-//        logicalOperators.push(LogicalOperator.NOT);
-//        Condition condition = new Condition(expressionQueue, null);
-
-        String conditionString = "MULTIORE < 3";
-//        String conditionString = "{((ORE_VALUE * 2) + 1)} > 100 && NAME == test";
-        Condition condition2 = Condition.parseCondition(conditionString);
-        Ore ore = new Ore();
-        ore.applyBaseStats(100, 0, 1, "test", "0", null);
-        Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
-        stopwatch.start();
-        for (int i = 0; i < 100_000; i++) {
-            Condition condition = Condition.parseCondition(conditionString);
-            holder.add(condition);
-        }
-        stopwatch.stop();
-        System.out.println(condition2);
-        System.out.println(stopwatch.getElapsedTime() + " ms to parse");
-
-        stopwatch.restart();
-        for (Condition condition1 : holder) {
-            condition1.evaluate(ore);
-        }
-        stopwatch.stop();
-        // ~253.226 nanoseconds to evaluate the expression.
-        System.out.println(stopwatch.getElapsedTime() +  " milliseconds to evaluate condition " + holder.size() + " times");
-        System.out.println(condition2.evaluate(ore));
     }
 
 }

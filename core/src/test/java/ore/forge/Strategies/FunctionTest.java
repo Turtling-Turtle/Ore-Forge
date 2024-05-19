@@ -10,7 +10,7 @@ class FunctionTest {
 
     @Test
     void testAddition() {
-        Function simpleAddition = Function.parseFunction("(2+2)");
+        Function simpleAddition = Function.parseFunction(("2+2"));
         assertEquals(4, simpleAddition.calculate(ore));
     }
 
@@ -93,7 +93,7 @@ class FunctionTest {
     @Test
     void testScientificNotation() {
         var testCase = Function.parseFunction("(3E10+1)");
-        assertEquals(Double.parseDouble("3E10")+1, testCase.calculate(ore));
+        assertEquals(Double.parseDouble("3E10") + 1, testCase.calculate(ore));
     }
 
     @Test
@@ -101,5 +101,26 @@ class FunctionTest {
         var testCase = Function.parseFunction("(2.252E8+42)");
         assertEquals(Double.parseDouble("2.252E8") + 42, testCase.calculate(ore));
     }
+
+    @Test
+    void testNewParse() {
+        var testCase = Function.parseFunction("(36*3+2)/2");
+        assertEquals(55, testCase.calculate(ore));
+    }
+
+    @Test
+    void testParenthesis() {
+        ore.setOreValue(10);
+        var testCase = Function.parseFunction("(ORE_VALUE % 3 + 1)*4");
+        assertEquals(8,testCase.calculate(ore));
+    }
+
+    @Test
+    void testParenthesisWithParenthesis() {
+        var testCase = Function.parseFunction("(10 % 3 + 1)*4 + 36 - 2 + (360--9)");
+        assertEquals(411, testCase.calculate(null));
+    }
+
+
 
 }

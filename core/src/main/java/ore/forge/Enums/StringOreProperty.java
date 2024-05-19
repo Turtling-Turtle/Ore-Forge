@@ -12,14 +12,14 @@ public enum StringOreProperty implements StringOperand {
 
     public static boolean isProperty(String property) {
         return switch (property.trim()) {
-            case "NAME", "ID", "TYPE" -> true;
+            case "NAME", "ORE_NAME", "ID", "TYPE" -> true;
             default -> false;
         };
     }
 
     public static StringOreProperty fromString(String string) {
         return switch (string.trim()) {
-            case "NAME" -> StringOreProperty.NAME;
+            case "NAME", "ORE_NAME" -> StringOreProperty.NAME;
             case "ID" -> StringOreProperty.ID;
             case "TYPE" -> StringOreProperty.TYPE;
             default -> throw new IllegalStateException("Unexpected value: " + string.trim());

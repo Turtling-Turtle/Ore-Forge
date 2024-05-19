@@ -315,6 +315,10 @@ public class Ore {
         return this.oreName;
     }
 
+    public void setOreName(String oreName) {
+        this.oreName = oreName;
+    }
+
     public String getID() {
         return this.id;
     }
