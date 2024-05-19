@@ -12,6 +12,7 @@ import org.bson.Document;
 import java.lang.StringBuilder;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**@author Nathan Ulmen
  * The Resource Manager is responsible for verifying and loading Item data and other assets and keeps a list of all
@@ -29,12 +30,14 @@ public class ResourceManager {
 
         mongoConnect();
 
-        long t1 = System.currentTimeMillis();
+        Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
+        stopwatch.start();
         loadItems(Constants.CONVEYORS_FP);
         loadItems(Constants.DROPPERS_FP);
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
-        Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + (System.currentTimeMillis()-t1) + " ms" + Color.NONE.colorId);
+        stopwatch.stop();
+        Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + stopwatch.getElapsedTime() + " ms" + Color.NONE.colorId);
         for (Item item: allItems.values()) {
             Gdx.app.log(item.getClass().getSimpleName(), item.toString());
             System.out.println();

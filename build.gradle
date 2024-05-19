@@ -72,7 +72,16 @@ subprojects {
   }
   dependencies {
     implementation 'org.mongodb:mongodb-driver-sync:5.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
+  }
+
+  test {
+
+    useJUnitPlatform()
   }
 }
+
+
 
 eclipse.project.name = 'OreForge' + '-parent'

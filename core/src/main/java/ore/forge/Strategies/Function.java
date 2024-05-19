@@ -109,30 +109,4 @@ public class Function implements NumericOperand {
         }
     }
 
-    //Method used for testing class
-    public static void main(String[] args) {
-        //String exampleEquation = "(((ORE_VALUE = 100) % 2) - (ORE_VALUE * (TEMPERATURE / 10)) + (MULTIORE * (100 ^ 2)))";
-        //Key Values: ORE_VALUE, TEMPERATURE, MULTIORE, UPGRADE_COUNT, SPEED, ACTIVE_ORE, PLACED_ITEMS, WALLET, PRESTIEGE_LEVEL, SPECIAL_POINTS
-        //Operators: + , - , * , / , ^ , = , %
-
-//        String function2 = "((3.14 * -3) + ((200 ^ 1.02) % 5))";
-
-//        String function2 = "(((ORE_VALUE*2) + 20) / (MULTIORE*2))";
-
-//        String function2 = "(((((((((ORE_VALUE*2)*2)*2)- 2)*2)*2)- 99E99)- 2909)+39999E200)";
-        String function2 = "(-2--3)";
-//        String function2 = "ORE_VALUE * 2) + 20) + ((((ORE_VALUE * 2))";
-        Function numericUpgradeFunction = parseFunction(function2);
-
-
-        Ore ore = new Ore();
-        ore.applyBaseStats(20, 50 , 1 , "Test", "idk", null);
-        //((20 * 2) + 50) = 90
-        System.out.println("ORE VALUE : " + ore.getOreValue());
-        System.out.println("ORE TEMPERATURE: " + ore.getOreTemp());
-
-        System.out.println(function2 + " Evaluates to : " + numericUpgradeFunction.calculate(ore));
-
-    }
-
 }

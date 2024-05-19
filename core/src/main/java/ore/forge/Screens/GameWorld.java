@@ -2,13 +2,10 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ore.forge.*;
 import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
@@ -16,7 +13,8 @@ import ore.forge.Items.Item;
 import ore.forge.Player.InputHandler;
 import ore.forge.Player.Player;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 
 public class GameWorld extends CustomScreen{
     private final SpriteBatch batch;
@@ -26,6 +24,7 @@ public class GameWorld extends CustomScreen{
     public Actor a;
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+    private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
 
 
     private final UserInterface userInterface;
@@ -47,7 +46,7 @@ public class GameWorld extends CustomScreen{
 
     @Override
     public void render(float delta) {
-//        asyncAct(delta);
+
         //updateMouse
         inputHandler.updateMouse(camera);
         //handleInput.
@@ -67,7 +66,9 @@ public class GameWorld extends CustomScreen{
         //Draw selected Item
         drawSelectedItem();
         //Draw active ore
+        stopwatch.start();
         drawActiveOre(delta);
+        stopwatch.stop();
         //Draw Held Item.
         drawHeldItem();
         //Draw held item if build mode is active, needs some work.
@@ -75,16 +76,9 @@ public class GameWorld extends CustomScreen{
 
         batch.end();
         userInterface.draw(delta);
+        Gdx.app.log("GameWorld", stopwatch.toString());
     }
 
-    //According to profiling this is more efficient however idk if it causes race conditions and other errors
-    private void asyncAct(float delta) {
-        CompletableFuture.runAsync(() -> {
-            for (Ore ore: oreRealm.getActiveOre()) {
-                ore.act(delta);
-            }
-        });
-    }
 
     private void drawSelectedItem() {
         if (inputHandler.isSelecting()) {

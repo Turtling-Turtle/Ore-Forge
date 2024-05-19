@@ -58,7 +58,7 @@ public class Ore {
         removalStack = new Stack<>();
         history = new BitSet();
         observerEffects = new ArrayList<>();
-        updateInterval = 0.01f;//effects are updated 100 times every second.
+        updateInterval = 0.0f;//effects are updated 100 times every second.
     }
 
     public void act(float deltaTime) {
@@ -341,6 +341,10 @@ public class Ore {
 
     public void setOreHistory(int oreHistory) {
         this.oreHistory = oreHistory;
+    }
+
+    public void setUpgradeCount(int upgradeCount) {
+        this.upgradeCount = upgradeCount;
     }
 
     public String toString() {

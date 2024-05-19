@@ -273,6 +273,7 @@ public abstract class Item {
         return direction == Direction.SOUTH;
     }
 
+    @SuppressWarnings("unchecked")
     protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
         try {
             jsonValue.getString(field);

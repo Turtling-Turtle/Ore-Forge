@@ -3,9 +3,11 @@ package ore.forge.Strategies;
 import com.badlogic.gdx.utils.Queue;
 import ore.forge.Enums.*;
 import ore.forge.Ore;
+import ore.forge.Stopwatch;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -180,19 +182,23 @@ public class Condition {
         Condition condition2 = Condition.parseCondition(conditionString);
         Ore ore = new Ore();
         ore.applyBaseStats(100, 0, 1, "test", "0", null);
-        long t1 = System.currentTimeMillis();
+        Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
+        stopwatch.start();
         for (int i = 0; i < 100_000; i++) {
             Condition condition = Condition.parseCondition(conditionString);
             holder.add(condition);
         }
-        System.out.println(condition2.toString());
-        System.out.println(System.currentTimeMillis() - t1 + "ms to parse");
-        t1 = System.nanoTime();
+        stopwatch.stop();
+        System.out.println(condition2);
+        System.out.println(stopwatch.getElapsedTime() + " ms to parse");
+
+        stopwatch.restart();
         for (Condition condition1 : holder) {
             condition1.evaluate(ore);
         }
+        stopwatch.stop();
         // ~253.226 nanoseconds to evaluate the expression.
-        System.out.println(System.nanoTime() - t1 + " nano sec to evaluate condition " + holder.size() + " times");
+        System.out.println(stopwatch.getElapsedTime() +  " milliseconds to evaluate condition " + holder.size() + " times");
         System.out.println(condition2.evaluate(ore));
     }
 
