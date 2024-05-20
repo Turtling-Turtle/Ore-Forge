@@ -28,10 +28,12 @@ public class ResourceManager {
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
-        mongoConnect();
-
         Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
         stopwatch.start();
+        mongoConnect();
+        System.out.println(stopwatch);
+
+        stopwatch.restart();
         loadItems(Constants.CONVEYORS_FP);
         loadItems(Constants.DROPPERS_FP);
         loadItems(Constants.UPGRADER_FP);

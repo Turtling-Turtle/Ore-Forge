@@ -13,7 +13,7 @@ import ore.forge.Items.Item;
 import ore.forge.Player.InputHandler;
 import ore.forge.Player.Player;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 public class GameWorld extends CustomScreen{
@@ -25,6 +25,7 @@ public class GameWorld extends CustomScreen{
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
 
     private final UserInterface userInterface;
@@ -35,10 +36,11 @@ public class GameWorld extends CustomScreen{
 
     public GameWorld(OreForge game, ResourceManager resourceManager) {
         super(game, resourceManager);
-        batch = new SpriteBatch(3_000);
+        batch = new SpriteBatch(8191);
         inputHandler = new InputHandler();
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
+
 
         camera.position.set(Constants.GRID_DIMENSIONS/2f, Constants.GRID_DIMENSIONS/2f, 0f);
 
@@ -46,7 +48,6 @@ public class GameWorld extends CustomScreen{
 
     @Override
     public void render(float delta) {
-
         //updateMouse
         inputHandler.updateMouse(camera);
         //handleInput.
@@ -57,26 +58,32 @@ public class GameWorld extends CustomScreen{
 
         //Draw game
         batch.begin();
+        batch.disableBlending();
         //Draw world tiles.
         drawWorldTiles(camera);
+        batch.enableBlending();
         //Draw BuildMode grid Lines
         drawBuildMode();
+
         //Draw placed items
         drawPlacedItems(delta);
         //Draw selected Item
         drawSelectedItem();
         //Draw active ore
-        stopwatch.start();
+//        stopwatch.start();
+            // Wait for the ore processing to complete
         drawActiveOre(delta);
-        stopwatch.stop();
+//        stopwatch.stop();
         //Draw Held Item.
         drawHeldItem();
         //Draw held item if build mode is active, needs some work.
 
 
         batch.end();
+        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
         userInterface.draw(delta);
-        Gdx.app.log("GameWorld", stopwatch.toString());
+
+
     }
 
 
@@ -103,6 +110,7 @@ public class GameWorld extends CustomScreen{
         }
     }
 
+
     private void drawHeldItem() {
         if (inputHandler.isBuilding()) {
             batch.setColor(.2f, 1, .2f, .6f);
@@ -128,6 +136,10 @@ public class GameWorld extends CustomScreen{
                     false);
             batch.setColor(1, 1, 1, 1f);
         }
+    }
+
+    private void updateOre(float delta){
+        oreRealm.getActiveOre().parallelStream().forEach(ore -> ore.act(delta));
     }
 
     private void drawActiveOre(float delta) {

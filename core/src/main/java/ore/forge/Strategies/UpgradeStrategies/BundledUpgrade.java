@@ -4,8 +4,10 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
 
-/**@author Nathan Ulmen
-Used to wrap/bundled any number of upgrades into one.*/
+/**
+ * @author Nathan Ulmen
+ * Used to wrap/bundled any number of upgrades into one.
+ */
 public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<UpgradeStrategy> {
     private final UpgradeStrategy[] upgradeStrategies;
 
@@ -19,7 +21,7 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
     public BundledUpgrade(JsonValue jsonValue) {
         this.upgradeStrategies = new UpgradeStrategy[jsonValue.size];
         for (int i = 0; i < jsonValue.size; i++) {
-            this.upgradeStrategies[i] = createOrNull(jsonValue, "upgStrat" + String.valueOf(i+1), "upgradeName");
+            this.upgradeStrategies[i] = createOrNull(jsonValue, "upgStrat" + String.valueOf(i + 1), "upgradeName");
         }
     }
 

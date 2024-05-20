@@ -1,12 +1,8 @@
 package ore.forge.Strategies;
 
 import ore.forge.Ore;
-import ore.forge.Stopwatch;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
