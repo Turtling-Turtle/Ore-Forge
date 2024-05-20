@@ -1,7 +1,12 @@
 package ore.forge.Strategies;
 
 import ore.forge.Ore;
+import ore.forge.Stopwatch;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +21,7 @@ class FunctionTest {
 
     @Test
     void testSubtraction() {
-        Function simpleSubtraction = Function.parseFunction("(2-2)");
+        Function simpleSubtraction = Function.parseFunction("2-2");
         assertEquals(0, simpleSubtraction.calculate(ore));
     }
 
@@ -28,7 +33,7 @@ class FunctionTest {
 
     @Test
     void testDivision() {
-        Function simpleDivision = Function.parseFunction("(6/2)");
+        Function simpleDivision = Function.parseFunction("6/2");
         assertEquals(3, simpleDivision.calculate(ore));
     }
 
@@ -74,7 +79,7 @@ class FunctionTest {
     @Test
     void testSpeedScalarProperty() {
         ore.setSpeedScalar(3);
-        var speedScalarProperty = Function.parseFunction("(SPEED+5)");
+        var speedScalarProperty = Function.parseFunction("(SPEED_SCALAR+5)");
         assertEquals(8, speedScalarProperty.calculate(ore));
     }
 
@@ -98,8 +103,8 @@ class FunctionTest {
 
     @Test
     void testScientificNotationWithDecimal() {
-        var testCase = Function.parseFunction("(2.252E8+42)");
-        assertEquals(Double.parseDouble("2.252E8") + 42, testCase.calculate(ore));
+        var testCase = Function.parseFunction("(2.252E8-42E3)");
+        assertEquals(Double.parseDouble("2.252E8") - Double.parseDouble("42E3"), testCase.calculate(ore));
     }
 
     @Test
@@ -111,8 +116,8 @@ class FunctionTest {
     @Test
     void testParenthesis() {
         ore.setOreValue(10);
-        var testCase = Function.parseFunction("(ORE_VALUE % 3 + 1)*4");
-        assertEquals(8,testCase.calculate(ore));
+        var testCase = Function.parseFunction("(ORE_VALUE % 3 + 1) * 4");
+        assertEquals(8, testCase.calculate(ore));
     }
 
     @Test
@@ -120,7 +125,5 @@ class FunctionTest {
         var testCase = Function.parseFunction("(10 % 3 + 1)*4 + 36 - 2 + (360--9)");
         assertEquals(411, testCase.calculate(null));
     }
-
-
 
 }

@@ -9,6 +9,7 @@ public enum NumericOreProperties implements NumericOperand {
     TEMPERATURE,
     MULTIORE,
     SPEED,
+    SPEED_SCALAR,
     UPGRADE_COUNT;
 
     public final double getAssociatedValue(Ore ore) {
@@ -26,7 +27,7 @@ public enum NumericOreProperties implements NumericOperand {
 
     public static boolean isProperty(String property) {
         return switch (property) {
-            case "ORE_VALUE", "TEMPERATURE", "MULTIORE", "SPEED", "UPGRADE_COUNT" -> true;
+            case "ORE_VALUE", "TEMPERATURE", "MULTIORE", "SPEED", "SPEED_SCALAR", "UPGRADE_COUNT" -> true;
             default -> false;
         };
     }
@@ -38,7 +39,8 @@ public enum NumericOreProperties implements NumericOperand {
             case ORE_VALUE -> (Ore::getOreValue);
             case TEMPERATURE -> (Ore::getOreTemp);
             case MULTIORE -> (Ore::getMultiOre);
-            case SPEED -> (Ore::getSpeedScalar);
+            case SPEED -> (Ore::getMoveSpeed);
+            case SPEED_SCALAR -> (Ore::getSpeedScalar);
             case UPGRADE_COUNT -> (Ore::getUpgradeCount);
         };
     }

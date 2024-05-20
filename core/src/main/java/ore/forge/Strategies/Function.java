@@ -23,9 +23,9 @@ public class Function implements NumericOperand {
     /*
     ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
     ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, -.1, 12.7 etc.
-    |\\(|\\)|\\+|-|\\*|/|=|%|\\^ Matches for Operators (+, -, *, /, =, %, ^)
+    ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
     */
-    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|\\+|-|\\*|/|=|%|\\^");
+    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -66,7 +66,7 @@ public class Function implements NumericOperand {
             } else if (token.equals("(")) {
                 operatorStack.push(null); //push to simulate the parenthesis
             } else if (token.equals(")")) {
-                while (operatorStack.peek() != null) {
+                while (operatorStack.peek() != null) { // "collapse" function till we hit the opening parenthesis.
                     operandStack.push(createFunction(operandStack, operatorStack));
                 }
                 operatorStack.pop();//remove the null
@@ -85,6 +85,10 @@ public class Function implements NumericOperand {
 
         while (!operatorStack.isEmpty()) {
             operandStack.push(createFunction(operandStack, operatorStack));
+        }
+
+        if (operandStack.peek() instanceof Constant) {
+            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
         }
 
         return (Function) operandStack.pop();
@@ -122,6 +126,9 @@ public class Function implements NumericOperand {
         NumericOperand right = operandStack.pop();
         NumericOperand left = operandStack.pop();
         NumericOperator functionOperator = operatorStack.pop();
+        if (right instanceof Constant && left instanceof Constant) {
+            return new Constant(functionOperator.apply((((Constant) left).value), ((Constant) right).value));
+        }
         return new Function(left, right, functionOperator);
     }
 
@@ -144,7 +151,7 @@ public class Function implements NumericOperand {
         return ("(" + leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand + ")");
     }
 
-    /**
+    /*
      * Record class to keep track of primitive doubles
      */
     public record Constant(double value) implements NumericOperand {

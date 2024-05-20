@@ -55,8 +55,8 @@ public class BasicUpgrade implements UpgradeStrategy {
             case ORE_VALUE -> (Ore ore) -> ore.setOreValue(numericOperator.apply(ore.getOreValue(), modifier));
             case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
             case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
-            case SPEED -> (Ore ore) -> ore.setSpeedScalar((float) numericOperator.apply(ore.getSpeedScalar(), modifier));
-            case UPGRADE_COUNT -> throw new RuntimeException("Upgrade Count is not a valid value to Modify.");
+            case SPEED_SCALAR -> (Ore ore) -> ore.setSpeedScalar((float) numericOperator.apply(ore.getSpeedScalar(), modifier));
+            case UPGRADE_COUNT, SPEED -> throw new RuntimeException("Upgrade Count is not a valid value to Modify.");
         };
     }
 
