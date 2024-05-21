@@ -44,6 +44,10 @@ public class InventoryNode {
         return stored;
     }
 
+    public String getHeldItemID() {
+        return heldItem.getID();
+    }
+
     public boolean hasSupply() {
         assertCheck();
         return stored > 0;

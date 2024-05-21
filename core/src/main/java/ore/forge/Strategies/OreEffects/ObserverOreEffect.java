@@ -1,7 +1,7 @@
 package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.ValueOfInfluence;
+import ore.forge.Expressions.ValueOfInfluence;
 import ore.forge.Ore;
 import ore.forge.Strategies.StrategyInitializer;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;

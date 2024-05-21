@@ -5,7 +5,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
-import ore.forge.Enums.Direction;
 import ore.forge.Items.*;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
@@ -13,7 +12,6 @@ import ore.forge.Items.Blocks.Worker;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 
 //@author Nathan Ulmen
 //The ItemMap is responsible for keeping track of placed items and retrieving the positions of their blocks
@@ -99,8 +97,8 @@ public class ItemMap {
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         for (Item item : placedItems) {
-           //print Item name, direction, and position.
-            mapData.add(new MapData(item.getName(), item.getDirection(), item.getVector2()));
+           //print Item ID, direction, and position.
+            mapData.add(new MapData(item.getID(), item.getDirection(), item.getVector2()));
         }
         String jsonOutput = json.prettyPrint(mapData);
         FileHandle fileHandle = Gdx.files.local(Constants.BASE_LAYOUT_FP);
@@ -108,7 +106,7 @@ public class ItemMap {
     }
 
     private void asyncSave(ArrayList<Item> copiedList) {
-        
+
     }
 
     public void loadState(ResourceManager resourceManager) {

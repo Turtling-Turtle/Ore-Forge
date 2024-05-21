@@ -5,9 +5,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import com.mongodb.client.*;
-import ore.forge.Enums.Color;
 import ore.forge.Items.*;
 import org.bson.Document;
+import org.slf4j.LoggerFactory;
 
 import java.lang.StringBuilder;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * valid Items.
  * */
 public class ResourceManager {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ResourceManager.class);
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
@@ -40,10 +41,10 @@ public class ResourceManager {
         loadItems(Constants.FURNACE_FP);
         stopwatch.stop();
         Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + stopwatch.getElapsedTime() + " ms" + Color.NONE.colorId);
-        for (Item item: allItems.values()) {
-            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
-            System.out.println();
-        }
+//        for (Item item: allItems.values()) {
+////            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
+//            System.out.println();
+//        }
     }
 
     public void loadItems(String fileToParse) {
@@ -75,26 +76,34 @@ public class ResourceManager {
     }
 
     private void addToAllItems(Item item, Color color) {
-        allItems.put(item.getName(), item);
+        allItems.put(item.getID(), item);
         loadCount++;
         Gdx.app.log(item.getClass().getSimpleName(), color.colorId + "Loaded " + item.getName() + Color.NONE.colorId);
     }
 
     private void mongoConnect() {
         //TODO: Add exception handling so that if you dont have internet it still works.
-        long t1 = System.currentTimeMillis();
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("OreForge");
+        Gdx.app.log("Mongo Loader", "Attempting to verify files...");
+        Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
+        stopwatch.start();
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("OreForge");
+            //Void specifies that this function isnt returning anything, Async loading.
+            CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> checkVersion("Conveyors", Constants.CONVEYORS_FP, database));
+            CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
+            CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));
+            CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> checkVersion("Droppers", Constants.DROPPERS_FP, database));
 
-        //Void specifies that this function isnt returning anything, Async loading.
-        CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> checkVersion("Conveyors", Constants.CONVEYORS_FP, database));
-        CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
-        CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));
-        CompletableFuture<Void> dropperFuture = CompletableFuture.runAsync(() -> checkVersion("Droppers", Constants.DROPPERS_FP, database));
+            CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
+            mongoClient.close();
+            stopwatch.stop();
+            Gdx.app.log("Mongo Loader", Color.GREEN.colorId + "Verified local files in " + stopwatch.getElapsedTime() + "ms" + Color.NONE.colorId);
+        } catch (Exception e) {
+            Gdx.app.log("Mongo Loader", Color.RED.colorId + "Failed to connect to MongoDB" + Color.NONE.colorId);
+        }
 
-        CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
-        mongoClient.close();
-        Gdx.app.log("Mongo Loader", Color.GREEN.colorId + "Verified local files in " + (System.currentTimeMillis() - t1) + "ms" + Color.NONE.colorId);
+
     }
 
     public HashMap<String, Item> getAllItems() {

@@ -1,7 +1,6 @@
-package ore.forge.Enums;
+package ore.forge.Expressions;
 
 import ore.forge.Ore;
-import ore.forge.Strategies.StringOperand;
 
 import java.util.function.Function;
 

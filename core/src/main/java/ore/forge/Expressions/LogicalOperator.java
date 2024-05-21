@@ -1,4 +1,4 @@
-package ore.forge.Enums;
+package ore.forge.Expressions;
 
 public enum LogicalOperator {
     NOT,

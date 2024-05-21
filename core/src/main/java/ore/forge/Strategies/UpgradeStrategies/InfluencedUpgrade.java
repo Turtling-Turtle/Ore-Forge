@@ -2,9 +2,9 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
-import ore.forge.Enums.NumericOperator;
-import ore.forge.Enums.NumericOreProperties;
-import ore.forge.Strategies.Function;
+import ore.forge.Expressions.NumericOperator;
+import ore.forge.Expressions.NumericOreProperties;
+import ore.forge.Expressions.Function;
 
 /**@author Nathan Ulmen
 An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.

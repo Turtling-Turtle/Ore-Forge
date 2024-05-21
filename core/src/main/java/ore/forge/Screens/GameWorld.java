@@ -25,7 +25,6 @@ public class GameWorld extends CustomScreen{
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-    private final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
 
     private final UserInterface userInterface;

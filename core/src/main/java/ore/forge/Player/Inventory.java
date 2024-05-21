@@ -20,7 +20,7 @@ public class Inventory {
     public Inventory(ResourceManager resourceManager) {
         inventoryNodes = new ArrayList<>();
         allItems = resourceManager.getAllItems();
-//        loadInventory();
+        loadInventory();
     }
 
     public ArrayList<InventoryNode> getInventoryNodes() {
@@ -28,7 +28,8 @@ public class Inventory {
     }
 
     public void saveInventory() {
-//        printInventory();
+        Gdx.app.log("INVENTORY", "Saving Inventory");
+        printInventory();
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         sortByName();
@@ -36,11 +37,11 @@ public class Inventory {
         List<InventoryData> inventoryDataList = new ArrayList<>(inventoryNodes.size());
 
         for (InventoryNode node : inventoryNodes) {
-            InventoryData nodeData = new InventoryData();
-            nodeData.setItemName(node.getHeldItem().getName());
-            nodeData.setType(node.getHeldItem().getClass().getSimpleName());
-            nodeData.setTotalOwned(node.getTotalOwned());
-            inventoryDataList.add(nodeData);
+            String name = node.getHeldItem().getName();
+            String type = node.getHeldItem().getClass().getSimpleName();
+            String id = node.getHeldItemID();
+            int owned = node.getTotalOwned();
+            inventoryDataList.add(new InventoryData(name,type,owned,id));
         }
 
 
@@ -50,7 +51,8 @@ public class Inventory {
     }
 
     public void loadInventory() {
-        System.out.println("loading inventory now!");
+//        System.out.println("loading inventory now!");
+        Gdx.app.log("INVENTORY", "Loading Inventory");
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents = null;
         boolean isPresent = true;
@@ -58,18 +60,17 @@ public class Inventory {
         try {
             fileContents = jsonReader.parse(Gdx.files.local(Constants.INVENTORY_FP));
         } catch (SerializationException e) {
-            System.out.println("No Inventory Present.");
+            Gdx.app.log("INVENTORY", "No inventory data present.");
             isPresent = false;
         }
 
-
-        if (isPresent) {
+        if (isPresent && fileContents != null) {
             //Go through each item in saved inventory and initialize node from allItems
             for (JsonValue jsonValue: fileContents) {
-                if (allItems.containsKey(jsonValue.getString("itemName"))) {
+                if (allItems.containsKey(jsonValue.getString("id"))) {
+                    String itemID = jsonValue.getString("id");
                     int owned = jsonValue.getInt("totalOwned");
-                    String itemName = jsonValue.getString("itemName");
-                    InventoryNode node = new InventoryNode(allItems.get(itemName), owned);
+                    InventoryNode node = new InventoryNode(allItems.get(itemID), owned);
                     inventoryNodes.add(node);
                 } else {
                     System.out.println(Constants.RED + jsonValue.getString("itemName") + "is not a valid Item" + Constants.DEFAULT);
@@ -79,20 +80,11 @@ public class Inventory {
             //TODO: create the default/beginner inventory.
         }
 
-
-
-        //TODO: this is bugged right now, need to fix it so that it adds a new node if the item didn't exist previously correctly.
         //Add nodes for new Items that didn't exist previously.
         Stack<InventoryNode> nodesToAdd = new Stack<>();
-        if (inventoryNodes.isEmpty()) {
-            for (Item item : allItems.values()) {
+        for (Item item : allItems.values()) {
+            if (!containsItem(item.getID())) {
                 nodesToAdd.push(new InventoryNode(item, 0));
-            }
-        } else {
-            for (Item item : allItems.values()) {
-                for (InventoryNode node: inventoryNodes) {
-                    nodesToAdd.push(new InventoryNode(item, 0));
-                }
             }
         }
 
@@ -102,13 +94,18 @@ public class Inventory {
 
     }
 
+    private boolean containsItem(String targetID) {
+        for (InventoryNode node : inventoryNodes) {
+            if (node.getHeldItemID().equals(targetID)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void printInventory() {
         for (InventoryNode node : inventoryNodes) {
-            System.out.println("Name: " + node.getHeldItem().getName() + "\tNumber Owned: " + node.getTotalOwned());
-        }
-
-        for (Item item : allItems.values()) {
-            System.out.println(item.getName());
+            Gdx.app.log("INVENTORY", "Item: " + node.getHeldItem().getName() + "\tNumber Owned: " + node.getTotalOwned());
         }
     }
 
@@ -218,34 +215,6 @@ public class Inventory {
         }
     }
 
-    private class InventoryData {
-        private String itemName;
-        private String type;
-        private int totalOwned;
-
-        public String getItemName() {
-            return itemName;
-        }
-
-        public void setItemName(String itemName) {
-            this.itemName = itemName;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public int getTotalOwned() {
-            return totalOwned;
-        }
-
-        public void setTotalOwned(int totalOwned) {
-            this.totalOwned = totalOwned;
-        }
-    }
+    private record InventoryData(String itemName, String type, int totalOwned, String id) {}
 
 }

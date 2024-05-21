@@ -2,11 +2,8 @@ package ore.forge;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import ore.forge.Enums.Direction;
-import ore.forge.Enums.ValueOfInfluence;
-import ore.forge.Items.Blocks.DropperBlock;
+import ore.forge.Expressions.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
-import ore.forge.Items.Dropper;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;

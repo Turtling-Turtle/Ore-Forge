@@ -1,12 +1,12 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.ComparisonOperator;
-import ore.forge.Enums.NumericOperator;
-import ore.forge.Enums.NumericOreProperties;
+import ore.forge.Expressions.ComparisonOperator;
+import ore.forge.Expressions.NumericOperator;
+import ore.forge.Expressions.NumericOreProperties;
 import ore.forge.Ore;
-import ore.forge.Strategies.Condition;
-import ore.forge.Strategies.Function;
+import ore.forge.Expressions.BooleanCondition;
+import ore.forge.Expressions.Function;
 
 //@author Nathan Ulmen
 //An incremental upgrade increases and or decreases it modifier everytime a condition is met
@@ -18,16 +18,16 @@ public class IncrementalUpgrade implements UpgradeStrategy {
     private final double baseModifier;
     private final NumericOperator trueBranchOperator, falseBranchOperator;
     private final BasicUpgrade baseUpgrade;
-    private final Condition triggerCondition;
+    private final BooleanCondition triggerBooleanCondition;
     private final Function trueIncrement, falseIncrement, threshold;
 //    private final ComparisonOperator thresholdComparator;
 
-    public IncrementalUpgrade(double baseModifier, NumericOperator trueBranchOperator, NumericOperator falseBranchOperator, BasicUpgrade baseUpgrade, Condition triggerCondition, Function trueIncrement, Function falseIncrement, Function threshold, ComparisonOperator thresholdComparator) {
+    public IncrementalUpgrade(double baseModifier, NumericOperator trueBranchOperator, NumericOperator falseBranchOperator, BasicUpgrade baseUpgrade, BooleanCondition triggerBooleanCondition, Function trueIncrement, Function falseIncrement, Function threshold, ComparisonOperator thresholdComparator) {
         this.baseModifier = baseModifier;
         this.trueBranchOperator = trueBranchOperator;
         this.falseBranchOperator = falseBranchOperator;
         this.baseUpgrade = baseUpgrade;
-        this.triggerCondition = triggerCondition;
+        this.triggerBooleanCondition = triggerBooleanCondition;
         this.trueIncrement = trueIncrement;
         this.falseIncrement = falseIncrement;
         this.threshold = threshold;
@@ -44,13 +44,13 @@ public class IncrementalUpgrade implements UpgradeStrategy {
         NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
         baseUpgrade = new BasicUpgrade(baseModifier, operator, valueToModify);
 
-        Condition temp;
+        BooleanCondition temp;
         try {
-            temp = Condition.parseCondition(jsonValue.getString("triggerCondition"));
+            temp = BooleanCondition.parseCondition(jsonValue.getString("triggerCondition"));
         } catch (IllegalArgumentException e) {
             temp = null;
         }
-        triggerCondition = temp;
+        triggerBooleanCondition = temp;
 
         trueIncrement = Function.parseFunction(jsonValue.getString("trueStep"));
         falseIncrement = Function.parseFunction(jsonValue.getString("falseStep"));
@@ -63,7 +63,7 @@ public class IncrementalUpgrade implements UpgradeStrategy {
         this.trueBranchOperator = upgradeToClone.trueBranchOperator;
         this.falseBranchOperator = upgradeToClone.falseBranchOperator;
         this.baseUpgrade = (BasicUpgrade) upgradeToClone.baseUpgrade.clone();
-        this.triggerCondition = upgradeToClone.triggerCondition;
+        this.triggerBooleanCondition = upgradeToClone.triggerBooleanCondition;
         this.trueIncrement = upgradeToClone.trueIncrement;
         this.falseIncrement = upgradeToClone.falseIncrement;
         this.threshold = upgradeToClone.threshold;
@@ -74,7 +74,7 @@ public class IncrementalUpgrade implements UpgradeStrategy {
     @Override
     public void applyTo(Ore ore) {
         double newModifier;
-        if (triggerCondition == null || triggerCondition.evaluate(ore)) { //Condition can be null/nonexistent
+        if (triggerBooleanCondition == null || triggerBooleanCondition.evaluate(ore)) { //Condition can be null/nonexistent
             newModifier = trueBranchOperator.apply(baseUpgrade.getModifier(), trueIncrement.calculate(ore));
         } else {
             newModifier = falseBranchOperator.apply(baseUpgrade.getModifier(), falseIncrement.calculate(ore));//Branch can be null/nonexistent

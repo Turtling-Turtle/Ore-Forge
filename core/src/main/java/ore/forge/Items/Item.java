@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.Direction;
+import ore.forge.Direction;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.ItemMap;
 

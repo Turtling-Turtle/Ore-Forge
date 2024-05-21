@@ -1,4 +1,4 @@
-package ore.forge.Enums;
+package ore.forge.Expressions;
 
 
 public enum ComparisonOperator {
@@ -28,7 +28,7 @@ public enum ComparisonOperator {
             case "<=" -> LESS_THAN_EQUAL_TO;
             case "==" -> EQUAL_TO;
             case "!=" -> NOT_EQUAL_TO;
-            default -> throw new IllegalStateException("Unexpected value: " + symbol);
+            default -> throw new IllegalArgumentException("Unexpected value: " + symbol);
         };
     }
 

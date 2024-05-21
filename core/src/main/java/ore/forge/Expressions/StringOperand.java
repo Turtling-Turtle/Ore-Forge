@@ -1,4 +1,4 @@
-package ore.forge.Strategies;
+package ore.forge.Expressions;
 
 import ore.forge.Ore;
 

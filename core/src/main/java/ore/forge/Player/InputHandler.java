@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ButtonHelper;
-import ore.forge.Enums.NumericOperator;
+import ore.forge.Expressions.NumericOperator;
 import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
-import ore.forge.Strategies.Function;
+import ore.forge.Expressions.Function;
 import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
@@ -18,8 +18,7 @@ import ore.forge.UpgradeTag;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import static ore.forge.Enums.NumericOperator.ADD;
-import static ore.forge.Enums.NumericOreProperties.ORE_VALUE;
+import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
 
 //@author Nathan Ulmen
 public class InputHandler {

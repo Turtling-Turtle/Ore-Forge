@@ -1,7 +1,6 @@
 package ore.forge.Items.Blocks;
 
-import com.badlogic.gdx.Gdx;
-import ore.forge.Enums.Direction;
+import ore.forge.Direction;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.OreRealm;

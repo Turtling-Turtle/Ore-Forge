@@ -1,5 +1,6 @@
 package ore.forge.Strategies;
 
+import ore.forge.Expressions.Function;
 import ore.forge.Ore;
 import org.junit.jupiter.api.Test;
 

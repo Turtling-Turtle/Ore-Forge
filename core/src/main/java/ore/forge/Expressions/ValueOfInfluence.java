@@ -1,10 +1,9 @@
-package ore.forge.Enums;
+package ore.forge.Expressions;
 
 import ore.forge.ItemMap;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
-import ore.forge.Strategies.NumericOperand;
 
 
 //Unknown if this will be used.

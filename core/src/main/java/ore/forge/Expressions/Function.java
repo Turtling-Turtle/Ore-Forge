@@ -1,9 +1,6 @@
-package ore.forge.Strategies;
+package ore.forge.Expressions;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Enums.NumericOperator;
-import ore.forge.Enums.NumericOreProperties;
-import ore.forge.Enums.ValueOfInfluence;
 import ore.forge.Ore;
 
 import java.util.Stack;

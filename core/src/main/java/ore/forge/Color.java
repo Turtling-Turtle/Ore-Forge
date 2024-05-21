@@ -1,4 +1,4 @@
-package ore.forge.Enums;
+package ore.forge;
 
 public enum Color {
     NONE("\u001B[0m"),

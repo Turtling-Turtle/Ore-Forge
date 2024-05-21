@@ -1,4 +1,4 @@
-package ore.forge.Enums;
+package ore.forge;
 
 public enum Direction {
     EAST(0),//x+1, y+0

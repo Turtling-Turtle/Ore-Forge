@@ -1,6 +1,5 @@
-package ore.forge.Strategies;
+package ore.forge.Expressions;
 
-import ore.forge.Enums.*;
 import ore.forge.Ore;
 
 import java.util.ArrayList;
@@ -11,11 +10,11 @@ import java.util.regex.Pattern;
 /** @author Nathan Ulmen
 * Represents a Boolean Expression, evaluates an argument, returning a booelan result.
 * Arguments can be numeric or String based(comparing IDs/names,types, etc.)
-* {@link ore.forge.Strategies.Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
+* {@link Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
 * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
 * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
 */
-public class Condition {
+public class BooleanCondition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
@@ -24,13 +23,13 @@ public class Condition {
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
-    private Condition(ArrayList<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
+    private BooleanCondition(ArrayList<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
         this.expressions = expressions;
         this.logicalOperators = logicalOperators;
     }
 
     //TODO: Implement an internal state machine for what type of Operand to expect next.
-    public static Condition parseCondition(String condition) {
+    public static BooleanCondition parseCondition(String condition) {
         Matcher matcher = pattern.matcher(condition);
         Stack<LogicalOperator> logicalOperators = new Stack<>();
         Stack<ComparisonOperator> comparisonOperators = new Stack<>();
@@ -64,7 +63,7 @@ public class Condition {
         return buildFromRPN(logicalOperators, comparisonOperators, operands);
     }
 
-    private static Condition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
+    private static BooleanCondition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
         ArrayList<BooleanExpression> expressionQueue = new ArrayList<>(); //We treat this like a Queue.
         while (!operands.isEmpty() && operands.size() - 2 >= 0) {
             if (operands.peek() instanceof NumericOperand) {
@@ -81,7 +80,7 @@ public class Condition {
                 expressionQueue.add(expression);
             }
         }
-        return new Condition(expressionQueue, logicalOperators);
+        return new BooleanCondition(expressionQueue, logicalOperators);
     }
 
 //    TODO FIX BUG with indexes and everything.
