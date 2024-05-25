@@ -3,6 +3,7 @@ package ore.forge.Strategies;
 import com.badlogic.gdx.utils.JsonValue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 
 public interface StrategyInitializer<E> {
 

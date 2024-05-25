@@ -29,7 +29,6 @@ public abstract class Item {
     protected Vector2 vector2;
     protected String name, description, id;
 
-
     public Item(String name, String description, int[][]blockLayout, Tier TIER, double itemValue) {
         this.name = name;
         this.description = description;
@@ -209,6 +208,8 @@ public abstract class Item {
 
     public abstract void initBlockConfiguration(int[][] numberConfig);
 
+    public abstract void logInfo();
+
     public Block[][] getBlockConfig(){
         return blockConfig;
     }
@@ -277,7 +278,7 @@ public abstract class Item {
     protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
         try {
             jsonValue.getString(field);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             return null;
         }
         try {

@@ -11,6 +11,7 @@ import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
 import ore.forge.Expressions.Function;
+import ore.forge.Screens.UserInterface;
 import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
@@ -23,6 +24,7 @@ import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
 //@author Nathan Ulmen
 public class InputHandler {
     private enum Mode {DEFAULT, BUILDING, SELECTING}
+
     protected static final ItemMap itemMap = ItemMap.getSingleton();
     protected static final Player player = Player.getSingleton();
     private final float cameraSpeed;
@@ -40,28 +42,27 @@ public class InputHandler {
 //            { 0, 1, 1, 0},
 //            { 0, 2, 2, 0},
 //            { 0, 1, 1, 0},
-            {2,2},
-            {1,1},
+        {2, 2},
+        {1, 1},
     };
     public int[][] conveyorConfig = {
-            {1, 1},
-            {1, 1},
+        {1, 1},
+        {1, 1},
     };
     public int[][] furnaceConfig = {
-            {4, 4},
-            {4, 4},
+        {4, 4},
+        {4, 4},
     };
     public int[][] dropperConfig = {
-            {0,3,0},
-            {0,0,0},
-            {0,0,0},
+        {0, 3, 0},
+        {0, 0, 0},
+        {0, 0, 0},
     };
     public int[][] buildingConfig = {
-            {0,1,0},
-            {0,1,0},
-            {0,1,1}
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 1}
     };
-
 
 
     //Test objects:
@@ -77,11 +78,11 @@ public class InputHandler {
     OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
     UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, NumericOperator.MULTIPLY, ORE_VALUE);
-    Function influenceFunction = Function.parseFunction("((ORE_VALUE % 30) * 2)");
-    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade, 0, 20.0);
+    Function influenceFunction = Function.parseFunction("(ORE_VALUE * .01) * 2");
+    UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade, 1.5, 20.0);
     OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 
-    OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime, null);
+    OreEffect dropperStrat = new BundledOreEffect(invincibility, upgradeOverTime, influencedUpgradeOverTime);
 
 
     public InputHandler() {
@@ -120,6 +121,9 @@ public class InputHandler {
             }
         }
 
+
+
+
         itemSelect();
         handlePlacement();
         handleSelecting();
@@ -134,20 +138,20 @@ public class InputHandler {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Dropper( "Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .001f, dropperStrat);
+            heldItem = new Dropper("Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, "Test Ore", 20, 1, 1, .001f, dropperStrat);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, null, upgradeTag);
+            heldItem = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 5, influencedUpgrade, upgradeTag);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
             currentMode = Mode.BUILDING;
-            heldItem = new Furnace("Test Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, testUpgrade);
+            heldItem = new Furnace("Test Furnace", "test", furnaceConfig, Item.Tier.COMMON, 0.0, 32, 5, influencedUpgrade);
         }
     }
 
     private void handleMovement(float deltaTime, OrthographicCamera camera) {
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             camera.position.y += cameraSpeed * deltaTime;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
@@ -157,7 +161,7 @@ public class InputHandler {
             camera.position.x += cameraSpeed * deltaTime;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.position.x -= cameraSpeed *deltaTime;
+            camera.position.x -= cameraSpeed * deltaTime;
         }
 
     }
@@ -178,7 +182,9 @@ public class InputHandler {
     private void handlePlacement() {
         //If we are building we should check to see if we need to rotate the item and or place it.
         if (currentMode == Mode.BUILDING) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) { heldItem.rotateClockwise(); }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                heldItem.rotateClockwise();
+            }
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (heldItem.didPlace(mouseWorld, contiguousPlacedItems)) { //make sure the item was placed down
                     contiguousPlacedItems.add(heldItem);
@@ -207,7 +213,7 @@ public class InputHandler {
 
     private void undo() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && !recentlyPlaced.isEmpty()) {
-                recentlyPlaced.pop().removeItem();
+            recentlyPlaced.pop().removeItem();
         } else if (currentMode != Mode.BUILDING) {
             recentlyPlaced.clear();
         }
@@ -245,7 +251,6 @@ public class InputHandler {
             }
         }
 
-
     }
 
     public Item getHeldItem() {
@@ -265,9 +270,8 @@ public class InputHandler {
     }
 
     private boolean isInvalid() {
-        return mouseWorld.x > itemMap.mapTiles.length || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length || mouseWorld.y < 0;
+        return mouseWorld.x > itemMap.mapTiles.length-1 || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length-1 || mouseWorld.y < 0;
     }
-
 
 
 }

@@ -2,13 +2,17 @@ package ore.forge.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.*;
+import ore.forge.Color;
 import ore.forge.Constants;
 import ore.forge.Items.Item;
 import ore.forge.ResourceManager;
+import ore.forge.Stopwatch;
 
 import java.lang.StringBuilder;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class Inventory {
@@ -16,10 +20,12 @@ public class Inventory {
     private final ArrayList<InventoryNode> inventoryNodes;
 
     private final HashMap<String, Item> allItems;
+    private final HashMap<String, ArrayList<InventoryNode>> cachedResults;
 
     public Inventory(ResourceManager resourceManager) {
         inventoryNodes = new ArrayList<>();
         allItems = resourceManager.getAllItems();
+        cachedResults = new HashMap<>();
         loadInventory();
     }
 
@@ -73,7 +79,7 @@ public class Inventory {
                     InventoryNode node = new InventoryNode(allItems.get(itemID), owned);
                     inventoryNodes.add(node);
                 } else {
-                    System.out.println(Constants.RED + jsonValue.getString("itemName") + "is not a valid Item" + Constants.DEFAULT);
+                    Gdx.app.log("INVENTORY", Color.highlightString("Unknown item ID: " + jsonValue.getString("id"), Color.YELLOW));
                 }
             }
         } else {
@@ -91,6 +97,8 @@ public class Inventory {
         while (!nodesToAdd.isEmpty()) {
             inventoryNodes.add(nodesToAdd.pop());
         }
+
+        sortByTier();
 
     }
 
@@ -111,49 +119,104 @@ public class Inventory {
 
     public void sortByName() {
         NameComparator nameComparator = new NameComparator();
-        bubbleSort(nameComparator);
+        quickSort(nameComparator);
     }
 
     public void sortByType() {
         TypeComparator typeComparator = new TypeComparator();
-        bubbleSort(typeComparator);
+        quickSort(typeComparator);
     }
 
     public void sortByTier() {
         TierComparator tierComparator = new TierComparator();
-        bubbleSort(tierComparator);
+        quickSort(tierComparator);
     }
 
     public void sortByStored() {
         StoredComparator storedComparator = new StoredComparator();
-        bubbleSort(storedComparator);
+        quickSort(storedComparator);
     }
 
-    private <E extends Comparator<InventoryNode>> void bubbleSort(E compareType) {
-        for (int waterLine = inventoryNodes.size()-1; waterLine>=0; waterLine--) {
+    private <E extends Comparator<InventoryNode>> ArrayList<InventoryNode> bubbleSort(E compareType, ArrayList<InventoryNode> data) {
+        for (int waterLine = data.size()-1; waterLine>=0; waterLine--) {
             for (int net = 0; net < waterLine; net++) {
-                if (compareType.compare(inventoryNodes.get(net), inventoryNodes.get(net+1)) >0) {
-                    InventoryNode temp = inventoryNodes.get(net);
-                    inventoryNodes.set(net, inventoryNodes.get(net+1));
-                    inventoryNodes.set(net+1, temp);
+                if (compareType.compare(data.get(net), data.get(net+1)) >0) {
+                    InventoryNode temp = data.get(net);
+                    data.set(net, data.get(net+1));
+                    data.set(net+1, temp);
                 }
             }
         }
+        return data;
     }
 
-    //Make it not case-sensitive. E == e
-    //Make it so it looks for items that contain string.
-    // EX: Upgrade would return All items that have upgrade in name.
-    public ArrayList<InventoryNode> searchFor(String userInput) {
-        ArrayList<InventoryNode> desiredItems = new ArrayList<>();
-        userInput = userInput.toLowerCase();
-        for (InventoryNode node : inventoryNodes) {
-            if (node.getName().toLowerCase().contains(userInput)) {
-                desiredItems.add(node);
+    private <E extends Comparator<InventoryNode>> void quickSort(E compareType) {
+        quickSort(compareType, 0, inventoryNodes.size()-1);
+    }
+
+    private <E extends Comparator<InventoryNode>> void quickSort(E compareType,int min, int max) {
+        if (min >= max) {return;}
+        int indexOfPartition = partition(compareType, min, max);
+
+        quickSort(compareType,min, indexOfPartition-1);
+        quickSort(compareType,indexOfPartition+1, max);
+    }
+
+    private <E extends Comparator<InventoryNode>> int partition(E compareType, int min, int max) {
+        InventoryNode partitionedElement;
+        int left, right;
+        int midpoint = (min+max)/2;
+        partitionedElement = inventoryNodes.get(midpoint);
+        swap(midpoint,min);
+
+        left = min;
+        right = max;
+        while (left < right) {
+            while (left< max && compareType.compare(inventoryNodes.get(left), partitionedElement) <= 0) {
+                left++;
+            }
+
+            while (right> min && compareType.compare(inventoryNodes.get(right), partitionedElement) > 0) {
+                right--;
+            }
+            if (left < right) {
+                swap(left,right);
             }
         }
 
-        return desiredItems;
+        swap(min,right);
+        return right;
+    }
+
+    private void swap(int firstIndex, int secondIndex) {
+        var temp = inventoryNodes.get(secondIndex);
+        inventoryNodes.set(secondIndex, inventoryNodes.get(firstIndex));
+        inventoryNodes.set(firstIndex, temp);
+    }
+
+    public ArrayList<InventoryNode> searchFor(String userInput) {
+        var stpwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+        stpwatch.start();
+        userInput = userInput.toLowerCase();
+        if (!userInput.isEmpty()) {
+            if (cachedResults.containsKey(userInput)) {
+                stpwatch.stop();
+                Gdx.app.log("INVENTORY",Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.GREEN));
+                return cachedResults.get(userInput);
+            }
+            ArrayList<InventoryNode> desiredItems = new ArrayList<>();
+            for (InventoryNode node : inventoryNodes) {
+                if (node.getName().toLowerCase().contains(userInput)) {
+                    desiredItems.add(node);
+                }
+            }
+            var sortedResults = bubbleSort(new TierComparator(),desiredItems);
+            cachedResults.put(userInput, desiredItems);
+            stpwatch.stop();
+            Gdx.app.log("INVENTORY",Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.YELLOW));
+            return sortedResults;
+        }
+        return inventoryNodes;
     }
 
     public String toString() {

@@ -1,10 +1,4 @@
-Look into implementing MongoDB so I can "update" and add new items to game. MOSTLY DONE
-
 Look into making a "content browser" where you can browse other items that people have created.
-
-Player:
-
-
 
 Items:
     --Implement Drawable for, get this, items im gonna draw.
@@ -42,3 +36,34 @@ Things to Talk to professor about:
 For each optimization in act method of ore with for each loop.
 
 Just making the ore that is passed into an upgrade effect A property of the upgrade so that I don't have to pass it around.
+
+
+
+-----------------------
+
+1. Create User Interface for Inventory and Shop.
+    *Basic Inventory UI is in place.
+
+2. Create Drawable System for Items.
+
+3. Create Prestige System for player.
+
+4. Create Quest System.
+
+5. Expand Item definitions so that you can specify the source you obtain it from.
+
+Game is "Finished" at this point. Everything after this point is bonus features.
+
+Later Down the line:
+
+    Develop Custom BigNumber Class.
+
+    Develop an Item browser.
+
+
+
+
+
+
+
+

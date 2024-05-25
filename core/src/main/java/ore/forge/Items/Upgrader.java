@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 import ore.forge.Items.Blocks.UpgradeBlock;
@@ -68,6 +69,15 @@ public class Upgrader extends Item {
                 }
             }
         }
+    }
+
+    @Override
+    public void logInfo() {
+        String info = "\nName: " + getName() + " \tID: " + getID() + "\tTier: " + getTier();
+        String stats = "Conveyor Speed: " + conveyorSpeed + "\tMax Upgrades: " + upgradeTag.getMaxUpgrades();
+        String upgradeEffect = "Upgrade: " + upgrade.toString();
+        info += "\n" + stats + "\n" + upgradeEffect;
+        Gdx.app.log("Upgrader", Color.highlightString(info, Color.BLUE));
     }
 
     @Override

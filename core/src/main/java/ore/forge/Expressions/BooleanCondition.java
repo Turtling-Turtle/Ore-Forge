@@ -18,8 +18,8 @@ public class BooleanCondition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
-    //TODO: Regex expression wont identify names that have spaces in them. EX: Iron Ore vs
-    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)"); //Might be broken because I updated Function Regex
+    //TODO: Regex expression wont identify names that have spaces in them.
+    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
@@ -28,7 +28,6 @@ public class BooleanCondition {
         this.logicalOperators = logicalOperators;
     }
 
-    //TODO: Implement an internal state machine for what type of Operand to expect next.
     public static BooleanCondition parseCondition(String condition) {
         Matcher matcher = pattern.matcher(condition);
         Stack<LogicalOperator> logicalOperators = new Stack<>();
@@ -83,7 +82,6 @@ public class BooleanCondition {
         return new BooleanCondition(expressionQueue, logicalOperators);
     }
 
-//    TODO FIX BUG with indexes and everything.
     public boolean evaluate(Ore ore) {
         int top = 0;
         boolean[] results = new boolean[expressions.size()];//emulates a stack, so we can work with boolean primitive.
@@ -100,7 +98,7 @@ public class BooleanCondition {
                         break;
                     case NOT:
                         boolean result = results[--top];
-                        results[top++] = operator.evaluate(false, result); //Not.evaluate() method only evaluates right argument
+                        results[top++] = operator.evaluate(false, result); //NOT.evaluate() method only evaluates right argument
                         break;
                 }
             }

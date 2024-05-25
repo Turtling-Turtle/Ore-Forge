@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.FurnaceBlock;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
@@ -65,6 +66,15 @@ public class Furnace extends Item {
                 }
             }
         }
+    }
+
+    @Override
+    public void logInfo() {
+        String info = "\nName: " + name + "\tID: " + id + "\tTier: " + tier;
+        String stats = "Special Point Reward: " + specialPointReward + "\tSpecial Point Threshold: " + rewardThreshold;
+        String stats2 = "Sell Effect: " + upgrade.toString();
+        info += "\n" + stats + "\n" + stats2;
+        Gdx.app.log("Furnace", Color.highlightString(info, Color.CYAN));
     }
 
     public int getRewardThreshold() {

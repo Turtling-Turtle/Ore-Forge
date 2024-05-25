@@ -84,9 +84,9 @@ public class Function implements NumericOperand {
             operandStack.push(createFunction(operandStack, operatorStack));
         }
 
-        if (operandStack.peek() instanceof Constant) {
-            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
-        }
+//        if (operandStack.peek() instanceof Constant) {
+//            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
+//        }
 
         return (Function) operandStack.pop();
     }
@@ -123,9 +123,9 @@ public class Function implements NumericOperand {
         NumericOperand right = operandStack.pop();
         NumericOperand left = operandStack.pop();
         NumericOperator functionOperator = operatorStack.pop();
-        if (right instanceof Constant && left instanceof Constant) {
-            return new Constant(functionOperator.apply((((Constant) left).value), ((Constant) right).value));
-        }
+//        if (right instanceof Constant && left instanceof Constant) {
+//            return new Constant(functionOperator.apply((((Constant) left).value), ((Constant) right).value));
+//        }
         return new Function(left, right, functionOperator);
     }
 

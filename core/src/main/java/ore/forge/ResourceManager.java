@@ -19,12 +19,12 @@ import java.util.concurrent.TimeUnit;
  * valid Items.
  * */
 public class ResourceManager {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ResourceManager.class);
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
 
     public ResourceManager() {
+        Gdx.app.log("Resource Manager", "Initializing Resource Manager...");
         loadCount = 0;
         allSounds = new HashMap<>();
         allItems = new HashMap<>();
@@ -32,7 +32,6 @@ public class ResourceManager {
         Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
         stopwatch.start();
         mongoConnect();
-        System.out.println(stopwatch);
 
         stopwatch.restart();
         loadItems(Constants.CONVEYORS_FP);
@@ -40,10 +39,9 @@ public class ResourceManager {
         loadItems(Constants.UPGRADER_FP);
         loadItems(Constants.FURNACE_FP);
         stopwatch.stop();
-        Gdx.app.log("Resource Manager", Color.GREEN.colorId + "Loaded " + loadCount + " items in " + stopwatch.getElapsedTime() + " ms" + Color.NONE.colorId);
+        Gdx.app.log("Resource Manager", Color.highlightString("Loaded: " + loadCount + " items in " + stopwatch.getElapsedTime() + " ms.", Color.GREEN));
 //        for (Item item: allItems.values()) {
-////            Gdx.app.log(item.getClass().getSimpleName(), item.toString());
-//            System.out.println();
+//            item.logInfo();
 //        }
     }
 
@@ -98,9 +96,9 @@ public class ResourceManager {
             CompletableFuture.allOf(conveyorFuture, upgraderFuture, furnaceFuture, dropperFuture).join();//This forces all ansync tasks to be completed before returning from this function.
             mongoClient.close();
             stopwatch.stop();
-            Gdx.app.log("Mongo Loader", Color.GREEN.colorId + "Verified local files in " + stopwatch.getElapsedTime() + "ms" + Color.NONE.colorId);
+            Gdx.app.log("Mongo Loader", Color.highlightString("Verified local files in " + stopwatch.getElapsedTime() + " ms.", Color.GREEN));
         } catch (Exception e) {
-            Gdx.app.log("Mongo Loader", Color.RED.colorId + "Failed to connect to MongoDB" + Color.NONE.colorId);
+            Gdx.app.log("Mongo Loader", Color.highlightString("Failed to connect to MongoDB", Color.RED));
         }
 
 
@@ -142,7 +140,7 @@ public class ResourceManager {
         //If the versions are out of sync we Overwrite the current version on the local
         //machine with the version from MongoDB.
         if (dbVersion != localVersion) {
-            Gdx.app.log("Mongo Loader", Color.YELLOW.colorId + localFile +  " version " + localVersion + " did not align with " + mongoCollection + " collection version" + dbVersion + Color.NONE.colorId);
+            Gdx.app.log("Mongo Loader", Color.highlightString(localFile + "version " + localVersion + " did not align with" + mongoCollection + " collection version " + dbVersion, Color.YELLOW));
             downloadAndUpdate(localFile, collection);
         }
     }

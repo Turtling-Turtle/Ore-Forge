@@ -15,4 +15,12 @@ public enum Color {
     Color(String colorId) {
         this.colorId = colorId;
     }
+
+    public static String highlightString(String string, Color color) {
+        return color + string + NONE;
+    }
+
+    public String toString() {
+        return colorId;
+    }
 }

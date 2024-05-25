@@ -123,4 +123,10 @@ class FunctionTest {
         assertEquals(411, testCase.calculate(null));
     }
 
+    @Test
+    void testImpliedMultiply() {
+        var testCase = Function.parseFunction("(5+2)(3+2)");
+        assertEquals(35, testCase.calculate(ore));
+    }
+
 }

@@ -19,6 +19,9 @@ import ore.forge.Player.Player;
 import ore.forge.Screens.*;
 import org.bson.Document;
 
+import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
+
 //@author Nathan Ulmen
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
@@ -47,6 +50,7 @@ public class OreForge extends Game {
 
 
 
+
         /*
 		* Things to Initialize here:
 		* AllGameItems
@@ -68,7 +72,15 @@ public class OreForge extends Game {
 		gameWorld = new GameWorld(this, resourceManager);
 		pauseMenu = new PauseMenu(this, resourceManager);
 
-
+        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+        do {
+            stopwatch.restart();
+            Player.getSingleton().getInventory().sortByTier();
+            Player.getSingleton().getInventory().sortByName();
+            Player.getSingleton().getInventory().sortByType();
+            Player.getSingleton().getInventory().sortByStored();
+            stopwatch.stop();
+        } while (stopwatch.getElapsedTime() >= 50);
 
 		setScreen(mainMenuScreen);
 	}

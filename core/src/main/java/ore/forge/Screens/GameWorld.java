@@ -35,18 +35,18 @@ public class GameWorld extends CustomScreen{
 
     public GameWorld(OreForge game, ResourceManager resourceManager) {
         super(game, resourceManager);
-        batch = new SpriteBatch(8191);
+        batch = new SpriteBatch(4000);
         inputHandler = new InputHandler();
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
-
-
         camera.position.set(Constants.GRID_DIMENSIONS/2f, Constants.GRID_DIMENSIONS/2f, 0f);
+
 
     }
 
     @Override
     public void render(float delta) {
+        stopwatch.restart();
         //updateMouse
         inputHandler.updateMouse(camera);
         //handleInput.
@@ -79,9 +79,9 @@ public class GameWorld extends CustomScreen{
 
 
         batch.end();
-        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
+//        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
         userInterface.draw(delta);
-
+        Gdx.app.log("Frame Time", stopwatch.toString());
 
     }
 

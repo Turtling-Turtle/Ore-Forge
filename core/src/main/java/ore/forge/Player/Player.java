@@ -3,6 +3,7 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
+import ore.forge.Color;
 import ore.forge.Constants;
 import ore.forge.ResourceManager;
 
@@ -28,6 +29,7 @@ public class Player {
     public void subtractFromWallet(double value) {
         wallet -= value;
     }
+
     public void addSpecialPoints(int SP) {
         specialPoints += SP;
     }
@@ -48,17 +50,9 @@ public class Player {
         inventory.saveInventory();
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
-
-        PlayerData playerData = new PlayerData();
-        playerData.setMostMoneyObtained(this.mostMoneyObtained);
-        playerData.setWallet(this.wallet);
-        playerData.setSpecialPoints(this.specialPoints);
-        playerData.setPrestigeCurrency(this.prestigeCurrency);
-        playerData.setPrestigeLevel(this.prestigeLevel);
-
-        String jsonOutput = json.prettyPrint(playerData);
+        PlayerData data = new PlayerData(this.prestigeLevel, wallet, prestigeCurrency, specialPoints, mostMoneyObtained);
+        String jsonOutput = json.prettyPrint(data);
         FileHandle fileHandle = Gdx.files.local(Constants.PLAYER_STATS_FP);
-
         fileHandle.writeString(jsonOutput, false);
     }
 
@@ -68,7 +62,7 @@ public class Player {
         try {
             fileContents = jsonReader.parse(Gdx.files.local(Constants.PLAYER_STATS_FP));
         } catch (SerializationException e) {
-            System.out.println(Constants.PLAYER_STATS_FP + " was not present");
+            Gdx.app.log("PLAYER", Color.highlightString(Constants.PLAYER_STATS_FP + " was not present", Color.YELLOW));
             fileContents = null;
         }
         if (fileContents != null) {
@@ -155,37 +149,10 @@ public class Player {
         return "Prestige Level: " + prestigeLevel + "\tWallet: " + wallet + "\tPlayer Prestige Currency: " + prestigeCurrency + "\tSpecial Points: " + specialPoints;
     }
 
-    private class PlayerData {
-        private int prestigeLevel;
-        private double wallet;
-        private int prestigeCurrency;
-        private long specialPoints;
-        private double mostMoneyObtained;
-
-        public void setPrestigeLevel(int prestigeLevel) {
-            this.prestigeLevel = prestigeLevel;
-        }
-
-        public void setPrestigeCurrency(int prestigeCurrency) {
-            this.prestigeCurrency = prestigeCurrency;
-        }
-
-        public void setSpecialPoints(long specialPoints) {
-            this.specialPoints = specialPoints;
-        }
-
-        public void setWallet(double wallet) {
-            this.wallet = wallet;
-        }
-
-        public void setMostMoneyObtained(double mostMoneyObtained) {
-            this.mostMoneyObtained = mostMoneyObtained;
-        }
-
-
+    private record PlayerData(int prestigeLevel, double wallet, int prestigeCurrency, long specialPoints,
+                              double mostMoneyObtained) {
 
     }
-
 
 
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.utils.TransformDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -105,6 +106,15 @@ public class Dropper extends Item {
                 }
             }
         }
+    }
+
+    @Override
+    public void logInfo() {
+        String info = "\nName: " + getName() + " \tID: " + getID() + "\tTier: " + getTier();
+        String stats = "Drop Interval: " + getDropInterval();
+        String oreInfo = "Ore Name: " + getOreName() + "\tOre Value: " + oreValue + "\tOre Temperature: " + oreTemp + "\tMultiOre: " + multiOre;
+        info += "\n" + stats + "\n" + oreInfo + "\n Ore Effect:" + oreEffect;
+        Gdx.app.log("Dropper", Color.highlightString(info, Color.PINK));
     }
 
     public String getOreName() {

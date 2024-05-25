@@ -83,8 +83,8 @@ public class BasicUpgrade implements UpgradeStrategy {
     public String toString() {
         return "[" + getClass().getSimpleName() + "]" +
             "\tValue To Modify: " + valueToModify +
-            ", Operator: " + numericOperator +
-            ", Modifier: " + modifier;
+            ", \tOperator: " + numericOperator +
+            ", \tModifier: " + modifier;
     }
 
 }
