@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -23,7 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import ore.forge.Stopwatch;
 
 import javax.swing.text.NumberFormatter;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
@@ -34,10 +35,8 @@ public class UserInterface {
     private static final Player player = Player.getSingleton();
     private com.badlogic.gdx.scenes.scene2d.ui.ScrollPane scrollPane;
     public Stage stage;
-    private Table table, inventoryTable, nodeTable;
+    private Table table,  nodeTable;
     private ImageButton imageButton;//Icon for
-    private TextField textField;//Search Bar;
-    private ArrayList<InventoryNode> inventoryNodes;
     private final ProgressBar oreLimit;
     private OrthographicCamera camera;
     private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre;
@@ -96,8 +95,11 @@ public class UserInterface {
         nodeTable = new Table();
         int count = 0;
 
+        inventoryWidget = new InventoryTable(player.getInventory());
 
-        this.inventoryWidget = new InventoryTable(player.getInventory());
+
+
+
 //        do {
 //            stopwatch.restart();
 //                player.getInventory().sortByStored();
@@ -131,14 +133,11 @@ public class UserInterface {
         stage.addActor(specialPoints);
         createWallet(fpsStyle);
         createActiveOre(fpsStyle);
+
     }
 
     public Table getInventoryTable() {
         return table;
-    }
-
-    public void setInventoryNodes(ArrayList<InventoryNode> nodes) {
-        inventoryNodes = nodes;
     }
 
     public ProgressBar getOreLimit() {
@@ -147,7 +146,6 @@ public class UserInterface {
 
     public void draw(float deltaT) {
         updateInterval += deltaT;
-
         showInventory();
         if (updateInterval > 0.1f) {
             camera.update();
@@ -181,19 +179,15 @@ public class UserInterface {
     }
 
     public void showInventory() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.INSERT)) {
             inventoryWidget.setVisible(!inventoryWidget.isVisible());
         }
         if (inventoryWidget.isVisible()) {
             Gdx.input.setInputProcessor(this.stage);
+        } else {
+            stage.setKeyboardFocus(null);
         }
     }
-
-    //Inventory Table Should Have a search bar
-    private void createInventoryTable() {
-        inventoryTable = new Table();
-    }
-
 
 
 }

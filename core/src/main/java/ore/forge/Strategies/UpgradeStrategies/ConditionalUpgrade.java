@@ -3,7 +3,7 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Expressions.BooleanCondition;
+import ore.forge.Expressions.Condition;
 import ore.forge.Strategies.StrategyInitializer;
 
 /**@author Nathan Ulmen
@@ -12,13 +12,13 @@ import ore.forge.Strategies.StrategyInitializer;
 * The condition is evaluated and either the trueBranch or the falseBranch is activated based on the result.
 */
 public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer<UpgradeStrategy> {
-    private final BooleanCondition booleanCondition;
+    private final Condition condition;
     private final UpgradeStrategy trueBranchStrategy;
     private final UpgradeStrategy falseBranchStrategy;
 
     //Used for testing purposes.
-    public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, BooleanCondition booleanCondition) {
-        this.booleanCondition = booleanCondition;
+    public ConditionalUpgrade(UpgradeStrategy trueBranch, UpgradeStrategy falseBranch, Condition condition) {
+        this.condition = condition;
         trueBranchStrategy = trueBranch;
         falseBranchStrategy = falseBranch;
     }
@@ -27,19 +27,19 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     public ConditionalUpgrade(JsonValue jsonValue) {
         trueBranchStrategy = createOrNull(jsonValue, "trueBranch", "upgradeName");
         falseBranchStrategy = createOrNull(jsonValue, "falseBranch", "upgradeName");
-        booleanCondition = BooleanCondition.parseCondition(jsonValue.getString("condition"));
+        condition = Condition.parseCondition(jsonValue.getString("condition"));
     }
 
     //Clone constructor
     private ConditionalUpgrade(ConditionalUpgrade conditionalUpgradeClone) {
-        this.booleanCondition = conditionalUpgradeClone.booleanCondition;
+        this.condition = conditionalUpgradeClone.condition;
         this.trueBranchStrategy = conditionalUpgradeClone.trueBranchStrategy.clone();
         this.falseBranchStrategy = conditionalUpgradeClone.falseBranchStrategy.clone();
     }
 
     @Override
     public void applyTo(Ore ore) {
-        if (booleanCondition.evaluate(ore)) {//evaluate the condition.
+        if (condition.evaluate(ore)) {//evaluate the condition.
             trueBranchStrategy.applyTo(ore);
         } else if (falseBranchStrategy != null) {
             falseBranchStrategy.applyTo(ore);
@@ -54,7 +54,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     @Override
     public String toString() {
         return "[" + getClass().getSimpleName() + "]" +
-            " Condition:" + booleanCondition +
+            " Condition:" + condition +
             "\n\tTrueBranch:" + trueBranchStrategy +  "}" +
             "\n\tFalseBranch:" + falseBranchStrategy + "}";
     }

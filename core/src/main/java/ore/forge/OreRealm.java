@@ -60,6 +60,10 @@ public class OreRealm {
         return activeOre;
     }
 
+    public ArrayList<Ore> getUniqueActiveOre() {
+        return new ArrayList<>(activeOre);
+    }
+
     public Stack<Ore> getStackOfOre() {
         return stackOfOre;
     }

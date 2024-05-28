@@ -46,7 +46,7 @@ public class GameWorld extends CustomScreen{
 
     @Override
     public void render(float delta) {
-        stopwatch.restart();
+//        stopwatch.restart();
         //updateMouse
         inputHandler.updateMouse(camera);
         //handleInput.
@@ -81,7 +81,7 @@ public class GameWorld extends CustomScreen{
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
         userInterface.draw(delta);
-        Gdx.app.log("Frame Time", stopwatch.toString());
+//        Gdx.app.log("Frame Time", stopwatch.toString());
 
     }
 
@@ -163,7 +163,7 @@ public class GameWorld extends CustomScreen{
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this.stage);
+        Gdx.input.setInputProcessor(userInterface.stage);
         game.memoryCounter.setPosition(camera.position.x, camera.position.y);
         stage.addActor(game.memoryCounter);
     }

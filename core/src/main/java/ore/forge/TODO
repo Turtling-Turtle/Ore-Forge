@@ -1,4 +1,3 @@
-Look into making a "content browser" where you can browse other items that people have created.
 
 Items:
     --Implement Drawable for, get this, items im gonna draw.
@@ -31,34 +30,120 @@ Furnace:
 TODO: Fix/guard against divide by zero errors in Upgrade Strategies.
 TODO: Change ore "state"(doomed etc) from boolean to Enum.
 
-Things to Talk to professor about:
-
-For each optimization in act method of ore with for each loop.
-
-Just making the ore that is passed into an upgrade effect A property of the upgrade so that I don't have to pass it around.
-
-
-
 -----------------------
 
 1. Create User Interface for Inventory and Shop.
-    *Basic Inventory UI is in place.
+    1A. Create basic inventory with nodes and search bar. **DONE**
+    2A. Implement sorting buttons(sort by tier, sort by name, etc) **DONE**
+    3A. Fix formatting errors (build from top right to left) **DONE**
+    4A. Create Tool Tips for Items when you hover over their node. **DONE**
+    5A. Test async searching and sorting of items.
+    6A. Fix input processing.
+        1B.
+
+    Create Shop UI.
 
 2. Create Drawable System for Items.
 
-3. Create Prestige System for player.
+3. Create Prestige System for players.
 
-4. Create Quest System.
+    1A. Formula for calculating prestige cost/threshold.
+    2A. Develop a System that lets you "Skip" prestige levels if you have enough money?
+    3A. Rewarding Items, and what you start with when you prestige(Starting Cash, Currency Rewards, ETC).
+    4A. "Resting" inventory, make sure items are prestige proof
+    5A. Consider a Sacrifice esque system ?
+-----------------------
 
-5. Expand Item definitions so that you can specify the source you obtain it from.
+
+4. Create Quest/Achievement System.
+
+    A quest is made up of the following:
+    id - used to identify a specific quest.
+    name - name of the quest.
+    description - general description of the quest.
+    reward - the Item or currency that is rewarded to the player once a step is completed.
+    type - the type of quest.
+        OR TYPE- one of the conditions must be completed.
+        AND Type - all of the conditions must be completed.
+        HYBRID Type - one group of conditions must be completed.
+    updateType - when the condition is checked.
+        ON_PRESTIGE -> Checks condition when the player prestiges.
+        ON_SELL -> checks condition when an ore is sold
+        ACTIVE -> checks condition very frequently
+        PERIODIC -> Checks condition a couple times each minute.
+----
+Rough Draft of JSON structure for a quest:
+    identifier: string
+    name: string
+    description : string
+    reward : currency or Item (rewarded once all steps are completed), can reward multiple things.
+    type : string -> enum/Object? (Different types of quests EX: check-list, linear, hybrid, etc.)
+    steps {
+        stepDescription : string
+        completed : boolean (marks whether or not this step has been finished)
+        updateType : string -> enum (used to determine when to check the state of the quest)
+        condition : string -> Condition. (Condition to evaluate, if true step is marked as completed)
+    }
+----
+    Example Of a Quest:
+    id : "132Q-EXAMPLE"
+    name : "An Example of a Quest"
+    description : "This was made to prototype a Quest Based system designed around JSON"
+    steps {
+        step1 : {
+           type : "SINGLE"
+           stepDescription : "Prestige 100 times"
+           completed : false
+           updateType : "ON_PRESTIGE"
+           condition : "PRESTIGE_LEVEL >= 100"
+           reward : null
+           rewardCount : 0
+        }
+        step2 : {
+            type : ""
+            stepDescription : "Have 100 ore on Your base with a median ore value that is greater than or equal to 2E20",
+            completed : false,
+            updateType : "ACTIVE",
+            condition : "MEDIAN_ORE_VALUE >= 2E20 AND ORE_COUNT >= 100",
+            reward : "832I-F-EXAMPLE",
+            rewardCount : 3
+        }
+        step3 : {
+            type : ""
+            stepDescription : "",
+            completed : false,
+            updateType : "ON_SELL",
+            condition : "ORE_VALUE >= 2E49",
+            reward : SPECIAL_POINTS,
+            rewardCount : "{PRESTIGE_LEVEL * 1.2}" ------> can be a function too.
+        }
+        step4 : {
+        }
+    }
+
+
+5. Expand Item definitions so to be more robust.
+    1A. Specify the source you obtain it from and methods for obtaining.
+    2A. Implement Drawable.
+    3A. Add types/tags to items.
+
+6. Add Conveyor Animation System.
+
+7. Allow you to select multiple items and move them at the same time.
+
+8. Add an Interactable component to Items(EX: click a button to drop an ore).
 
 Game is "Finished" at this point. Everything after this point is bonus features.
 
 Later Down the line:
 
-    Develop Custom BigNumber Class.
+    Add a layout system. (Shouldn't be too difficult/Hard)
 
-    Develop an Item browser.
+    Develop Custom BigNumber Class. (Difficult)
+
+    Physics for ore? (Difficult)
+
+    Develop an Item browser. (Difficult)
 
 
 

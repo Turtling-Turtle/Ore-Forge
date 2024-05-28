@@ -2,11 +2,11 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
@@ -33,11 +33,28 @@ public class ItemIcon extends WidgetGroup {
         border.setSize(1.25f * button.getWidth(), 1.25f * button.getHeight());
         border.center();
 
-        Table toolTip = new Table();
-        toolTip.setBackground(buttonAtlas.getDrawable(roundFull));
+        Table table = new Table();
+        table.setBackground(buttonAtlas.getDrawable(roundFull));
+        table.setColor(determineColor(node));
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        labelStyle.fontColor = Color.BLACK;
+
+        TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
+        var background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.background = background;
+        style.label = new Label.LabelStyle(labelStyle);
+        TextTooltip tooltip = new TextTooltip(node.getName(), style);
+        tooltip.setInstant(true);
+
+
+
         addActor(border);
         border.setColor(determineColor(node));
         setSize(border.getWidth(), border.getHeight());
+        this.setTouchable(Touchable.enabled);
+        this.addListener(tooltip);
 
     }
 
@@ -67,4 +84,7 @@ public class ItemIcon extends WidgetGroup {
         };
     }
 
+    public String toString() {
+        return this.getNodeName();
+    }
 }

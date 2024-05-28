@@ -2,7 +2,6 @@ package ore.forge.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.*;
 import ore.forge.Color;
 import ore.forge.Constants;
@@ -99,7 +98,14 @@ public class Inventory {
         }
 
         sortByTier();
+    }
 
+    public void addItem(String itemID, int count) {
+        for (InventoryNode node : inventoryNodes) {
+            if (node.getHeldItemID().equals(itemID)) {
+                node.addNew(count);
+            }
+        }
     }
 
     private boolean containsItem(String targetID) {

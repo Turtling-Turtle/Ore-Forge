@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
 * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
 */
-public class BooleanCondition {
+public class Condition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
@@ -23,12 +23,12 @@ public class BooleanCondition {
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
-    private BooleanCondition(ArrayList<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
+    private Condition(ArrayList<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
         this.expressions = expressions;
         this.logicalOperators = logicalOperators;
     }
 
-    public static BooleanCondition parseCondition(String condition) {
+    public static Condition parseCondition(String condition) {
         Matcher matcher = pattern.matcher(condition);
         Stack<LogicalOperator> logicalOperators = new Stack<>();
         Stack<ComparisonOperator> comparisonOperators = new Stack<>();
@@ -62,7 +62,7 @@ public class BooleanCondition {
         return buildFromRPN(logicalOperators, comparisonOperators, operands);
     }
 
-    private static BooleanCondition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
+    private static Condition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
         ArrayList<BooleanExpression> expressionQueue = new ArrayList<>(); //We treat this like a Queue.
         while (!operands.isEmpty() && operands.size() - 2 >= 0) {
             if (operands.peek() instanceof NumericOperand) {
@@ -79,7 +79,7 @@ public class BooleanCondition {
                 expressionQueue.add(expression);
             }
         }
-        return new BooleanCondition(expressionQueue, logicalOperators);
+        return new Condition(expressionQueue, logicalOperators);
     }
 
     public boolean evaluate(Ore ore) {

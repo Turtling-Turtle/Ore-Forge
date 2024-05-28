@@ -59,13 +59,13 @@ public class InventoryNode {
         assertCheck();
     }
 
-    public void purchaseNew() {
+    public void addNew() {
         totalOwned++;
         stored++;
         assertCheck();
     }
 
-    public void purchaseNew(int numBought) {
+    public void addNew(int numBought) {
         totalOwned += numBought;
         stored += numBought;
         assertCheck();

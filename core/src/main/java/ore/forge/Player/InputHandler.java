@@ -11,7 +11,6 @@ import ore.forge.Items.*;
 import ore.forge.ItemMap;
 import ore.forge.OreForge;
 import ore.forge.Expressions.Function;
-import ore.forge.Screens.UserInterface;
 import ore.forge.Strategies.OreEffects.*;
 import ore.forge.Strategies.UpgradeStrategies.*;
 import ore.forge.UpgradeTag;
@@ -20,10 +19,30 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
-
+/*-----------------------------------------------------------------------
+Input Manager    | Translate OS input events into logical events
+-----------------------------------------------------------------------
+    | |
+    | |
+   \   /
+    \_/
+-----------------------------------------------------------------------
+Character Controller | React to logical events and affect game play
+-----------------------------------------------------------------------
+    | |
+    | |
+   \   /
+    \_/
+-----------------------------------------------------------------------
+Game Logic     | React to player actions and provides feedback
+-----------------------------------------------------------------------*/
 //@author Nathan Ulmen
 public class InputHandler {
-    private enum Mode {DEFAULT, BUILDING, SELECTING}
+    private enum Mode {DISABLED, OBSERVING, BUILDING, SELECTING, INVENTORY}
+    /*
+    * Default - you are just watching the game, all can visit all
+    *
+    * */
 
     protected static final ItemMap itemMap = ItemMap.getSingleton();
     protected static final Player player = Player.getSingleton();
@@ -93,7 +112,7 @@ public class InputHandler {
         contiguousPlacedItems = new ArrayList<>();
         recentlyPlaced = new Stack<>();
         selectedItems = new ArrayList<>();
-        currentMode = Mode.DEFAULT;
+        currentMode = Mode.DISABLED;
     }
 
     public void updateMouse(OrthographicCamera camera) {
@@ -117,13 +136,9 @@ public class InputHandler {
                 game.setScreen(game.pauseMenu);
                 itemMap.saveState();
             } else {
-                currentMode = Mode.DEFAULT;
+                currentMode = Mode.DISABLED;
             }
         }
-
-
-
-
         itemSelect();
         handlePlacement();
         handleSelecting();
@@ -225,7 +240,7 @@ public class InputHandler {
                 selectedItem = itemMap.getItem(mouseWorld);
                 currentMode = Mode.SELECTING;
             } else {
-                currentMode = Mode.DEFAULT;
+                currentMode = Mode.DISABLED;
                 heldItem = null;
                 selectedItems.clear();
             }
@@ -241,7 +256,7 @@ public class InputHandler {
             if (Gdx.input.isKeyPressed(Input.Keys.Z)) { //Remove the selected Item from the base.
                 selectedItem.removeItem();
                 selectedItem = null;
-                currentMode = Mode.DEFAULT;
+                currentMode = Mode.DISABLED;
                 return; //return because we are no longer selecting.
 
             }
@@ -250,7 +265,10 @@ public class InputHandler {
                 //item.activate();
             }
         }
+    }
 
+    public void setDisabled() {
+        this.currentMode = Mode.DISABLED;
     }
 
     public Item getHeldItem() {
