@@ -18,6 +18,7 @@ import java.util.ArrayList;
 //@author Nathan Ulmen
 public abstract class Item {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE, EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
+    public enum UnlockMethod {SPECIAL_POINTS, PRESTIGE_LEVEL, QUEST}
 
 
 
