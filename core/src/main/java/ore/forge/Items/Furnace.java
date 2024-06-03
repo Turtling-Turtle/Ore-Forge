@@ -17,14 +17,14 @@ public class Furnace extends Item {
     private final UpgradeStrategy upgrade;
 
     //Used to create item from scratch.
-    public Furnace(String name, String description, int[][] blockLayout, Tier tier, double itemValue, int specialPointReward, int rewardThreshold, UpgradeStrategy upgrade) {
-        super(name, description, blockLayout, tier, itemValue);
+    public Furnace(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, int specialPointReward, int rewardThreshold, UpgradeStrategy upgrade) {
+        super(name, description, blockLayout, tier, itemValue, rarity);
         this.specialPointReward = specialPointReward;
         currentProgress = 0;
         this.rewardThreshold = rewardThreshold;
         this.upgrade = upgrade;
         initBlockConfiguration(blockLayout);
-        setTexture(new Texture(Gdx.files.internal("Furnace.png")));
+//        setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }
 
     public Furnace(JsonValue jsonValue) {

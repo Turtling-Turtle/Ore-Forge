@@ -1,8 +1,10 @@
 package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
+import ore.forge.EventSystem.Events.OreDroppedEvent;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
+import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Strategies.DropperStrategies.DropperStrategy;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -54,10 +56,12 @@ public class DropperBlock extends Block {
     }
 
     private void createOre(Block blockInFront, OreEffect effect) {
-        oreRealm.giveOre()
+        var ore = oreRealm.giveOre()
             .setVector(vector2)
             .applyBaseStats(oreValue, oreTemp, multiOre, oreName, id, effect)
             .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
+
+        eventManager.notifyListeners(new OreDroppedEvent(ore));
         increaseTotalOreDropped();
     }
 

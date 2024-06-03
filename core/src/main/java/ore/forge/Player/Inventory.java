@@ -46,7 +46,7 @@ public class Inventory {
             String type = node.getHeldItem().getClass().getSimpleName();
             String id = node.getHeldItemID();
             int owned = node.getTotalOwned();
-            inventoryDataList.add(new InventoryData(name,type,owned,id));
+            inventoryDataList.add(new InventoryData(name, type, owned, id, ));
         }
 
 
@@ -71,7 +71,7 @@ public class Inventory {
 
         if (isPresent && fileContents != null) {
             //Go through each item in saved inventory and initialize node from allItems
-            for (JsonValue jsonValue: fileContents) {
+            for (JsonValue jsonValue : fileContents) {
                 if (allItems.containsKey(jsonValue.getString("id"))) {
                     String itemID = jsonValue.getString("id");
                     int owned = jsonValue.getInt("totalOwned");
@@ -110,7 +110,7 @@ public class Inventory {
 
     private boolean containsItem(String targetID) {
         for (InventoryNode node : inventoryNodes) {
-            if (node.getHeldItemID().equals(targetID)){
+            if (node.getHeldItemID().equals(targetID)) {
                 return true;
             }
         }
@@ -144,12 +144,12 @@ public class Inventory {
     }
 
     private <E extends Comparator<InventoryNode>> ArrayList<InventoryNode> bubbleSort(E compareType, ArrayList<InventoryNode> data) {
-        for (int waterLine = data.size()-1; waterLine>=0; waterLine--) {
+        for (int waterLine = data.size() - 1; waterLine >= 0; waterLine--) {
             for (int net = 0; net < waterLine; net++) {
-                if (compareType.compare(data.get(net), data.get(net+1)) >0) {
+                if (compareType.compare(data.get(net), data.get(net + 1)) > 0) {
                     InventoryNode temp = data.get(net);
-                    data.set(net, data.get(net+1));
-                    data.set(net+1, temp);
+                    data.set(net, data.get(net + 1));
+                    data.set(net + 1, temp);
                 }
             }
         }
@@ -157,40 +157,42 @@ public class Inventory {
     }
 
     private <E extends Comparator<InventoryNode>> void quickSort(E compareType) {
-        quickSort(compareType, 0, inventoryNodes.size()-1);
+        quickSort(compareType, 0, inventoryNodes.size() - 1);
     }
 
-    private <E extends Comparator<InventoryNode>> void quickSort(E compareType,int min, int max) {
-        if (min >= max) {return;}
+    private <E extends Comparator<InventoryNode>> void quickSort(E compareType, int min, int max) {
+        if (min >= max) {
+            return;
+        }
         int indexOfPartition = partition(compareType, min, max);
 
-        quickSort(compareType,min, indexOfPartition-1);
-        quickSort(compareType,indexOfPartition+1, max);
+        quickSort(compareType, min, indexOfPartition - 1);
+        quickSort(compareType, indexOfPartition + 1, max);
     }
 
     private <E extends Comparator<InventoryNode>> int partition(E compareType, int min, int max) {
         InventoryNode partitionedElement;
         int left, right;
-        int midpoint = (min+max)/2;
+        int midpoint = (min + max) / 2;
         partitionedElement = inventoryNodes.get(midpoint);
-        swap(midpoint,min);
+        swap(midpoint, min);
 
         left = min;
         right = max;
         while (left < right) {
-            while (left< max && compareType.compare(inventoryNodes.get(left), partitionedElement) <= 0) {
+            while (left < max && compareType.compare(inventoryNodes.get(left), partitionedElement) <= 0) {
                 left++;
             }
 
-            while (right> min && compareType.compare(inventoryNodes.get(right), partitionedElement) > 0) {
+            while (right > min && compareType.compare(inventoryNodes.get(right), partitionedElement) > 0) {
                 right--;
             }
             if (left < right) {
-                swap(left,right);
+                swap(left, right);
             }
         }
 
-        swap(min,right);
+        swap(min, right);
         return right;
     }
 
@@ -207,7 +209,7 @@ public class Inventory {
         if (!userInput.isEmpty()) {
             if (cachedResults.containsKey(userInput)) {
                 stpwatch.stop();
-                Gdx.app.log("INVENTORY",Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.GREEN));
+                Gdx.app.log("INVENTORY", Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.GREEN));
                 return cachedResults.get(userInput);
             }
             ArrayList<InventoryNode> desiredItems = new ArrayList<>();
@@ -216,10 +218,10 @@ public class Inventory {
                     desiredItems.add(node);
                 }
             }
-            var sortedResults = bubbleSort(new TierComparator(),desiredItems);
+            var sortedResults = bubbleSort(new TierComparator(), desiredItems);
             cachedResults.put(userInput, desiredItems);
             stpwatch.stop();
-            Gdx.app.log("INVENTORY",Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.YELLOW));
+            Gdx.app.log("INVENTORY", Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.YELLOW));
             return sortedResults;
         }
         return inventoryNodes;
@@ -227,7 +229,7 @@ public class Inventory {
 
     public String toString() {
         StringBuilder string = new StringBuilder();
-        for (InventoryNode node: inventoryNodes) {
+        for (InventoryNode node : inventoryNodes) {
             string.append(node.toString()).append("\n");
         }
         return string.toString();
@@ -246,11 +248,15 @@ public class Inventory {
         public int compare(InventoryNode node1, InventoryNode node2) {
             //Tier
             int result = node1.getHeldItem().getTier().compareTo(node2.getHeldItem().getTier());
-            if(result != 0) {return result;}
+            if (result != 0) {
+                return result;
+            }
             //Type
             result = node1.getHeldItem().getClass().getSimpleName().
-                    compareTo(node2.getHeldItem().getClass().getSimpleName());
-            if (result != 0) {return result;}
+                compareTo(node2.getHeldItem().getClass().getSimpleName());
+            if (result != 0) {
+                return result;
+            }
             //Name
             return node1.getName().compareTo(node2.getName());
 
@@ -263,11 +269,15 @@ public class Inventory {
         public int compare(InventoryNode node1, InventoryNode node2) {
             //Type
             int result = node1.getHeldItem().getClass().getSimpleName().
-                                compareTo(node2.getHeldItem().getClass().getSimpleName());
-            if (result != 0) {return result;}
+                compareTo(node2.getHeldItem().getClass().getSimpleName());
+            if (result != 0) {
+                return result;
+            }
             //Tier
             result = node1.getHeldItem().getTier().compareTo(node2.getHeldItem().getTier());
-            if(result != 0) {return result;}
+            if (result != 0) {
+                return result;
+            }
             //Name
             return node1.getName().compareTo(node2.getName());
 
@@ -284,6 +294,7 @@ public class Inventory {
         }
     }
 
-    private record InventoryData(String itemName, String type, int totalOwned, String id) {}
+    private record InventoryData(String itemName, String type, int totalOwned, String id, boolean isUnlocked) {
+    }
 
 }

@@ -2,13 +2,14 @@ package ore.forge.Items.Blocks;
 
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Direction;
+import ore.forge.EventSystem.EventManager;
 import ore.forge.Items.Item;
 import ore.forge.ItemMap;
 
 //@author Nathan Ulmen
 public class Block {
-
     protected static ItemMap itemMap = ItemMap.getSingleton();
+    protected final static EventManager eventManager = EventManager.getSingleton();
     public final Vector2 vector2;
     protected final Vector2 force;
 

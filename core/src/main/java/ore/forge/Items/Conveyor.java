@@ -12,11 +12,11 @@ public class Conveyor extends Item {
     private final float conveyorSpeed;
 
     //Used to create from scratch
-    public Conveyor(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float speed){
-        super(name, description, blockLayout, tier, itemValue);
+    public Conveyor(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, float speed){
+        super(name, description, blockLayout, tier, itemValue, rarity);
         conveyorSpeed = speed;
         initBlockConfiguration(blockLayout);
-        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
+//        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }
 
     //Used to create from json data.

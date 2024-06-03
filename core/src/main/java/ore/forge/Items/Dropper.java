@@ -24,8 +24,8 @@ public class Dropper extends Item {
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore.
 
     //Used to create from scratch.
-    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
-        super(name, description, blockLayout, tier, itemValue);
+    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
+        super(name, description, blockLayout, tier, itemValue, rarity);
         this.dropInterval = dropInterval;
         this.oreName = oreName;
         this.oreValue = oreVal;
@@ -36,7 +36,7 @@ public class Dropper extends Item {
         totalOreDropped = 0;
 
         initBlockConfiguration(blockLayout);
-        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
+//        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
     }
 
     public Dropper(JsonValue jsonValue) {

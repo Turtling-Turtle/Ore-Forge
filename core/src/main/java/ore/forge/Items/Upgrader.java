@@ -21,13 +21,13 @@ public class Upgrader extends Item {
     private final float conveyorSpeed;
 
     //Used to create from scratch.
-    public Upgrader(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float conveyorSpeed, UpgradeStrategy upgrade, UpgradeTag tag) {//Upgrader Constructor
-        super(name, description, blockLayout, tier, itemValue);
+    public Upgrader(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, float conveyorSpeed, UpgradeStrategy upgrade, UpgradeTag tag) {//Upgrader Constructor
+        super(name, description, blockLayout, tier, itemValue, rarity);
         this.conveyorSpeed = conveyorSpeed;
         this.upgrade = upgrade;
         this.upgradeTag = tag;
         initBlockConfiguration(this.numberConfig);
-        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
+//        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
     }
 
     public Upgrader(JsonValue jsonValue) {

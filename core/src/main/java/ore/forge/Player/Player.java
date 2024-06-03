@@ -3,9 +3,10 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
-import ore.forge.Color;
-import ore.forge.Constants;
-import ore.forge.ResourceManager;
+import ore.forge.*;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.PrestigeEvent;
+import ore.forge.Expressions.Function;
 
 //@author Nathan Ulmen
 public class Player {
@@ -79,7 +80,18 @@ public class Player {
             prestigeCurrency = 0;
             mostMoneyObtained = 50;
         }
+    }
 
+    public void prestige() {
+        Function prestigeFunction = Function.parseFunction("(2.5 * 10^19) * (PRESTIGE_LEVEL + 1)");
+        if (prestigeFunction.calculate(null) <= wallet) {
+            //Clear Map of all items.
+            //Remove all non-prestige proof items from inventory
+            //Reset wallet
+            //Reward player with a prestige item.
+            //Notify Listeners of type PrestigeEvent.
+            //Reward prestige Currency?
+        }
     }
 
     public void initInventory(ResourceManager resourceManager) {

@@ -1,6 +1,4 @@
-
-Items:
-    --Implement Drawable for, get this, items im gonna draw.
+--Implement Drawable for, get this, items im gonna draw.
 
 width & height.
 
@@ -30,7 +28,7 @@ Furnace:
 TODO: Fix/guard against divide by zero errors in Upgrade Strategies.
 TODO: Change ore "state"(doomed etc) from boolean to Enum.
 
------------------------
+------Features Ore Forge needs to be a complete/finished product------
 
 1. Create User Interface for Inventory and Shop.
     1A. Create basic inventory with nodes and search bar. **DONE**
@@ -124,6 +122,27 @@ Rough Draft of JSON structure for a quest:
 
 5. Expand Item definitions so to be more robust.
     1A. Specify the source you obtain it from and methods for obtaining.
+        1B. Sources- Shop, Prestige, Quest.
+            Quests- could "unlock"/enable items to be obtained from shop or prestige or they could just grant a copy
+            of the item or they could do both.
+            Prestige- Prestige Items are unlocked at a specific prestige level and have an associated rarity.
+            Shop- Item is bought with the specified currency type.
+
+
+            sourceInfo : {
+                unlockMethod : [Special Points, Prestige Level, Quest]
+                unlockRequirements : double
+                isShopItem : boolean - if an item is a shop item it means it can be bought with a specific currency once unlocked.
+                currency : String/enum - currency the item can be bought with [Cash, Special Points, Prestige Currency, None]
+
+                -----
+                if selected item is prestige item:
+                levelUnlockedAt : int
+                rarity : float
+                -----
+
+            }
+
     2A. Implement Drawable.
     3A. Add types/tags to items.
 
@@ -133,17 +152,19 @@ Rough Draft of JSON structure for a quest:
 
 8. Add an Interactable component to Items(EX: click a button to drop an ore).
 
-Game is "Finished" at this point. Everything after this point is bonus features.
+9. Event System for Quests and Other features to register to.
+
+------Game is "Finished" at this point. Everything after this point are bonus features-------
 
 Later Down the line:
 
-    Add a layout system. (Shouldn't be too difficult/Hard)
+    Add a layout system.
 
-    Develop Custom BigNumber Class. (Difficult)
+    Develop Custom BigNumber Class.
 
-    Physics for ore? (Difficult)
+    Physics for ore?
 
-    Develop an Item browser. (Difficult)
+    Develop an Item browser.
 
 
 

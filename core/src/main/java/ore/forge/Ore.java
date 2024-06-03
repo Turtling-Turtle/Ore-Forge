@@ -191,10 +191,11 @@ public class Ore {
         return this;
     }
 
-    public void setDestination(Vector2 target, float speed, Direction direction) {
+    public Ore setDestination(Vector2 target, float speed, Direction direction) {
         this.destination.set(target);
         this.direction = direction;
         setMoveSpeed(speed);
+        return this;
     }
 
     public void setDestination(float x, float y, float speed, Direction direction) {

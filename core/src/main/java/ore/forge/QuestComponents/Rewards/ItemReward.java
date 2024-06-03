@@ -1,10 +1,9 @@
 package ore.forge.QuestComponents.Rewards;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Items.Item;
 import ore.forge.Player.Player;
 
-public class ItemReward implements Reward{
+public class ItemReward implements Reward {
     private final Player player = Player.getSingleton();
     private final String itemID;
     private final int count;
@@ -21,6 +20,6 @@ public class ItemReward implements Reward{
 
     @Override
     public void grantReward() {
-        player.getInventory().addItem(itemID,count);
+        player.getInventory().addItem(itemID, count);
     }
 }
