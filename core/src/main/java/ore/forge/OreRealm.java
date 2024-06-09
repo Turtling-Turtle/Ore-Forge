@@ -11,13 +11,14 @@ import java.util.Stack;
 //@author Nathan Ulmen
 public class OreRealm {
     private static OreRealm oreRealmInstance = new OreRealm();
-    private final Stack<Ore> stackOfOre, removalStack;
+    private final Stack<Ore> stackOfOre, removalStack, additionStack;
     private final ArrayList<Ore> activeOre;
 
     private OreRealm() {
         stackOfOre = new Stack<>();
         activeOre = new ArrayList<>(Constants.ORE_LIMIT);
         removalStack = new Stack<>();
+        additionStack = new Stack<>();
     }
 
     public static OreRealm getSingleton() {
@@ -25,6 +26,11 @@ public class OreRealm {
             oreRealmInstance = new OreRealm();
         }
         return oreRealmInstance;
+    }
+
+    public Ore queueOre() {
+        additionStack.add(stackOfOre.peek());
+        return stackOfOre.pop();
     }
 
     public Ore giveOre() {
@@ -53,6 +59,9 @@ public class OreRealm {
         while (!removalStack.isEmpty()) {
             removalStack.peek().reset();
             activeOre.remove(removalStack.pop());
+        }
+        while (!additionStack.isEmpty()) {
+            activeOre.add(additionStack.pop());
         }
     }
 

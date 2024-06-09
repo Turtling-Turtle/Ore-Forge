@@ -19,7 +19,7 @@ public class CooldownUpgrade implements UpgradeStrategy, StrategyInitializer<Upg
     }
 
     private CooldownUpgrade(CooldownUpgrade clone) {
-        this.upgrade = clone.upgrade.clone();
+        this.upgrade = clone.upgrade.cloneUpgradeStrategy();
         this.cooldownTime = clone.cooldownTime;
         this.current = 0;
     }
@@ -41,7 +41,7 @@ public class CooldownUpgrade implements UpgradeStrategy, StrategyInitializer<Upg
     }
 
     @Override
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return new CooldownUpgrade(this);
     }
 

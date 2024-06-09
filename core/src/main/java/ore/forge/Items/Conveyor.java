@@ -16,7 +16,7 @@ public class Conveyor extends Item {
         super(name, description, blockLayout, tier, itemValue, rarity);
         conveyorSpeed = speed;
         initBlockConfiguration(blockLayout);
-//        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
+        setTexture(new Texture(Gdx.files.internal("BasicConveyor.png")));
     }
 
     //Used to create from json data.

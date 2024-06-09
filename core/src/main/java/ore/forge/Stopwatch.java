@@ -57,6 +57,9 @@ public class Stopwatch {
         startTime = System.nanoTime();
     }
 
+    public boolean isRunning() {
+        return state == State.RUNNING;
+    }
     public String toString() {
         return switch (state) {
             case RUNNING -> "Current Elpased time: " + getTimeStamp() + " " + this.timeUnit;

@@ -50,7 +50,7 @@ public class EventManager {
 
     public void notifyListeners(Event event) {
         ArrayList<EventListener> listeners = subscribers.get(event.getClass());
-        if (!listeners.isEmpty()) {
+        if (listeners != null && !listeners.isEmpty()) {
             for (var listener : listeners) {
                 listener.handle(event);
             }

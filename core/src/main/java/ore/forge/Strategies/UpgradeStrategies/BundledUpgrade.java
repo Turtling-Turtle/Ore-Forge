@@ -29,7 +29,9 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
     private BundledUpgrade(BundledUpgrade bundledUpgradeClone) {
         this.upgradeStrategies = new UpgradeStrategy[bundledUpgradeClone.upgradeStrategies.length];
         for (int i = 0; i < bundledUpgradeClone.upgradeStrategies.length; i++) {
-            this.upgradeStrategies[i] = bundledUpgradeClone.upgradeStrategies[i].clone();
+            if (bundledUpgradeClone.upgradeStrategies[i] != null) {
+                this.upgradeStrategies[i] = bundledUpgradeClone.upgradeStrategies[i].cloneUpgradeStrategy();
+            }
         }
     }
 
@@ -43,7 +45,7 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
     }
 
     @Override
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return new BundledUpgrade(this);
     }
 

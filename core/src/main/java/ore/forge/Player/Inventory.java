@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class Inventory {
 
     private final ArrayList<InventoryNode> inventoryNodes;
+    private final HashMap<String, InventoryNode> lookUp;
 
     private final HashMap<String, Item> allItems;
     private final HashMap<String, ArrayList<InventoryNode>> cachedResults;
@@ -25,7 +26,17 @@ public class Inventory {
         inventoryNodes = new ArrayList<>();
         allItems = resourceManager.getAllItems();
         cachedResults = new HashMap<>();
+
         loadInventory();
+        lookUp = new HashMap<>(inventoryNodes.size());
+        for (InventoryNode node : inventoryNodes) {
+            lookUp.put(node.getHeldItemID(), node);
+        }
+    }
+
+
+    public InventoryNode getNode(String itemID) {
+        return lookUp.get(itemID);
     }
 
     public ArrayList<InventoryNode> getInventoryNodes() {
@@ -46,7 +57,7 @@ public class Inventory {
             String type = node.getHeldItem().getClass().getSimpleName();
             String id = node.getHeldItemID();
             int owned = node.getTotalOwned();
-            inventoryDataList.add(new InventoryData(name, type, owned, id, ));
+            inventoryDataList.add(new InventoryData(name, type, owned, id));
         }
 
 
@@ -294,7 +305,7 @@ public class Inventory {
         }
     }
 
-    private record InventoryData(String itemName, String type, int totalOwned, String id, boolean isUnlocked) {
+    private record InventoryData(String itemName, String type, int totalOwned, String id) {
     }
 
 }

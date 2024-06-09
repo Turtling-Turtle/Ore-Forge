@@ -1,9 +1,11 @@
 package ore.forge.Items;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Color;
 import ore.forge.Currency;
 import ore.forge.Direction;
 import ore.forge.Items.Blocks.Block;
@@ -18,8 +20,8 @@ import java.util.ArrayList;
 //@author Nathan Ulmen
 public abstract class Item {
     public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE, EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
-    public enum UnlockMethod {SPECIAL_POINTS, PRESTIGE_LEVEL, QUEST}
 
+    public enum UnlockMethod {SPECIAL_POINTS, PRESTIGE_LEVEL, QUEST, NONE}
 
 
     protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
@@ -35,15 +37,16 @@ public abstract class Item {
     private Texture itemTexture;
     protected Vector2 vector2;
     protected String name, description, id;
-    private AcquisitionInfo acquisitionInfo;
 
-    protected final float rarity; //Rarity of item. Only matters if item is prestige item.
-    private boolean isShopItem; //Denotes if the item can be purchased from the shop.
-    private Currency currencyBoughtWith; // The Currency the item is bought from the shop with.
-    private UnlockMethod unlockMethod; //Denotes the unlock method.
-    private double unlockRequirements; // The prestige level or special point currency required to unlock item from shop.
-    private boolean isUnlocked; //Denotes if the item has been unlocked for purchase in the shop.
-    private boolean canBeSold;
+    protected float rarity; //Rarity of item. Only matters if item is prestige item.
+    protected boolean isShopItem; //Denotes if the item can be purchased from the shop.
+    protected double shopPrice;
+    protected Currency currencyBoughtWith; // The Currency the item is bought from the shop with.
+    protected UnlockMethod unlockMethod; //Denotes the unlock method.
+    protected double unlockRequirements; // The prestige level or special point currency required to unlock item from shop.
+    protected boolean isUnlocked; //Denotes if the item has been unlocked for purchase in the shop.
+    protected boolean canBeSold;
+    protected double sellPrice;
 
 
     public Item(String name, String description, int[][] blockLayout, Tier TIER, double itemValue, float rarity) {
@@ -55,8 +58,7 @@ public abstract class Item {
         this.tier = TIER;
         this.itemValue = itemValue;
         this.direction = Direction.NORTH;
-        var tempRarity = BigDecimal.valueOf(rarity);
-        this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
+        this.rarity = BigDecimal.valueOf(rarity).setScale(1, RoundingMode.HALF_UP).floatValue();
     }
 
     public Item(JsonValue jsonValue) {
@@ -70,9 +72,46 @@ public abstract class Item {
         this.itemValue = jsonValue.getDouble("itemValue");
         this.vector2 = new Vector2();
         this.direction = Direction.NORTH;
-        var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
-        this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
-        isUnlocked = true;
+
+
+        try {
+            var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
+            this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
+            isShopItem = jsonValue.getBoolean("isShopItem");
+            if (!isShopItem) {
+                shopPrice = 0;
+                currencyBoughtWith = Currency.NONE;
+            } else {
+                currencyBoughtWith = Currency.valueOf(jsonValue.getString("currencyBoughtWith"));
+                shopPrice = jsonValue.getDouble("shopPrice");
+            }
+
+            canBeSold = jsonValue.getBoolean("canBeSold");
+
+            if (canBeSold) {
+                sellPrice = jsonValue.getDouble("shopPrice");
+            } else {
+                sellPrice = 0;
+            }
+
+
+            unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
+            if (unlockMethod == UnlockMethod.NONE) {
+                isUnlocked = true;
+                unlockRequirements = 0;
+            } else if (unlockMethod == UnlockMethod.QUEST) {
+                unlockRequirements = 0;
+                isUnlocked = false;
+            } else {
+                unlockRequirements = jsonValue.getDouble("unlockRequirements");
+                isUnlocked = false;
+            }
+        } catch (Exception e) {
+            Gdx.app.log("ITEM", Color.highlightString("Error Occurred while Loading Acquisition Info.", Color.YELLOW));
+        }
+
+
+
     }
 
     public Item(Item itemToClone) {
@@ -87,6 +126,14 @@ public abstract class Item {
         direction = Direction.NORTH;
         itemTexture = itemToClone.itemTexture;
         this.rarity = itemToClone.rarity;
+        this.isShopItem = itemToClone.isShopItem;
+        this.shopPrice = itemToClone.shopPrice;
+        this.currencyBoughtWith = itemToClone.currencyBoughtWith;
+        this.canBeSold = itemToClone.canBeSold;
+        this.sellPrice = itemToClone.sellPrice;
+        this.unlockMethod = itemToClone.unlockMethod;
+        this.isUnlocked = itemToClone.isUnlocked;
+        this.unlockRequirements = itemToClone.unlockRequirements;
     }
 
     private int[][] parseBlockLayout(JsonValue jsonValue) {

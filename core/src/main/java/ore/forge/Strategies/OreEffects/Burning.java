@@ -38,7 +38,7 @@ public class Burning implements OreEffect {
     }
 
     @Override
-    public OreEffect clone() {
+    public OreEffect cloneOreEffect() {
         return new Burning(this);
     }
 

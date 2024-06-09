@@ -8,21 +8,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import ore.forge.Constants;
-import ore.forge.OreForge;
-import ore.forge.OreRealm;
+import ore.forge.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import ore.forge.Stopwatch;
 
 import javax.swing.text.NumberFormatter;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 //@author Nathan Ulmen
 public class UserInterface {
     private static final OreRealm oreRealm = OreRealm.getSingleton();
+    private static final ItemMap ITEM_MAP = ItemMap.getSingleton();
     private float updateInterval = 0;
     private final Runtime runtime = Runtime.getRuntime();
     private static final Player player = Player.getSingleton();
@@ -39,7 +34,7 @@ public class UserInterface {
     private ImageButton imageButton;//Icon for
     private final ProgressBar oreLimit;
     private OrthographicCamera camera;
-    private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre;
+    private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre, itemOver;
     private Vector3 mouse;
     private NumberFormatter numberFormatter;
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
@@ -86,6 +81,13 @@ public class UserInterface {
         mouseCoords.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .91f);
         mouseCoords.setVisible(true);
 
+        itemOver = new Label("", fpsStyle);
+        itemOver.setFontScale(0.6f);
+        itemOver.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .89f);
+        itemOver.setVisible(true);
+
+
+
         specialPoints = new Label("", fpsStyle);
         specialPoints.setScale(1f);
         specialPoints.setPosition(Gdx.graphics.getWidth() * .55f, Gdx.graphics.getHeight() * .98f);
@@ -126,18 +128,20 @@ public class UserInterface {
 //        nodeTable.setPosition(900f, 700f);
 //        stage.addActor(nodeTable);
         inventoryWidget.setPosition(Gdx.graphics.getWidth() *.7f, Gdx.graphics.getHeight() * .4f);
+        inventoryWidget.setVisible(false);
         stage.addActor(inventoryWidget);
         stage.addActor(fpsCounter);
         stage.addActor(memoryUsage);
         stage.addActor(mouseCoords);
+        stage.addActor(itemOver);
         stage.addActor(specialPoints);
         createWallet(fpsStyle);
         createActiveOre(fpsStyle);
 
     }
 
-    public Table getInventoryTable() {
-        return table;
+    public InventoryTable getInventoryTable() {
+        return inventoryWidget;
     }
 
     public ProgressBar getOreLimit() {
@@ -146,10 +150,16 @@ public class UserInterface {
 
     public void draw(float deltaT) {
         updateInterval += deltaT;
-        showInventory();
+//        showInventory();
         if (updateInterval > 0.1f) {
             camera.update();
             fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+            if (ITEM_MAP.getItem(mouse) != null) {
+                itemOver.setText("Item: " + ITEM_MAP.getItem(mouse).getName());
+            } else {
+                itemOver.setText("Item: " + null);
+            }
+
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024) + " MB");
             this.mouseCoords.setText("X: " + (int) mouse.x + " Y: " + (int) mouse.y);
             wallet.setText("$ " + String.format("%.2e", player.getWallet()));
@@ -188,6 +198,7 @@ public class UserInterface {
             stage.setKeyboardFocus(null);
         }
     }
+
 
 
 }

@@ -7,16 +7,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ore.forge.*;
+import ore.forge.Input.*;
 import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
-import ore.forge.Player.InputHandler;
 import ore.forge.Player.Player;
 
 import java.util.concurrent.*;
 
 
-public class GameWorld extends CustomScreen{
+public class GameWorld extends CustomScreen {
     private final SpriteBatch batch;
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     public static ItemMap itemMap = ItemMap.getSingleton();
@@ -36,10 +36,20 @@ public class GameWorld extends CustomScreen{
     public GameWorld(OreForge game, ResourceManager resourceManager) {
         super(game, resourceManager);
         batch = new SpriteBatch(4000);
-        inputHandler = new InputHandler();
+        inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
-        camera.position.set(Constants.GRID_DIMENSIONS/2f, Constants.GRID_DIMENSIONS/2f, 0f);
+        inputHandler.setMode(InputHandler.Mode.INVENTORY);
+        InventoryModeProcessor currentMode = (InventoryModeProcessor) inputHandler.getCurrentMode();
+        currentMode.setUserInterface(userInterface);
+
+
+        for (ItemIcon icon : userInterface.getInventoryTable().getAllIcons()) {
+            icon.setProcessor(currentMode);
+        }
+
+        inputHandler.exitMode();
+        camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
 
     }
@@ -48,9 +58,11 @@ public class GameWorld extends CustomScreen{
     public void render(float delta) {
 //        stopwatch.restart();
         //updateMouse
-        inputHandler.updateMouse(camera);
+//        inputHandler.updateMouse(camera);
+
         //handleInput.
-        inputHandler.handleInput(delta, camera, game);
+//        inputHandler.handleInput(delta, camera, game);
+        inputHandler.update(delta, camera);
         //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
@@ -70,7 +82,7 @@ public class GameWorld extends CustomScreen{
         drawSelectedItem();
         //Draw active ore
 //        stopwatch.start();
-            // Wait for the ore processing to complete
+        // Wait for the ore processing to complete
         drawActiveOre(delta);
 //        stopwatch.stop();
         //Draw Held Item.
@@ -87,57 +99,104 @@ public class GameWorld extends CustomScreen{
 
 
     private void drawSelectedItem() {
-        if (inputHandler.isSelecting()) {
+//        if (inputHandler.isSelecting()) {
+//            batch.setColor(.2f, 1, .2f, 0.5f);
+//            batch.draw(inputHandler.selectedItem.getTexture(),
+//                (int) inputHandler.selectedItem.getVector2().x,
+//                (int) inputHandler.selectedItem.getVector2().y,
+//                (inputHandler.selectedItem.getWidth() / 2f),
+//                (inputHandler.selectedItem.getHeight() / 2f),
+//                inputHandler.selectedItem.getWidth(),
+//                inputHandler.selectedItem.getHeight(),
+//                1,
+//                1,
+//                inputHandler.selectedItem.getDirection().getAngle(),
+//                0,
+//                0,
+//                inputHandler.selectedItem.getTexture().getWidth(),
+//                inputHandler.selectedItem.getTexture().getHeight(),
+//                false,
+//                false);
+//            batch.setColor(1, 1, 1, 1f);
+//        }
+        if (inputHandler.getCurrentMode() instanceof SelectModeProcessor mode) {
+            var selectedItem = mode.getSelectedItem();
             batch.setColor(.2f, 1, .2f, 0.5f);
-            batch.draw(inputHandler.selectedItem.getTexture(),
-                    (int)inputHandler.selectedItem.getVector2().x,
-                    (int)inputHandler.selectedItem.getVector2().y,
-                    (inputHandler.selectedItem.getWidth()/2f),
-                    (inputHandler.selectedItem.getHeight()/2f),
-                    inputHandler.selectedItem.getWidth(),
-                    inputHandler.selectedItem.getHeight(),
-                    1,
-                    1,
-                    inputHandler.selectedItem.getDirection().getAngle(),
-                    0,
-                    0,
-                    inputHandler.selectedItem.getTexture().getWidth(),
-                    inputHandler.selectedItem.getTexture().getHeight(),
-                    false,
-                    false);
+            batch.draw(selectedItem.getTexture(),
+                (int) selectedItem.getVector2().x,
+                (int) selectedItem.getVector2().y,
+                (selectedItem.getWidth() / 2f),
+                (selectedItem.getHeight() / 2f),
+                selectedItem.getWidth(),
+                selectedItem.getHeight(),
+                1,
+                1,
+                selectedItem.getDirection().getAngle(),
+                0,
+                0,
+                selectedItem.getTexture().getWidth(),
+                selectedItem.getTexture().getHeight(),
+                false,
+                false
+            );
             batch.setColor(1, 1, 1, 1f);
         }
     }
 
 
     private void drawHeldItem() {
-        if (inputHandler.isBuilding()) {
+//        if (inputHandler.isBuilding()) {
+//            batch.setColor(.2f, 1, .2f, .6f);
+//            batch.draw(inputHandler.getHeldItem().getTexture(),
+//                (int) (inputHandler.mouseWorld.x),
+//                (int) (inputHandler.mouseWorld.y),
+////                    inputHandler.mouseWorld.x,
+////                    inputHandler.mouseWorld.y,
+////                    MathUtils.round(inputHandler.mouseWorld.x/ 1.5f) * 1.5f,
+////                    MathUtils.round(inputHandler.mouseWorld.y / 1.5f) * 1.5f,
+//                (inputHandler.getHeldItem().getWidth() / 2f),
+//                (inputHandler.getHeldItem().getHeight() / 2f),
+//                inputHandler.getHeldItem().getWidth(),
+//                inputHandler.getHeldItem().getHeight(),
+//                1,
+//                1,
+//                inputHandler.getHeldItem().getDirection().getAngle(),
+//                0,
+//                0,
+//                inputHandler.getHeldItem().getTexture().getWidth(),
+//                inputHandler.getHeldItem().getTexture().getHeight(),
+//                false,
+//                false);
+//            batch.setColor(1, 1, 1, 1f);
+//        }
+//
+        if (inputHandler.getCurrentMode() instanceof BuildModeProcessor mode) {
+            var selectedItem = mode.getHeldItem();
             batch.setColor(.2f, 1, .2f, .6f);
-                batch.draw(inputHandler.getHeldItem().getTexture(),
-                    (int)(inputHandler.mouseWorld.x),
-                    (int)(inputHandler.mouseWorld.y),
-//                    inputHandler.mouseWorld.x,
-//                    inputHandler.mouseWorld.y,
-//                    MathUtils.round(inputHandler.mouseWorld.x/ 1.5f) * 1.5f,
-//                    MathUtils.round(inputHandler.mouseWorld.y / 1.5f) * 1.5f,
-                    (inputHandler.getHeldItem().getWidth()/2f),
-                    (inputHandler.getHeldItem().getHeight()/2f),
-                    inputHandler.getHeldItem().getWidth(),
-                    inputHandler.getHeldItem().getHeight(),
-                    1,
-                    1,
-                    inputHandler.getHeldItem().getDirection().getAngle(),
-                    0,
-                    0,
-                    inputHandler.getHeldItem().getTexture().getWidth(),
-                    inputHandler.getHeldItem().getTexture().getHeight(),
-                    false,
-                    false);
+
+
+            batch.draw(selectedItem.getTexture(),
+                (int) inputHandler.mouseWorld.x,
+                (int) inputHandler.mouseWorld.y,
+                (selectedItem.getWidth() / 2f),
+                (selectedItem.getHeight() / 2f),
+                selectedItem.getWidth(),
+                selectedItem.getHeight(),
+                1,
+                1,
+                selectedItem.getDirection().getAngle(),
+                0,
+                0,
+                selectedItem.getTexture().getWidth(),
+                selectedItem.getTexture().getHeight(),
+                false,
+                false
+            );
             batch.setColor(1, 1, 1, 1f);
         }
     }
 
-    private void updateOre(float delta){
+    private void updateOre(float delta) {
         oreRealm.getActiveOre().parallelStream().forEach(ore -> ore.act(delta));
     }
 
@@ -150,7 +209,7 @@ public class GameWorld extends CustomScreen{
     }
 
     private void drawBuildMode() {
-        if (inputHandler.isBuilding()) {
+        if (inputHandler.getCurrentMode() instanceof BuildModeProcessor) {
             batch.setColor(1f, 1, 1f, 0.9f);
             for (int i = 0; i < Constants.GRID_DIMENSIONS; i++) {
                 for (int j = 0; j < Constants.GRID_DIMENSIONS; j++) {
@@ -183,7 +242,7 @@ public class GameWorld extends CustomScreen{
         for (Item item : itemMap.getPlacedItems()) {
             if (item instanceof Dropper) {
                 ((Dropper) item).update(deltaTime);
-            } else if(item instanceof Conveyor) {
+            } else if (item instanceof Conveyor) {
                 ((Conveyor) item).update();//Might use this.
             }
             batch.draw(item.getTexture(),
@@ -204,7 +263,6 @@ public class GameWorld extends CustomScreen{
                 false);
         }
     }
-
 
 
 }

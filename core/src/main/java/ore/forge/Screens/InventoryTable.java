@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -58,7 +57,7 @@ public class InventoryTable extends WidgetGroup {
         this.iconTable = new Table();
         topTable.add(searchBar).top().left().expand().fill().align(Align.topLeft).pad(5);
 
-        checkBoxes = new CheckBox[2];
+        checkBoxes = new CheckBox[3];
         horizontalGroup = new HorizontalGroup();
         horizontalGroup.align(Align.topLeft);
 
@@ -106,6 +105,25 @@ public class InventoryTable extends WidgetGroup {
             }
         });
 
+        checkBoxes[2] = new CheckBox("Stored", buttonStyle);
+        checkBoxes[2].addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ButtonHelper.getButtonClickSound().play();
+                if (checkBoxes[2].isChecked()) {
+                    sortMethod = new StoredComparator();
+                    asyncSearch(searchBar.getText());
+                    for (CheckBox checkBox : checkBoxes) {
+                        if (checkBox != checkBoxes[2] && checkBox != null && checkBox.isChecked()) {
+                            checkBox.setChecked(false);
+                        }
+                    }
+                } else {
+                    sortMethod = null;
+                }
+            }
+        });
+
         this.scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
@@ -113,6 +131,7 @@ public class InventoryTable extends WidgetGroup {
 
         topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
         topTable.add(checkBoxes[1]).top().left().expand().fill().align(Align.topLeft).pad(5);
+        topTable.add(checkBoxes[2]).top().left().expand().fill().align(Align.topLeft).pad(5);
 
         allIcons = new ArrayList<>();
         for (InventoryNode node : inventory.getInventoryNodes()) {
@@ -154,6 +173,10 @@ public class InventoryTable extends WidgetGroup {
         });
 //        stopwatch.stop();
 //        Gdx.app.log("Inventory Table", ore.forge.Color.highlightString(stopwatch.toString(), ore.forge.Color.GREEN));
+    }
+
+    public ArrayList<ItemIcon> getAllIcons() {
+        return allIcons;
     }
 
     private ArrayList<ItemIcon> findIcons(String target) {
@@ -291,9 +314,25 @@ public class InventoryTable extends WidgetGroup {
     static class StoredComparator implements Comparator<ItemIcon> {
         @Override
         public int compare(ItemIcon icon1, ItemIcon icon2) {
-            Integer firstStored = icon1.getNode().getStored();
-            Integer secondStored = icon2.getNode().getStored();
-            return firstStored.compareTo(secondStored);
+            //Owned
+            Integer result = icon1.getNode().getTotalOwned();
+            result = result.compareTo(icon2.getNode().getTotalOwned());
+            if (result != 0) {
+                return result;
+            }
+            //Type
+            result = icon1.getNode().getHeldItem().getClass().getSimpleName().
+                compareTo(icon1.getNode().getHeldItem().getClass().getSimpleName());
+            if (result != 0) {
+                return result;
+            }
+            //Tier
+            result = icon1.getNode().getHeldItem().getTier().compareTo(icon2.getNode().getHeldItem().getTier());
+            if (result != 0) {
+                return result;
+            }
+            //Name
+            return icon1.getNodeName().compareTo(icon2.getNodeName());
         }
     }
 

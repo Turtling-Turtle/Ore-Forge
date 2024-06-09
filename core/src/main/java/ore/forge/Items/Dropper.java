@@ -9,19 +9,28 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
+import ore.forge.Stopwatch;
+import ore.forge.Strategies.DropperStrategies.BurstDrop;
+import ore.forge.Strategies.DropperStrategies.DropStrategy;
+import ore.forge.Strategies.OreEffects.ObserverOreEffect;
 import ore.forge.Strategies.OreEffects.OreEffect;
+import ore.forge.Strategies.OreEffects.UpgradeOreEffect;
+import ore.forge.Strategies.UpgradeStrategies.ReplicateStrategy;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class Dropper extends Item {
     protected final float ejectionSpeed = 6f;
+    private final DropStrategy strategy = new BurstDrop(340,3);
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
     private int totalOreDropped;
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore.
+    protected final Stopwatch stopwatch = new Stopwatch(TimeUnit.SECONDS);
 
     //Used to create from scratch.
     public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
@@ -36,7 +45,7 @@ public class Dropper extends Item {
         totalOreDropped = 0;
 
         initBlockConfiguration(blockLayout);
-//        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
+        setTexture(new Texture(Gdx.files.internal("Dropper.png")));
     }
 
     public Dropper(JsonValue jsonValue) {
@@ -69,10 +78,16 @@ public class Dropper extends Item {
 
     //Check to see if we should produce an ore.
     public void update(float deltaTime) {
-        timeSinceLast += deltaTime;
-        while(timeSinceLast >= dropInterval) {
+        if (!stopwatch.isRunning()) {
+            stopwatch.start();
+        }
+//        timeSinceLast += deltaTime;
+
+        if (strategy.drop(deltaTime)) {
             dropOre();
-            timeSinceLast -= dropInterval;
+        }
+        if (stopwatch.getTimeStamp() == 60) {
+            Gdx.app.log("ORE PER MINUTE", "Total Ore Dropped " + totalOreDropped + "\tTimer:" + stopwatch);
         }
     }
 

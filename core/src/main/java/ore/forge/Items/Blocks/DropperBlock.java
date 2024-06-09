@@ -4,7 +4,6 @@ import ore.forge.Direction;
 import ore.forge.EventSystem.Events.OreDroppedEvent;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
-import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Strategies.DropperStrategies.DropperStrategy;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -46,7 +45,7 @@ public class DropperBlock extends Block {
             if (strategy == null) {
                 effect = null;
             } else {
-                effect = strategy.clone();
+                effect = strategy.cloneOreEffect();
             }
 //            if (dropperEffect != null) {
 //                dropperEffect.applyTo(oreRealm.peek(), (Dropper) this.parentItem);

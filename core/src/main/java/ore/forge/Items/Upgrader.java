@@ -2,7 +2,6 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
@@ -27,7 +26,7 @@ public class Upgrader extends Item {
         this.upgrade = upgrade;
         this.upgradeTag = tag;
         initBlockConfiguration(this.numberConfig);
-//        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
+        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
     }
 
     public Upgrader(JsonValue jsonValue) {
@@ -43,7 +42,7 @@ public class Upgrader extends Item {
     public Upgrader(Upgrader itemToClone) {
         super(itemToClone);
         this.conveyorSpeed = itemToClone.conveyorSpeed;
-        this.upgrade =  itemToClone.upgrade.clone();
+        this.upgrade =  itemToClone.upgrade.cloneUpgradeStrategy();
         this.upgradeTag = itemToClone.upgradeTag;
         this.setTexture(itemToClone.getTexture());
         initBlockConfiguration(itemToClone.numberConfig);

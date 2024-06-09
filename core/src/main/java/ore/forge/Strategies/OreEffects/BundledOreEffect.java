@@ -28,7 +28,7 @@ public class BundledOreEffect implements OreEffect , StrategyInitializer<OreEffe
 
 
     @Override
-    public OreEffect clone() {
+    public OreEffect cloneOreEffect() {
         return this;
     }
 

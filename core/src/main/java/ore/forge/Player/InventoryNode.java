@@ -14,6 +14,8 @@ public class InventoryNode {
     public InventoryNode(Item itemToBeHeld, int totalOwned) {
         heldItem = itemToBeHeld;
         this.totalOwned = totalOwned;
+        stored = totalOwned;
+        placed = 0;
         nodeName = itemToBeHeld.getName();
     }
 
@@ -46,6 +48,11 @@ public class InventoryNode {
 
     public String getHeldItemID() {
         return heldItem.getID();
+    }
+
+    public void place() {
+        stored--;
+        placed++;
     }
 
     public boolean hasSupply() {

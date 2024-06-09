@@ -60,7 +60,7 @@ public class BasicUpgrade implements UpgradeStrategy {
         };
     }
 
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return new BasicUpgrade(this);
     }
 

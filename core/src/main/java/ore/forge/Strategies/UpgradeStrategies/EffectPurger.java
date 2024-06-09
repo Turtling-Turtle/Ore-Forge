@@ -16,7 +16,7 @@ public class EffectPurger implements UpgradeStrategy{
     }
 
     @Override
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return this;
     }
 

@@ -62,7 +62,7 @@ public class IncrementalUpgrade implements UpgradeStrategy {
         this.baseModifier = upgradeToClone.baseModifier;
         this.trueBranchOperator = upgradeToClone.trueBranchOperator;
         this.falseBranchOperator = upgradeToClone.falseBranchOperator;
-        this.baseUpgrade = (BasicUpgrade) upgradeToClone.baseUpgrade.clone();
+        this.baseUpgrade = (BasicUpgrade) upgradeToClone.baseUpgrade.cloneUpgradeStrategy();
         this.triggerCondition = upgradeToClone.triggerCondition;
         this.trueIncrement = upgradeToClone.trueIncrement;
         this.falseIncrement = upgradeToClone.falseIncrement;
@@ -89,7 +89,7 @@ public class IncrementalUpgrade implements UpgradeStrategy {
 
     }
 
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return new IncrementalUpgrade(this);
     }
 

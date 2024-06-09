@@ -37,7 +37,7 @@ public class UpgradeBlock extends Block implements Worker {
             ore.setDestination(blockInFront.getVector(), this.speed, this.direction);
 //            ore.setVector(map.getBlockInFront(vector2, direction).getVector());
 //            blockInFront.setFull(true); //set the block in-front to full because it now has an ore.
-            this.setFull(false); //Set this block to empty because it has now moved the ore.
+//            this.setFull(false); //Set this block to empty because it has now moved the ore.
         } else {
 
         }

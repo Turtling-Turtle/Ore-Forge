@@ -33,8 +33,8 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     //Clone constructor
     private ConditionalUpgrade(ConditionalUpgrade conditionalUpgradeClone) {
         this.condition = conditionalUpgradeClone.condition;
-        this.trueBranchStrategy = conditionalUpgradeClone.trueBranchStrategy.clone();
-        this.falseBranchStrategy = conditionalUpgradeClone.falseBranchStrategy.clone();
+        this.trueBranchStrategy = conditionalUpgradeClone.trueBranchStrategy.cloneUpgradeStrategy();
+        this.falseBranchStrategy = conditionalUpgradeClone.falseBranchStrategy.cloneUpgradeStrategy();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ConditionalUpgrade implements UpgradeStrategy , StrategyInitializer
     }
 
     @Override
-    public UpgradeStrategy clone() {
+    public UpgradeStrategy cloneUpgradeStrategy() {
         return new ConditionalUpgrade(this);
     }
 

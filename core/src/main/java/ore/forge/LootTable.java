@@ -19,77 +19,37 @@ import java.util.concurrent.TimeUnit;
 import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
 
 public class LootTable {
-    private ArrayList<Item> items;
     private HashMap<Float, ArrayList<Item>> buckets;
-    Random rand = new Random();
+    private final Random random;
 
     public LootTable() {
+        random = new Random();
         this.buckets = new HashMap<>();
-        this.items = new ArrayList<>();
     }
 
-    public void rewardItem() {
-        Random rand = new Random();
-/*
-        generate a number between 0-100
-        have a hash map that uses item rarity as a key.
-        go through list from most rare to least rare and check to see if generated number is less than the rarity.
-        if rolled number is <= rarity get all the values in that bucket.
-        generate another random number within the range/number of items in the bucket, then reward the item whose index
-        aligns with that number.
-*/
-        var tempRoll = BigDecimal.valueOf(rand.nextFloat() * 100);
-        float roll = tempRoll.setScale(1, RoundingMode.HALF_UP).floatValue();
-        float aggregate = 0;
-        var sortedKeys = new ArrayList<>(buckets.keySet());
-        sortedKeys.sort(Collections.reverseOrder());
-
-        for (Float bucketKey : sortedKeys) {
-            if (roll < bucketKey + aggregate) {
-                var reward = getItemFromBucket(buckets.get(bucketKey));
-                System.out.println(reward);
-            } else {
-                aggregate += bucketKey;
-            }
-        }
-
-    }
-
-    public Item generateItem() {
-        Random rand = new Random();
-/*
-        generate a number between 0-100
-        have a hash map that uses item rarity as a key.
-        go through list from most rare to least rare and check to see if generated number is less than the rarity.
-        if rolled number is < rarity get all the values in that bucket.
-        generate another random number within the range/number of items in the bucket, then reward the item whose index
-        aligns with that number.
-*/
+    public Item getRandomItem() {
         var sortedKeys = new ArrayList<>(buckets.keySet());
         Collections.sort(sortedKeys);
-
-        while (true) {
-            var tempRoll = BigDecimal.valueOf(rand.nextFloat() * 100);
-            float roll = tempRoll.setScale(1, RoundingMode.HALF_UP).floatValue();
-//            System.out.println(roll);
-            float aggregate = 0;
-
-
+        float roll = generateRoll();
+        if (roll >= sortedKeys.getLast()) {
+            return getItemFromBucket(buckets.get(sortedKeys.getLast()));
+        } else {
             for (Float bucketKey : sortedKeys) {
-                if (roll < (bucketKey + aggregate)) {
+                if (roll < (bucketKey)) {
                     return getItemFromBucket(buckets.get(bucketKey));
-                } else {
-                    aggregate += bucketKey;
                 }
             }
         }
+        throw new IllegalStateException("Roll did not match either bucket.");
+    }
+
+    private float generateRoll() {
+        return BigDecimal.valueOf(random.nextFloat() * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
     }
 
     private Item getItemFromBucket(ArrayList<Item> bucket) {
-        Random rand = new Random();
-        return bucket.get(rand.nextInt(bucket.size()));
+        return bucket.get(random.nextInt(bucket.size()));
     }
-
 
     public void addItem(Item item) {
         if (!buckets.containsKey(item.getRarity())) {
@@ -99,16 +59,18 @@ public class LootTable {
         } else {
             var bucket = buckets.get(item.getRarity());
             assert !bucket.contains(item);
-            bucket.add(item);
+            if (!bucket.contains(item)) {
+                bucket.add(item);
+            }
         }
     }
 
     public void removeItem(Item item) {
-
+        buckets.get(item.getRarity()).remove(item);
     }
 
     public String toString() {
-        return null;
+        return String.valueOf(buckets.size());
     }
 
     public static void main(String[] args) {
@@ -161,7 +123,7 @@ public class LootTable {
         conveyor.setID("Test Conveyor");
         Dropper dropper = new Dropper("Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, 1.12312f, "Test Ore", 20, 1, 1, .001f, dropperStrat);
         dropper.setID("Test Dropper");
-        Upgrader upgrader = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 99, 5, influencedUpgrade, upgradeTag);
+        Upgrader upgrader = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 59, 5, influencedUpgrade, upgradeTag);
         upgrader.setID("Test Upgrader");
 
         LootTable table = new LootTable();
@@ -174,17 +136,23 @@ public class LootTable {
         var obtainedItems = new HashMap<String, Item>();
         int count = 0;
         Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+
 //        stopwatch.start();
+
         while (!obtainedItems.containsKey(furnace.getID()) || !obtainedItems.containsKey(conveyor.getID()) || !obtainedItems.containsKey(dropper.getID()) || !obtainedItems.containsKey(upgrader.getID())) {
+            count++;
 //            System.out.println(count++);
             stopwatch.restart();
-            var item = table.generateItem();
+            var item = table.getRandomItem();
             System.out.println(stopwatch);
             if (!obtainedItems.containsKey(item.getID())) {
 //                System.out.println(item + "\tRarity:" + item.getRarity());
                 obtainedItems.put(item.getID(), item);
             }
         }
+        System.out.println(count);
+
+
 //        stopwatch.stop();
 //        System.out.println(stopwatch);
 

@@ -20,7 +20,6 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
         this.duration = duration;
         this.charges = charges;
         this.upgradeStrategy = strategy;
-
     }
 
     public ObserverOreEffect(JsonValue jsonValue) {
@@ -33,7 +32,7 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
     private ObserverOreEffect(ObserverOreEffect clone) {
         this.duration = clone.duration;
         this.charges = clone.charges;
-        this.upgradeStrategy = clone.upgradeStrategy.clone();
+        this.upgradeStrategy = clone.upgradeStrategy.cloneUpgradeStrategy();
     }
 
     @Override
@@ -48,7 +47,7 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
     }
 
     @Override
-    public OreEffect clone() {
+    public OreEffect cloneOreEffect() {
         return new ObserverOreEffect(this);
     }
 

@@ -6,8 +6,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import ore.forge.EventSystem.EventListener;
+import ore.forge.Input.InventoryModeProcessor;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
 
@@ -21,6 +24,7 @@ public class ItemIcon extends WidgetGroup {
     private static final String roundFull = "128xRoundFull";
     private ImageButton button;
     private final InventoryNode node;
+    private InventoryModeProcessor processor;
 
     public ItemIcon(InventoryNode node) {
         this.node = node;
@@ -32,6 +36,9 @@ public class ItemIcon extends WidgetGroup {
         border.center();
         border.setSize(1.25f * button.getWidth(), 1.25f * button.getHeight());
         border.center();
+
+
+
 
         Table table = new Table();
         table.setBackground(buttonAtlas.getDrawable(roundFull));
@@ -55,6 +62,17 @@ public class ItemIcon extends WidgetGroup {
         setSize(border.getWidth(), border.getHeight());
         this.setTouchable(Touchable.enabled);
         this.addListener(tooltip);
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                notifyProcessor();
+            }
+        });
+
+        if (!node.hasSupply()) {
+            setColor(Color.BLACK);
+        }
+
 
     }
 
@@ -68,6 +86,10 @@ public class ItemIcon extends WidgetGroup {
 
     public InventoryNode getNode() {
         return node;
+    }
+
+    public void setProcessor(InventoryModeProcessor processor) {
+        this.processor = processor;
     }
 
     private Color determineColor(InventoryNode node) {
@@ -87,4 +109,9 @@ public class ItemIcon extends WidgetGroup {
     public String toString() {
         return this.getNodeName();
     }
+
+    public void notifyProcessor() {
+        processor.handleClicked(this);
+    }
+
 }

@@ -28,10 +28,10 @@ public class ConveyorBlock extends Block implements Worker {
         Block blockInFront = itemMap.getBlockInFront(vector2, direction);
         if (blockInFront != null && blockInFront.isValid()) {
             ore.setDestination(blockInFront.getVector(), this.speed, this.direction);
-            if (!(blockInFront instanceof FurnaceBlock)) {
-                blockInFront.setFull(true);
-            }
-            this.setFull(false); //Set this block to empty because it has now moved the ore.\
+//            if (!(blockInFront instanceof FurnaceBlock)) {
+//                blockInFront.setFull(true);
+//            }
+//            this.setFull(false); //Set this block to empty because it has now moved the ore.\
        } else {
             int x = (int) vector2.x;
             int y = (int) vector2.y;

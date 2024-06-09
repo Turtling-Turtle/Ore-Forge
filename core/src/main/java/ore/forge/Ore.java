@@ -161,9 +161,9 @@ public class Ore {
                 applyEffect(effect);
             }
         } else if (strategy instanceof ObserverOreEffect) {
-            observerEffects.add((ObserverOreEffect) strategy.clone());
+            observerEffects.add((ObserverOreEffect) strategy.cloneOreEffect());
         } else {
-            effects.add(strategy.clone());
+            effects.add(strategy.cloneOreEffect());
         }
     }
 
@@ -181,7 +181,7 @@ public class Ore {
         removeOldEffects();
     }
 
-    public Ore applyBaseStats(double oreValue, int oreTemp, int multiOre, String oreName, String id, OreEffect strategy) {
+    public Ore applyBaseStats(double oreValue, float oreTemp, int multiOre, String oreName, String id, OreEffect strategy) {
         this.oreValue = oreValue;
         this.id = id;
         this.oreTemperature = oreTemp;
@@ -280,6 +280,15 @@ public class Ore {
         isDoomed = state;
 //        Gdx.app.log("State changed to: ", String.valueOf(isDoomed));
     }
+
+    public Vector2 getDestination() {
+        return destination;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
 
     public void setSpeedScalar(float newScalar) {
         speedScalar = newScalar;

@@ -82,7 +82,7 @@ public class ItemMap {
     }
 
     public Item getItem(Vector3 vector3) {
-        if (mapTiles[(int) vector3.x][(int) vector3.y] != null) {
+        if (!isInvalid(vector3) && mapTiles[(int) vector3.x][(int) vector3.y] != null) {
             return mapTiles[(int) vector3.x][(int) vector3.y].getParentItem() ;
         }
         return null;
@@ -143,6 +143,10 @@ public class ItemMap {
             itemToPlace.placeItem(x,y);
             System.out.println(itemToPlace);
         }
+    }
+
+    private boolean isInvalid(Vector3 vector3) {
+        return vector3.x > this.mapTiles.length - 1 || vector3.x < 0 || vector3.y > this.mapTiles[0].length - 1 || vector3.y < 0;
     }
 
     public void add(Item item) {

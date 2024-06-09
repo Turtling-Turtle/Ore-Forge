@@ -24,7 +24,7 @@ public class UpgradeOreEffect implements OreEffect {
         this.interval = clone.interval;
         this.duration = clone.duration;
         currentTime = 0f;
-        strategy = clone.strategy.clone();
+        strategy = clone.strategy.cloneUpgradeStrategy();
     }
 
     public UpgradeOreEffect(JsonValue jsonValue) {
@@ -58,7 +58,7 @@ public class UpgradeOreEffect implements OreEffect {
     }
 
     @Override
-    public OreEffect clone() {
+    public OreEffect cloneOreEffect() {
         return new UpgradeOreEffect(this);
     }
 
