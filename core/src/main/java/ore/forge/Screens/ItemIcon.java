@@ -9,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import ore.forge.EventSystem.EventListener;
-import ore.forge.Input.InventoryModeProcessor;
+import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
 
@@ -24,7 +23,7 @@ public class ItemIcon extends WidgetGroup {
     private static final String roundFull = "128xRoundFull";
     private ImageButton button;
     private final InventoryNode node;
-    private InventoryModeProcessor processor;
+    private InventoryMode processor;
 
     public ItemIcon(InventoryNode node) {
         this.node = node;
@@ -88,7 +87,7 @@ public class ItemIcon extends WidgetGroup {
         return node;
     }
 
-    public void setProcessor(InventoryModeProcessor processor) {
+    public void setProcessor(InventoryMode processor) {
         this.processor = processor;
     }
 

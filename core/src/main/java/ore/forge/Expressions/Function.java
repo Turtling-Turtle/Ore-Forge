@@ -3,6 +3,7 @@ package ore.forge.Expressions;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
+import java.util.Objects;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +23,11 @@ public class Function implements NumericOperand {
     ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, -.1, 12.7 etc.
     ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
     */
-    private final static Pattern pattern = Pattern.compile("([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
+    private final static Pattern pattern = Pattern.compile(
+        "(log\\(|sqrt\\(|ln\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|" + //identifies ln, log, and sqrt
+        "([a-zA-Z_]+)|" + //Looks for keywords, EX: ORE_VALUE, ORE_TEMPERATURE.
+        "(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|" + //Identifies Numbers
+        "\\(|\\)|([+\\-*/^=%])"); //Operators and parenthesis.
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -67,6 +72,11 @@ public class Function implements NumericOperand {
                     operandStack.push(createFunction(operandStack, operatorStack));
                 }
                 operatorStack.pop();//remove the null
+            } else if(MathFunction.isMathFunction(token)) { //Special Functions like ln
+                MathFunction function = MathFunction.fromSymbol(token);
+                operandStack.push(new MathFunction.SpecialFunction(parseFunction(matcher.group(2)), function)); //group 2 is the contents inside special function.
+                matcher.find(); //Get rid of the Trailing )
+                assert Objects.equals(matcher.group(), ")");
             } else if (NumericOperator.isOperator(token)) {
                 NumericOperator operator = NumericOperator.fromSymbol(token);
                 while (!operatorStack.isEmpty() && operatorStack.peek() != null &&
@@ -84,9 +94,9 @@ public class Function implements NumericOperand {
             operandStack.push(createFunction(operandStack, operatorStack));
         }
 
-//        if (operandStack.peek() instanceof Constant) {
-//            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
-//        }
+        if (!(operandStack.peek() instanceof Function)) {
+            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
+        }
 
         return (Function) operandStack.pop();
     }

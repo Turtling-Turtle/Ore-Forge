@@ -17,9 +17,9 @@ public abstract class CustomScreen implements Screen {
 
     protected final OreForge game;
     protected final ResourceManager resourceManager;
-    protected OrthographicCamera camera;
-    protected Viewport viewport;
-    protected Stage stage;
+    protected final OrthographicCamera camera;
+    protected final Viewport viewport;
+    protected final Stage stage;
 
     public CustomScreen(final OreForge game, final ResourceManager resourceManager) {
         this.game = game;
@@ -39,8 +39,11 @@ public abstract class CustomScreen implements Screen {
         stage.act(delta);
         stage.draw();
     }
+
     @Override
-    public void resize(int width, int height) {}
+    public void resize(int width, int height) {
+        if (width == 0 || height == 0) return;
+    }
 
     @Override
     public void show() {
@@ -53,7 +56,9 @@ public abstract class CustomScreen implements Screen {
     public void pause() {}
 
     @Override
-    public void resume() {}
+    public void resume() {
+        Gdx.input.setInputProcessor(stage);
+    }
 
     @Override
     public void hide() {
@@ -64,6 +69,7 @@ public abstract class CustomScreen implements Screen {
     public void dispose() {
         stage.dispose();
     }
+
     public void addToStage(Actor actor) {
         stage.addActor(actor);
     }

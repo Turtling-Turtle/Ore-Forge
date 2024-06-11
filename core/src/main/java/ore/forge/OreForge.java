@@ -72,15 +72,15 @@ public class OreForge extends Game {
 		gameWorld = new GameWorld(this, resourceManager);
 		pauseMenu = new PauseMenu(this, resourceManager);
 
-        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-        do {
-            stopwatch.restart();
-            Player.getSingleton().getInventory().sortByTier();
-            Player.getSingleton().getInventory().sortByName();
-            Player.getSingleton().getInventory().sortByType();
-            Player.getSingleton().getInventory().sortByStored();
-            stopwatch.stop();
-        } while (stopwatch.getElapsedTime() >= 50);
+//        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+//        do {
+//            stopwatch.restart();
+//            Player.getSingleton().getInventory().sortByTier();
+//            Player.getSingleton().getInventory().sortByName();
+//            Player.getSingleton().getInventory().sortByType();
+//            Player.getSingleton().getInventory().sortByStored();
+//            stopwatch.stop();
+//        } while (stopwatch.getElapsedTime() >= 50);
 
 		setScreen(mainMenuScreen);
 	}

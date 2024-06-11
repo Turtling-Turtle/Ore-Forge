@@ -30,14 +30,14 @@ TODO: Change ore "state"(doomed etc) from boolean to Enum.
 
 ------ Areas To Refine/Improve/Clean -----
 1. User Interfaces
-2. InputMode handling, very hacky right now.
+2. InputMode handling, very hacky right now. - Mostly done, just need to improve initialization.
 3.
 
 
 ------Features Ore Forge needs to be a complete/finished product------
 
 1. Create User Interface for Inventory and Shop.
-    1A. Create basic inventory with nodes and search bar. **DONE**
+    1A. Create inventory with nodes and search bar. **DONE**
     2A. Implement sorting buttons(sort by tier, sort by name, etc) **DONE**
     3A. Fix formatting errors (build from top right to left) **DONE**
     4A. Create Tool Tips for Items when you hover over their node. **DONE**
@@ -45,6 +45,13 @@ TODO: Change ore "state"(doomed etc) from boolean to Enum.
     6A. Fix input processing. **DONE**
 
     Create Shop UI.
+    Shop should have separate tabs for the following:
+        1. Item Unlock Tab,
+        2. Cash Item Tab,
+        3. Special Point item tab,
+        4. Prestige Currency Tab.
+    Each tab should allow you to filter items in that category.
+
 
 2. Create Drawable System for Items.
 

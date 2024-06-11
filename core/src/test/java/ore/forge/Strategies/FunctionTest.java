@@ -129,4 +129,15 @@ class FunctionTest {
         assertEquals(35, testCase.calculate(ore));
     }
 
+    @Test
+    void testSpecialFunction() {
+        var testCase = Function.parseFunction("ln(30)/2");
+        assertEquals(Math.log(30)/2, testCase.calculate(ore));
+    }
+
+    @Test
+    void testNestedSpecialFunction() {
+        var testCase = Function.parseFunction("ln(sqrt(30))");
+        assertEquals(Math.log(Math.sqrt(30)), testCase.calculate(ore));
+    }
 }

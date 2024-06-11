@@ -39,16 +39,15 @@ public class GameWorld extends CustomScreen {
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
         userInterface = new UserInterface(game, inputHandler.mouseWorld);
-        inputHandler.setMode(InputHandler.Mode.INVENTORY);
-        InventoryModeProcessor currentMode = (InventoryModeProcessor) inputHandler.getCurrentMode();
-        currentMode.setUserInterface(userInterface);
 
+        inputHandler.setCurrentMode(inputHandler.getObserverMode());
+        InventoryMode currentMode = inputHandler.getInventoryMode();
+        currentMode.setUserInterface(userInterface);
 
         for (ItemIcon icon : userInterface.getInventoryTable().getAllIcons()) {
             icon.setProcessor(currentMode);
         }
 
-        inputHandler.exitMode();
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
 
@@ -56,8 +55,7 @@ public class GameWorld extends CustomScreen {
 
     @Override
     public void render(float delta) {
-//        stopwatch.restart();
-        //updateMouse
+//        updateMouse
 //        inputHandler.updateMouse(camera);
 
         //handleInput.
@@ -69,26 +67,21 @@ public class GameWorld extends CustomScreen {
 
         //Draw game
         batch.begin();
-        batch.disableBlending();
-        //Draw world tiles.
-        drawWorldTiles(camera);
-        batch.enableBlending();
-        //Draw BuildMode grid Lines
-        drawBuildMode();
+//        batch.disableBlending();
 
-        //Draw placed items
-        drawPlacedItems(delta);
-        //Draw selected Item
-        drawSelectedItem();
-        //Draw active ore
-//        stopwatch.start();
-        // Wait for the ore processing to complete
-        drawActiveOre(delta);
-//        stopwatch.stop();
+        drawWorldTiles(camera); //Draw World Tiles.
+//        batch.enableBlending();
+
+        drawBuildMode(); // Draw Build Mode Grid Lines.
+
+        drawPlacedItems(delta); // Draw all placed Items.
+
+        drawSelectedItem(); // If we are selecting an item then draw it.
+
+        drawActiveOre(delta); //Draw all active ore and update them
+
         //Draw Held Item.
-        drawHeldItem();
-        //Draw held item if build mode is active, needs some work.
-
+        drawHeldItem(); // Draw it that we are building with.
 
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
@@ -119,7 +112,7 @@ public class GameWorld extends CustomScreen {
 //                false);
 //            batch.setColor(1, 1, 1, 1f);
 //        }
-        if (inputHandler.getCurrentMode() instanceof SelectModeProcessor mode) {
+        if (inputHandler.getCurrentMode() instanceof SelectMode mode) {
             var selectedItem = mode.getSelectedItem();
             batch.setColor(.2f, 1, .2f, 0.5f);
             batch.draw(selectedItem.getTexture(),
@@ -170,7 +163,7 @@ public class GameWorld extends CustomScreen {
 //            batch.setColor(1, 1, 1, 1f);
 //        }
 //
-        if (inputHandler.getCurrentMode() instanceof BuildModeProcessor mode) {
+        if (inputHandler.getCurrentMode() instanceof BuildMode mode) {
             var selectedItem = mode.getHeldItem();
             batch.setColor(.2f, 1, .2f, .6f);
 
@@ -209,7 +202,7 @@ public class GameWorld extends CustomScreen {
     }
 
     private void drawBuildMode() {
-        if (inputHandler.getCurrentMode() instanceof BuildModeProcessor) {
+        if (inputHandler.getCurrentMode() instanceof BuildMode) {
             batch.setColor(1f, 1, 1f, 0.9f);
             for (int i = 0; i < Constants.GRID_DIMENSIONS; i++) {
                 for (int j = 0; j < Constants.GRID_DIMENSIONS; j++) {

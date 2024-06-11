@@ -4,22 +4,28 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ItemMap;
+import ore.forge.Items.Item;
 import ore.forge.OreForge;
 import ore.forge.Player.Inventory;
+import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
 
-import java.util.Stack;
-
 public class InputHandler {
-    public enum Mode {OBSERVING, SELECTING, BUILDING, INVENTORY}
 
     private InputMode currentMode;
-    public Mode mode;
-    private final ObserverModeProcessor observerModeProcessor;
-    private final SelectModeProcessor selectModeProcessor;
-    private final BuildModeProcessor buildModeProcessor;
-    private final InventoryModeProcessor inventoryModeProcessor;
-    private final Stack<InputHandler.Mode> modeStack;
+    private InputMode previousMode;
+
+    private InventoryNode heldNode;
+    private Item heldItem;
+
+
+
+    private final ObserverMode observerMode;
+    private final SelectMode selectMode;
+    private final BuildMode buildMode;
+    private final InventoryMode inventoryMode;
+
+
     private final static Inventory inventory = Player.getSingleton().getInventory();
     private final static ItemMap itemMap = ItemMap.getSingleton();
     private final OreForge game;
@@ -29,73 +35,18 @@ public class InputHandler {
         mouseWorld = new Vector3();
         mouseScreen = new Vector3();
         this.game = game;
-        observerModeProcessor = new ObserverModeProcessor(this);
-        selectModeProcessor = new SelectModeProcessor(this);
-        buildModeProcessor = new BuildModeProcessor(this);
-        inventoryModeProcessor = new InventoryModeProcessor(this);
-        modeStack = new Stack<>();
-        setMode(Mode.OBSERVING);
-
+        observerMode = new ObserverMode();
+        selectMode = new SelectMode();
+        buildMode = new BuildMode(heldNode, heldItem);
+        inventoryMode = new InventoryMode(this);
     }
 
     public void update(float delta, OrthographicCamera camera) {
-        currentMode.update(delta, camera);
-    }
-
-    public void exitMode() {
-        modeStack.pop();
-        currentMode = getMode(modeStack.peek());
-        if (currentMode instanceof InventoryModeProcessor) {
-            try {
-                ((InventoryModeProcessor) currentMode).activate();
-
-            } catch (NullPointerException e) {
-
-            }
-
+        if (Gdx.graphics.getWidth() == 0 || Gdx.graphics.getHeight() == 0) {
+            return;
         }
-        Gdx.app.log("INPUT MODE", currentMode.toString());
-    }
-
-
-    public void setMode(Mode mode) {
-        System.out.println(mode);
-//        var newMode = getMode(mode);
-        modeStack.push(mode);
-        if (getMode(mode) instanceof BuildModeProcessor) {
-            if (currentMode instanceof SelectModeProcessor) {
-                ((BuildModeProcessor) getMode(mode)).setHeldNode(inventory.getNode(((SelectModeProcessor) currentMode).getSelectedItem().getID()));
-            } else if (currentMode instanceof InventoryModeProcessor) {
-                ((BuildModeProcessor) getMode(mode)).setHeldNode(((InventoryModeProcessor) currentMode).getSelectedNode());
-                Gdx.app.log("INPUT MODE", currentMode.toString());
-            }
-        }
-
-        if (getMode(mode) instanceof SelectModeProcessor) {
-            ((SelectModeProcessor) getMode(mode)).setSelectedItem(itemMap.getItem(mouseWorld));
-        }
-
-        currentMode = getMode(mode);
-        if (currentMode instanceof InventoryModeProcessor) {
-            try {
-                ((InventoryModeProcessor) currentMode).activate();
-
-            } catch (NullPointerException e) {
-
-            }
-
-        }
-        Gdx.app.log("INPUT MODE", currentMode.toString());
-    }
-
-    private InputMode getMode(Mode newMode) {
-        this.mode = newMode;
-        return switch (newMode) {
-            case SELECTING -> selectModeProcessor;
-            case BUILDING -> buildModeProcessor;
-            case INVENTORY -> inventoryModeProcessor;
-            case OBSERVING -> observerModeProcessor;
-        };
+        updateMouse(camera);
+        currentMode.update(delta, camera, this);
     }
 
     public void pauseGame() {
@@ -106,9 +57,81 @@ public class InputHandler {
         return currentMode;
     }
 
-    public Mode getMode() {
-        return mode;
+    public void updateMouse(OrthographicCamera camera) {
+        mouseScreen.x = Gdx.input.getX();
+        mouseScreen.y = Gdx.input.getY();
+        mouseWorld.set(camera.unproject(mouseScreen));
     }
 
+    public void setCurrentMode(InputMode newMode) {
+        previousMode = this.currentMode;
+        this.currentMode = newMode;
+        currentMode.setActive(this);
+//        Gdx.app.log("InputHandler", "New Mode:" + currentMode);
+    }
 
+    public InputMode getPreviousMode() {
+        return previousMode;
+    }
+
+    public InventoryNode getHeldNode() {
+        return heldNode;
+    }
+
+    public void setHeldNode(InventoryNode heldNode) {
+        this.heldNode = heldNode;
+    }
+
+    public ObserverMode getObserverMode() {
+        return observerMode;
+    }
+
+    public SelectMode getSelectMode() {
+        return selectMode;
+    }
+
+    public InventoryMode getInventoryMode() {
+        return inventoryMode;
+    }
+
+    public void setInventoryNode(InventoryNode node) {
+        this.heldNode = node;
+    }
+
+    public void setInventoryNode(Item item) {
+        this.heldNode = inventory.getNode(item.getID());
+    }
+
+    public InventoryNode getInventoryNode() {
+        return heldNode;
+    }
+
+    public void setHeldItem(Item item) {
+        this.heldItem = item;
+        setInventoryNode(item);
+    }
+
+    public Item getHeldItem() {
+        return heldItem;
+    }
+
+    public BuildMode getBuildMode() {
+        return buildMode;
+    }
+
+    public Vector3 getMouseWorld() {
+        return mouseWorld;
+    }
+
+    public float getMouseWorldX() {
+        return mouseWorld.x;
+    }
+
+    public float getMouseWorldY() {
+        return mouseWorld.y;
+    }
+
+    public boolean isCoordinatesInvalid() {
+        return mouseWorld.x > itemMap.mapTiles.length - 1 || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length - 1 || mouseWorld.y < 0;
+    }
 }
