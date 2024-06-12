@@ -29,6 +29,7 @@ public class Dropper extends Item {
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
     private int totalOreDropped;
+    public OreEffect replicateTest = new UpgradeOreEffect(3,9,new ReplicateStrategy());
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore.
     protected final Stopwatch stopwatch = new Stopwatch(TimeUnit.SECONDS);
 
@@ -111,7 +112,7 @@ public class Dropper extends Item {
                         blockConfig[i][j] = new Block(this);
                         break;
                     case 3:
-                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, oreEffect);
+                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, replicateTest);
                         break;
                     case 1:
                     case 4:

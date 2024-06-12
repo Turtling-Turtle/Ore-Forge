@@ -20,23 +20,28 @@ public class ReplicateStrategy implements OreEffect, UpgradeStrategy {
 
     @Override
     public void activate(float deltaT, Ore ore) {
-        if (rand.nextFloat() * 100 < 50) {
-            Ore replicant = oreRealm.queueOre();
-            replicant.setVector(ore.getVector());
-            replicant.setDestination(ore.getDestination(), ore.getMoveSpeed(), ore.getDirection());
-            replicant.applyEffect(new UpgradeOreEffect(0, 0.5f, new BasicUpgrade(0.1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR)));
-            replicant.applyBaseStats(ore.getOreValue(), ore.getOreTemp(), ore.getMultiOre(), ore.getName(), ore.getID(), this);
-        }
+//        if ((rand.nextFloat() * 100) < 50) {
+//            Ore replicant = oreRealm.queueOre();
+//            replicant.setVector(ore.getVector());
+//            replicant.setDestination(ore.getDestination(), ore.getMoveSpeed(), ore.getDirection());
+//            replicant.applyEffect(new UpgradeOreEffect(0, 0.5f, new BasicUpgrade(0.1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR)));
+//            replicant.applyBaseStats(ore.getOreValue(), ore.getOreTemp(), ore.getMultiOre(), ore.getName(), ore.getID(), this);
+//        }
+        applyTo(ore);
     }
 
     @Override
     public void applyTo(Ore ore) {
-        if (rand.nextFloat() * 100 < 50) {
+        if ((rand.nextFloat() * 100) < 50 && !oreRealm.getStackOfOre().isEmpty()) {
+            ButtonHelper.playFurnaceSellSound();
             Ore replicant = oreRealm.queueOre();
             replicant.setVector(ore.getVector());
             replicant.setDestination(ore.getDestination(), ore.getMoveSpeed(), ore.getDirection());
-            replicant.applyEffect(new UpgradeOreEffect(0, 0.5f, new BasicUpgrade(0.1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR)));
-            replicant.applyBaseStats(ore.getOreValue(), ore.getOreTemp(), ore.getMultiOre(), ore.getName(), ore.getID(), this);
+            var bundle = new BundledUpgrade(new BasicUpgrade(0.1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR));
+            replicant.applyEffect(new UpgradeOreEffect(.1f, .1f, bundle)); //Slows ore down for a time
+            replicant.applyEffect(new UpgradeOreEffect(.2f, .2f, new BasicUpgrade(1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR))); //Returns to normal speed
+            replicant.applyEffect(new UpgradeOreEffect(3f, 3f, this));
+            replicant.applyBaseStats(ore.getOreValue(), ore.getOreTemp(), ore.getMultiOre(), ore.getName(), ore.getID(), null);
         }
     }
 

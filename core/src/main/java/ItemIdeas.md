@@ -6,8 +6,43 @@
     (Inspired By Siva and Outbreak Perfected/Prime from Destiny): 
 
     Effects: 
-    - On upgrade Sievite Ore has an X% chance to replicate.
+    - On upgrade Sievite Ore has an X% chance to replicate, replicated ore have an X% chance to gain the replicate effect.
+    - Ore that replicated has its Value increased by 1.07x
     - Drops Ore in bursts of 3. Produces 450 per minute.
+
+**Utility Dropper**
+
+    Effects:
+    - Every X Seconds Activates all activateable Items on your base.
+    
+
+## Generic Droppers
+**Simple yet potent/useful droppers**
+
+- **Early Game Prestige Dropper**
+    - Produces 1 ore every .75 seconds worth 5 million.
+
+
+- **Anti Fire Dropper**
+    - Produces ore worth 75 Million.
+    - Ore is immune to effects that increase its temperature && Burning.
+    - Only X ore can be active at one time.
+
+- **Anti Ice Dropper**
+    - Produces Ore worth 250 Million
+    - Ore is immune to effects that chill it and Frostbite.
+    - Only X ore can be active at one time.
+
+- **Scaling Dropper**
+    - Drops Ore whose value is based off the number of ore that this specific dropper has produced.
+    - Initial Value 1 Million.
+    - (ORE_VALUE = BASE_ORE_VALUE * DROP_COUNT^1.2)
+    - Max Value of X.
+
+- **MultiOre Dropper**
+    - Produces ore which have a MultiOre Value of 2
+
+    
 
 
 # Furnaces:
@@ -53,7 +88,7 @@
 - **Nature Upgrader**
     - Effects:
         - 2x multiplier
-        - Removes all ore status **@**
+        - Removes all ore status **@REVIEW**
         - If status is removed, 3x multiplier
 
 
@@ -69,7 +104,7 @@
         - Removes all status effects and upgrade tags
 
 
-- **Resetter 2**
+- **Resetter 2** **@REVIEW**
     - Effects:
         - Upgrades ore by 20x
         - Removes all status effects and upgrade tags
@@ -93,91 +128,93 @@
 - **Lava Pools**
     - Effects:
         - Upgrades ore based on how hot they are.
-        - (ORE_TEMPERATURE / 45)
+          - ((ORE_TEMPERATURE * log(ORE_TEMPERATURE))^1.3 /100 + 1 )
         - min multiplier 1.05x
-        - max multiplier 
+        - max multiplier  **NA**
 
 
 - **The Grill**
     - Effects:
         - Upgrades ore by 3x
-        - Warms/heats the ore
+        - Increases ore temp by 1.25x
 
 
 - **Fire Storm**
     - Effects:
         - Upgrades ore by 5x
-        - Warms/heats the ore by a large amount
-        - Ignites the ore
+        - Increases ore temp by a sizable amount (+75)
+        - Ignites the ore.
         - If the ore is already on fire, upgrades by 8x and adds status buff that increases warm/heat gained by +5
 
 
 - **Torch**
     - Effects:
         - Upgrades ore by 6x
-        - Warms/heats the ore
+        - Warms/heats the ore(+25)
         - Ignites it
 
 
 - **Dragon Blaster**
     - Effects:
-        - Upgrades ore by 2.5x
+        - Upgrades ore by 3.5x
         - 10% chance to explode the ore (destroy)
-        - Warms/heats the ore
+        - Warms/heats the ore (+15)
         - Can upgrade multiple times
 
 
 - **Glacier**
     - Effects:
         - Upgrades ore based on how cold they are
-        - (ORE_TEMPERATURE / -45)
+        - ((ORE_TEMPERATURE * log(ORE_TEMPERATURE * -1))/ -30)^1.03 + 1
+        - Min multiplier 1.5x
+        - max Multiplier **NA**
 
 
 - **Frigid Winds**
     - Effects:
         - Upgrades ore by 3x
-        - Chills the ore
+        - Chills the ore (-25)
 
 
-- **Snowflake**
+- **Snowflake** **@REVIEW**
     - Effects:
         - Upgrades ore by 2x
-        - Chills the ore
-        - Increases the amount of chill stacks ore receives by 2x
+        - Chills the ore (-25)
+        - Increases the amount of chill stacks ore receives by 2x for X seconds.
         - Reduces the amount of heat stacks ore receives by 0.5x
 
 
 - **Deep Freezer**
     - Effects:
         - Upgrades ore by 5x
-        - Chills the ore a large amount
+        - Chills the ore a large amount (-75)
 
 
 - **Vent System/Coolant Chamber**
     - Effects:
         - Upgrades ore by 3x
-        - Normalizes the temp
+        - Normalizes the temp (If ore Temp is greater than X or less than -X then set temperature to 0.)
         - If the ore was normalized, upgrades ore by 9x
 
 
-- **Contaminator**
+- **Contaminator** **@REVIEW**
     - Effects:
         - Upgrades ore by 8x
         - Makes it radioactive
 
 
-- **Nuclear Leach**
+- **Nuclear Leach @REVIEW**
     - Effects:
         - Upgrades ore by 10x if ore is radioactive
 
 
-- **Elephants Foot**
+- **Elephants Foot @REVIEW**
     - Effects:
         - Upgrades ore by 6x
         - Makes it radioactive
 
 
-- **Fine Point**
+- **Fine Point @REVIEW**
     - Effects:
         - Small upgrade beam
         - Upgrades ore by 6x
@@ -186,6 +223,7 @@
 - **The Great Crystal**
     - Effects:
         - Upgrades ore based on the number of prestige currency you have
+        - (PRESTIGE_CURRENCY/20 + 2)
 
 
 - **Even Is Better**
@@ -203,6 +241,20 @@
 - **Piggy Back**
     - Effects:
         - Adds a XXX to ore and upgrades it by 1.1x
-        - XXX status makes it so whenever ore is upgraded, it's also upgraded by 1.1x
+        - XXX status makes it so whenever ore is upgraded, it's also upgraded by 1.1x.
 
 # Conveyors:
+- **Basic Conveyor**
+    - 3 Speed.
+
+- **Advanced Conveyor**
+    - 4 Speed.
+
+- **Superior Conveyor**
+    - 5 Speed.
+
+- **Prestige Conveyor** Obtain 1x of these each time you prestige. First prestige you get 10x
+    - 7 Speed.
+
+- **Ultimate Conveyor**
+    - 9 Speed.

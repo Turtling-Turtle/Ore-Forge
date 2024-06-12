@@ -2,7 +2,7 @@ package ore.forge.Expressions;
 
 import ore.forge.Ore;
 
-public enum MathFunction {
+public enum UniqueMathFunctions {
     LN, LOG, SQRT; //SIN, COS, TAN;
 
     private interface FunctionBehavior {
@@ -16,16 +16,16 @@ public enum MathFunction {
     }
 
 
-    public static MathFunction fromSymbol(String symbol) {
+    public static UniqueMathFunctions fromSymbol(String symbol) {
 //        return switch (symbol.toLowerCase()) {
 //            case "ln", "ln(", "ln()" -> LN;
 //            case "log", "log(", "log()" -> LOG;
 //            case "sqrt", "sqrt(", "sqrt()" -> SQRT;
 //            default -> throw new IllegalStateException("Unexpected symbol: " + symbol);
 //        };
-        if (symbol.contains("ln(")) return MathFunction.LN;
-        if (symbol.contains("log(")) return MathFunction.LOG;
-        if (symbol.contains("sqrt(")) return MathFunction.SQRT;
+        if (symbol.contains("ln(")) return UniqueMathFunctions.LN;
+        if (symbol.contains("log(")) return UniqueMathFunctions.LOG;
+        if (symbol.contains("sqrt(")) return UniqueMathFunctions.SQRT;
         throw new IllegalArgumentException("Unknown symbol: " + symbol);
     }
 
@@ -41,7 +41,7 @@ public enum MathFunction {
         return symbol.contains("ln(") || symbol.contains("log(") || symbol.contains("sqrt(");
     }
 
-    MathFunction() {
+    UniqueMathFunctions() {
         behavior = switch (this) {
             case LN -> (function, ore) -> Math.log(function.calculate(ore));
             case LOG -> (function, ore) -> Math.log10(function.calculate(ore));
@@ -49,7 +49,7 @@ public enum MathFunction {
         };
     }
 
-    public record SpecialFunction(Function function, MathFunction specialFunction) implements NumericOperand {
+    public record SpecialFunction(Function function, UniqueMathFunctions specialFunction) implements NumericOperand {
         @Override
         public double calculate(Ore ore) {
             return specialFunction.calculate(function, ore);

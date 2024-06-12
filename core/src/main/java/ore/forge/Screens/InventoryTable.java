@@ -35,7 +35,7 @@ public class InventoryTable extends WidgetGroup {
         topTable = new Table();
         this.background = new Table();
         background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
-        background.setColor(Color.BROWN);
+        background.setColor(Color.GRAY);
         var textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;

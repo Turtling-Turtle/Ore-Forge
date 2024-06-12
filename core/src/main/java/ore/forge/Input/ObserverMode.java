@@ -35,6 +35,10 @@ public class ObserverMode extends InputMode {
 //            handler.setMode(InputHandler.Mode.SELECTING);
             handler.setHeldItem(itemMap.getItem(handler.getMouseWorld()));
             handler.setCurrentMode(handler.getSelectMode());
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            handler.setCurrentMode(handler.getOreObserver());
         }
     }
 

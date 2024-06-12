@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ore.forge.*;
 import ore.forge.Input.*;
@@ -13,10 +16,13 @@ import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.Player.Player;
 
+import javax.swing.*;
 import java.util.concurrent.*;
 
 
 public class GameWorld extends CustomScreen {
+    private final World physicsWorld;
+    private final Box2DDebugRenderer debugRenderer;
     private final SpriteBatch batch;
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     public static ItemMap itemMap = ItemMap.getSingleton();
@@ -35,6 +41,32 @@ public class GameWorld extends CustomScreen {
 
     public GameWorld(OreForge game, ResourceManager resourceManager) {
         super(game, resourceManager);
+
+
+        physicsWorld = new World(new Vector2(0, 0f), true);
+        debugRenderer = new Box2DDebugRenderer();
+
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.position.set(25f, 25f);
+        groundBodyDef.type = BodyDef.BodyType.KinematicBody;
+        Body groundBody = physicsWorld.createBody(groundBodyDef);
+        PolygonShape ground = new PolygonShape();
+        ground.setAsBox(25f, 25f);
+        groundBody.createFixture(ground, 0.0f);
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(25.0f, 25.0f);
+        Body dynamicBody = physicsWorld.createBody(bodyDef);
+        PolygonShape dynamicBox = new PolygonShape();
+        dynamicBox.setAsBox(.5f, .5f); // Half-width and half-height
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = dynamicBox;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.3f;
+        dynamicBody.createFixture(fixtureDef);
+
+
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
@@ -65,8 +97,11 @@ public class GameWorld extends CustomScreen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
+
+
         //Draw game
         batch.begin();
+
 //        batch.disableBlending();
 
         drawWorldTiles(camera); //Draw World Tiles.
@@ -76,17 +111,27 @@ public class GameWorld extends CustomScreen {
 
         drawPlacedItems(delta); // Draw all placed Items.
 
+//        debugRenderer.render(physicsWorld, camera.combined);
+
+
+
+
         drawSelectedItem(); // If we are selecting an item then draw it.
 
         drawActiveOre(delta); //Draw all active ore and update them
 
+        drawHighlightedOre(); // Draw selectedOre
+
         //Draw Held Item.
         drawHeldItem(); // Draw it that we are building with.
+
+//        physicsWorld.step(1/60f, 6, 2);
 
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
         userInterface.draw(delta);
 //        Gdx.app.log("Frame Time", stopwatch.toString());
+
 
     }
 
@@ -189,15 +234,28 @@ public class GameWorld extends CustomScreen {
         }
     }
 
+    private void drawHighlightedOre() {
+        if (inputHandler.getCurrentMode() instanceof OreObserver mode) {
+            var ore = mode.getHighlightedOre();
+            batch.setColor(.2f, 1f, .2f, 1f);
+            batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
+            batch.setColor(1, 1, 1, 1f);
+        }
+    }
+
     private void updateOre(float delta) {
         oreRealm.getActiveOre().parallelStream().forEach(ore -> ore.act(delta));
     }
 
     private void drawActiveOre(float delta) {
+        if (inputHandler.getCurrentMode() instanceof OreObserver mode) {
+            batch.setColor(1, 1, 1, .5f);
+        }
         for (Ore ore : oreRealm.getActiveOre()) {
             ore.act(delta);
             batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
         }
+        batch.setColor(1, 1, 1, 1f);
         oreRealm.updateActiveOre();
     }
 

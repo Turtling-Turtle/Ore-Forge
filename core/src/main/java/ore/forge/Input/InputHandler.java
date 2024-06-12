@@ -24,6 +24,7 @@ public class InputHandler {
     private final SelectMode selectMode;
     private final BuildMode buildMode;
     private final InventoryMode inventoryMode;
+    private final OreObserver oreObserver;
 
 
     private final static Inventory inventory = Player.getSingleton().getInventory();
@@ -39,6 +40,7 @@ public class InputHandler {
         selectMode = new SelectMode();
         buildMode = new BuildMode(heldNode, heldItem);
         inventoryMode = new InventoryMode(this);
+        oreObserver = new OreObserver();
     }
 
     public void update(float delta, OrthographicCamera camera) {
@@ -92,6 +94,10 @@ public class InputHandler {
 
     public InventoryMode getInventoryMode() {
         return inventoryMode;
+    }
+
+    public OreObserver getOreObserver() {
+        return oreObserver;
     }
 
     public void setInventoryNode(InventoryNode node) {

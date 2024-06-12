@@ -24,10 +24,7 @@ public class Function implements NumericOperand {
     ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
     */
     private final static Pattern pattern = Pattern.compile(
-        "(log\\(|sqrt\\(|ln\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|" + //identifies ln, log, and sqrt
-        "([a-zA-Z_]+)|" + //Looks for keywords, EX: ORE_VALUE, ORE_TEMPERATURE.
-        "(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|" + //Identifies Numbers
-        "\\(|\\)|([+\\-*/^=%])"); //Operators and parenthesis.
+        "(log\\(|sqrt\\(|ln\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -72,9 +69,9 @@ public class Function implements NumericOperand {
                     operandStack.push(createFunction(operandStack, operatorStack));
                 }
                 operatorStack.pop();//remove the null
-            } else if(MathFunction.isMathFunction(token)) { //Special Functions like ln
-                MathFunction function = MathFunction.fromSymbol(token);
-                operandStack.push(new MathFunction.SpecialFunction(parseFunction(matcher.group(2)), function)); //group 2 is the contents inside special function.
+            } else if(UniqueMathFunctions.isMathFunction(token)) { //Special Functions like ln
+                UniqueMathFunctions function = UniqueMathFunctions.fromSymbol(token);
+                operandStack.push(new UniqueMathFunctions.SpecialFunction(parseFunction(matcher.group(2)), function)); //group 2 is the contents inside special function.
                 matcher.find(); //Get rid of the Trailing )
                 assert Objects.equals(matcher.group(), ")");
             } else if (NumericOperator.isOperator(token)) {

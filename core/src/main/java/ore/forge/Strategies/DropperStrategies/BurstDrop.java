@@ -1,5 +1,7 @@
 package ore.forge.Strategies.DropperStrategies;
 
+import ore.forge.CoolDown;
+
 public class BurstDrop implements DropStrategy {
     private float currentCooldownInterval, cooldownInterval;
     private float burstCount;
@@ -7,6 +9,8 @@ public class BurstDrop implements DropStrategy {
     private int currentOreInBurst;
     private boolean isDropping;
     private float intervalPerOre, currentIntervalPerOre;
+
+    private final CoolDown CCI, CIPO;
 
     // oreCooldown, burstCount, ore per minute.
     public BurstDrop(int orePerMinute, float burstCount) {
@@ -17,13 +21,16 @@ public class BurstDrop implements DropStrategy {
         intervalPerOre = 1 / orePerSec;
         burstDuration = intervalPerOre * burstCount;
 
-        cooldownInterval /=2;
+        cooldownInterval /= 2;
         currentCooldownInterval = cooldownInterval;
+        CCI = new CoolDown(cooldownInterval);
         currentOreInBurst = 0;
+
 
         currentBurstDuration = burstDuration;
         intervalPerOre /= 2;
         currentIntervalPerOre = intervalPerOre;
+        CIPO = new CoolDown(intervalPerOre);
         isDropping = false;
     }
 
@@ -31,25 +38,22 @@ public class BurstDrop implements DropStrategy {
     @Override
     public boolean drop(float delta) {
         if (!isDropping) {
-            currentCooldownInterval -= delta;
-            if (currentCooldownInterval <= 0) {
+            if (CCI.update(delta)) {
                 isDropping = true;
                 currentOreInBurst = 0;
             }
         } else {
-            currentIntervalPerOre += delta;
-            if (currentIntervalPerOre >= intervalPerOre && currentOreInBurst < burstCount) {
+            if (CIPO.update(delta) && currentOreInBurst < burstCount) {
                 currentOreInBurst++;
-                if(currentOreInBurst == burstCount) {
-                    currentCooldownInterval = cooldownInterval;
+                if (currentOreInBurst == burstCount) {
+                    CCI.resetCurrentTime();
                     isDropping = false;
                 }
-                currentIntervalPerOre = 0;
+                CIPO.resetCurrentTime();
                 return true;
             }
         }
         return false;
-
     }
 
 

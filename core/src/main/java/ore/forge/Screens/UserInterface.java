@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.*;
+import ore.forge.Input.InputHandler;
+import ore.forge.Input.OreObserver;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
@@ -39,6 +41,8 @@ public class UserInterface {
     private NumberFormatter numberFormatter;
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private InventoryTable inventoryWidget;
+    private InputHandler inputHandler;
+    private Label oreInfo;
 
     public UserInterface(Inventory inventory) {
         table = new Table();
@@ -99,7 +103,8 @@ public class UserInterface {
 
         inventoryWidget = new InventoryTable(player.getInventory());
 
-
+//        oreInfo = new Label("", fpsStyle);
+//        oreInfo.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .87f);
 
 
 //        do {
@@ -129,6 +134,7 @@ public class UserInterface {
 //        stage.addActor(nodeTable);
         inventoryWidget.setPosition(Gdx.graphics.getWidth() *.7f, Gdx.graphics.getHeight() * .4f);
         inventoryWidget.setVisible(false);
+//        stage.addActor(oreInfo);
         stage.addActor(inventoryWidget);
         stage.addActor(fpsCounter);
         stage.addActor(memoryUsage);
@@ -160,6 +166,12 @@ public class UserInterface {
                 itemOver.setText("Item: " + null);
             }
 
+//            if(inputHandler.getCurrentMode() instanceof OreObserver mode) {
+//                oreInfo.setText("Ore: " + mode.getHighlightedOre().toString());
+//            } else {
+//                oreInfo.setText("");
+//            }
+//
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024) + " MB");
             this.mouseCoords.setText("X: " + (int) mouse.x + " Y: " + (int) mouse.y);
             wallet.setText("$ " + String.format("%.2e", player.getWallet()));

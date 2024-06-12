@@ -36,6 +36,7 @@ public class Ore {
     private final float updateInterval; //Interval for how often effects are updated.
     private float current;
     private float deltaTime;
+    private boolean isActive;
 
     public Ore() {
         this.oreValue = 0;
@@ -55,7 +56,7 @@ public class Ore {
         removalStack = new Stack<>();
         history = new BitSet();
         observerEffects = new ArrayList<>();
-        updateInterval = 0.01f;//effects are updated 100 times every second.
+        updateInterval = 0f;//effects are updated 100 times every second.
     }
 
     public void act(float deltaTime) {
@@ -204,7 +205,7 @@ public class Ore {
         setMoveSpeed(speed);
     }
 
-    public void reset() {
+    public void deepReset() {
 //        if (map.getBlock(position)!= null) {
 //            map.getBlock(position).setFull(false);
 //        }
@@ -218,6 +219,7 @@ public class Ore {
         removalStack.clear();
         isDoomed = false;
         current = 0f;
+        isActive = false;
         resetAllTags();
     }
 
@@ -356,6 +358,14 @@ public class Ore {
 
     public void setUpgradeCount(int upgradeCount) {
         this.upgradeCount = upgradeCount;
+    }
+
+    public void setIsActive(boolean state) {
+        isActive = state;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     public String toString() {

@@ -5,8 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public abstract class InputMode {
-    private final static float ZOOM_SPEED = 0.05f;
-    private final static float CAMERA_SPEED = 20.0f;
+    protected final static float ZOOM_SPEED = 0.05f;
+    protected final static float CAMERA_SPEED = 20.0f;
 
 
     public abstract void update(float deltaTime, OrthographicCamera camera, InputHandler context);

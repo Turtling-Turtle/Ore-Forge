@@ -152,6 +152,14 @@ Rough Draft of JSON structure for a quest:
 
 9. Event System for Quests and Other features to register to.
 
+10. Ability to lock your camera to and ore/highlight ore.
+    1A. Make it so game smoothly transitions to the ore. *DONE*
+    2A. Make cycling through ore start out slow then speed up the longer the button is held.
+    3A. Display Info about the highlighted ore.
+
+    Search Feature?
+
+
 ------Game is "Finished" at this point. Everything after this point are bonus features-------
 
 Later Down the line:
