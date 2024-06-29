@@ -5,11 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Color;
-import ore.forge.Currency;
-import ore.forge.Direction;
+import ore.forge.*;
 import ore.forge.Items.Blocks.Block;
-import ore.forge.ItemMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +16,7 @@ import java.util.ArrayList;
 
 //@author Nathan Ulmen
 public abstract class Item {
-    public enum Tier {PINNACLE, SPECIAL, EXOTIC, PRESTIGE, EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
+    public enum Tier {PINNACLE, EXOTIC, PRESTIGE, SPECIAL, EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
 
     public enum UnlockMethod {SPECIAL_POINTS, PRESTIGE_LEVEL, QUEST, NONE}
 
@@ -32,16 +29,18 @@ public abstract class Item {
 //    { 0, 2, 2, 0},
 //    { 0, 1, 1, 0},
     protected Direction direction;
-    protected double itemValue;
+
+    //Tier could be used to identify how to load Acquisition info.
     protected Tier tier;
     private Texture itemTexture;
     protected Vector2 vector2;
     protected String name, description, id;
 
+    protected boolean isPrestigeProof;
     protected float rarity; //Rarity of item. Only matters if item is prestige item.
     protected boolean isShopItem; //Denotes if the item can be purchased from the shop.
-    protected double shopPrice;
-    protected Currency currencyBoughtWith; // The Currency the item is bought from the shop with.
+    protected double itemValue;
+    protected Currency currencyBoughtWith; // The Currency the item is bought and sold with.
     protected UnlockMethod unlockMethod; //Denotes the unlock method.
     protected double unlockRequirements; // The prestige level or special point currency required to unlock item from shop.
     protected boolean isUnlocked; //Denotes if the item has been unlocked for purchase in the shop.
@@ -73,23 +72,26 @@ public abstract class Item {
         this.vector2 = new Vector2();
         this.direction = Direction.NORTH;
 
+        //Tier could be used to identify how to load Acquisition info.
+
+//        isPrestigeProof = jsonValue.getBoolean("isPrestigeProof");
 
         try {
             var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
             this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
             isShopItem = jsonValue.getBoolean("isShopItem");
             if (!isShopItem) {
-                shopPrice = 0;
+                itemValue = 0;
                 currencyBoughtWith = Currency.NONE;
             } else {
                 currencyBoughtWith = Currency.valueOf(jsonValue.getString("currencyBoughtWith"));
-                shopPrice = jsonValue.getDouble("shopPrice");
+                itemValue = jsonValue.getDouble("itemValue");
             }
 
             canBeSold = jsonValue.getBoolean("canBeSold");
 
             if (canBeSold) {
-                sellPrice = jsonValue.getDouble("shopPrice");
+                sellPrice = jsonValue.getDouble("sellPrice");
             } else {
                 sellPrice = 0;
             }
@@ -111,7 +113,6 @@ public abstract class Item {
         }
 
 
-
     }
 
     public Item(Item itemToClone) {
@@ -127,7 +128,6 @@ public abstract class Item {
         itemTexture = itemToClone.itemTexture;
         this.rarity = itemToClone.rarity;
         this.isShopItem = itemToClone.isShopItem;
-        this.shopPrice = itemToClone.shopPrice;
         this.currencyBoughtWith = itemToClone.currencyBoughtWith;
         this.canBeSold = itemToClone.canBeSold;
         this.sellPrice = itemToClone.sellPrice;
@@ -349,6 +349,22 @@ public abstract class Item {
 
     public boolean isFacingSouth() {
         return direction == Direction.SOUTH;
+    }
+
+    public boolean isUnlocked() {
+        return isUnlocked;
+    }
+
+    public void setUnlocked(boolean isUnlocked) {
+        this.isUnlocked = isUnlocked;
+    }
+
+    public boolean isPrestigeProof() {
+        return isPrestigeProof;
+    }
+
+    public Currency getCurrencyBoughtWith() {
+        return currencyBoughtWith;
     }
 
     @SuppressWarnings("unchecked")

@@ -11,14 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
 import ore.forge.OreForge;
 import ore.forge.Player.Player;
-import ore.forge.ResourceManager;
+import ore.forge.ItemManager;
 
 public class MainMenu extends CustomScreen {
     private final TextButton start, exit, settings;
     private final Table table;
 
-    public MainMenu(final OreForge game, final ResourceManager resourceManager) {
-        super(game, resourceManager);
+    public MainMenu(final OreForge game, final ItemManager itemManager) {
+        super(game, itemManager);
 
         Gdx.input.setInputProcessor(this.stage);
         start = ButtonHelper.createRoundTextButton("Start", Color.DARK_GRAY, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/22.5f);

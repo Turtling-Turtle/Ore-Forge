@@ -54,12 +54,13 @@
     - Processed Ore is sold then teleported to another placed furnace where it can be sold again.
 
 # Upgraders:
+Terra, Geo, 
 
 ## Generic Upgraders
 **Simple yet potent Upgraders**
 - **Earth Upgrader**
     - Effects:
-        - 3x multiplier
+        - 3.5x multiplier
 
 
 - **Fire Upgrader**
@@ -68,14 +69,14 @@
         - Adds 25 heat/warmth
 
 
-- **Wind Upgrader**
+- **Jet Stream**
     - Effects:
-        - 3x multiplier
+        - 3.5x multiplier
 
 
 - **Water Upgrader**
     - Effects:
-        - 3x multiplier
+        - 3.5x multiplier
 
 
 - **Ice Upgrader**
@@ -150,7 +151,7 @@
 - **Torch**
     - Effects:
         - Upgrades ore by 6x
-        - Warms/heats the ore(+25)
+        - Warms/heats the ore(+35)
         - Ignites it
 
 
@@ -173,7 +174,7 @@
 - **Frigid Winds**
     - Effects:
         - Upgrades ore by 3x
-        - Chills the ore (-25)
+        - Chills the ore (-45)
 
 
 - **Snowflake** **@REVIEW**

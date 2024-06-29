@@ -9,7 +9,8 @@ public enum NumericOreProperties implements NumericOperand {
     MULTIORE,
     SPEED,
     SPEED_SCALAR,
-    UPGRADE_COUNT;
+    UPGRADE_COUNT,
+    RESET_COUNT;
 
     public final double getAssociatedValue(Ore ore) {
         return supplier.getValue(ore);
@@ -41,6 +42,7 @@ public enum NumericOreProperties implements NumericOperand {
             case SPEED -> (Ore::getMoveSpeed);
             case SPEED_SCALAR -> (Ore::getSpeedScalar);
             case UPGRADE_COUNT -> (Ore::getUpgradeCount);
+            case RESET_COUNT -> (Ore::getResetCount);
         };
     }
 }

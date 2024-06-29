@@ -9,6 +9,7 @@ import ore.forge.OreForge;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
+import ore.forge.Screens.ShopMenu;
 
 public class InputHandler {
 
@@ -17,9 +18,6 @@ public class InputHandler {
 
     private InventoryNode heldNode;
     private Item heldItem;
-
-
-
     private final ObserverMode observerMode;
     private final SelectMode selectMode;
     private final BuildMode buildMode;
@@ -29,6 +27,7 @@ public class InputHandler {
 
     private final static Inventory inventory = Player.getSingleton().getInventory();
     private final static ItemMap itemMap = ItemMap.getSingleton();
+    private ShopMenu shopMenu;
     private final OreForge game;
     public final Vector3 mouseWorld, mouseScreen;
 
@@ -115,6 +114,14 @@ public class InputHandler {
     public void setHeldItem(Item item) {
         this.heldItem = item;
         setInventoryNode(item);
+    }
+
+    public void setShopMenu(ShopMenu shopMenu) {
+        this.shopMenu = shopMenu;
+    }
+
+    public ShopMenu getShopMenu() {
+        return shopMenu;
     }
 
     public Item getHeldItem() {

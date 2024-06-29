@@ -40,6 +40,7 @@ public class Quest {
             completedSteps.add(incompleteSteps.removeFirst());
         }
 
+
         if (this.state == QuestState.COMPLETED) {
             return;
         } else {

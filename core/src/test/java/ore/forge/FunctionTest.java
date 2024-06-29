@@ -1,13 +1,18 @@
-package ore.forge.Strategies;
+package ore.forge;
 
 import ore.forge.Expressions.Function;
-import ore.forge.Ore;
+import ore.forge.Items.Upgrader;
+import ore.forge.Player.Player;
 import org.junit.jupiter.api.Test;
 
+
+import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FunctionTest {
+    private final static OreRealm oreRealm = OreRealm.getSingleton();
     private final Ore ore = new Ore();
 
     @Test
@@ -125,19 +130,63 @@ class FunctionTest {
 
     @Test
     void testImpliedMultiply() {
-        var testCase = Function.parseFunction("(5+2)(3+2)");
+        var testCase = Function.parseFunction("(5+2) * (3+2)");
         assertEquals(35, testCase.calculate(ore));
     }
 
     @Test
     void testSpecialFunction() {
         var testCase = Function.parseFunction("ln(30)/2");
-        assertEquals(Math.log(30)/2, testCase.calculate(ore));
+        assertEquals(Math.log(30) / 2, testCase.calculate(ore));
     }
 
     @Test
     void testNestedSpecialFunction() {
-        var testCase = Function.parseFunction("ln(sqrt(30))");
-        assertEquals(Math.log(Math.sqrt(30)), testCase.calculate(ore));
+        var testCase = Function.parseFunction("ln(log(sqrt(30)))");
+        assertEquals(Math.log(Math.log10(Math.sqrt(30))), testCase.calculate(ore));
     }
+
+    @Test
+    void testAbsoluteValue() {
+        var testCase = Function.parseFunction("abs(90)");
+        assertEquals(Math.abs(-90), testCase.calculate(null));
+    }
+
+    @Test
+    void testComplexFunction() {
+        ore.setTemp(100);
+        var testCase = Function.parseFunction("(abs((TEMPERATURE * log(TEMPERATURE)) / 30)) ^ 1.03 + 1");
+        assertEquals(1.3225262801180642, testCase.calculate(ore));
+    }
+
+    @Test
+    void testAverageOreValue() {
+        oreRealm.populate();
+        int value = 10;
+        while (!oreRealm.getStackOfOre().isEmpty()) {
+            oreRealm.giveOre().setOreValue(value);
+        }
+        var testCase = Function.parseFunction("AVG_ORE_VALUE");
+        double result = 0;
+        for (Ore ore : oreRealm.getActiveOre()) {
+            result += ore.getOreValue();
+        }
+        result /= oreRealm.getActiveOre().size();
+        assertEquals(result, testCase.calculate(null));
+    }
+
+    @Test
+    void testMedianOreValue() {
+//        int[] array = new int[]{12, 3, 5, 7, 4, 19, 26};
+        oreRealm.depopulate();
+        oreRealm.populate();
+        int[] array = new int[]{2, 3, 1, 4, 5, 0};
+        for (int j : array) {
+            oreRealm.giveOre().setOreValue(j);
+        }
+        var testCase = Function.parseFunction("MEDIAN_ORE_VALUE");
+        assertEquals(2.5, testCase.calculate(null));
+        oreRealm.resetAllOre();
+    }
+
 }

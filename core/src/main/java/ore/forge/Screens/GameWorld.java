@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,11 +16,12 @@ import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.Player.Player;
 
-import javax.swing.*;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 
 
 public class GameWorld extends CustomScreen {
+    private ArrayList<Long> frameTimes;
     private final World physicsWorld;
     private final Box2DDebugRenderer debugRenderer;
     private final SpriteBatch batch;
@@ -38,10 +39,19 @@ public class GameWorld extends CustomScreen {
     private final Texture blockTexture = new Texture(Gdx.files.internal("RockTile.png"));
     private final Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
 
+    private final ParticleEffect burning = new ParticleEffect();
+    private final ParticleEffect frostbite = new ParticleEffect();
 
-    public GameWorld(OreForge game, ResourceManager resourceManager) {
-        super(game, resourceManager);
 
+    public GameWorld(OreForge game, ItemManager itemManager) {
+        super(game, itemManager);
+//        frameTimes = new ArrayList<>((int) 2e8);
+//            frostbite.load(Gdx.files.internal("Effects/Frostbite.p"),Gdx.files.internal("Effects"));
+//            frostbite.start();
+//            frostbite.scaleEffect(0.016f);
+//        burning.load(Gdx.files.internal("Effects/BurningEffect.p"), Gdx.files.internal("Effects"));
+//        burning.start();
+//        burning.scaleEffect(0.016f);
 
         physicsWorld = new World(new Vector2(0, 0f), true);
         debugRenderer = new Box2DDebugRenderer();
@@ -70,7 +80,7 @@ public class GameWorld extends CustomScreen {
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
-        userInterface = new UserInterface(game, inputHandler.mouseWorld);
+        userInterface = new UserInterface(game, inputHandler.mouseWorld, inputHandler);
 
         inputHandler.setCurrentMode(inputHandler.getObserverMode());
         InventoryMode currentMode = inputHandler.getInventoryMode();
@@ -82,11 +92,11 @@ public class GameWorld extends CustomScreen {
 
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
-
     }
 
     @Override
     public void render(float delta) {
+        stopwatch.restart();
 //        updateMouse
 //        inputHandler.updateMouse(camera);
 
@@ -96,7 +106,6 @@ public class GameWorld extends CustomScreen {
         //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-
 
 
         //Draw game
@@ -114,8 +123,6 @@ public class GameWorld extends CustomScreen {
 //        debugRenderer.render(physicsWorld, camera.combined);
 
 
-
-
         drawSelectedItem(); // If we are selecting an item then draw it.
 
         drawActiveOre(delta); //Draw all active ore and update them
@@ -130,6 +137,7 @@ public class GameWorld extends CustomScreen {
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
         userInterface.draw(delta);
+//        frameTimes.add(stopwatch.getTimeStamp());
 //        Gdx.app.log("Frame Time", stopwatch.toString());
 
 
@@ -253,6 +261,9 @@ public class GameWorld extends CustomScreen {
         }
         for (Ore ore : oreRealm.getActiveOre()) {
             ore.act(delta);
+//            if (ore.isBurning()) {
+//                ore.getFrostbiteEffect().draw(batch);
+//            }
             batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
         }
         batch.setColor(1, 1, 1, 1f);
@@ -285,6 +296,27 @@ public class GameWorld extends CustomScreen {
                 batch.draw(blockTexture, i, j, 1, 1);
             }
         }
+    }
+
+    @Override
+    public void hide() {
+        if (frameTimes == null) {
+            return;
+        }
+        long avg = 0;
+        long biggest = 0;
+        for (Long value : frameTimes) {
+            avg += value;
+            if (value > biggest) {
+                biggest = value;
+            }
+        }
+        avg /= frameTimes.size();
+        frameTimes.clear();
+        avg = TimeUnit.MICROSECONDS.convert(avg, TimeUnit.NANOSECONDS);
+        biggest = TimeUnit.MICROSECONDS.convert(biggest,TimeUnit.NANOSECONDS);
+        Gdx.app.log("GAME WORLD", "Average Frame Time: " + avg);
+        Gdx.app.log("GAME WORLD", "Max Frame Time: " + biggest);
     }
 
     private void drawPlacedItems(float deltaTime) {

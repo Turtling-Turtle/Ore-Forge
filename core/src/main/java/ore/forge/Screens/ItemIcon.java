@@ -37,8 +37,6 @@ public class ItemIcon extends WidgetGroup {
         border.center();
 
 
-
-
         Table table = new Table();
         table.setBackground(buttonAtlas.getDrawable(roundFull));
         table.setColor(determineColor(node));
@@ -61,17 +59,11 @@ public class ItemIcon extends WidgetGroup {
         setSize(border.getWidth(), border.getHeight());
         this.setTouchable(Touchable.enabled);
         this.addListener(tooltip);
-        this.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                notifyProcessor();
-            }
-        });
+
 
         if (!node.hasSupply()) {
             setColor(Color.BLACK);
         }
-
 
     }
 
@@ -87,8 +79,18 @@ public class ItemIcon extends WidgetGroup {
         return node;
     }
 
+    public double getPrice() {
+        return node.getHeldItem().getItemValue();
+    }
+
     public void setProcessor(InventoryMode processor) {
         this.processor = processor;
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                notifyProcessor();
+            }
+        });
     }
 
     private Color determineColor(InventoryNode node) {

@@ -2,35 +2,36 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.utils.TransformDrawable;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
+import ore.forge.Expressions.Function;
+import ore.forge.Expressions.NumericOperand;
+import ore.forge.Expressions.NumericOperator;
+import ore.forge.Expressions.NumericOreProperties;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.Stopwatch;
 import ore.forge.Strategies.DropperStrategies.BurstDrop;
 import ore.forge.Strategies.DropperStrategies.DropStrategy;
-import ore.forge.Strategies.OreEffects.ObserverOreEffect;
+import ore.forge.Strategies.OreEffects.Burning;
 import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.UpgradeOreEffect;
-import ore.forge.Strategies.UpgradeStrategies.ReplicateStrategy;
+import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
+import ore.forge.Strategies.UpgradeStrategies.InfluencedUpgrade;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class Dropper extends Item {
     protected final float ejectionSpeed = 6f;
-    private final DropStrategy strategy = new BurstDrop(340,3);
+    private final DropStrategy strategy = new BurstDrop(30,1);
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     protected float timeSinceLast, dropInterval;
     private int totalOreDropped;
-    public OreEffect replicateTest = new UpgradeOreEffect(3,9,new ReplicateStrategy());
-    protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore.
+    public OreEffect testEffect = new UpgradeOreEffect(0.1f, 30, new InfluencedUpgrade(Function.parseFunction("ACTIVE_ORE.GET_COUNT(760-pfWQURud)"), new BasicUpgrade(0, NumericOperator.ADD, NumericOreProperties.ORE_VALUE), -9999999, 999999));
+    protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore
     protected final Stopwatch stopwatch = new Stopwatch(TimeUnit.SECONDS);
 
     //Used to create from scratch.
@@ -112,7 +113,7 @@ public class Dropper extends Item {
                         blockConfig[i][j] = new Block(this);
                         break;
                     case 3:
-                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, replicateTest);
+                        blockConfig[i][j] = new DropperBlock(this, oreName, oreValue, oreTemp, multiOre, ejectionSpeed, oreEffect);
                         break;
                     case 1:
                     case 4:

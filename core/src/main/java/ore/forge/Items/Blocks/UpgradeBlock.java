@@ -9,9 +9,10 @@ import ore.forge.UpgradeTag;
 
 //@author Nathan Ulmen
 public class UpgradeBlock extends Block implements Worker {
-   private UpgradeTag upgradeTag;
-   private UpgradeStrategy upgrade;
-   private float speed;
+    private UpgradeTag upgradeTag;
+    private UpgradeStrategy upgrade;
+    private float speed;
+
     public UpgradeBlock(Direction direction, int x, int y) {
         super(direction, x, y);
 
@@ -29,7 +30,7 @@ public class UpgradeBlock extends Block implements Worker {
     @Override
     public void handle(Ore ore) {
         Block blockInFront = itemMap.getBlockInFront(vector2, direction);
-        if(blockInFront != null && blockInFront.isValid()) {
+        if (blockInFront != null && blockInFront.isValid()) {
             if (ore.getUpgradeTag(upgradeTag).getCurrentUpgrades() < upgradeTag.getMaxUpgrades()) {
                 upgrade.applyTo(ore);
                 ore.incrementTag(upgradeTag);

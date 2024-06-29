@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.*;
 import ore.forge.Color;
 import ore.forge.Constants;
 import ore.forge.Items.Item;
-import ore.forge.ResourceManager;
+import ore.forge.ItemManager;
 import ore.forge.Stopwatch;
 
 import java.lang.StringBuilder;
@@ -22,9 +22,9 @@ public class Inventory {
     private final HashMap<String, Item> allItems;
     private final HashMap<String, ArrayList<InventoryNode>> cachedResults;
 
-    public Inventory(ResourceManager resourceManager) {
+    public Inventory(ItemManager itemManager) {
         inventoryNodes = new ArrayList<>();
-        allItems = resourceManager.getAllItems();
+        allItems = itemManager.getAllItems();
         cachedResults = new HashMap<>();
 
         loadInventory();
@@ -117,6 +117,22 @@ public class Inventory {
                 node.addNew(count);
             }
         }
+    }
+
+    public void addItem(Item item, int count) {
+        lookUp.get(item.getID()).addNew(count);
+    }
+
+    public void prestigeReset() {
+        for (InventoryNode node : inventoryNodes) {
+            if (!node.getHeldItem().isPrestigeProof()) {
+                node.resetOwned();
+            }
+        }
+    }
+
+    public void pickUp(Item item) {
+        lookUp.get(item.getID()).pickUp();
     }
 
     private boolean containsItem(String targetID) {

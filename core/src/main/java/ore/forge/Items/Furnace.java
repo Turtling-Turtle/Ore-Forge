@@ -102,4 +102,5 @@ public class Furnace extends Item {
             ", upgrade=" + upgrade +
             '}';
     }
+
 }

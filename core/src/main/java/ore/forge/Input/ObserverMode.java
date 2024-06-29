@@ -40,9 +40,11 @@ public class ObserverMode extends InputMode {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             handler.setCurrentMode(handler.getOreObserver());
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            //
+            handler.getShopMenu().setVisible(!handler.getShopMenu().isVisible());
+        }
     }
-
-
 
     public String toString() {
         return "ObserverModeProcessor";

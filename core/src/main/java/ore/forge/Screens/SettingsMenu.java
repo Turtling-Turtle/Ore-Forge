@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
 import ore.forge.OreForge;
-import ore.forge.ResourceManager;
+import ore.forge.ItemManager;
 
 //TODO:
 //SetResolution, Enable VSYNC, Show FPS, AntiAliasing?, Sound options for music and sfx.
@@ -34,8 +34,8 @@ public class SettingsMenu extends CustomScreen {
 //    private SelectBox<String> selectBox = new SelectBox<>();
 
 
-    public SettingsMenu(final OreForge game, final ResourceManager resourceManager) {
-        super(game, resourceManager);
+    public SettingsMenu(final OreForge game, final ItemManager itemManager) {
+        super(game, itemManager);
         //VSYNC TOGGLE
         checkBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth()/10f, Gdx.graphics.getWidth()/10f);
         checkBox.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight()/1.5f);

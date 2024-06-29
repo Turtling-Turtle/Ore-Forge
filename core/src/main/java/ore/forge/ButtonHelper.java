@@ -141,6 +141,12 @@ public class ButtonHelper {
         button.setSize(sizeX, sizeY);
         button.setColor(buttonColor);
 
+        return button;
+    }
+
+    public static TextButton createRoundTextButton(String buttonText, Color buttonColor) {
+        TextButton button = new TextButton(buttonText, createRoundButtonStyle());
+        button.setColor(buttonColor);
 
         return button;
     }

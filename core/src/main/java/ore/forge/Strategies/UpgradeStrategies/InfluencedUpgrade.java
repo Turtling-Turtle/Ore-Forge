@@ -1,14 +1,17 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
 import ore.forge.Expressions.NumericOperator;
 import ore.forge.Expressions.NumericOreProperties;
 import ore.forge.Expressions.Function;
 
-/**@author Nathan Ulmen
-An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.
-A maximum and minimum value can be set to ensure the modifier stays within a specified range.*/
+/**
+ * @author Nathan Ulmen
+ * An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.
+ * A maximum and minimum value can be set to ensure the modifier stays within a specified range.
+ */
 public class InfluencedUpgrade implements UpgradeStrategy {
     private final BasicUpgrade baseUpgrade;
     private final Function upgradeFunction;
@@ -24,7 +27,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     public InfluencedUpgrade(JsonValue jsonValue) {
         upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
 
-        NumericOperator operator = NumericOperator.valueOf(jsonValue.getString("numericOperator"));
+        NumericOperator operator = NumericOperator.valueOf(jsonValue.getString("operator"));
         NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
         baseUpgrade = new BasicUpgrade(0, operator, valueToModify);
 
@@ -55,6 +58,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     public void applyTo(Ore ore) {
         double originalModifier = baseUpgrade.getModifier();
         double newModifier = upgradeFunction.calculate(ore);
+//        Gdx.app.log("INFLUENCED UPGRADE", "New Modifier" + String.valueOf(newModifier));
 
         if (newModifier > maxModifier) {
             baseUpgrade.setModifier(maxModifier);
@@ -75,7 +79,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
 
     @Override
     public String toString() {
-        return "[" + this.getClass().getSimpleName()+ "]" +
+        return "[" + this.getClass().getSimpleName() + "]" +
             "\tOperator Type: " + baseUpgrade.getOperator() +
             ", Value To Modify: " + baseUpgrade.getValueToModify() +
             ", Upgrade Function: " + upgradeFunction +

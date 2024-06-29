@@ -41,6 +41,7 @@ public class UserInterface {
     private NumberFormatter numberFormatter;
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private InventoryTable inventoryWidget;
+    private ShopMenu shopWidget;
     private InputHandler inputHandler;
     private Label oreInfo;
 
@@ -56,8 +57,10 @@ public class UserInterface {
         oreLimit = new ProgressBar(0, Constants.ORE_LIMIT, 1, false, style);
     }
 
-    public UserInterface(OreForge game, Vector3 mouse) {
+    public UserInterface(OreForge game, Vector3 mouse, InputHandler handler) {
         numberFormatter = new NumberFormatter();
+
+        this.inputHandler = handler;
 
         this.mouse = mouse;
         camera = new OrthographicCamera();
@@ -103,8 +106,11 @@ public class UserInterface {
 
         inventoryWidget = new InventoryTable(player.getInventory());
 
-//        oreInfo = new Label("", fpsStyle);
-//        oreInfo.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .87f);
+        shopWidget = new ShopMenu(player.getInventory());
+        handler.setShopMenu(shopWidget);
+
+        oreInfo = new Label("", fpsStyle);
+        oreInfo.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .87f);
 
 
 //        do {
@@ -134,7 +140,11 @@ public class UserInterface {
 //        stage.addActor(nodeTable);
         inventoryWidget.setPosition(Gdx.graphics.getWidth() *.7f, Gdx.graphics.getHeight() * .4f);
         inventoryWidget.setVisible(false);
-//        stage.addActor(oreInfo);
+
+        shopWidget.setPosition(0, Gdx.graphics.getHeight() * .4f);
+        shopWidget.setVisible(false);
+        stage.addActor(oreInfo);
+        stage.addActor(shopWidget);
         stage.addActor(inventoryWidget);
         stage.addActor(fpsCounter);
         stage.addActor(memoryUsage);
@@ -166,11 +176,11 @@ public class UserInterface {
                 itemOver.setText("Item: " + null);
             }
 
-//            if(inputHandler.getCurrentMode() instanceof OreObserver mode) {
-//                oreInfo.setText("Ore: " + mode.getHighlightedOre().toString());
-//            } else {
-//                oreInfo.setText("");
-//            }
+            if(inputHandler.getCurrentMode() instanceof OreObserver mode) {
+                oreInfo.setText("Ore: " + mode.getHighlightedOre().getName() + "\nOre Value: " + mode.getHighlightedOre().getOreValue() + "\nOre Temperature: " + mode.getHighlightedOre().getOreTemp());
+            } else {
+                oreInfo.setText("");
+            }
 //
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024) + " MB");
             this.mouseCoords.setText("X: " + (int) mouse.x + " Y: " + (int) mouse.y);

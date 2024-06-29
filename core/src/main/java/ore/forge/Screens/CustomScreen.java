@@ -10,20 +10,20 @@ import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.OreForge;
-import ore.forge.ResourceManager;
+import ore.forge.ItemManager;
 
 
 public abstract class CustomScreen implements Screen {
 
     protected final OreForge game;
-    protected final ResourceManager resourceManager;
+    protected final ItemManager itemManager;
     protected final OrthographicCamera camera;
     protected final Viewport viewport;
     protected final Stage stage;
 
-    public CustomScreen(final OreForge game, final ResourceManager resourceManager) {
+    public CustomScreen(final OreForge game, final ItemManager itemManager) {
         this.game = game;
-        this.resourceManager = resourceManager;
+        this.itemManager = itemManager;
 
 
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

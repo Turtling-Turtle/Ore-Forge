@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
 import ore.forge.OreForge;
 import ore.forge.Player.Player;
-import ore.forge.ResourceManager;
+import ore.forge.ItemManager;
 
 
 public class PauseMenu extends CustomScreen {
@@ -35,8 +35,8 @@ public class PauseMenu extends CustomScreen {
     private final FPSLogger fpsLogger= new FPSLogger();
 
 
-    public PauseMenu(final OreForge game, final ResourceManager resourceManager) {
-        super(game, resourceManager);
+    public PauseMenu(final OreForge game, final ItemManager itemManager) {
+        super(game, itemManager);
 
         table = new Table();
         Gdx.input.setInputProcessor(stage);

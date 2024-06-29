@@ -8,6 +8,7 @@ public enum NumericOperator {
     public final double apply(double x, double y) {
         return operator.applyAsDouble(x, y);
     }
+
     public enum Associativity {LEFT, RIGHT}
 
     private final DoubleBinaryOperator operator;
@@ -54,7 +55,7 @@ public enum NumericOperator {
 
     public static boolean isOperator(String symbol) {
         return switch (symbol) {
-            case "+", "-" , "*", "/", "^", "=", "%" -> true;
+            case "+", "-", "*", "/", "^", "=", "%" -> true;
             default -> false;
         };
     }
@@ -72,10 +73,10 @@ public enum NumericOperator {
             case ADD -> (x, y) -> x + y;
             case SUBTRACT -> (x, y) -> x - y;
             case MULTIPLY -> (x, y) -> x * y;
-            case DIVIDE -> (x, y) -> x / y; //TODO: Handle division by zero....
-            case EXPONENT -> (x, y) -> Math.pow(x, y);
+            case DIVIDE -> (x, y) -> y == 0 ? 1 : x / y;
+            case EXPONENT -> (x, y) -> x < 0 && y != Math.floor(y) ? Math.pow(Math.abs(x),y) * -1 : Math.pow(x,y);
             case ASSIGNMENT -> (x, y) -> y;
-            case MODULO -> (x, y) -> x % y;
+            case MODULO -> (x, y) -> y == 0 ? 1 : x % y;
         };
         associativity = switch (this) {
             case ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO -> Associativity.LEFT;

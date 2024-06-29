@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.*;
 import com.mongodb.client.*;
 import ore.forge.Items.*;
 import org.bson.Document;
-import org.slf4j.LoggerFactory;
 
 import java.lang.StringBuilder;
 import java.util.HashMap;
@@ -15,15 +14,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**@author Nathan Ulmen
- * The Resource Manager is responsible for verifying and loading Item data and other assets and keeps a list of all
- * valid Items.
+ * The Item Manager is responsible for verifying and loading Item data and keeping track of all items.
  * */
-public class ResourceManager {
+public class ItemManager {
     private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
 
-    public ResourceManager() {
+    public ItemManager() {
         Gdx.app.log("Resource Manager", "Initializing Resource Manager...");
         loadCount = 0;
         allSounds = new HashMap<>();
@@ -45,7 +43,22 @@ public class ResourceManager {
 //        }
     }
 
-    public void loadItems(String fileToParse) {
+    public HashMap<String, Item> getAllItems() {
+        return allItems;
+    }
+
+    public HashMap<String, Item> copyAllItems() {
+        return new HashMap<>(allItems);
+    }
+
+    public Item getItem(String id) {
+        if (allItems.containsKey(id)) {
+            return allItems.get(id);
+        }
+        throw new IllegalArgumentException("Item with ID: " + id + " not found.");
+    }
+
+    private void loadItems(String fileToParse) {
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents = jsonReader.parse(Gdx.files.local(fileToParse));
         fileContents.child().remove();//Remove version field from file.
@@ -74,6 +87,10 @@ public class ResourceManager {
     }
 
     private void addToAllItems(Item item, Color color) {
+        if (allItems.containsKey(item.getID())) {
+            throw new IllegalArgumentException("Conflicting IDs between " + item.getName() + " and " + allItems.get(item.getID()).getName() + ".");
+
+        }
         allItems.put(item.getID(), item);
         loadCount++;
         Gdx.app.log(item.getClass().getSimpleName(), color.colorId + "Loaded " + item.getName() + Color.NONE.colorId);
@@ -104,14 +121,6 @@ public class ResourceManager {
 
     }
 
-    public HashMap<String, Item> getAllItems() {
-        return allItems;
-    }
-
-    public HashMap<String, Item> copyAllItems() {
-        return new HashMap<>(allItems);
-    }
-
     private void checkVersion(String mongoCollection, String localFile, MongoDatabase database) {
         MongoCollection<Document> collection = database.getCollection(mongoCollection);
         // Project only the "version" field
@@ -127,8 +136,6 @@ public class ResourceManager {
             localFileContents = jsonReader.parse(Gdx.files.local(localFile));
             localVersion = localFileContents.child().getDouble("version");
         } catch (Throwable ignored) {}
-
-
 
         double dbVersion = -2;
         try {

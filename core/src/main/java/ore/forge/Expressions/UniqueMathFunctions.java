@@ -3,7 +3,7 @@ package ore.forge.Expressions;
 import ore.forge.Ore;
 
 public enum UniqueMathFunctions {
-    LN, LOG, SQRT; //SIN, COS, TAN;
+    LN, LOG, SQRT, ABS; //SIN, COS, TAN;
 
     private interface FunctionBehavior {
         double calculate(Function function, Ore ore);
@@ -23,9 +23,10 @@ public enum UniqueMathFunctions {
 //            case "sqrt", "sqrt(", "sqrt()" -> SQRT;
 //            default -> throw new IllegalStateException("Unexpected symbol: " + symbol);
 //        };
-        if (symbol.contains("ln(")) return UniqueMathFunctions.LN;
-        if (symbol.contains("log(")) return UniqueMathFunctions.LOG;
-        if (symbol.contains("sqrt(")) return UniqueMathFunctions.SQRT;
+        if (symbol.contains("ln(") && symbol.charAt(1) == 'n') return UniqueMathFunctions.LN;
+        if (symbol.contains("log(") && symbol.charAt(1) == 'o') return UniqueMathFunctions.LOG;
+        if (symbol.contains("sqrt(")&& symbol.charAt(1) == 'q') return UniqueMathFunctions.SQRT;
+        if (symbol.contains("abs(") && symbol.charAt(1) == 'b') return UniqueMathFunctions.ABS;
         throw new IllegalArgumentException("Unknown symbol: " + symbol);
     }
 
@@ -34,18 +35,20 @@ public enum UniqueMathFunctions {
             case LN -> "ln";
             case LOG -> "log";
             case SQRT -> "sqrt";
+            case ABS -> "abs";
         };
     }
 
     public static boolean isMathFunction(String symbol) {
-        return symbol.contains("ln(") || symbol.contains("log(") || symbol.contains("sqrt(");
+        return symbol.contains("ln(") || symbol.contains("log(") || symbol.contains("sqrt(") || symbol.contains("abs(");
     }
 
     UniqueMathFunctions() {
         behavior = switch (this) {
             case LN -> (function, ore) -> Math.log(function.calculate(ore));
-            case LOG -> (function, ore) -> Math.log10(function.calculate(ore));
+            case LOG -> (function, ore) -> Math.log10(Math.abs(function.calculate(ore)));
             case SQRT -> (function, ore) -> Math.sqrt(function.calculate(ore));
+            case ABS -> (function, ore) -> Math.abs(function.calculate(ore));
         };
     }
 

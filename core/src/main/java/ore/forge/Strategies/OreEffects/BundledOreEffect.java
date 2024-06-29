@@ -15,9 +15,15 @@ public class BundledOreEffect implements OreEffect , StrategyInitializer<OreEffe
     }
 
     public BundledOreEffect(JsonValue jsonValue) {
-        strategies = new OreEffect[jsonValue.size];
-        for (int i = 0; i < jsonValue.size; i++) {
-            strategies[i] = createOrNull(jsonValue, "effect" + String.valueOf(i+1), "effectName");
+//        strategies = new OreEffect[jsonValue.size];
+//        for (int i = 0; i < jsonValue.size; i++) {
+//            strategies[i] = createOrNull(jsonValue, "effect" + String.valueOf(i+1), "effectName");
+//        }
+
+        var effectArray = jsonValue.get("effects");
+        strategies = new OreEffect[effectArray.size];
+        for (int i = 0; i < effectArray.size; i++) {
+            strategies[i] = createOrNull(effectArray.get(i), "effectName");
         }
     }
 

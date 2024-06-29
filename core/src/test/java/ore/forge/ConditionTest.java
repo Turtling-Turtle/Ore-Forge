@@ -1,7 +1,6 @@
-package ore.forge.Strategies;
+package ore.forge;
 
 import ore.forge.Expressions.Condition;
-import ore.forge.Ore;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +63,27 @@ class ConditionTest {
         ore.setOreName("test");
         ore.setOreValue(15);
         var testCase = Condition.parseCondition("ORE_NAME == test AND ! ORE_VALUE > 20");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testCollectionBasedCondition() {
+        ore.getUpgradeTag(new UpgradeTag("Foolish Tag", "1234", 5, false));
+        var testCase = Condition.parseCondition("UPGRADE_TAGS.CONTAINS(1234)");
+        System.out.println(testCase.evaluate(ore));
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testNumericRetriever() {
+        var testCase = Condition.parseCondition("UPGRADE_TAGS.GET_COUNT(1234) <= 0");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testOreTemperature() {
+        ore.setTemp(-30);
+        var testCase = Condition.parseCondition("TEMPERATURE < 0");
         assertTrue(testCase.evaluate(ore));
     }
 }

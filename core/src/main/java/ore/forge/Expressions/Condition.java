@@ -7,19 +7,23 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** @author Nathan Ulmen
-* Represents a Boolean Expression, evaluates an argument, returning a booelan result.
-* Arguments can be numeric or String based(comparing IDs/names,types, etc.)
-* {@link Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
-* Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
-* Supported Comparsion Operators: >, <, >=, <=, ==, !=.
-*/
+/**
+ * @author Nathan Ulmen
+ * Represents a Boolean Expression, evaluates an argument, returning a booelan result.
+ * Arguments can be numeric or String based(comparing IDs/names,types, etc.)
+ * {@link Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
+ * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
+ * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
+ */
+
+
 public class Condition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);
     }
+
     //TODO: Regex expression wont identify names that have spaces in them.
-    private final static Pattern pattern = Pattern.compile("\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
+    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
 
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
@@ -39,6 +43,24 @@ public class Condition {
             token = token.trim();
             if (token.isEmpty() || token.equals(" ")) {
                 //ignore " "
+                continue;
+            } else if (token.contains("{") && token.contains("}")) {
+                token = token.replace("{", "").replace("}", "");
+                Function function = Function.parseFunction(token);
+                operands.push(function);
+            } else if (token.contains("(") && token.contains(")") && matcher.group(2).charAt(matcher.group(2).length() - 1) == '.') {//Method verification.
+                var argumentSource = matcher.group(2);
+                argumentSource = argumentSource.substring(0, argumentSource.length() - 1);
+                if (MethodBasedOperand.isCollection(argumentSource)) { //Verify that collection is valid.
+                    var method = matcher.group(3);
+                    if (MethodBasedOperand.methodIsValid(method)) { //Verify that method is valid
+                        if (method.equals("GET_COUNT")) { //Determine return type of method(number vs boolean)
+                            operands.push(new NumericMethodOperand(matcher.group(4), MethodBasedOperand.valueOf(argumentSource)));
+                        } else {
+                            operands.push(new BooleanMethodOperand(matcher.group(4), MethodBasedOperand.valueOf(argumentSource)));
+                        }
+                    }
+                }
             } else if (ComparisonOperator.isOperator(token)) {
                 comparisonOperators.push(ComparisonOperator.fromSymbol(token));
             } else if (LogicalOperator.isOperator(token)) {
@@ -47,10 +69,6 @@ public class Condition {
                 operands.push(NumericOreProperties.valueOf(token));
             } else if (Function.isNumeric(token)) {
                 operands.push(new Function.Constant(Double.parseDouble(token)));
-            } else if (token.contains("{") && token.contains("}")) {
-                token = token.replace("{", "").replace("}", "");
-                Function function = Function.parseFunction(token);
-                operands.push(function);
             } else if (StringOreProperty.isProperty(token)) {
                 operands.push(StringOreProperty.fromString(token));
             } else if (ValueOfInfluence.isValue(token)) {
@@ -65,19 +83,25 @@ public class Condition {
 
     private static Condition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
         ArrayList<BooleanExpression> expressionQueue = new ArrayList<>(); //We treat this like a Queue.
-        while (!operands.isEmpty() && operands.size() - 2 >= 0) {
-            if (operands.peek() instanceof NumericOperand) {
-                NumericOperand right = (NumericOperand) operands.pop();
-                ComparisonOperator comparisonOperator = comparisonOperators.pop();
-                NumericOperand left = (NumericOperand) operands.pop();
-                NumericExpression expression = new NumericExpression(left, right, comparisonOperator);
-                expressionQueue.add(expression);
-            } else if (operands.peek() instanceof StringOperand) {
-                StringOperand right = (StringOperand) operands.pop();
-                StringOperand left = (StringOperand) operands.pop();
-                ComparisonOperator comparisonOperator = comparisonOperators.pop();
-                StringExpression expression = new StringExpression(left, right, comparisonOperator);
-                expressionQueue.add(expression);
+        while (!operands.isEmpty()) {
+            if (operands.peek() instanceof BooleanExpression) {
+                expressionQueue.add((BooleanExpression) operands.pop());
+                continue;
+            }
+            if (operands.size() - 2 >= 0) {
+                if (operands.peek() instanceof NumericOperand) {
+                    NumericOperand right = (NumericOperand) operands.pop();
+                    ComparisonOperator comparisonOperator = comparisonOperators.pop();
+                    NumericOperand left = (NumericOperand) operands.pop();
+                    NumericExpression expression = new NumericExpression(left, right, comparisonOperator);
+                    expressionQueue.add(expression);
+                } else if (operands.peek() instanceof StringOperand) {
+                    StringOperand right = (StringOperand) operands.pop();
+                    StringOperand left = (StringOperand) operands.pop();
+                    ComparisonOperator comparisonOperator = comparisonOperators.pop();
+                    StringExpression expression = new StringExpression(left, right, comparisonOperator);
+                    expressionQueue.add(expression);
+                }
             }
         }
         return new Condition(expressionQueue, logicalOperators);
@@ -132,7 +156,8 @@ public class Condition {
         }
     }
 
-    public record NumericExpression(NumericOperand left, NumericOperand right, ComparisonOperator operator) implements BooleanExpression {
+    public record NumericExpression(NumericOperand left, NumericOperand right,
+                                    ComparisonOperator operator) implements BooleanExpression {
         @Override
         public boolean evaluate(Ore ore) {
             return operator.evaluate(left.calculate(ore), right.calculate(ore));
@@ -144,7 +169,8 @@ public class Condition {
         }
     }
 
-    public record StringExpression(StringOperand left, StringOperand right, ComparisonOperator operator) implements BooleanExpression {
+    public record StringExpression(StringOperand left, StringOperand right,
+                                   ComparisonOperator operator) implements BooleanExpression {
         @Override
         public boolean evaluate(Ore ore) {
             if (operator == ComparisonOperator.EQUAL_TO) {
@@ -159,6 +185,24 @@ public class Condition {
         @Override
         public String toString() {
             return left + " " + operator.asSymbol() + " " + right;
+        }
+    }
+
+    public record NumericMethodOperand(String targetID, MethodBasedOperand source) implements NumericOperand {
+
+        @Override
+        public double calculate(Ore ore) {
+            return source.calculate(ore, targetID);
+        }
+
+
+    }
+
+    public record BooleanMethodOperand(String targetID, MethodBasedOperand source) implements BooleanExpression {
+
+        @Override
+        public boolean evaluate(Ore ore) {
+            return source.evaluate(ore, targetID);
         }
     }
 

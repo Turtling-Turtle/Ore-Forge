@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 public class Function implements NumericOperand {
     /*
     ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
-    ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, -.1, 12.7 etc.
+    ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, 3.2E-2, -.1, 12.7 etc.
     ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
     */
     private final static Pattern pattern = Pattern.compile(
-        "(log\\(|sqrt\\(|ln\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE]-?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
+        "(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|(log\\(|sqrt\\(|ln\\(|abs\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
@@ -69,9 +69,9 @@ public class Function implements NumericOperand {
                     operandStack.push(createFunction(operandStack, operatorStack));
                 }
                 operatorStack.pop();//remove the null
-            } else if(UniqueMathFunctions.isMathFunction(token)) { //Special Functions like ln
+            } else if (UniqueMathFunctions.isMathFunction(token)) { //Special Functions like ln
                 UniqueMathFunctions function = UniqueMathFunctions.fromSymbol(token);
-                operandStack.push(new UniqueMathFunctions.SpecialFunction(parseFunction(matcher.group(2)), function)); //group 2 is the contents inside special function.
+                operandStack.push(new UniqueMathFunctions.SpecialFunction(parseFunction(matcher.group(6)), function)); //group 2 is the contents inside special function.
                 matcher.find(); //Get rid of the Trailing )
                 assert Objects.equals(matcher.group(), ")");
             } else if (NumericOperator.isOperator(token)) {
@@ -82,6 +82,22 @@ public class Function implements NumericOperand {
                     operandStack.push(createFunction(operandStack, operatorStack));
                 }
                 operatorStack.push(operator);
+            } else if (token.contains("(") && token.contains(")") && matcher.group(2).charAt(matcher.group(2).length() - 1) == '.') {//Method verification.
+//                var argumentSource = matcher.group(2);
+//                if (argumentSource.charAt(argumentSource.length() - 1) == '.') {
+                var argumentSource = matcher.group(2);
+                argumentSource = argumentSource.substring(0, argumentSource.length() - 1);
+                if (MethodBasedOperand.isCollection(argumentSource)) { //Verify that collection is valid.
+                    var method = matcher.group(3);
+                    if (MethodBasedOperand.methodIsValid(method)) { //Verify that method is valid
+                        if (method.equals("GET_COUNT")) { //Determine return type of method(number vs boolean)
+                            operandStack.push(new Condition.NumericMethodOperand(matcher.group(4), MethodBasedOperand.valueOf(argumentSource)));
+                        } else {
+                            throw new IllegalArgumentException("Cant use CONTAINS in function.");
+                        }
+                    }
+                }
+//                }
             } else {
                 throw new IllegalArgumentException("Unknown token: " + token);
             }
@@ -92,7 +108,7 @@ public class Function implements NumericOperand {
         }
 
         if (!(operandStack.peek() instanceof Function)) {
-            return new Function(new Constant(0), operandStack.pop(),NumericOperator.ASSIGNMENT);
+            return new Function(new Constant(0), operandStack.pop(), NumericOperator.ASSIGNMENT);
         }
 
         return (Function) operandStack.pop();
@@ -130,9 +146,6 @@ public class Function implements NumericOperand {
         NumericOperand right = operandStack.pop();
         NumericOperand left = operandStack.pop();
         NumericOperator functionOperator = operatorStack.pop();
-//        if (right instanceof Constant && left instanceof Constant) {
-//            return new Constant(functionOperator.apply((((Constant) left).value), ((Constant) right).value));
-//        }
         return new Function(left, right, functionOperator);
     }
 
@@ -152,7 +165,7 @@ public class Function implements NumericOperand {
 
     @Override
     public String toString() {
-        return ("(" + leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand + ")");
+        return (leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand);
     }
 
     /*

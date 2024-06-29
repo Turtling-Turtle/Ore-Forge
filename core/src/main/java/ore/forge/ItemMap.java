@@ -8,6 +8,8 @@ import com.badlogic.gdx.utils.*;
 import ore.forge.Items.*;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
+import ore.forge.Player.Inventory;
+import ore.forge.Player.Player;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
@@ -19,10 +21,12 @@ public class ItemMap {
     protected static ItemMap itemMapSingleton = new ItemMap();
     public final Block[][] mapTiles;
     private final ArrayList<Item> placedItems;
+    private final HashMap<String, Item> lookup;
 
     private ItemMap() {
         mapTiles = new Block[Constants.GRID_DIMENSIONS][Constants.GRID_DIMENSIONS];
         placedItems = new ArrayList<>(50);
+        lookup = new HashMap<>(30);
     }
 
     public static ItemMap getSingleton() {
@@ -109,10 +113,10 @@ public class ItemMap {
 
     }
 
-    public void loadState(ResourceManager resourceManager) {
+    public void loadState(ItemManager itemManager) {
         //TODO: Need to make sure that this goes through the players inventory so that they cant place items they dont have.
 //        System.out.println("Made it to beginning of load State!");
-        HashMap<String, Item> allItems = resourceManager.getAllItems();
+        HashMap<String, Item> allItems = itemManager.getAllItems();
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents;
         try {
@@ -121,19 +125,19 @@ public class ItemMap {
             return;//Nothing to load so no we just leave the function.
         }
 
-        String itemName;
+        String itemID;
         Item itemToPlace;
         for (JsonValue jsonValue : fileContents) {
-            itemName = jsonValue.getString("itemName");
+            itemID = jsonValue.getString("itemID");
 //            System.out.println(itemName);
 //            System.out.println(allItems.get(itemName));
             //Create the Item based on the Stored Version in All Items.
-            itemToPlace = switch (allItems.get(itemName)) {
-                case Upgrader ignored -> new Upgrader((Upgrader) allItems.get(itemName));
-                case Furnace ignored -> new Furnace((Furnace) allItems.get(itemName));
-                case Dropper ignored -> new Dropper((Dropper) allItems.get(itemName));
-                case Conveyor ignored -> new Conveyor((Conveyor) allItems.get(itemName));
-                default -> throw new IllegalStateException("Unexpected value: " + allItems.get(itemName));
+            itemToPlace = switch (allItems.get(itemID)) {
+                case Upgrader ignored -> new Upgrader((Upgrader) allItems.get(itemID));
+                case Furnace ignored -> new Furnace((Furnace) allItems.get(itemID));
+                case Dropper ignored -> new Dropper((Dropper) allItems.get(itemID));
+                case Conveyor ignored -> new Conveyor((Conveyor) allItems.get(itemID));
+                default -> throw new IllegalStateException("Unexpected value: " + allItems.get(itemID));
             };
             //read in the items coordinates and its Direction.
             int x = jsonValue.get("position").getInt("x");
@@ -149,12 +153,30 @@ public class ItemMap {
         return vector3.x > this.mapTiles.length - 1 || vector3.x < 0 || vector3.y > this.mapTiles[0].length - 1 || vector3.y < 0;
     }
 
+    public void reset(Inventory inventory) {
+        for (Item item : placedItems) {
+            item.removeItem();
+            inventory.pickUp(item);
+        }
+        placedItems.clear();
+    }
+
+
     public void add(Item item) {
         placedItems.add(item);
     }
 
     public void remove(Item item2) {
         placedItems.remove(item2);
+    }
+
+    public boolean containsItem(String itemID) {
+        for (Item item : placedItems) {
+            if (itemID.equals(item.getID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<Item> getPlacedItems() {
@@ -174,19 +196,17 @@ public class ItemMap {
     }
 
     private class MapData {
-        private final String itemName;
+        private final String itemID;
         private final Direction direction;
         private final Vector2 position;
 
-        public MapData(String itemName, Direction direction, Vector2 position) {
-            this.itemName = itemName;
+        public MapData(String itemID, Direction direction, Vector2 position) {
+            this.itemID = itemID;
             this.direction = direction;
             this.position = position;
         }
 
-
     }
-
 
 
 }

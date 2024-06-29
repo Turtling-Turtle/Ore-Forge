@@ -5,27 +5,18 @@ package ore.forge;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonWriter;
-import com.mongodb.client.*;
-import ore.forge.Player.Inventory;
 import ore.forge.Player.Player;
 import ore.forge.Screens.*;
-import org.bson.Document;
-
-import java.math.BigInteger;
-import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
-	private ResourceManager resourceManager;
+	private ItemManager itemManager;
 	public Label memoryCounter;
 	public Player player;
 
@@ -60,17 +51,17 @@ public class OreForge extends Game {
 		*
 		* */
 		spriteBatch = new SpriteBatch();
-		resourceManager = new ResourceManager();
+		itemManager = new ItemManager();
         OreRealm.getSingleton().populate(); //Create/pool all ore.
         Player.getSingleton().loadSaveData();
-        Player.getSingleton().initInventory(resourceManager);
+        Player.getSingleton().initInventory(itemManager);
         Player.getSingleton().getInventory().printInventory();
 
 //        ItemMap.getSingleton().loadState(resourceManager);
-		mainMenuScreen = new MainMenu(this, resourceManager);
-		settingsMenu = new SettingsMenu(this, resourceManager);
-		gameWorld = new GameWorld(this, resourceManager);
-		pauseMenu = new PauseMenu(this, resourceManager);
+		mainMenuScreen = new MainMenu(this, itemManager);
+		settingsMenu = new SettingsMenu(this, itemManager);
+		gameWorld = new GameWorld(this, itemManager);
+		pauseMenu = new PauseMenu(this, itemManager);
 
 //        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
 //        do {

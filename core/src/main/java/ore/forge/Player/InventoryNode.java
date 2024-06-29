@@ -50,9 +50,18 @@ public class InventoryNode {
         return heldItem.getID();
     }
 
+    public void resetOwned() {
+        stored = placed = totalOwned = 0;
+    }
+
     public void place() {
         stored--;
         placed++;
+    }
+
+    public void pickUp() {
+        stored++;
+        placed--;
     }
 
     public boolean hasSupply() {
@@ -94,6 +103,10 @@ public class InventoryNode {
         totalOwned--;
         placed--;
         assertCheck();
+    }
+
+    public int getPlaced() {
+        return placed;
     }
 
     private void assertCheck() {

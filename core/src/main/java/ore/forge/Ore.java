@@ -1,10 +1,13 @@
 package ore.forge;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Expressions.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
+import ore.forge.Strategies.OreEffects.Burning;
 import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;
 
@@ -13,8 +16,9 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Stack;
 
-/**@author Nathan Ulmen
- * */
+/**
+ * @author Nathan Ulmen
+ */
 public class Ore {
     //Ore can be classified by name, id, type. Ores can have multiple types.
     protected static ItemMap itemMap = ItemMap.getSingleton();
@@ -37,8 +41,13 @@ public class Ore {
     private float current;
     private float deltaTime;
     private boolean isActive;
+    private int resetCount;
+//    private final ParticleEffect frostbiteEffect = new ParticleEffect();
 
     public Ore() {
+//        frostbiteEffect.load(Gdx.files.internal("Effects/Frostbite.p"), Gdx.files.internal("Effects"));
+//        frostbiteEffect.start();
+//        frostbiteEffect.scaleEffect(0.016f);
         this.oreValue = 0;
         this.oreTemperature = 0;
         this.oreName = "";
@@ -56,13 +65,15 @@ public class Ore {
         removalStack = new Stack<>();
         history = new BitSet();
         observerEffects = new ArrayList<>();
+        this.resetCount = 0;
         updateInterval = 0f;//effects are updated 100 times every second.
     }
 
     public void act(float deltaTime) {
         this.deltaTime = deltaTime;
+//        frostbiteEffect.update(deltaTime);
         current += deltaTime;
-        if (current >= updateInterval) {
+        if (!effects.isEmpty()) {
             updateEffects(deltaTime);
         }
         if (position.x != destination.x || position.y != destination.y) {
@@ -70,13 +81,14 @@ public class Ore {
         } else {
             activateBlock();
         }
+//        frostbiteEffect.setPosition(position.x,position.y);
         //End Step effects like invincibility;
-        if (current >= updateInterval) {
+        if (!effects.isEmpty()) {
             updateEndStepEffects(deltaTime);
             current = 0f;
-            if (this.isDoomed()) {
-                oreRealm.takeOre(this);
-            }
+        }
+        if (this.isDoomed()) {
+            oreRealm.takeOre(this);
         }
     }
 
@@ -220,6 +232,7 @@ public class Ore {
         isDoomed = false;
         current = 0f;
         isActive = false;
+        this.resetCount = 0;
         resetAllTags();
     }
 
@@ -229,6 +242,7 @@ public class Ore {
                 tag.reset();
             }
         }
+        resetCount++;
     }
 
     public void incrementTag(UpgradeTag tag) {
@@ -245,6 +259,17 @@ public class Ore {
             tagMap.put(tagName, newTag);
             return newTag;
         }
+    }
+
+    public boolean containsTag(String tagID) {
+        return tagMap.containsKey(tagID);
+    }
+
+    public int tagUpgradeCount(String tagID) {
+        if (tagMap.containsKey(tagID)) {
+            return tagMap.get(tagID).getCurrentUpgrades();
+        }
+        return 0;
     }
 
     public void resetAllTags() {
@@ -290,7 +315,6 @@ public class Ore {
     public Direction getDirection() {
         return direction;
     }
-
 
     public void setSpeedScalar(float newScalar) {
         speedScalar = newScalar;
@@ -367,6 +391,27 @@ public class Ore {
     public boolean isActive() {
         return isActive;
     }
+
+    public int getResetCount() {
+        return resetCount;
+    }
+
+    public void setResetCount(int resetCount) {
+        this.resetCount = resetCount;
+    }
+
+    public boolean isBurning() {
+        for (OreEffect effect : effects) {
+            if (effect.getClass() == Burning.class) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    public ParticleEffect getFrostbiteEffect() {
+//        return frostbiteEffect;
+//    }
 
     public String toString() {
         //Name, Value, Temp, Multi-Ore, Upgrade Count, Position, Active Effects.

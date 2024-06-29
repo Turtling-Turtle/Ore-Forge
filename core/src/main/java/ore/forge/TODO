@@ -157,9 +157,12 @@ Rough Draft of JSON structure for a quest:
     2A. Make cycling through ore start out slow then speed up the longer the button is held.
     3A. Display Info about the highlighted ore.
 
-    Search Feature?
+    Search Feature? Filters?
 
-
+11. Effect System
+    * Will probably end up using shaders as they are done on the GPU rather than the CPU.
+    Effects will include:
+    Frostbite, Burning, more>
 ------Game is "Finished" at this point. Everything after this point are bonus features-------
 
 Later Down the line:

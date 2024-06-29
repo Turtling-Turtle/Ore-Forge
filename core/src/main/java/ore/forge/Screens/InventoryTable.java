@@ -14,11 +14,13 @@ import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
+import ore.forge.Stopwatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class InventoryTable extends WidgetGroup {
     private Comparator<ItemIcon> sortMethod;
@@ -154,21 +156,19 @@ public class InventoryTable extends WidgetGroup {
         scrollPane.setDebug(true);
     }
 
-    //So right now I have an inventory Component of my user interface that has a searchbar that you can use to look up specific items.
-    //Currently, in my application everytime a frame is updated/when a new frame is drawn the game goes through the game loop which is in charge of drawing and updating all the actors in my game.
-    //This means that every frame the game checks to see if it needs to search and sort a set of items.
-    //I want to make the search feature of the code asynchronous so that it doesn't cause any stutters when you search for an item as its rather resource intensive based off profiling that ive done (its O(n log n))
-    //Is it possible for the program to have multiple different versions of this task running at the same time? I think it would with my current knowledge, and I was wondering if it is possible to limit it so that only one task is running?
-
     private void asyncSearch(String target) {
 //        var stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
 //        stopwatch.start();
         String finalizedTarget = target;
         CompletableFuture.runAsync(() -> {
+            Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+            stopwatch.start();
                 ArrayList<ItemIcon> icons = findIcons(finalizedTarget);
                 if (sortMethod != null) {
-                    quickSort(icons, sortMethod);
+                    icons.sort(sortMethod); //language implementation is really fast...
+//                    quickSort(icons,sortMethod);
                 }
+                Gdx.app.log("INVENTORY TABLE",stopwatch.toString());
                 Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
 //        stopwatch.stop();
@@ -205,9 +205,8 @@ public class InventoryTable extends WidgetGroup {
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
-        if (count >= 8) {
+        if (count % 8 == 0) {
             iconTable.row();
-            count = 0;
         }
         iconTable.add(icon).left().top().size(icon.getWidth(),icon.getHeight()).align(Align.topLeft).pad(5);
     }

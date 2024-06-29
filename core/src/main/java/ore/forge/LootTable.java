@@ -8,25 +8,27 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
 
 public class LootTable {
+    private final ItemManager manager;
     private HashMap<Float, ArrayList<Item>> buckets;
     private final Random random;
 
-    public LootTable() {
+    public LootTable(ItemManager manager) {
+        this.manager = manager;
         random = new Random();
         this.buckets = new HashMap<>();
+        updateItems();
     }
 
     public Item getRandomItem() {
-        var sortedKeys = new ArrayList<>(buckets.keySet());
-        Collections.sort(sortedKeys);
+        var keys = new ArrayList<>(buckets.keySet());
+        Collections.sort(keys);
         float roll = generateRoll();
-        if (roll >= sortedKeys.getLast()) {
-            return getItemFromBucket(buckets.get(sortedKeys.getLast()));
+        if (roll >= keys.getLast()) {
+            return getItemFromBucket(buckets.get(keys.getLast()));
         } else {
-            for (Float bucketKey : sortedKeys) {
+            for (Float bucketKey : keys) {
                 if (roll < (bucketKey)) {
                     return getItemFromBucket(buckets.get(bucketKey));
                 }
@@ -34,6 +36,7 @@ public class LootTable {
         }
         throw new IllegalStateException("Roll did not match either bucket.");
     }
+
 
     private float generateRoll() {
         return BigDecimal.valueOf(random.nextFloat() * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
@@ -43,26 +46,36 @@ public class LootTable {
         return bucket.get(random.nextInt(bucket.size()));
     }
 
-    public void addItem(Item item) {
+    private void addItem(Item item) {
+        assert item.getTier() == Item.Tier.PRESTIGE;
         if (!buckets.containsKey(item.getRarity())) {
             var newBucket = new ArrayList<Item>();
             newBucket.add(item);
             buckets.put(item.getRarity(), newBucket);
         } else {
             var bucket = buckets.get(item.getRarity());
-            assert !bucket.contains(item);
+//            assert !bucket.contains(item);
             if (!bucket.contains(item)) {
                 bucket.add(item);
             }
         }
     }
 
-    public void removeItem(Item item) {
+    private void removeItem(Item item) {
         buckets.get(item.getRarity()).remove(item);
     }
 
     public String toString() {
         return String.valueOf(buckets.size());
+    }
+
+    public void updateItems() {
+        var allItems = manager.getAllItems();
+        for (Item item : allItems.values()) {
+            if (item.getTier() == Item.Tier.PRESTIGE) {
+                addItem(item);
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -157,7 +170,7 @@ public class LootTable {
 
         stopwatch.restart();
         for (int i = 0; i < 2_500; i++) {
-            bigNumbers.add(new BigDouble((i+5)*2e4));
+            bigNumbers.add(new BigDouble((i + 5) * 2e4));
         }
         stopwatch.stop();
         System.out.println("Creation finished in " + stopwatch);
@@ -169,7 +182,7 @@ public class LootTable {
             }
         }
         stopwatch.stop();
-        System.out.println("Adding finished in" +  stopwatch);
+        System.out.println("Adding finished in" + stopwatch);
         System.out.println("Sum: " + sum(bigNumbers).toString());
 
 
@@ -183,7 +196,7 @@ public class LootTable {
         for (int i = 0; i < 2500; i++) {
             for (int j = 0; j < 99999; j++) {
                 bigNumbers.set(i, bigNumbers.get(i).multiply(testDouble));
-                if (bigNumbers.get(i).greaterThan(biggestNumber)){
+                if (bigNumbers.get(i).greaterThan(biggestNumber)) {
                     biggestNumber = new BigDouble(bigNumbers.get(i));
                     index = i;
                 }
@@ -191,43 +204,42 @@ public class LootTable {
         }
         stopwatch.stop();
         System.out.println("Biggest Number:" + biggestNumber);
-        System.out.println("Multiply finished in" +  stopwatch);
+        System.out.println("Multiply finished in" + stopwatch);
         System.out.println("Sum: " + sum(bigNumbers));
         System.out.println(sum(bigNumbers).greaterThan(biggestNumber));
         System.out.println(bigNumbers.get(index));
 
         System.out.println();
         stopwatch.restart();
-        for (BigDouble bigNumber1: bigNumbers) {
+        for (BigDouble bigNumber1 : bigNumbers) {
             for (BigDouble bigNumber2 : bigNumbers) {
                 bigNumber1.divide(bigNumber2);
             }
         }
         stopwatch.stop();
-        System.out.println("Division finished in" +  stopwatch);
+        System.out.println("Division finished in" + stopwatch);
         System.out.println("Sum: " + sum(bigNumbers));
 
         stopwatch.restart();
-        for (BigDouble bigNumber1: bigNumbers) {
+        for (BigDouble bigNumber1 : bigNumbers) {
             for (BigDouble bigNumber2 : bigNumbers) {
                 bigNumber1.subtract(bigNumber2);
             }
         }
         stopwatch.stop();
-        System.out.println("Subtraction finished in" +  stopwatch);
+        System.out.println("Subtraction finished in" + stopwatch);
         System.out.println("Sum: " + sum(bigNumbers));
 
         stopwatch.restart();
-        for (BigDouble bigNumber1: bigNumbers) {
+        for (BigDouble bigNumber1 : bigNumbers) {
             for (BigDouble bigNumber2 : bigNumbers) {
                 bigNumber1.greaterThan(bigNumber2);
             }
         }
         stopwatch.stop();
-        System.out.println("Comparison finished in" +  stopwatch);
+        System.out.println("Comparison finished in" + stopwatch);
         System.out.println("Sum: " + sum(bigNumbers));
         System.out.println(sum(bigNumbers).add("2.223372036854776e+9168681316920207656"));
-
 
 
     }
@@ -235,12 +247,11 @@ public class LootTable {
     private static BigDouble sum(ArrayList<BigDouble> bigNumbers) {
         BigDouble sum = new BigDouble(0);
         for (BigDouble bigNumber : bigNumbers) {
-             sum = new BigDouble(sum.add(bigNumber));
+            sum = new BigDouble(sum.add(bigNumber));
         }
         return sum;
 
     }
-
 
 
 }

@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import ore.forge.*;
-import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.PrestigeEvent;
 import ore.forge.Expressions.Function;
 
 //@author Nathan Ulmen
@@ -35,6 +33,9 @@ public class Player {
         specialPoints += SP;
     }
 
+    public void addPrestigeCurrency(int currencyToAdd) {
+        this.prestigeCurrency += currencyToAdd;
+    }
 
     public void setWallet(double valueToSetTo) {
         wallet = valueToSetTo;
@@ -94,8 +95,8 @@ public class Player {
         }
     }
 
-    public void initInventory(ResourceManager resourceManager) {
-        inventory = new Inventory(resourceManager);
+    public void initInventory(ItemManager itemManager) {
+        inventory = new Inventory(itemManager);
     }
 
     public double getWallet() {

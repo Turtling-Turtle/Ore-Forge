@@ -19,10 +19,17 @@ public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<Upgr
     }
 
     public BundledUpgrade(JsonValue jsonValue) {
-        this.upgradeStrategies = new UpgradeStrategy[jsonValue.size];
-        for (int i = 0; i < jsonValue.size; i++) {
-            this.upgradeStrategies[i] = createOrNull(jsonValue, "upgStrat" + String.valueOf(i + 1), "upgradeName");
+//        this.upgradeStrategies = new UpgradeStrategy[jsonValue.size];
+//        for (int i = 0; i < jsonValue.size; i++) {
+//            this.upgradeStrategies[i] = createOrNull(jsonValue, "upgStrat" + String.valueOf(i + 1), "upgradeName");
+//        }
+
+        JsonValue strategyArray = jsonValue.get("upgrades");
+        this.upgradeStrategies = new UpgradeStrategy[strategyArray.size];
+        for (int i = 0; i < strategyArray.size; i++) {
+            this.upgradeStrategies[i] = createOrNull(strategyArray.get(i), "upgradeName");
         }
+
     }
 
     //Clone constructor

@@ -4,8 +4,11 @@ package ore.forge;//The OreRealm is a stack of max Length 500(Ore limit) and whe
 //This allows for ore objects to be recycled and limits the number of ore objects in that can be present in the tycoon.
 //The oreRealm also keeps track of the ore that are active in the tycoon, and is used to set ore state to moveable at the end of each tick.
 
+import com.badlogic.gdx.Gdx;
+
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class OreRealm {
@@ -48,6 +51,10 @@ public class OreRealm {
         }
     }
 
+    public void depopulate() {
+        stackOfOre.clear();
+    }
+
     public void takeOre(Ore ore) {
         if (!removalStack.contains(ore)) {
             removalStack.add(ore);
@@ -66,6 +73,29 @@ public class OreRealm {
         }
     }
 
+    public boolean containsOre(String ID) {
+        for (Ore ore : activeOre) {
+            if (ore.getID().equals(ID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    Could Implement caching for this so We dont recalculate it all the time.
+    public int getOreCount(String ID) {
+//        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+//        stopwatch.start();
+        int count = 0;
+        for (Ore ore : activeOre) {
+            if (ore.getID().equals(ID)) {
+                count++;
+            }
+        }
+//        Gdx.app.log("ORE REALM", stopwatch.toString());
+        return count;
+    }
+
     public ArrayList<Ore> getActiveOre() {
         return activeOre;
     }
@@ -76,6 +106,13 @@ public class OreRealm {
 
     public Stack<Ore> getStackOfOre() {
         return stackOfOre;
+    }
+
+    public void resetAllOre() {
+        for (Ore ore : activeOre) {
+            takeOre(ore);
+        }
+        updateActiveOre();
     }
 
     public String toString() {

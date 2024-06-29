@@ -32,7 +32,7 @@ public class BasicUpgrade implements UpgradeStrategy {
             modifier = 1;
         }
         valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));
-        numericOperator = NumericOperator.valueOf(jsonValue.getString("operation"));
+        numericOperator = NumericOperator.valueOf(jsonValue.getString("operator"));
         upgradeFunction = configureUpgradeFunction();
     }
 
@@ -56,7 +56,7 @@ public class BasicUpgrade implements UpgradeStrategy {
             case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
             case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
             case SPEED_SCALAR -> (Ore ore) -> ore.setSpeedScalar((float) numericOperator.apply(ore.getSpeedScalar(), modifier));
-            case UPGRADE_COUNT, SPEED -> throw new IllegalArgumentException( valueToModify + " is not a valid value to Modify.");
+            case UPGRADE_COUNT, SPEED, RESET_COUNT-> throw new IllegalArgumentException( valueToModify + " is not a valid value to Modify.");
         };
     }
 
