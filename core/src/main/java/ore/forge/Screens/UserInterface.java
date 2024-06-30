@@ -110,8 +110,7 @@ public class UserInterface {
         handler.setShopMenu(shopWidget);
 
         oreInfo = new Label("", fpsStyle);
-        oreInfo.setPosition(Gdx.graphics.getWidth() / 30f, Gdx.graphics.getHeight() * .87f);
-
+        oreInfo.setPosition(Gdx.graphics.getWidth() * .85f, Gdx.graphics.getHeight() * .93f);
 
 //        do {
 //            stopwatch.restart();

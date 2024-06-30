@@ -291,11 +291,11 @@ public abstract class Item {
         return blockConfig;
     }
 
-    public float getWidth() {
+    public int getWidth() {
         return numberConfig.length; //Returns original width.
     }
 
-    public float getHeight() {
+    public int getHeight() {
         return numberConfig[0].length; //returns original height.
     }
 

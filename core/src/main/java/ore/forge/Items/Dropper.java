@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 //@author Nathan Ulmen
 public class Dropper extends Item {
     protected final float ejectionSpeed = 6f;
-    private final DropStrategy strategy = new BurstDrop(30,1);
+    private final DropStrategy strategy = new BurstDrop(450,3);
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
@@ -88,9 +88,9 @@ public class Dropper extends Item {
         if (strategy.drop(deltaTime)) {
             dropOre();
         }
-        if (stopwatch.getTimeStamp() == 60) {
-            Gdx.app.log("ORE PER MINUTE", "Total Ore Dropped " + totalOreDropped + "\tTimer:" + stopwatch);
-        }
+//        if (stopwatch.getTimeStamp() == 60) {
+//            Gdx.app.log("ORE PER MINUTE", "Total Ore Dropped " + totalOreDropped + "\tTimer:" + stopwatch);
+//        }
     }
 
     private void dropOre() {

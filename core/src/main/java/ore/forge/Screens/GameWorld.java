@@ -1,11 +1,13 @@
 package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -32,6 +34,7 @@ public class GameWorld extends CustomScreen {
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+    private float timeScalar;
 
 
     private final UserInterface userInterface;
@@ -92,10 +95,12 @@ public class GameWorld extends CustomScreen {
 
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
+        timeScalar = 1f;
     }
 
     @Override
     public void render(float delta) {
+        delta *= timeScalar();
         stopwatch.restart();
 //        updateMouse
 //        inputHandler.updateMouse(camera);
@@ -191,53 +196,50 @@ public class GameWorld extends CustomScreen {
 
 
     private void drawHeldItem() {
-//        if (inputHandler.isBuilding()) {
-//            batch.setColor(.2f, 1, .2f, .6f);
-//            batch.draw(inputHandler.getHeldItem().getTexture(),
-//                (int) (inputHandler.mouseWorld.x),
-//                (int) (inputHandler.mouseWorld.y),
-////                    inputHandler.mouseWorld.x,
-////                    inputHandler.mouseWorld.y,
-////                    MathUtils.round(inputHandler.mouseWorld.x/ 1.5f) * 1.5f,
-////                    MathUtils.round(inputHandler.mouseWorld.y / 1.5f) * 1.5f,
-//                (inputHandler.getHeldItem().getWidth() / 2f),
-//                (inputHandler.getHeldItem().getHeight() / 2f),
-//                inputHandler.getHeldItem().getWidth(),
-//                inputHandler.getHeldItem().getHeight(),
-//                1,
-//                1,
-//                inputHandler.getHeldItem().getDirection().getAngle(),
-//                0,
-//                0,
-//                inputHandler.getHeldItem().getTexture().getWidth(),
-//                inputHandler.getHeldItem().getTexture().getHeight(),
-//                false,
-//                false);
-//            batch.setColor(1, 1, 1, 1f);
-//        }
-//
         if (inputHandler.getCurrentMode() instanceof BuildMode mode) {
             var selectedItem = mode.getHeldItem();
             batch.setColor(.2f, 1, .2f, .6f);
+            if (selectedItem.getDirection() == Direction.NORTH || selectedItem.getDirection() == Direction.SOUTH) {
+                batch.draw(selectedItem.getTexture(),
+                    MathUtils.floor(inputHandler.mouseWorld.x) - xOffset(selectedItem.getWidth(), selectedItem.getHeight()),
+                    MathUtils.floor(inputHandler.mouseWorld.y) - yOffset(selectedItem.getWidth(), selectedItem.getHeight()),
+//                    selectedItem.getWidth() != selectedItem.getHeight() ? MathUtils.floor(inputHandler.mouseWorld.x) -1f : MathUtils.floor(inputHandler.mouseWorld.x),
+//                    selectedItem.getWidth() != selectedItem.getHeight() ? MathUtils.floor(inputHandler.mouseWorld.y) +1f : MathUtils.floor(inputHandler.mouseWorld.y),
+                    (selectedItem.getWidth() / 2f),
+                    (selectedItem.getHeight() / 2f),
+                    selectedItem.getWidth(),
+                    selectedItem.getHeight(),
+                    1,
+                    1,
+                    selectedItem.getDirection().getAngle(),
+                    0,
+                    0,
+                    selectedItem.getTexture().getWidth(),
+                    selectedItem.getTexture().getHeight(),
+                    false,
+                    false
+                );
+            } else {
+                batch.draw(selectedItem.getTexture(),
+                    MathUtils.floor(inputHandler.mouseWorld.x),
+                    MathUtils.floor(inputHandler.mouseWorld.y),
+                    (selectedItem.getWidth() / 2f),
+                    (selectedItem.getHeight() / 2f),
+                    selectedItem.getWidth(),
+                    selectedItem.getHeight(),
+                    1,
+                    1,
+                    selectedItem.getDirection().getAngle(),
+                    0,
+                    0,
+                    selectedItem.getTexture().getWidth(),
+                    selectedItem.getTexture().getHeight(),
+                    false,
+                    false
+                );
+            }
 
 
-            batch.draw(selectedItem.getTexture(),
-                (int) inputHandler.mouseWorld.x,
-                (int) inputHandler.mouseWorld.y,
-                (selectedItem.getWidth() / 2f),
-                (selectedItem.getHeight() / 2f),
-                selectedItem.getWidth(),
-                selectedItem.getHeight(),
-                1,
-                1,
-                selectedItem.getDirection().getAngle(),
-                0,
-                0,
-                selectedItem.getTexture().getWidth(),
-                selectedItem.getTexture().getHeight(),
-                false,
-                false
-            );
             batch.setColor(1, 1, 1, 1f);
         }
     }
@@ -314,37 +316,110 @@ public class GameWorld extends CustomScreen {
         avg /= frameTimes.size();
         frameTimes.clear();
         avg = TimeUnit.MICROSECONDS.convert(avg, TimeUnit.NANOSECONDS);
-        biggest = TimeUnit.MICROSECONDS.convert(biggest,TimeUnit.NANOSECONDS);
+        biggest = TimeUnit.MICROSECONDS.convert(biggest, TimeUnit.NANOSECONDS);
         Gdx.app.log("GAME WORLD", "Average Frame Time: " + avg);
         Gdx.app.log("GAME WORLD", "Max Frame Time: " + biggest);
     }
 
     private void drawPlacedItems(float deltaTime) {
         //TODO: Only Draw what camera can see.
-        //Solution to not drawing rectangular sprites correctly is the use Math.floor or Math.Round.
+        //Use math.floor or math.round to fix drawing items.
         for (Item item : itemMap.getPlacedItems()) {
             if (item instanceof Dropper) {
                 ((Dropper) item).update(deltaTime);
             } else if (item instanceof Conveyor) {
                 ((Conveyor) item).update();//Might use this.
             }
-            batch.draw(item.getTexture(),
-                item.getVector2().x,
-                item.getVector2().y,
-                (float) (item.getWidth() / 2f),
-                (float) (item.getHeight() / 2f),
-                item.getWidth(),
-                item.getHeight(),
-                1,
-                1,
-                item.getDirection().getAngle(),
-                0,
-                0,
-                item.getTexture().getWidth(),
-                item.getTexture().getHeight(),
-                false,
-                false);
+
+            float x = item.getVector2().x;
+            float y = item.getVector2().y;
+//            batch.draw(item.getTexture(),
+//                item.getVector2().x,
+//                item.getVector2().y,
+//                (float) (item.getWidth() / 2f),
+//                (float) (item.getHeight() / 2f),
+//                item.getWidth(),
+//                item.getHeight(),
+//                1,
+//                1,
+//                item.getDirection().getAngle(),
+//                0,
+//                0,
+//                item.getTexture().getWidth(),
+//                item.getTexture().getHeight(),
+//                false,
+//                false);
+
+            if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
+                batch.draw(item.getTexture(),
+                    MathUtils.floor(item.getVector2().x) - xOffset(item.getWidth(), item.getHeight()),
+                    MathUtils.floor(item.getVector2().y) - yOffset(item.getWidth(), item.getHeight()),
+//                    item.getWidth() != item.getHeight() ? MathUtils.floor(item.getVector2().x) +1f : MathUtils.floor(item.getVector2().x),
+//                    item.getWidth() != item.getHeight() ? MathUtils.floor(item.getVector2().y) -1f : MathUtils.floor(item.getVector2().y),
+                    (item.getWidth() / 2f),
+                    (item.getHeight() / 2f),
+                    item.getWidth(),
+                    item.getHeight(),
+                    1,
+                    1,
+                    item.getDirection().getAngle(),
+                    0,
+                    0,
+                    item.getTexture().getWidth(),
+                    item.getTexture().getHeight(),
+                    false,
+                    false
+                );
+            } else {
+                batch.draw(item.getTexture(),
+                    MathUtils.floor(item.getVector2().x),
+                    MathUtils.floor(item.getVector2().y),
+                    (item.getWidth() / 2f),
+                    (item.getHeight() / 2f),
+                    item.getWidth(),
+                    item.getHeight(),
+                    1,
+                    1,
+                    item.getDirection().getAngle(),
+                    0,
+                    0,
+                    item.getTexture().getWidth(),
+                    item.getTexture().getHeight(),
+                    false,
+                    false
+                );
+            }
         }
+    }
+
+    private float timeScalar() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            timeScalar -= 0.2f;
+            if (timeScalar < 0.2) {
+                timeScalar = 0.2f;
+            }
+            Gdx.app.log("GAME WORLD", "Set Time Scalar to: " + timeScalar);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            timeScalar += 0.2f;
+            if (timeScalar > 3f) {
+                timeScalar = 3f;
+            }
+            Gdx.app.log("GAME WORLD", "Set Time Scalar to: " + timeScalar);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            timeScalar = 1f;
+        }
+
+        return timeScalar;
+    }
+
+    private float xOffset(int width, int height) {
+        return (((width * 0.5f) - 2) + ((height * -0.5f) + 2));
+    }
+
+    private float yOffset(int width, int height) {
+        return (((width * -0.5f) + 2) + ((height * 0.5f) - 2));
     }
 
 

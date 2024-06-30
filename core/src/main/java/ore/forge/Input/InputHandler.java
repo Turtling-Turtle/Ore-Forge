@@ -2,6 +2,7 @@ package ore.forge.Input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ItemMap;
 import ore.forge.Items.Item;
@@ -62,6 +63,8 @@ public class InputHandler {
         mouseScreen.x = Gdx.input.getX();
         mouseScreen.y = Gdx.input.getY();
         mouseWorld.set(camera.unproject(mouseScreen));
+//        mouseWorld.x = MathUtils.floor(mouseWorld.x);
+//        mouseWorld.y = MathUtils.floor(mouseWorld.y);
     }
 
     public void setCurrentMode(InputMode newMode) {
