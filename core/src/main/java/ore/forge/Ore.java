@@ -1,8 +1,5 @@
 package ore.forge;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Expressions.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
@@ -12,7 +9,6 @@ import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -23,22 +19,18 @@ public class Ore {
     //Ore can be classified by name, id, type. Ores can have multiple types.
     protected static ItemMap itemMap = ItemMap.getSingleton();
     protected static OreRealm oreRealm = OreRealm.getSingleton();
-    private final BitSet history;
     private final HashMap<String, UpgradeTag> tagMap;
     private final Vector2 position, destination;
-    private Texture texture;
     private final ArrayList<OreEffect> effects;
     private final Stack<OreEffect> removalStack;
     private final ArrayList<ObserverOreEffect> observerEffects;
     private String oreName, id;
     private double oreValue;
-    private int upgradeCount, multiOre, oreHistory;
+    private int upgradeCount, multiOre;
     private float oreTemperature;
     private float moveSpeed, speedScalar;
     private Direction direction;
     private boolean isDoomed;
-    private final float updateInterval; //Interval for how often effects are updated.
-    private float current;
     private float deltaTime;
     private boolean isActive;
     private int resetCount;
@@ -59,20 +51,15 @@ public class Ore {
         tagMap = new HashMap<>();
         position = new Vector2();
         destination = new Vector2();
-//        texture = new Texture(Gdx.files.internal("Ruby2.png"));
         direction = Direction.NORTH;
         effects = new ArrayList<>();
         removalStack = new Stack<>();
-        history = new BitSet();
         observerEffects = new ArrayList<>();
         this.resetCount = 0;
-        updateInterval = 0f;//effects are updated 100 times every second.
     }
 
     public void act(float deltaTime) {
         this.deltaTime = deltaTime;
-//        frostbiteEffect.update(deltaTime);
-        current += deltaTime;
         if (!effects.isEmpty()) {
             updateEffects(deltaTime);
         }
@@ -81,32 +68,18 @@ public class Ore {
         } else {
             activateBlock();
         }
-//        frostbiteEffect.setPosition(position.x,position.y);
         //End Step effects like invincibility;
-        if (!effects.isEmpty()) {
-            updateEndStepEffects(deltaTime);
-            current = 0f;
-        }
         if (this.isDoomed()) {
+            //notify listeners that this ore is doomed so that it can be saved.
             oreRealm.takeOre(this);
         }
     }
 
     private void updateEffects(float deltaTime) {
         for (OreEffect effect : effects) {
-            if (!effect.isEndStepEffect()) {
-                effect.activate(deltaTime, this);
-            }
+            effect.activate(deltaTime, this);
         }
         removeOldEffects();
-    }
-
-    private void updateEndStepEffects(float deltaTime) {
-        for (OreEffect effect : effects) {
-            if (effect.isEndStepEffect()) {
-                effect.activate(deltaTime, this);
-            }
-        }
     }
 
     private void removeOldEffects() {
@@ -157,9 +130,8 @@ public class Ore {
     }
 
     public void activateBlock() {
-//        Gdx.app.log("Ore" , this.toString());
-        if ((itemMap.getBlock((int) position.x, (int) position.y) instanceof Worker)) {
-            ((Worker) itemMap.getBlock(position)).handle(this);
+        if ((itemMap.getBlock(position) instanceof Worker worker)) {
+            worker.handle(this);
         } else {
             setIsDoomed(true);
         }
@@ -230,7 +202,6 @@ public class Ore {
         effects.clear();
         removalStack.clear();
         isDoomed = false;
-        current = 0f;
         isActive = false;
         this.resetCount = 0;
         resetAllTags();
@@ -293,10 +264,6 @@ public class Ore {
     public Ore setVector(Vector2 vector) {
         this.position.set(vector);
         return this;
-    }
-
-    public Texture getTexture() {
-        return texture;
     }
 
     public boolean isDoomed() {
@@ -370,14 +337,6 @@ public class Ore {
 
     public void setMultiOre(int newMultiOre) {
         this.multiOre = newMultiOre;
-    }
-
-    public int getOreHistory() {
-        return oreHistory;
-    }
-
-    public void setOreHistory(int oreHistory) {
-        this.oreHistory = oreHistory;
     }
 
     public void setUpgradeCount(int upgradeCount) {

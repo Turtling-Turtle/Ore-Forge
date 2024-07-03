@@ -42,10 +42,6 @@ public class Burning implements OreEffect {
         return new Burning(this);
     }
 
-    @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
 
     @Override
     public String toString() {

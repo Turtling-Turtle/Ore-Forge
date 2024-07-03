@@ -77,40 +77,106 @@ public abstract class Item {
 //        isPrestigeProof = jsonValue.getBoolean("isPrestigeProof");
 
         try {
-            var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
-            this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
-            isShopItem = jsonValue.getBoolean("isShopItem");
-            if (!isShopItem) {
-                itemValue = 0;
-                currencyBoughtWith = Currency.NONE;
-            } else {
-                currencyBoughtWith = Currency.valueOf(jsonValue.getString("currencyBoughtWith"));
-                itemValue = jsonValue.getDouble("itemValue");
-            }
-
-            canBeSold = jsonValue.getBoolean("canBeSold");
-
-            if (canBeSold) {
-                sellPrice = jsonValue.getDouble("sellPrice");
-            } else {
-                sellPrice = 0;
-            }
-
-
-            unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
-            if (unlockMethod == UnlockMethod.NONE) {
-                isUnlocked = true;
-                unlockRequirements = 0;
-            } else if (unlockMethod == UnlockMethod.QUEST) {
-                unlockRequirements = 0;
-                isUnlocked = false;
-            } else {
-                unlockRequirements = jsonValue.getDouble("unlockRequirements");
-                isUnlocked = false;
+            switch (tier) {
+                case PINNACLE -> {
+                    rarity = -1;
+                    unlockMethod = UnlockMethod.QUEST;
+                    unlockRequirements = -1;
+                    currencyBoughtWith = Currency.NONE;
+                    canBeSold = false;
+                    itemValue = -1;
+                    sellPrice = -1;
+                    isPrestigeProof = true;
+                }
+                case EXOTIC -> {
+                    rarity = -1;
+                    unlockMethod = UnlockMethod.QUEST;
+                    currencyBoughtWith = Currency.SPECIAL_POINTS;
+                    canBeSold = false;
+                    itemValue = jsonValue.getDouble("itemValue");
+                    sellPrice = jsonValue.getDouble("sellPrice"); // Should just be -1?
+                    isPrestigeProof = true;
+                }
+                case PRESTIGE -> {
+                    rarity = jsonValue.getFloat("rarity");
+                    unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
+                    assert unlockMethod == UnlockMethod.QUEST || unlockMethod == UnlockMethod.PRESTIGE_LEVEL;
+                    if (unlockMethod == UnlockMethod.PRESTIGE_LEVEL) {
+                        unlockRequirements = jsonValue.getDouble("unlockRequirement");
+                    } else {
+                        unlockRequirements = -1;
+                    }
+                    currencyBoughtWith = Currency.PRESTIGE_POINTS;
+                    canBeSold = true;
+                    itemValue = jsonValue.getDouble("itemValue");
+                    sellPrice = jsonValue.getDouble("sellPrice");
+                    isPrestigeProof = true;
+                }
+                case SPECIAL -> {
+                    rarity = -1;
+                    unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
+                    switch (unlockMethod) {
+                        case SPECIAL_POINTS, PRESTIGE_LEVEL -> unlockRequirements = jsonValue.getDouble("unlockRequirement");
+                        case QUEST , NONE-> unlockRequirements = -1;
+                    }
+                    currencyBoughtWith = Currency.SPECIAL_POINTS;
+                    canBeSold = true;
+                    itemValue = jsonValue.getDouble("itemValue");
+                    sellPrice = jsonValue.getDouble("sellPrice");
+                    isPrestigeProof = true;
+                }
+                case EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON -> {
+                    rarity = -1;
+                    unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
+                    assert unlockMethod == UnlockMethod.NONE || unlockMethod == UnlockMethod.QUEST;
+                    unlockRequirements = -1;
+                    currencyBoughtWith = Currency.CASH;
+                    canBeSold = true;
+                    itemValue = jsonValue.getDouble("itemValue");
+                    sellPrice = jsonValue.getDouble("sellPrice");
+                    isPrestigeProof = false;
+                }
             }
         } catch (Exception e) {
-            Gdx.app.log("ITEM", Color.highlightString("Error Occurred while Loading Acquisition Info.", Color.YELLOW));
+            Gdx.app.log("Item", Color.highlightString( "Error Occurred While Loading Acquisition " +  name + "s' Info: " + e, Color.YELLOW));
         }
+
+//
+//        try {
+//            var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
+//            this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
+//            isShopItem = jsonValue.getBoolean("isShopItem");
+//            if (!isShopItem) {
+//                itemValue = 0;
+//                currencyBoughtWith = Currency.NONE;
+//            } else {
+//                currencyBoughtWith = Currency.valueOf(jsonValue.getString("currencyBoughtWith"));
+//                itemValue = jsonValue.getDouble("itemValue");
+//            }
+//
+//            canBeSold = jsonValue.getBoolean("canBeSold");
+//
+//            if (canBeSold) {
+//                sellPrice = jsonValue.getDouble("sellPrice");
+//            } else {
+//                sellPrice = 0;
+//            }
+//
+//
+//            unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
+//            if (unlockMethod == UnlockMethod.NONE) {
+//                isUnlocked = true;
+//                unlockRequirements = 0;
+//            } else if (unlockMethod == UnlockMethod.QUEST) {
+//                unlockRequirements = 0;
+//                isUnlocked = false;
+//            } else {
+//                unlockRequirements = jsonValue.getDouble("unlockRequirements");
+//                isUnlocked = false;
+//            }
+//        } catch (Exception e) {
+//            Gdx.app.log("ITEM", Color.highlightString("Error Occurred while Loading Acquisition Info.", Color.YELLOW));
+//        }
 
 
     }
@@ -365,6 +431,14 @@ public abstract class Item {
 
     public Currency getCurrencyBoughtWith() {
         return currencyBoughtWith;
+    }
+
+    public UnlockMethod getUnlockMethod() {
+        return unlockMethod;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
     }
 
     @SuppressWarnings("unchecked")

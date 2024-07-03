@@ -32,7 +32,7 @@ public class FurnaceBlock extends Block implements Worker{
     public void handle(Ore ore) {
         upgrade.applyTo(ore);
         player.addToWallet(ore.getOreValue() * ore.getMultiOre());
-        eventManager.notifyListeners(new OreSoldEvent(ore));
+        eventManager.notifyListeners(new OreSoldEvent(ore, (Furnace) this.getParentItem()));
 //        Gdx.app.log("Sold For:", String.valueOf(ore.getOreValue() * ore.getMultiOre()));
         calculateSpecialReward(ore);
         oreRealm.takeOre(ore);

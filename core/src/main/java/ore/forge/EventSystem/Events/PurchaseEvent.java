@@ -1,9 +1,11 @@
 package ore.forge.EventSystem.Events;
 
+import ore.forge.Currency;
 import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
+import ore.forge.Items.Item;
 
-public record PrestigeEvent(Object object) implements Event{
+public record PurchaseEvent(Item item, Currency currency, int amountPurchased) implements Event {
 
     @Override
     public EventType getType() {
@@ -12,7 +14,7 @@ public record PrestigeEvent(Object object) implements Event{
 
     @Override
     public String getBriefInfo() {
-        return "";
+        return "Purchased " + amountPurchased + " " + item.getName() + " for " + (item.getItemValue() * amountPurchased) + " " + currency;
     }
 
     @Override
@@ -22,11 +24,11 @@ public record PrestigeEvent(Object object) implements Event{
 
     @Override
     public String eventName() {
-        return "Prestige";
+        return "Purchase Event";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.PALE_VIOLET_RED;
+        return FontColors.SEA_GREEN;
     }
 }

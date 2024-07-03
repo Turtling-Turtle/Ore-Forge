@@ -12,7 +12,7 @@ public class UnlockReward implements Reward{
     }
 
     public UnlockReward(JsonValue jsonValue) {
-        this.unlockedItemID = jsonValue.getString("id");
+        this.unlockedItemID = jsonValue.getString("rewardID");
     }
 
     @Override

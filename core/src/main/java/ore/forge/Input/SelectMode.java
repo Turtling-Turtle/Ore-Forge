@@ -5,10 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import ore.forge.ItemMap;
 import ore.forge.Items.Item;
+import ore.forge.Player.Player;
 
 
 public class SelectMode extends InputMode {
     protected static final ItemMap itemMap = ItemMap.getSingleton();
+    private final Player player = Player.getSingleton();
     private Item selectedItem;
 
     @Override
@@ -54,10 +56,19 @@ public class SelectMode extends InputMode {
             //Change to BuildMode
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            player.purchaseItem(selectedItem);
             //Handle logic for purchasing a copy of an item.
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
             selectedItem.removeItem();
+            var node = player.getInventory().getNode(selectedItem.getID());
+            node.sellFromBase();
+            switch (selectedItem.getCurrencyBoughtWith()) {
+                case PRESTIGE_POINTS -> player.setPrestigeCurrency((int) (player.getPrestigeCurrency() + selectedItem.getSellPrice()));
+                case SPECIAL_POINTS -> player.setSpecialPoints((long) (player.getSpecialPoints() + selectedItem.getSellPrice()));
+                case CASH -> player.setWallet(player.getWallet() + selectedItem.getSellPrice());
+            }
+            handler.setCurrentMode(handler.getObserverMode());
             //Handle Logic for selling the item.
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {

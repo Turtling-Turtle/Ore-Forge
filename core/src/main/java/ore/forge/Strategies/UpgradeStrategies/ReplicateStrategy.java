@@ -57,8 +57,4 @@ public class ReplicateStrategy implements OreEffect, UpgradeStrategy {
     }
 
 
-    @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
 }

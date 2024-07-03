@@ -1,0 +1,39 @@
+[
+{
+  "id": "Test Quest 1234",
+  "name": "Test Quest",
+  "description": "A quest to test event Manager.",
+  "state": "IN_PROGRESS",
+  "steps": [
+    {
+      "stepName": "First Step",
+      "stepDescription": "Have 100 or more Ore active on your base at once.",
+      "questConditions": [
+        {
+          "condition": "ACTIVE_ORE >= 100",
+          "eventType": "ORE_DROPPED_EVENT",
+          "state": "IN_PROGRESS"
+        }
+      ],
+      "state": "IN_PROGRESS"
+    },
+    {
+      "stepName": "Second Step",
+      "stepDescription": "Have a median ore value of 10 or greater.",
+      "questConditions": [
+        {
+          "condition": "MEDIAN_ORE_VALUE >= 10",
+          "eventType": "ORE_DROPPED_EVENT",
+          "state": "LOCKED"
+        }
+      ],
+      "state": "LOCKED",
+      "reward": {
+        "rewardType": "ore.forge.QuestComponents.Rewards.ItemReward",
+        "rewardID": "831-hUrLWgPv",
+        "rewardCount": 2
+      }
+    }
+  ]
+}
+]

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.*;
+import ore.forge.EventSystem.EventManager;
 import ore.forge.Input.InputHandler;
 import ore.forge.Input.OreObserver;
 import ore.forge.Player.Inventory;
@@ -70,7 +71,7 @@ public class UserInterface {
         camera.setToOrtho(false);
         Viewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 
-        BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        BitmapFont font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
         Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 
         fpsCounter = new Label("", fpsStyle);
@@ -112,6 +113,10 @@ public class UserInterface {
         oreInfo = new Label("", fpsStyle);
         oreInfo.setPosition(Gdx.graphics.getWidth() * .85f, Gdx.graphics.getHeight() * .93f);
 
+
+        EventLogger eventLogger = new EventLogger();
+        eventLogger.setPosition(Gdx.graphics.getWidth() * 0.01f, Gdx.graphics.getHeight() * .01f);
+        EventManager.getSingleton().setEventLogger(eventLogger);
 //        do {
 //            stopwatch.restart();
 //                player.getInventory().sortByStored();
@@ -142,6 +147,7 @@ public class UserInterface {
 
         shopWidget.setPosition(0, Gdx.graphics.getHeight() * .4f);
         shopWidget.setVisible(false);
+        stage.addActor(eventLogger);
         stage.addActor(oreInfo);
         stage.addActor(shopWidget);
         stage.addActor(inventoryWidget);

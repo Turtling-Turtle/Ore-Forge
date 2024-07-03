@@ -17,7 +17,8 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
 
     public QuestManager() {
         JsonReader reader = new JsonReader();
-        JsonValue allQuestData = reader.parse(Gdx.files.internal("quests.json"));
+        JsonValue allQuestData = reader.parse(Gdx.files.local("Player/Quests.json"));
+        allQuests = new HashMap<>();
 
         for (JsonValue questData : allQuestData) {
             Quest quest = new Quest(questData);

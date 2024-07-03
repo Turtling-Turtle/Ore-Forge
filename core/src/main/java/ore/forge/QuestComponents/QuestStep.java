@@ -2,19 +2,22 @@ package ore.forge.QuestComponents;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
 import ore.forge.QuestComponents.Rewards.Reward;
+import ore.forge.Strategies.StrategyInitializer;
 
 //A QuestStep holds a reward, and an array of conditions.
 //The QuestStep is only complete
-public class QuestStep {
+public class QuestStep implements StrategyInitializer<Reward> {
     private final EventManager eventManager = EventManager.getSingleton();
     private Quest parent;
-    private final String stepDescription;
+    private final String stepDescription, stepName;
     private final QuestCondition[] conditionArray;
     private Reward reward;
     private QuestState state;
 
-    public QuestStep(String stepDescription, QuestCondition... questCondition) {
+    public QuestStep(String stepDescription, String stepName, QuestCondition... questCondition) {
+        this.stepName = stepName;
         this.stepDescription = stepDescription;
         this.conditionArray = new QuestCondition[questCondition.length];
         System.arraycopy(questCondition, 0, conditionArray, 0, questCondition.length);
@@ -22,12 +25,16 @@ public class QuestStep {
 
     public QuestStep(Quest parent, JsonValue jsonValue) {
         this.parent = parent;
-        this.stepDescription = jsonValue.getString("description");
-        conditionArray = new QuestCondition[jsonValue.get("condition").size];
-        for (int i = 0; i < jsonValue.size; i++) {
-            conditionArray[i] = new QuestCondition(this, jsonValue.get("condition").get(i));
+        this.stepName = jsonValue.getString("stepName");
+        this.stepDescription = jsonValue.getString("stepDescription");
+        conditionArray = new QuestCondition[jsonValue.get("questConditions").size];
+        var questConditions = jsonValue.get("questConditions");
+        for (int i = 0; i < conditionArray.length; i++) {
+            conditionArray[i] = new QuestCondition(this, questConditions.get(i));
         }
+
         this.state = QuestState.valueOf(jsonValue.getString("state"));
+        reward = createOrNull(jsonValue.get("reward"), "rewardType");
     }
 
     public void registerConditions() {
@@ -45,8 +52,8 @@ public class QuestStep {
     }
 
     /*
-    * Whenever a QuestCondition is completed this
-    * */
+     * Whenever a QuestCondition is completed this
+     * */
     public void checkState() {
         for (QuestCondition questCondition : conditionArray) {
             if (questCondition.getState() != QuestState.COMPLETED) {
@@ -54,12 +61,17 @@ public class QuestStep {
             }
         }
         this.state = QuestState.COMPLETED;
+        eventManager.notifyListeners(new QuestStepCompletedEvent(this));
         grantReward();
         parent.checkForCompletion();
     }
 
     public QuestState getState() {
         return this.state;
+    }
+
+    public String getStepName() {
+        return stepName;
     }
 
     public boolean isCompleted() {

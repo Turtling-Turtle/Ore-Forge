@@ -10,11 +10,30 @@
     - Ore that replicated has its Value increased by 1.07x
     - Drops Ore in bursts of 3. Produces 450 per minute.
 
+**The Prancing Stallion** 
+    
+    - Prestige Item that is incredibly Rare (0.1?). Will have special/unique purchase and sell values.
+    - Procues 950 ore per minute, the same as LaFerraris horse power.
+    - Ore is worth an incredible ammount.
+    - MAYBE have a tie into perstige cause the car is prestigous. Ore_Value = (Base Ore Value * 1 + (PRESTIGE_LEVEL*1.02) 
+        -The value of ore is influenced by your prestige level???
+    - MAYBE have it drop ore that looks like a horse.
+    -
 **Utility Dropper**
 
     Effects:
     - Every X Seconds Activates all activateable Items on your base.
     
+
+**Saryn Upgrader**
+
+    Effects:
+    - Upgraded Ore has the SPORES?? effect applied to it. 
+    - SPORES?? effect activates every 3 seconds.
+    - On activation spores increase value of all "infected" by the following each tick: 1+ (0.02 * #OF Infected ORE)
+    - Spores last for 12 seconds.
+
+
 
 ## Generic Droppers
 **Simple yet potent/useful droppers**
@@ -43,7 +62,6 @@
     - Produces ore which have a MultiOre Value of 2
 
     
-
 
 # Furnaces:
 

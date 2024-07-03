@@ -51,8 +51,4 @@ public class ObserverOreEffect implements OreEffect , StrategyInitializer<Upgrad
         return new ObserverOreEffect(this);
     }
 
-    @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
 }

@@ -4,7 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import ore.forge.*;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.FailedPurchaseEvent;
+import ore.forge.EventSystem.Events.PurchaseEvent;
 import ore.forge.Expressions.Function;
+import ore.forge.Items.Item;
 
 //@author Nathan Ulmen
 public class Player {
@@ -99,6 +103,28 @@ public class Player {
         inventory = new Inventory(itemManager);
     }
 
+    public void purchaseItem(Item itemToPurchase) {
+        double playerCurrency = switch (itemToPurchase.getCurrencyBoughtWith()) {
+            case CASH -> getWallet();
+            case SPECIAL_POINTS -> getSpecialPoints();
+            case PRESTIGE_POINTS -> getPrestigeCurrency();
+            case NONE ->
+                throw new IllegalStateException("Unexpected Currency: " + itemToPurchase.getCurrencyBoughtWith());
+        };
+
+        if (playerCurrency >= itemToPurchase.getItemValue()) {
+            inventory.getNode(itemToPurchase.getID()).addNew();
+            switch (itemToPurchase.getCurrencyBoughtWith()) {
+                case CASH -> setWallet(playerCurrency - itemToPurchase.getItemValue());
+                case SPECIAL_POINTS -> setSpecialPoints((long) (playerCurrency - itemToPurchase.getItemValue()));
+                case PRESTIGE_POINTS -> setPrestigeCurrency((int) (playerCurrency - itemToPurchase.getItemValue()));
+            }
+            EventManager.getSingleton().notifyListeners(new PurchaseEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), 1));
+        } else {
+            EventManager.getSingleton().notifyListeners(new FailedPurchaseEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), 1));
+        }
+    }
+
     public double getWallet() {
         return wallet;
     }
@@ -149,6 +175,7 @@ public class Player {
         }
         return playerInstance;
     }
+
 
     public void incrementTicks() {
         numberOfTicks++;

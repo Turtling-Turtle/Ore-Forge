@@ -63,11 +63,6 @@ public class UpgradeOreEffect implements OreEffect {
         return new UpgradeOreEffect(this);
     }
 
-    @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
-
     public String toString() {
         return "\n" +getClass().getSimpleName() + "\tInterval: " + interval +
             "\tDuration: " + duration + "\nUpgradeStrategy: " + strategy.toString();

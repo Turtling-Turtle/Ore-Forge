@@ -5,6 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import ore.forge.Color;
 import ore.forge.Constants;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.ObtainedEvent;
 import ore.forge.Items.Item;
 import ore.forge.ItemManager;
 import ore.forge.Stopwatch;
@@ -112,9 +114,12 @@ public class Inventory {
     }
 
     public void addItem(String itemID, int count) {
+
         for (InventoryNode node : inventoryNodes) {
             if (node.getHeldItemID().equals(itemID)) {
                 node.addNew(count);
+                EventManager.getSingleton().notifyListeners(new ObtainedEvent(node.getHeldItem(), count));
+                return;
             }
         }
     }

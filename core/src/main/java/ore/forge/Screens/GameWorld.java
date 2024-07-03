@@ -3,10 +3,12 @@ package ore.forge.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -35,6 +37,7 @@ public class GameWorld extends CustomScreen {
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private float timeScalar;
+    private ShaderProgram shader;
 
 
     private final UserInterface userInterface;
@@ -44,6 +47,7 @@ public class GameWorld extends CustomScreen {
 
     private final ParticleEffect burning = new ParticleEffect();
     private final ParticleEffect frostbite = new ParticleEffect();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
     public GameWorld(OreForge game, ItemManager itemManager) {
@@ -96,12 +100,30 @@ public class GameWorld extends CustomScreen {
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
         timeScalar = 1f;
+
+
+//        String vertexShader = Gdx.files.internal("default.vert").readString();
+//        String fragmentShader = Gdx.files.internal("conveyorTest.frag").readString();
+//        System.out.println(fragmentShader);
+//        shader = new ShaderProgram(vertexShader, fragmentShader);
+//        if (!shader.isCompiled()) {
+//            Gdx.app.error("Shader", "Shader compilation failed: " + shader.getLog());
+//            Gdx.app.exit();
+//        }
+
     }
 
     @Override
     public void render(float delta) {
-        delta *= timeScalar();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            delta *= timeScalar();
         stopwatch.restart();
+//        shader.bind();
+//        shader.setUniformf("speed",2f);
+//        shader.setUniformf("time", delta);
+//        shader.setUniformf("u_time", delta);
+//        shader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        batch.setShader(shader);
 //        updateMouse
 //        inputHandler.updateMouse(camera);
 
@@ -111,6 +133,7 @@ public class GameWorld extends CustomScreen {
         //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+//        executor.submit(() -> updateOre(finalDelta));
 
 
         //Draw game
@@ -119,14 +142,10 @@ public class GameWorld extends CustomScreen {
 //        batch.disableBlending();
 
         drawWorldTiles(camera); //Draw World Tiles.
-//        batch.enableBlending();
 
         drawBuildMode(); // Draw Build Mode Grid Lines.
 
         drawPlacedItems(delta); // Draw all placed Items.
-
-//        debugRenderer.render(physicsWorld, camera.combined);
-
 
         drawSelectedItem(); // If we are selecting an item then draw it.
 
@@ -141,6 +160,10 @@ public class GameWorld extends CustomScreen {
 
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
+
+        if (Gdx.graphics.getWidth() == 0 || Gdx.graphics.getHeight() == 0) {
+            return;
+        }
         userInterface.draw(delta);
 //        frameTimes.add(stopwatch.getTimeStamp());
 //        Gdx.app.log("Frame Time", stopwatch.toString());
@@ -254,18 +277,23 @@ public class GameWorld extends CustomScreen {
     }
 
     private void updateOre(float delta) {
-        oreRealm.getActiveOre().parallelStream().forEach(ore -> ore.act(delta));
+        oreRealm.getActiveOre().forEach(ore -> ore.act(delta));
+        synchronized (oreRealm.getActiveOre()) {
+            oreRealm.updateActiveOre();
+        }
     }
 
     private void drawActiveOre(float delta) {
+
         if (inputHandler.getCurrentMode() instanceof OreObserver mode) {
             batch.setColor(1, 1, 1, .5f);
         }
+
         for (Ore ore : oreRealm.getActiveOre()) {
             ore.act(delta);
-//            if (ore.isBurning()) {
-//                ore.getFrostbiteEffect().draw(batch);
-//            }
+        }
+
+        for (Ore ore : oreRealm.getActiveOre()) {
             batch.draw(oreTexture, ore.getVector().x, ore.getVector().y, 1f, 1f);
         }
         batch.setColor(1, 1, 1, 1f);
@@ -289,6 +317,11 @@ public class GameWorld extends CustomScreen {
         Gdx.input.setInputProcessor(userInterface.stage);
         game.memoryCounter.setPosition(camera.position.x, camera.position.y);
         stage.addActor(game.memoryCounter);
+    }
+
+    @Override
+    public void resume() {
+        Gdx.input.setInputProcessor(userInterface.stage);
     }
 
     private void drawWorldTiles(Camera camera) {
@@ -394,9 +427,9 @@ public class GameWorld extends CustomScreen {
 
     private float timeScalar() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            timeScalar -= 0.2f;
-            if (timeScalar < 0.2) {
-                timeScalar = 0.2f;
+            timeScalar -= 0.1f;
+            if (timeScalar < 0.1) {
+                timeScalar = 0.1f;
             }
             Gdx.app.log("GAME WORLD", "Set Time Scalar to: " + timeScalar);
         }

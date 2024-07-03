@@ -32,7 +32,7 @@ public class ConveyorBlock extends Block implements Worker {
 //                blockInFront.setFull(true);
 //            }
 //            this.setFull(false); //Set this block to empty because it has now moved the ore.\
-       } else {
+        } else {
             int x = (int) vector2.x;
             int y = (int) vector2.y;
             switch (direction) {
@@ -50,7 +50,7 @@ public class ConveyorBlock extends Block implements Worker {
                     break;
             }
 //            ore.setForce(force);
-            ore.setDestination(new Vector2(x,y), speed, direction);
+            ore.setDestination(new Vector2(x, y), speed, direction);
 //            ore.setDestination(blockInFront.getVector().x, blockInFront.getVector().y, speed, direction);
         }
     }

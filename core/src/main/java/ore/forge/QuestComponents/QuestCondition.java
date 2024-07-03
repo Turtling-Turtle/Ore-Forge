@@ -8,7 +8,7 @@ import ore.forge.EventSystem.Events.Event;
 import ore.forge.Expressions.Condition;
 import ore.forge.Ore;
 
-public class QuestCondition implements EventListener<Event<?>> {
+public class QuestCondition implements EventListener<Event> {
     private final EventManager eventManager = EventManager.getSingleton();
     private final QuestStep parent;
     private final Condition condition;
@@ -43,7 +43,7 @@ public class QuestCondition implements EventListener<Event<?>> {
     }
 
     public EventType getEventType() {
-        return null;
+        return eventType;
     }
 
     public String toString() {
@@ -51,12 +51,9 @@ public class QuestCondition implements EventListener<Event<?>> {
     }
 
     @Override
-    public void handle(Event<?> event) {
-        if (event.getSubject() instanceof Ore) {
-            checkCondition((Ore) event.getSubject());
-        } else {
-            checkCondition(null);
-        }
+    public void handle(Event event) {
+        //TODO
+        checkCondition(null);
     }
 }
 

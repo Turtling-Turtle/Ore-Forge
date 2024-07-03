@@ -15,7 +15,7 @@ public class Conveyor extends Item {
     private final float conveyorSpeed;
 
     //Used to create from scratch
-    public Conveyor(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, float speed){
+    public Conveyor(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, float speed) {
         super(name, description, blockLayout, tier, itemValue, rarity);
         conveyorSpeed = speed;
         initBlockConfiguration(blockLayout);
@@ -43,7 +43,7 @@ public class Conveyor extends Item {
     //Sets all blocks in item to not be full.
     public void update() {
         for (Block[] blocks : blockConfig) {
-            for (Block block: blocks) {
+            for (Block block : blocks) {
                 block.setFull(false);
             }
         }
@@ -55,12 +55,16 @@ public class Conveyor extends Item {
         for (int i = 0; i < numberConfig.length; i++) {
             for (int j = 0; j < numberConfig[0].length; j++) {
                 if (numberConfig[i][j] == 1) {
-                    this.blockConfig[i][j] =new ConveyorBlock(this, conveyorSpeed, direction);
+                    this.blockConfig[i][j] = new ConveyorBlock(this, conveyorSpeed, direction);
                 } else {
                     throw new IllegalArgumentException("Invalid Block Config Value For item Type: " + numberConfig[i][j]);
                 }
             }
         }
+    }
+
+    public float getConveyorSpeed() {
+        return conveyorSpeed;
     }
 
     @Override

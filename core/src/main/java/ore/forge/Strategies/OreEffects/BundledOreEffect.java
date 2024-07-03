@@ -38,11 +38,6 @@ public class BundledOreEffect implements OreEffect , StrategyInitializer<OreEffe
         return this;
     }
 
-    @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
-
     public OreEffect[] getStrategies() {
         return strategies;
     }

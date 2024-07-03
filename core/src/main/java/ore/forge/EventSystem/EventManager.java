@@ -1,10 +1,13 @@
 package ore.forge.EventSystem;
 
 
+import com.badlogic.gdx.Gdx;
 import ore.forge.EventSystem.Events.Event;
+import ore.forge.Screens.EventLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 //The Event Manager is responsible for publishing specific events to subscribers.
 //Subscribers will implement the EventListener Interface.
@@ -16,9 +19,13 @@ import java.util.HashMap;
 public class EventManager {
     private static EventManager eventManager = new EventManager();
     private final HashMap<EventType, ArrayList<EventListener>> subscribers;
+    private EventLogger eventLogger;
+    private final Stack<EventListener> removalStack, additionStack;
 
     private EventManager() {
         subscribers = new HashMap<>();
+        removalStack = new Stack<>();
+        additionStack = new Stack<>();
     }
 
     public static EventManager getSingleton() {
@@ -29,32 +36,58 @@ public class EventManager {
     }
 
     public void registerListener(EventType type, EventListener listener) {
+        Gdx.app.log("EventManager", "Registering listener: " + type + " " + listener);
         if (!subscribers.containsKey(type)) {
-            assert !subscribers.get(type).contains(listener);
+//            assert !subscribers.get(type).contains(listener);
             subscribers.put(type, new ArrayList<>());
             subscribers.get(type).add(listener);
+
         } else {
             subscribers.get(type).add(listener);
         }
     }
 
     public void unregisterListener(EventType type, EventListener listener) {
-        var listeners = subscribers.get(type);
-        if (listeners != null) {
-            listeners.remove(listener);
-            if (listeners.isEmpty()) {
-                subscribers.remove(type);
-            }
-        }
+//        Gdx.app.log("EventManager", "Unregistering listener: " + listener);
+//        var listeners = subscribers.get(type);
+//        if (listeners != null) {
+        removalStack.push(listener);
+//            listeners.remove(listener);
+//            if (listeners.isEmpty()) {
+//                subscribers.remove(type);
+//            }
+//        }
     }
 
     public void notifyListeners(Event event) {
-        ArrayList<EventListener> listeners = subscribers.get(event.getClass());
+        this.eventLogger.logEvent(event);
+        ArrayList<EventListener> listeners = subscribers.get(event.getType());
         if (listeners != null && !listeners.isEmpty()) {
-            for (var listener : listeners) {
-                listener.handle(event);
+            for (int i = 0; i < listeners.size(); i++) {
+                listeners.get(i).handle(event);
+            }
+
+        }
+
+        while (!additionStack.isEmpty()) {
+            var listener = additionStack.pop();
+        }
+
+        if (listeners == null) {
+            return;
+        }
+        while (!removalStack.isEmpty()) {
+            listeners.remove(removalStack.pop());
+            if (listeners.isEmpty()) {
+                subscribers.remove(event.getType());
             }
         }
+
+
+    }
+
+    public void setEventLogger(EventLogger eventLogger) {
+        this.eventLogger = eventLogger;
     }
 
 }

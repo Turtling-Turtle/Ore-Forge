@@ -46,11 +46,6 @@ public class FrostBite implements OreEffect {
     }
 
     @Override
-    public boolean isEndStepEffect() {
-        return false;
-    }
-
-    @Override
     public String toString() {
         return "FrostBite{" +
             "duration=" + currentDuration +

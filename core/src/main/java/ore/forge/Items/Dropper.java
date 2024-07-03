@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 //@author Nathan Ulmen
 public class Dropper extends Item {
     protected final float ejectionSpeed = 6f;
-    private final DropStrategy strategy = new BurstDrop(450,3);
+    private final DropStrategy strategy = new BurstDrop(720,1);
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;

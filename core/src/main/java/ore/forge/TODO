@@ -155,15 +155,27 @@ Rough Draft of JSON structure for a quest:
 10. Ability to lock your camera to and ore/highlight ore.
     1A. Make it so game smoothly transitions to the ore. *DONE*
     2A. Make cycling through ore start out slow then speed up the longer the button is held.
-    3A. Display Info about the highlighted ore.
+    3A. Display Info about the highlighted ore. **DONE**
 
     Search Feature? Filters?
 
-11. Effect System
-    * Will probably end up using shaders as they are done on the GPU rather than the CPU.
-    Effects will include:
-    Frostbite, Burning, more>
+11. Graphical Effects:
+    shaders for various ore effects like burning and frostbite and maybe some for upgrades.
+    Shaders for highlighting items or ore that you have highlighted.
+    Shader for buildMode grid lines.
+
+12. Event Logger. **DONE**
+    Event logger would log info like upgrade events, sell events, quest completion, time scale modifier,
+    item acquisition events, etc. **DONE**
+
+13. Trait System for Ore?
+    Trait/Characteristic - A String/Tag that is attached to an element. Other elements can use this to determine their behavior but the trait itself doesn't do anything. Traits can be added or removed.
+    Status Effect - A status effect is an affect that can be removed by another effect, and can be used to determine a behavior.
+    Aura/Intrinsic - Are intrinsic to an ore and cannot be removed. Its present for the lifetime of the ore.
 ------Game is "Finished" at this point. Everything after this point are bonus features-------
+
+
+
 
 Later Down the line:
 

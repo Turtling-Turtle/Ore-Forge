@@ -2,9 +2,9 @@ package ore.forge.EventSystem.Events;
 
 import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
+import ore.forge.QuestComponents.QuestStep;
 
-public record PrestigeEvent(Object object) implements Event{
-
+public record QuestStepCompletedEvent(QuestStep step) implements Event {
     @Override
     public EventType getType() {
         return null;
@@ -12,21 +12,21 @@ public record PrestigeEvent(Object object) implements Event{
 
     @Override
     public String getBriefInfo() {
-        return "";
+        return "Completed " + step.getStepName() + " quest step.";
     }
 
     @Override
     public String getInDepthInfo() {
-        return "";
+        return "Unimplemented";
     }
 
     @Override
     public String eventName() {
-        return "Prestige";
+        return "Quest Step Completed";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.PALE_VIOLET_RED;
+        return FontColors.LIGHT_GREEN;
     }
 }

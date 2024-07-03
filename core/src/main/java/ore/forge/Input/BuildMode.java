@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import ore.forge.ButtonHelper;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.ItemPlacedEvent;
 import ore.forge.Items.*;
 import ore.forge.Player.InventoryNode;
 
@@ -67,7 +69,8 @@ public class BuildMode extends InputMode {
             if (heldNode.hasSupply() && heldItem.didPlace(handler.getMouseWorld(), contiguousPlacedItems)) { //make sure the item was placed down
                 heldNode.place();
                 contiguousPlacedItems.add(heldItem);
-                Gdx.app.log("BUILD MODE", "Placed Item at " + String.valueOf(heldItem.getVector2()));
+//                Gdx.app.log("BUILD MODE", "Placed Item at " + String.valueOf(heldItem.getVector2()));
+                EventManager.getSingleton().notifyListeners(new ItemPlacedEvent(heldItem));
                 ButtonHelper.playPlaceSound();
                 recentlyPlaced.push(heldItem);
                 cloneItem(heldItem);

@@ -8,8 +8,6 @@ public interface OreEffect {
     //Whenever an Ore Effect is applied to an ore the clone method is called.
     OreEffect cloneOreEffect();
 
-    boolean isEndStepEffect();
-
     //Strategies, Burning, Frozen, Immunity to specific status effects, invincibility, radiation??, Upgrade over time effects/modify value over time,
 
     //Burning: DONE

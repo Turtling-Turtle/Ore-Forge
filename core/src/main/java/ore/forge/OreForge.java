@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import ore.forge.Player.Player;
+import ore.forge.QuestComponents.QuestManager;
 import ore.forge.Screens.*;
 
 //@author Nathan Ulmen
@@ -52,6 +53,7 @@ public class OreForge extends Game {
 		* */
 		spriteBatch = new SpriteBatch();
 		itemManager = new ItemManager();
+        var questManager = new QuestManager();
         OreRealm.getSingleton().populate(); //Create/pool all ore.
         Player.getSingleton().loadSaveData();
         Player.getSingleton().initInventory(itemManager);

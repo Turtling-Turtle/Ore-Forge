@@ -60,8 +60,8 @@ public class DropperBlock extends Block {
             .applyBaseStats(oreValue, oreTemp, multiOre, oreName, id, effect)
             .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
 
-        eventManager.notifyListeners(new OreDroppedEvent(ore));
         increaseTotalOreDropped();
+        eventManager.notifyListeners(new OreDroppedEvent(ore, (Dropper) this.getParentItem()));
     }
 
     private void increaseTotalOreDropped() {

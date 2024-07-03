@@ -26,6 +26,9 @@ public abstract class InputMode {
     }
 
     public void updateCameraPosition(float delta, OrthographicCamera camera) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            delta *= 2;
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             camera.position.y += CAMERA_SPEED * delta;
         }

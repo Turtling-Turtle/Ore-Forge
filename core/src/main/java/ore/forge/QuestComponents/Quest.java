@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Queue;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestCompletedEvent;
+import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class Quest {
             incompleteSteps.addLast(questStep);
             questSteps.add(questStep);
         }
+
 
         while (!incompleteSteps.isEmpty() && incompleteSteps.first().getState() == QuestState.COMPLETED) {
             completedSteps.add(incompleteSteps.removeFirst());
