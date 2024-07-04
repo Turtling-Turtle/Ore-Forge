@@ -44,7 +44,7 @@ TODO: Change ore "state"(doomed etc) from boolean to Enum.
     5A. Test async searching and sorting of items.
     6A. Fix input processing. **DONE**
 
-    Create Shop UI.
+    Create Shop UI.**DONE**
     Shop should have separate tabs for the following:
         1. Item Unlock Tab,
         2. Cash Item Tab,
@@ -172,6 +172,10 @@ Rough Draft of JSON structure for a quest:
     Trait/Characteristic - A String/Tag that is attached to an element. Other elements can use this to determine their behavior but the trait itself doesn't do anything. Traits can be added or removed.
     Status Effect - A status effect is an affect that can be removed by another effect, and can be used to determine a behavior.
     Aura/Intrinsic - Are intrinsic to an ore and cannot be removed. Its present for the lifetime of the ore.
+
+14. Loading and handling locked an unlocked Items.
+
+
 ------Game is "Finished" at this point. Everything after this point are bonus features-------
 
 

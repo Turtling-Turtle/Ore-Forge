@@ -326,7 +326,5 @@ public class Inventory {
         }
     }
 
-    private record InventoryData(String itemName, String type, int totalOwned, String id) {
-    }
-
+    private record InventoryData(String itemName, String type, int totalOwned, String id) {}
 }

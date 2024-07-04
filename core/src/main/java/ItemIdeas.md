@@ -13,12 +13,12 @@
 **The Prancing Stallion** 
     
     - Prestige Item that is incredibly Rare (0.1?). Will have special/unique purchase and sell values.
-    - Procues 950 ore per minute, the same as LaFerraris horse power.
+    - Procues 950 ore per minute, the same as REDACTED power.
     - Ore is worth an incredible ammount.
-    - MAYBE have a tie into perstige cause the car is prestigous. Ore_Value = (Base Ore Value * 1 + (PRESTIGE_LEVEL*1.02) 
-        -The value of ore is influenced by your prestige level???
-    - MAYBE have it drop ore that looks like a horse.
-    -
+    - Have a tie into prestige cause the REDACTED is prestigious. Ore_Value = (Base Ore Value * 1 + (PRESTIGE_LEVEL*1.02) 
+    - Drops Ore that looks like a horse.
+    - Ore has an Aura/Intrinsic effect that causes it to have its ore value increased by 1.02x everytime it's upgraded.
+
 **Utility Dropper**
 
     Effects:
@@ -277,3 +277,4 @@ Terra, Geo,
 
 - **Ultimate Conveyor**
     - 9 Speed.
+ 
