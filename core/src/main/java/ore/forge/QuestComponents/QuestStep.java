@@ -4,11 +4,11 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
 import ore.forge.QuestComponents.Rewards.Reward;
-import ore.forge.Strategies.StrategyInitializer;
+import ore.forge.Strategies.ReflectionLoader;
 
 //A QuestStep holds a reward, and an array of conditions.
 //The QuestStep is only complete
-public class QuestStep implements StrategyInitializer<Reward> {
+public class QuestStep implements ReflectionLoader<Reward> {
     private final EventManager eventManager = EventManager.getSingleton();
     private Quest parent;
     private final String stepDescription, stepName;

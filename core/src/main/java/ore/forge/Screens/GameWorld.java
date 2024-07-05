@@ -130,6 +130,7 @@ public class GameWorld extends CustomScreen {
         //handleInput.
 //        inputHandler.handleInput(delta, camera, game);
         inputHandler.update(delta, camera);
+
         //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
@@ -161,14 +162,9 @@ public class GameWorld extends CustomScreen {
         batch.end();
 //        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
 
-        if (Gdx.graphics.getWidth() == 0 || Gdx.graphics.getHeight() == 0) {
-            return;
-        }
         userInterface.draw(delta);
 //        frameTimes.add(stopwatch.getTimeStamp());
 //        Gdx.app.log("Frame Time", stopwatch.toString());
-
-
     }
 
 

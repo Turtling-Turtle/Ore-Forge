@@ -148,9 +148,9 @@ public class ShopMenu extends WidgetGroup {
         background.setColor(Color.OLIVE);
         this.addActor(background);
 
-        background.setDebug(true);
-        iconTable.setDebug(true);
-        scrollPane.setDebug(true);
+//        background.setDebug(true);
+//        iconTable.setDebug(true);
+//        scrollPane.setDebug(true);
 
         background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
     }

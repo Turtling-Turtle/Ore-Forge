@@ -1,18 +1,17 @@
 package ore.forge.EventSystem.Events;
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.QuestComponents.Quest;
 
-public record QuestCompletedEvent(Quest compeletedQuest) implements Event {
+public record QuestCompletedEvent(Quest compeletedQuest) implements Event<Quest> {
+
+    @Override
+    public Class getEventType() {
+        return QuestCompletedEvent.class;
+    }
 
     public Quest getSubject() {
         return compeletedQuest;
-    }
-
-    @Override
-    public EventType getType() {
-        return null;
     }
 
     @Override

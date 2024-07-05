@@ -1,12 +1,16 @@
 package ore.forge.EventSystem.Events;
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 
 public record PrestigeEvent(Object object) implements Event{
 
     @Override
-    public EventType getType() {
+    public Class getEventType() {
+        return null;
+    }
+
+    @Override
+    public Object getSubject() {
         return null;
     }
 

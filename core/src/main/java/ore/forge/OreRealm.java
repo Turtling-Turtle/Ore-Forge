@@ -4,11 +4,9 @@ package ore.forge;//The OreRealm is a stack of max Length 500(Ore limit) and whe
 //This allows for ore objects to be recycled and limits the number of ore objects in that can be present in the tycoon.
 //The oreRealm also keeps track of the ore that are active in the tycoon, and is used to set ore state to moveable at the end of each tick.
 
-import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class OreRealm {

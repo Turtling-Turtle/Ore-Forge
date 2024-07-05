@@ -1,14 +1,18 @@
 package ore.forge.EventSystem.Events;
 
 import ore.forge.Currency;
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
 public record PurchaseEvent(Item item, Currency currency, int amountPurchased) implements Event {
 
     @Override
-    public EventType getType() {
+    public Class getEventType() {
+        return PurchaseEvent.class;
+    }
+
+    @Override
+    public Object getSubject() {
         return null;
     }
 

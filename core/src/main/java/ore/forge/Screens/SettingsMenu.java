@@ -37,13 +37,13 @@ public class SettingsMenu extends CustomScreen {
     public SettingsMenu(final OreForge game, final ItemManager itemManager) {
         super(game, itemManager);
         //VSYNC TOGGLE
-        checkBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth()/10f, Gdx.graphics.getWidth()/10f);
-        checkBox.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight()/1.5f);
+        checkBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getWidth() / 10f);
+        checkBox.setPosition(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 1.5f);
         checkBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ButtonHelper.getButtonClickSound().play();
-                if (checkBox.isChecked()){
+                if (checkBox.isChecked()) {
                     Gdx.graphics.setVSync(true);
                     vsync.setText("Vsync: Enabled");
                     vsync.setColor(Color.GREEN);
@@ -60,8 +60,8 @@ public class SettingsMenu extends CustomScreen {
         Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 
         //FPS COUNTER OPTION
-        fpsCheckBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
-        fpsCheckBox.setPosition(Gdx.graphics.getWidth()/3f, Gdx.graphics.getHeight()/2f);
+        fpsCheckBox = ButtonHelper.createCheckBox("", Color.BLACK, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f);
+        fpsCheckBox.setPosition(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 2f);
         fpsCheckBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -78,8 +78,8 @@ public class SettingsMenu extends CustomScreen {
             }
         });
 
-        backButton = ButtonHelper.createRoundTextButton("<------", Color.RED, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
-        backButton.setPosition(0, Gdx.graphics.getHeight()*.9f);
+        backButton = ButtonHelper.createRoundTextButton("<------", Color.RED, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f);
+        backButton.setPosition(0, Gdx.graphics.getHeight() * .9f);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -91,11 +91,11 @@ public class SettingsMenu extends CustomScreen {
 
         //Vsync button description
         vsync = new Label("Vsync: Disabled", fpsStyle);
-        vsync.setPosition(checkBox.getX()+checkBox.getWidth(), checkBox.getY()+checkBox.getHeight()*0.5f);
+        vsync.setPosition(checkBox.getX() + checkBox.getWidth(), checkBox.getY() + checkBox.getHeight() * 0.5f);
         vsync.setColor(Color.RED);
         //FpsButton Description
         fpsCounterLabel = new Label("FPS Counter: Disabled", fpsStyle);
-        fpsCounterLabel.setPosition(fpsCheckBox.getX()+fpsCheckBox.getWidth(), fpsCheckBox.getY()+fpsCheckBox.getHeight()*0.5f);
+        fpsCounterLabel.setPosition(fpsCheckBox.getX() + fpsCheckBox.getWidth(), fpsCheckBox.getY() + fpsCheckBox.getHeight() * 0.5f);
         fpsCounterLabel.setColor(Color.RED);
 
 
@@ -107,6 +107,7 @@ public class SettingsMenu extends CustomScreen {
 //        stage.addActor(game.fpsCounter);
         stage.addActor(checkBox);
         stage.addActor(fpsCheckBox);
+
     }
 
     /**
@@ -129,7 +130,7 @@ public class SettingsMenu extends CustomScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-        if(Gdx.input.isKeyPressed(Input.Keys.FORWARD_DEL)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.FORWARD_DEL)) {
             Gdx.app.exit();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -181,7 +182,6 @@ public class SettingsMenu extends CustomScreen {
     public void dispose() {
         stage.dispose();
     }
-
 
 
 }

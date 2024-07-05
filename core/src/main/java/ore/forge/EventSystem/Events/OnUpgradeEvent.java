@@ -1,13 +1,17 @@
 package ore.forge.EventSystem.Events;
 
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 
 public record OnUpgradeEvent() implements Event{
 
     @Override
-    public EventType getType() {
+    public Class getEventType() {
+        return OnUpgradeEvent.class;
+    }
+
+    @Override
+    public Object getSubject() {
         return null;
     }
 

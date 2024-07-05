@@ -1,16 +1,20 @@
 package ore.forge.EventSystem.Events;
 
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.Items.Dropper;
 import ore.forge.Ore;
 
-public record OreDroppedEvent(Ore ore, Dropper dropper) implements Event {
+public record OreDroppedEvent(Ore ore, Dropper dropper) implements Event<Ore> {
 
     @Override
-    public EventType getType() {
-        return EventType.ORE_DROPPED_EVENT;
+    public Class<?> getEventType() {
+        return OreDroppedEvent.class;
+    }
+
+    @Override
+    public Ore getSubject() {
+        return ore;
     }
 
     @Override

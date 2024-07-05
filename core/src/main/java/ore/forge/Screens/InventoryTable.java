@@ -150,10 +150,10 @@ public class InventoryTable extends WidgetGroup {
         background.add(topTable).align(Align.topLeft).expandX().fillX().row();
         background.add(scrollPane).top().left().expand().fill();
         this.addActor(background);
-        background.setDebug(true);
+//        background.setDebug(true);
 //        horizontalGroup.setDebug(true);
-        iconTable.setDebug(true);
-        scrollPane.setDebug(true);
+//        iconTable.setDebug(true);
+//        scrollPane.setDebug(true);
     }
 
     private void asyncSearch(String target) {

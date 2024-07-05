@@ -1,7 +1,6 @@
 package ore.forge.EventSystem;
 
 
-import com.badlogic.gdx.Gdx;
 import ore.forge.EventSystem.Events.Event;
 import ore.forge.Screens.EventLogger;
 
@@ -9,16 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-//The Event Manager is responsible for publishing specific events to subscribers.
-//Subscribers will implement the EventListener Interface.
-//Whenever an event happens the EventManager will notify all subscribers interested in that specific type of event.
-//The Class<?> event that is passed into teh registerListener Method should be the same type as the EventListener
-//EX: An EventListener<OreSoldEvent> should pass in OreSoldEvent as the Class<?>.
-// eventManager.registerListener(OreSoldEvent.class, subscriber);
-//EventType is the key, Event is a generic.
+/**@author Nathan Ulmen
+ *
+ *
+ *
+ * */
 public class EventManager {
     private static EventManager eventManager = new EventManager();
-    private final HashMap<EventType, ArrayList<EventListener>> subscribers;
+    private final HashMap<Class<?>, ArrayList<EventListener>> subscribers;
     private EventLogger eventLogger;
     private final Stack<EventListener> removalStack, additionStack;
 
@@ -35,38 +32,29 @@ public class EventManager {
         return eventManager;
     }
 
-    public void registerListener(EventType type, EventListener listener) {
-        Gdx.app.log("EventManager", "Registering listener: " + type + " " + listener);
-        if (!subscribers.containsKey(type)) {
-//            assert !subscribers.get(type).contains(listener);
-            subscribers.put(type, new ArrayList<>());
-            subscribers.get(type).add(listener);
-
+    public void registerListener(Class<?> eventType, EventListener<?> listener) {
+        System.out.println(eventType);
+        assert Event.class.isAssignableFrom(eventType);
+        if (!subscribers.containsKey(eventType)) {
+            subscribers.put(eventType, new ArrayList<>());
+            subscribers.get(eventType).add(listener);
         } else {
-            subscribers.get(type).add(listener);
+            subscribers.get(eventType).add(listener);
         }
+
     }
 
-    public void unregisterListener(EventType type, EventListener listener) {
-//        Gdx.app.log("EventManager", "Unregistering listener: " + listener);
-//        var listeners = subscribers.get(type);
-//        if (listeners != null) {
+    public void unregisterListener(EventListener<?> listener) {
         removalStack.push(listener);
-//            listeners.remove(listener);
-//            if (listeners.isEmpty()) {
-//                subscribers.remove(type);
-//            }
-//        }
     }
 
     public void notifyListeners(Event event) {
         this.eventLogger.logEvent(event);
-        ArrayList<EventListener> listeners = subscribers.get(event.getType());
+        ArrayList<EventListener> listeners = subscribers.get(event.getEventType());
         if (listeners != null && !listeners.isEmpty()) {
-            for (int i = 0; i < listeners.size(); i++) {
+            for (int i = 0; i < listeners.size(); i++) { //For i to evade concurrent modification, not the smartest...
                 listeners.get(i).handle(event);
             }
-
         }
 
         while (!additionStack.isEmpty()) {
@@ -79,7 +67,7 @@ public class EventManager {
         while (!removalStack.isEmpty()) {
             listeners.remove(removalStack.pop());
             if (listeners.isEmpty()) {
-                subscribers.remove(event.getType());
+                subscribers.remove(event.getEventType());
             }
         }
 

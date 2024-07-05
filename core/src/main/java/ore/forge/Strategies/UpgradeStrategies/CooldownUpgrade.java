@@ -3,10 +3,10 @@ package ore.forge.Strategies.UpgradeStrategies;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.StrategyInitializer;
+import ore.forge.Strategies.ReflectionLoader;
 
 /**@author Nathan Ulmen*/
-public class CooldownUpgrade implements UpgradeStrategy, StrategyInitializer<UpgradeStrategy>{
+public class CooldownUpgrade implements UpgradeStrategy, ReflectionLoader<UpgradeStrategy> {
     private final UpgradeStrategy upgrade;
     private final float cooldownTime;
     private float current;

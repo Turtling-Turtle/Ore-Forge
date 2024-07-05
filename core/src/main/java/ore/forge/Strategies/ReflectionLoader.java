@@ -4,9 +4,8 @@ import com.badlogic.gdx.utils.JsonValue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 
-public interface StrategyInitializer<E> {
+public interface ReflectionLoader<E> {
 
     @SuppressWarnings("unchecked")
     default E createOrNull(JsonValue jsonValue, String valueToGet, String fieldName) {
@@ -37,7 +36,7 @@ public interface StrategyInitializer<E> {
             return (E) constructor.newInstance(jsonValue);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            throw new RuntimeException(jsonValue.toString() + "\t" + fieldName);
+            throw new RuntimeException(e + "\nJson value:" +jsonValue.toString() + "\t" + fieldName);
         }
     }
 

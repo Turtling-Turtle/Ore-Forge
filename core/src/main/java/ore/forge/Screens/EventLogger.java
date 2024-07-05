@@ -3,20 +3,21 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.TimeUtils;
 import ore.forge.Constants;
 import ore.forge.CoolDown;
 import ore.forge.EventSystem.Events.Event;
 import ore.forge.FontColors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 
 
 /**
@@ -30,31 +31,32 @@ import java.util.Date;
  */
 public class EventLogger extends WidgetGroup {
     private final SimpleDateFormat simpleDateFormat;
+    private final HashSet<Class<?>> disabledEvents;
     private final Table logTable;
     private final ScrollPane scrollPane;
     private final static int MAX_EVENTS = 1_000;
-    private final BitmapFont font2;
-    private final Label.LabelStyle fpsStyle;
+    private final BitmapFont font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
+    private final Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
     private boolean autoScroll = true;
     private final CoolDown coolDown;
 
     public EventLogger() {
+        disabledEvents = new HashSet<>();
+//        disabledEvents.add(OreDroppedEvent.class);
         coolDown = new CoolDown(0.3f);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
-        font2.setColor(Color.WHITE);
         font2.getData().markupEnabled = true;
-        fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
+        font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         logTable = new Table();
 
         logTable.setSize(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .2f);
-        logTable.setDebug(true);
+//        logTable.setDebug(true);
 
 
         scrollPane = new ScrollPane(logTable);
         scrollPane.setScrollingDisabled(true, false);
-        scrollPane.setDebug(true);
+//        scrollPane.setDebug(true);
 
         scrollPane.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .2f);
         scrollPane.addListener(new InputListener() {
@@ -71,27 +73,35 @@ public class EventLogger extends WidgetGroup {
             }
         });
 
-
         this.addActor(scrollPane);
         this.setSize(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .2f);
     }
 
+
     //TODO:Update this so that it removes events, make sure it isn't super jittery.
     public void logEvent(Event event) {
-        if (logTable.getChildren().size > MAX_EVENTS) {
-//            logTable.removeActor(logTable.getChildren().first());
+        if (disabledEvents.contains(event.getClass())) {
+            return;
         }
-        logTable.add(createLabel(event)).top().left().fillX().expandX().row();
-//        logTable.layout();
+
+        if (logTable.getChildren().size > MAX_EVENTS) {
+            logTable.removeActor(logTable.getChildren().first());
+            logTable.layout();
+        }
+        var label = createLabel(event);
+        logTable.add(label).bottom().left().fillX().expandX().row();
+        label.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.45f)));
+
+
         if (autoScroll) {
             scrollPane.scrollTo(0, 0, 0, 0);
         }
 //        scrollPane.updateVisualScroll();
-
     }
 
     private Label createLabel(Event event) {
         var label = new Label(formatText(event), fpsStyle);
+        label.getStyle().font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         label.setFontScale(.55f, .55f);
         return label;
     }
@@ -103,5 +113,12 @@ public class EventLogger extends WidgetGroup {
         return timestamp + " - " + FontColors.highlightString("[" + event.eventName() + "]", event.getColor()) + " - " + info;
     }
 
+    public void disableEventLogging(Class<?> eventClass) {
+        disabledEvents.add(eventClass);
+    }
+
+    public void enableEventLogging(Class<?> eventClass) {
+        disabledEvents.remove(eventClass);
+    }
 
 }

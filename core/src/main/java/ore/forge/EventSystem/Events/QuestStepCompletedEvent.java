@@ -1,12 +1,17 @@
 package ore.forge.EventSystem.Events;
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.QuestComponents.QuestStep;
 
 public record QuestStepCompletedEvent(QuestStep step) implements Event {
+
     @Override
-    public EventType getType() {
+    public Class getEventType() {
+        return QuestStepCompletedEvent.class;
+    }
+
+    @Override
+    public Object getSubject() {
         return null;
     }
 

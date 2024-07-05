@@ -1,12 +1,17 @@
 package ore.forge.EventSystem.Events;
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
 public record ObtainedEvent(Item item, int count) implements Event {
+
     @Override
-    public EventType getType() {
+    public Class getEventType() {
+        return ObtainedEvent.class;
+    }
+
+    @Override
+    public Object getSubject() {
         return null;
     }
 

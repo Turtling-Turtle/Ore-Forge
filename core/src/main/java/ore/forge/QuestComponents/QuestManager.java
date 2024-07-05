@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventListener;
 import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.Event;
 import ore.forge.EventSystem.Events.QuestCompletedEvent;
 
 import java.util.ArrayList;

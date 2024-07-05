@@ -2,13 +2,13 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.StrategyInitializer;
+import ore.forge.Strategies.ReflectionLoader;
 
 /**
  * @author Nathan Ulmen
  * Used to wrap/bundled any number of upgrades into one.
  */
-public class BundledUpgrade implements UpgradeStrategy, StrategyInitializer<UpgradeStrategy> {
+public class BundledUpgrade implements UpgradeStrategy, ReflectionLoader<UpgradeStrategy> {
     private final UpgradeStrategy[] upgradeStrategies;
 
     public BundledUpgrade(UpgradeStrategy... upgradeStrategies) {

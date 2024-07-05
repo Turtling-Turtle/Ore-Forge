@@ -3,23 +3,23 @@ package ore.forge.QuestComponents;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.EventType;
 import ore.forge.EventSystem.Events.Event;
 import ore.forge.Expressions.Condition;
 import ore.forge.Ore;
 
-public class QuestCondition implements EventListener<Event> {
+public class QuestCondition implements EventListener<Event<?>> {
+    private final Class<?> eventType;
     private final EventManager eventManager = EventManager.getSingleton();
     private final QuestStep parent;
     private final Condition condition;
-    private final EventType eventType;
     private QuestState state;
 
     public QuestCondition(QuestStep parent, JsonValue jsonValue) {
         this.parent = parent;
         condition = Condition.parseCondition(jsonValue.getString("condition"));
-        eventType = EventType.valueOf(jsonValue.getString("eventType"));
         state = QuestState.valueOf(jsonValue.getString("state"));
+        eventType = getEvent(jsonValue, "eventType");
+        assert eventType != null;
     }
 
     public void checkCondition(Ore ore) {
@@ -31,18 +31,18 @@ public class QuestCondition implements EventListener<Event> {
     }
 
     public void register() {
-        eventManager.registerListener(eventType, this);
+        eventManager.registerListener(eventType,this);
     }
 
     public void unregister() {
-        eventManager.unregisterListener(eventType, this);
+        eventManager.unregisterListener(this);
     }
 
     public QuestState getState() {
         return this.state;
     }
 
-    public EventType getEventType() {
+    public Class<?> getEventType() {
         return eventType;
     }
 
@@ -52,8 +52,23 @@ public class QuestCondition implements EventListener<Event> {
 
     @Override
     public void handle(Event event) {
-        //TODO
-        checkCondition(null);
+        assert event.getSubject().getClass() == Ore.class;
+        checkCondition((Ore) event.getSubject());
     }
+
+    private Class<?> getEvent(JsonValue jsonValue, String fieldName) {
+        Class<?> aClass;
+        try {
+            try {
+                aClass = Class.forName(jsonValue.getString(fieldName));
+            } catch (NullPointerException e) {
+                return null;
+            }
+            return aClass;
+        } catch ( ClassNotFoundException e) {
+            throw new RuntimeException(e + "\nJson value:" +jsonValue.toString() + "\t" + fieldName);
+        }
+    }
+
 }
 

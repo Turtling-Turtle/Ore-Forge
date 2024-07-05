@@ -1,17 +1,21 @@
 package ore.forge.EventSystem.Events;
 
 
-import ore.forge.EventSystem.EventType;
 import ore.forge.FontColors;
 import ore.forge.Items.Furnace;
 import ore.forge.Ore;
 
-public record OreSoldEvent(Ore ore, Furnace item) implements Event {
+public record OreSoldEvent(Ore ore, Furnace item) implements Event<Ore> {
 
 
     @Override
-    public EventType getType() {
-        return null;
+    public Class getEventType() {
+        return OreSoldEvent.class;
+    }
+
+    @Override
+    public Ore getSubject() {
+        return ore;
     }
 
     @Override

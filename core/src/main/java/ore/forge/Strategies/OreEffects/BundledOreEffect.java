@@ -2,9 +2,9 @@ package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.StrategyInitializer;
+import ore.forge.Strategies.ReflectionLoader;
 
-public class BundledOreEffect implements OreEffect , StrategyInitializer<OreEffect> {
+public class BundledOreEffect implements OreEffect , ReflectionLoader<OreEffect> {
     private final OreEffect[] strategies;
 
     public BundledOreEffect(OreEffect... effects) {
