@@ -1,0 +1,50 @@
+Ternary =  if ? then : else
+Should use ternary only to return, not to branch.
+
+
+
+Conditional Upgrades using upgrade charge even if they don't do anything.
+
+
+
+
+Rework Icons so that they are more similar in size to warframe and so that they display the name and stored count on the icon itself instead of the tooltip.
+Tooltip should have the description and the tier.
+
+- Warframe inventory Icon is ~243x243 on a 1440p monitor which means that height is .18x of screen height and width is .1x of screen width.
+- Stored will be displayed in the top right of the icon. It will "cover the image."
+
+Items should only be displayed in the shop if the item is unlocked.
+    If the item is not unlocked the item will have its Icon Greyed out.
+    If the item is not unlocked the item is placed at the very bottom and are sorted by Unlock Method and unlock requirement.
+
+How do we check unlock requirements for items?
+    Items are checked to see if they are unlocked when:
+    Quest handles this itself when completed.
+    Prestige is checked and updated on prestige level.
+    Special Points unlock handles itself.
+    NONE means item is already unlocked.
+
+process of unlocking a new item looks like this:
+    event occurs and listeners check their conditions -> if condition is true emit a new unlock event -> shops is registered to unlock events and updates itself.
+
+
+Inventory should only display the item icon if the totalOwned count > 0.
+if stored <= 0 then we grey out the ItemIcon
+Times the inventory ui needs to be updated:
+    inventory ui should be updated whenever the state of an Inventory node changes, the extent of the change depends on
+    the inventory node.
+        Things that are updated:
+        -number stored count for tool tip.
+        -adding new Icon to table if a the first copy of an item was just obtained.
+
+
+
+
+
+
+
+
+
+
+
