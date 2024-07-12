@@ -1,6 +1,6 @@
 [
 {
-  "id": "Test Quest 1234",
+  "id": "Test Quest 1.0",
   "name": "Test Quest",
   "description": "A quest to test event Manager.",
   "state": "IN_PROGRESS",
@@ -32,6 +32,31 @@
         "rewardType": "ore.forge.QuestComponents.Rewards.ItemReward",
         "rewardID": "831-hUrLWgPv",
         "rewardCount": 2
+      }
+    }
+  ]
+},
+{
+  "id" : "Test Quest 1.1",
+  "name": "Test Quest - Tutorial Quest line",
+  "description": "A quest to test tutorial",
+  "state": "IN_PROGRESS",
+  "steps": [
+    {
+      "stepName": "Getting Started",
+      "stepDescription": "Place an Item.",
+      "questConditions": [
+        {
+          "condition": "1==1",
+          "eventType": "ore.forge.EventSystem.Events.ItemPlacedEvent",
+          "state": "IN_PROGRESS"
+        }
+      ],
+      "state": "IN_PROGRESS",
+      "reward": {
+        "rewardType": "ore.forge.QuestComponents.Rewards.CurrencyReward",
+        "currencyType": "CASH",
+        "rewardCount": 5
       }
     }
   ]

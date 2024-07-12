@@ -12,38 +12,43 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
+import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.NodeEvent;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Stopwatch;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class InventoryTable extends WidgetGroup {
+public class InventoryTable extends WidgetGroup implements EventListener<NodeEvent> {
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
     private final Table background, iconTable, topTable;
     private final HorizontalGroup horizontalGroup;
     private ScrollPane scrollPane;
     private final ArrayList<ItemIcon> allIcons;
+    private final HashMap<String, ItemIcon> lookUp;
     private final CheckBox[] checkBoxes;
     private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
 
     public InventoryTable(Inventory inventory) {
+        lookUp = new HashMap<>();
         topTable = new Table();
         this.background = new Table();
         background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
-        background.setColor(Color.GRAY);
+        background.setColor(Color.DARK_GRAY);
         var textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
+
+        EventManager.getSingleton().registerListener(NodeEvent.class, this);
 
         searchBar.setTextFieldListener(new TextFieldListener() {
             String last;
@@ -137,7 +142,9 @@ public class InventoryTable extends WidgetGroup {
 
         allIcons = new ArrayList<>();
         for (InventoryNode node : inventory.getInventoryNodes()) {
+            var itemIcon = new ItemIcon(node);
             allIcons.add(new ItemIcon(node));
+            lookUp.put(itemIcon.getNode().getHeldItemID(), itemIcon);
         }
         addNewIcons(allIcons);
 
@@ -163,13 +170,13 @@ public class InventoryTable extends WidgetGroup {
         CompletableFuture.runAsync(() -> {
             Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
             stopwatch.start();
-                ArrayList<ItemIcon> icons = findIcons(finalizedTarget);
-                if (sortMethod != null) {
-                    icons.sort(sortMethod); //language implementation is really fast...
+            ArrayList<ItemIcon> icons = findIcons(finalizedTarget);
+            if (sortMethod != null) {
+                icons.sort(sortMethod); //language implementation is really fast...
 //                    quickSort(icons,sortMethod);
-                }
-                Gdx.app.log("INVENTORY TABLE",stopwatch.toString());
-                Gdx.app.postRunnable(() -> addNewIcons(icons));
+            }
+            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
+            Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
 //        stopwatch.stop();
 //        Gdx.app.log("Inventory Table", ore.forge.Color.highlightString(stopwatch.toString(), ore.forge.Color.GREEN));
@@ -197,7 +204,9 @@ public class InventoryTable extends WidgetGroup {
         iconTable.clear();
         int count = 0;
         for (ItemIcon icon : icons) {
-            addIconToTable(iconTable, icon, count++);
+            if (icon.getNode().getTotalOwned() > 0) {
+                addIconToTable(iconTable, icon, count++);
+            }
         }
         iconTable.setFillParent(true);
         iconTable.pack();
@@ -205,60 +214,17 @@ public class InventoryTable extends WidgetGroup {
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
-        if (count % 8 == 0) {
+        if (count % 4 == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(),icon.getHeight()).align(Align.topLeft).pad(5);
+        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(5);
     }
 
-    private <E extends Comparator<ItemIcon>> void quickSort(List<ItemIcon> icons, E compareType) {
-        quickSort(icons, compareType, 0, icons.size() - 1);
+    @Override
+    public void handle(NodeEvent event) {
+        var itemIcon = lookUp.get(event.node().getHeldItemID());
+        itemIcon.updateToolTip(itemIcon.getNodeName() + " Stored: " + event.node().getStored());
     }
-
-    private <E extends Comparator<ItemIcon>> void quickSort(List<ItemIcon> icons, E compareType, int min, int max) {
-        if (min >= max) {
-            return;
-        }
-        int indexOfPartition = partition(icons, compareType, min, max);
-
-        quickSort(icons, compareType, min, indexOfPartition - 1);
-        quickSort(icons, compareType, indexOfPartition + 1, max);
-    }
-
-    private <E extends Comparator<ItemIcon>> int partition(List<ItemIcon> icons, E compareType, int min, int max) {
-        ItemIcon partitionedElement;
-        int left, right;
-        int midpoint = (min + max) / 2;
-        partitionedElement = icons.get(midpoint);
-
-        swap(icons, midpoint, min);
-
-        left = min;
-        right = max;
-
-        while (left < right) {
-            while (left < max && compareType.compare(icons.get(left), partitionedElement) <= 0) {
-                left++;
-            }
-
-            while (right > min && compareType.compare(icons.get(right), partitionedElement) > 0) {
-                right--;
-            }
-            if (left < right) {
-                swap(icons, left, right);
-            }
-        }
-
-        swap(icons, min, right);
-        return right;
-    }
-
-    private void swap(List<ItemIcon> icons, int firstIndex, int secondIndex) {
-        ItemIcon temp = icons.get(secondIndex);
-        icons.set(secondIndex, icons.get(firstIndex));
-        icons.set(firstIndex, temp);
-    }
-
 
     static class NameComparator implements Comparator<ItemIcon> {
         @Override
@@ -314,8 +280,8 @@ public class InventoryTable extends WidgetGroup {
         @Override
         public int compare(ItemIcon icon1, ItemIcon icon2) {
             //Owned
-            Integer result = icon1.getNode().getTotalOwned();
-            result = result.compareTo(icon2.getNode().getTotalOwned());
+            Integer result = icon1.getNode().getStored();
+            result = result.compareTo(icon2.getNode().getStored());
             if (result != 0) {
                 return result;
             }

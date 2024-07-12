@@ -93,10 +93,10 @@ public class EventLogger extends WidgetGroup {
         label.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.45f)));
 
 
-        if (autoScroll) {
+        if (autoScroll && scrollPane.getScrollY() > 0 ) {
             scrollPane.scrollTo(0, 0, 0, 0);
         }
-//        scrollPane.updateVisualScroll();
+        scrollPane.updateVisualScroll();
     }
 
     private Label createLabel(Event event) {

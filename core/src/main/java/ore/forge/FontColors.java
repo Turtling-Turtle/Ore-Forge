@@ -155,6 +155,10 @@ public enum FontColors {
         return hexCode;
     }
 
+    public int getCode() {
+        return Integer.parseInt(hexCode);
+    }
+
     public static String highlightString(String text, FontColors color) {
         return "[#" + color.getHexCode() + "]" + text + "[]";
     }

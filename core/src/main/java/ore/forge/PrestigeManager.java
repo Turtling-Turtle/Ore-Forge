@@ -1,6 +1,5 @@
 package ore.forge;
 
-import ore.forge.Items.Item;
 import ore.forge.Player.Player;
 
 public class PrestigeManager {

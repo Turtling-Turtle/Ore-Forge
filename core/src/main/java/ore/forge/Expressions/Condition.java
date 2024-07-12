@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
  * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
  */
 
-
 public class Condition {
     private interface BooleanExpression {
         boolean evaluate(Ore ore);

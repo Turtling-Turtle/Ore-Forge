@@ -52,8 +52,14 @@ public class QuestCondition implements EventListener<Event<?>> {
 
     @Override
     public void handle(Event event) {
-        assert event.getSubject().getClass() == Ore.class;
-        checkCondition((Ore) event.getSubject());
+//        assert event.getSubject().getClass() == Ore.class;
+        if (event.getSubject() instanceof Ore) {
+            checkCondition((Ore) event.getSubject());
+        } else {
+            checkCondition(null);
+        }
+
+
     }
 
     private Class<?> getEvent(JsonValue jsonValue, String fieldName) {

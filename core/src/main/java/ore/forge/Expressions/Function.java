@@ -83,8 +83,6 @@ public class Function implements NumericOperand {
                 }
                 operatorStack.push(operator);
             } else if (token.contains("(") && token.contains(")") && matcher.group(2).charAt(matcher.group(2).length() - 1) == '.') {//Method verification.
-//                var argumentSource = matcher.group(2);
-//                if (argumentSource.charAt(argumentSource.length() - 1) == '.') {
                 var argumentSource = matcher.group(2);
                 argumentSource = argumentSource.substring(0, argumentSource.length() - 1);
                 if (MethodBasedOperand.isCollection(argumentSource)) { //Verify that collection is valid.
@@ -97,7 +95,6 @@ public class Function implements NumericOperand {
                         }
                     }
                 }
-//                }
             } else {
                 throw new IllegalArgumentException("Unknown token: " + token);
             }

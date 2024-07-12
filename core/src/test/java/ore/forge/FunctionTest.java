@@ -156,7 +156,7 @@ class FunctionTest {
     void testComplexFunction() {
         ore.setTemp(100);
         var testCase = Function.parseFunction("(abs((TEMPERATURE * log(TEMPERATURE)) / 30)) ^ 1.03 + 1");
-        assertEquals(1.3225262801180642, testCase.calculate(ore));
+        assertEquals(Math.pow(Math.abs(ore.getOreTemp() * Math.log10(ore.getOreTemp()) / 30), 1.03) + 1, testCase.calculate(ore));
     }
 
     @Test
@@ -187,6 +187,30 @@ class FunctionTest {
         var testCase = Function.parseFunction("MEDIAN_ORE_VALUE");
         assertEquals(2.5, testCase.calculate(null));
         oreRealm.resetAllOre();
+    }
+
+    @Test
+    void testNumericMethod() {
+        oreRealm.depopulate();
+        oreRealm.populate();
+        for (int i = 0; i < 5; i++) {
+            oreRealm.giveOre().applyBaseStats(1, 5, 1, "NumericMethodTestOre", "321", null);
+        }
+        var testCase = Function.parseFunction("ACTIVE_ORE.GET_COUNT(321)");
+        assertEquals(5, testCase.calculate(null));
+    }
+
+    @Test
+    void testSpecialFunctionsAndNumericMethod() {
+        oreRealm.resetAllOre();
+        oreRealm.depopulate();
+        oreRealm.populate();
+        for (int i = 0; i < 5; i++) {
+            oreRealm.giveOre().applyBaseStats(1, 5, 1, "Line208", "321", null);
+        }
+        var testCase = Function.parseFunction("ln(ACTIVE_ORE.GET_COUNT(321) * log(ACTIVE_ORE.GET_COUNT(321))) ^ 1.03 + 1");
+        assertEquals(Math.pow(Math.log(5 * Math.log10(5)),1.03) +1, testCase.calculate(null));
+
     }
 
 }

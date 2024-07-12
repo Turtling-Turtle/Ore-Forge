@@ -137,9 +137,14 @@ public abstract class Item {
                     isPrestigeProof = false;
                 }
             }
+
+            if (unlockMethod == UnlockMethod.NONE) {
+                isUnlocked = true;
+            }
         } catch (Exception e) {
             Gdx.app.log("Item", Color.highlightString( "Error Occurred While Loading Acquisition " +  name + "s' Info: " + e, Color.YELLOW));
         }
+
 
 //
 //        try {

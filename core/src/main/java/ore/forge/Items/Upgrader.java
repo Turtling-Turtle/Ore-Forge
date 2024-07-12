@@ -26,7 +26,7 @@ public class Upgrader extends Item {
         this.upgrade = upgrade;
         this.upgradeTag = tag;
         initBlockConfiguration(this.numberConfig);
-        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
+//        setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
     }
 
     public Upgrader(JsonValue jsonValue) {

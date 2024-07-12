@@ -17,14 +17,12 @@ import java.util.concurrent.TimeUnit;
  * The Item Manager is responsible for verifying and loading Item data and keeping track of all items.
  * */
 public class ItemManager {
-    private final HashMap<String, Sound> allSounds;
     private final HashMap<String, Item> allItems;
     private int loadCount;
 
     public ItemManager() {
         Gdx.app.log("Resource Manager", "Initializing Resource Manager...");
         loadCount = 0;
-        allSounds = new HashMap<>();
         allItems = new HashMap<>();
 
         Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);

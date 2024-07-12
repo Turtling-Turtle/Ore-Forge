@@ -12,7 +12,7 @@ public record ItemPlacedEvent(Item item) implements Event {
 
     @Override
     public Object getSubject() {
-        return null;
+        return Item.class;
     }
 
     @Override

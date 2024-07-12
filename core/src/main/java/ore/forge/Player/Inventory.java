@@ -59,7 +59,8 @@ public class Inventory {
             String type = node.getHeldItem().getClass().getSimpleName();
             String id = node.getHeldItemID();
             int owned = node.getTotalOwned();
-            inventoryDataList.add(new InventoryData(name, type, owned, id));
+            boolean isUnlocked = node.getHeldItem().isUnlocked();
+            inventoryDataList.add(new InventoryData(name, type, owned, id, isUnlocked));
         }
 
 
@@ -89,6 +90,7 @@ public class Inventory {
                     String itemID = jsonValue.getString("id");
                     int owned = jsonValue.getInt("totalOwned");
                     InventoryNode node = new InventoryNode(allItems.get(itemID), owned);
+                    node.getHeldItem().setUnlocked(jsonValue.getBoolean("isUnlocked"));
                     inventoryNodes.add(node);
                 } else {
                     Gdx.app.log("INVENTORY", Color.highlightString("Unknown item ID: " + jsonValue.getString("id"), Color.YELLOW));
@@ -326,5 +328,5 @@ public class Inventory {
         }
     }
 
-    private record InventoryData(String itemName, String type, int totalOwned, String id) {}
+    private record InventoryData(String itemName, String type, int totalOwned, String id, boolean isUnlocked) {}
 }

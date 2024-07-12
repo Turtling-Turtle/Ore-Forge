@@ -16,6 +16,10 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
+        System.out.println(System.getProperty("java.version"));
+        System.out.println(System.getProperty("java.vendor"));
+        System.out.println(System.getProperty("java.vm.name"));
+
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Ore Forge");
         config.useVsync(true);

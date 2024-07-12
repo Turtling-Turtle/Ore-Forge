@@ -24,7 +24,7 @@ public class Furnace extends Item {
         this.rewardThreshold = rewardThreshold;
         this.upgrade = upgrade;
         initBlockConfiguration(blockLayout);
-        setTexture(new Texture(Gdx.files.internal("Furnace.png")));
+//        setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }
 
     public Furnace(JsonValue jsonValue) {
