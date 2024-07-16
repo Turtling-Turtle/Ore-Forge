@@ -31,7 +31,12 @@ public class QuestCondition implements EventListener<Event<?>> {
     }
 
     public void register() {
-        eventManager.registerListener(eventType,this);
+        eventManager.registerListener(this);
+    }
+
+    @Override
+    public Class<?> getEventType() {
+        return eventType;
     }
 
     public void unregister() {
@@ -40,10 +45,6 @@ public class QuestCondition implements EventListener<Event<?>> {
 
     public QuestState getState() {
         return this.state;
-    }
-
-    public Class<?> getEventType() {
-        return eventType;
     }
 
     public String toString() {
@@ -71,10 +72,11 @@ public class QuestCondition implements EventListener<Event<?>> {
                 return null;
             }
             return aClass;
-        } catch ( ClassNotFoundException e) {
-            throw new RuntimeException(e + "\nJson value:" +jsonValue.toString() + "\t" + fieldName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e + "\nJson value:" + jsonValue.toString() + "\t" + fieldName);
         }
     }
+
 
 }
 

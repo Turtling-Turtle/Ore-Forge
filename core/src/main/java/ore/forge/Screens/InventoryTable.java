@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class InventoryTable extends WidgetGroup implements EventListener<NodeEvent> {
+    private final static int ROW_COUNT = 4;
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
     private final Table background, iconTable, topTable;
@@ -48,7 +49,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
 
-        EventManager.getSingleton().registerListener(NodeEvent.class, this);
+        EventManager.getSingleton().registerListener(this);
 
         searchBar.setTextFieldListener(new TextFieldListener() {
             String last;
@@ -152,7 +153,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         scrollPane.setScrollingDisabled(true, false);
         horizontalGroup.setVisible(true);
 
-        background.setSize(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .5f);
+        background.setSize(Gdx.graphics.getWidth() * .352f, Gdx.graphics.getHeight() * .8f);
 
         background.add(topTable).align(Align.topLeft).expandX().fillX().row();
         background.add(scrollPane).top().left().expand().fill();
@@ -175,7 +176,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
                 icons.sort(sortMethod); //language implementation is really fast...
 //                    quickSort(icons,sortMethod);
             }
-            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
+//            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
             Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
 //        stopwatch.stop();
@@ -214,16 +215,23 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
-        if (count % 4 == 0) {
+        if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
         iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(5);
+//        iconTable.add(icon).left().top().expandX().fillX().align(Align.topLeft).pad(5);
     }
 
     @Override
     public void handle(NodeEvent event) {
         var itemIcon = lookUp.get(event.node().getHeldItemID());
-        itemIcon.updateToolTip(itemIcon.getNodeName() + " Stored: " + event.node().getStored());
+        itemIcon.updateToolTip("Stored: " + event.node().getStored());
+//        asyncSearch(searchBar.getText());
+    }
+
+    @Override
+    public Class<?> getEventType() {
+        return NodeEvent.class;
     }
 
     static class NameComparator implements Comparator<ItemIcon> {

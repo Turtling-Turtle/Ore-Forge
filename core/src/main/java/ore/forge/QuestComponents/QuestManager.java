@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.Event;
 import ore.forge.EventSystem.Events.QuestCompletedEvent;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
             allQuests.put(quest.getName(), quest);
             handleQuest(quest);
         }
-
     }
 
     public void activateQuest(String questId) {
@@ -52,6 +50,11 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
         var finishedQuest = event.getSubject();
         assert finishedQuest.getState() == QuestState.COMPLETED;
         completedQuests.add(finishedQuest);
+    }
+
+    @Override
+    public Class<?> getEventType() {
+        return QuestCompletedEvent.class;
     }
 
 }

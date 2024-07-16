@@ -89,44 +89,23 @@ public class Ore {
     }
 
     private void move(float deltaTime) {
-        switch (direction) {
-            case NORTH:
-                if (position.y < destination.y) {
-                    position.y += moveSpeed * deltaTime;
-                }
-                if (position.y >= destination.y) {
-                    position.y = destination.y;
-                    activateBlock();
-                }
-                break;
-            case SOUTH:
-                if (position.y > destination.y) {
-                    position.y -= moveSpeed * deltaTime;
-                }
-                if (position.y <= destination.y) {
-                    position.y = destination.y;
-                    activateBlock();
-                }
-                break;
-            case EAST:
-                if (position.x < destination.x) {
-                    position.x += moveSpeed * deltaTime;
-                }
-                if (position.x >= destination.x) {
-                    position.x = destination.x;
-                    activateBlock();
-                }
-                break;
-            case WEST:
-                if (position.x > destination.x) {
-                    position.x -= moveSpeed * deltaTime;
-                }
-                if (position.x <= destination.x) {
-                    position.x = destination.x;
-                    activateBlock();
-                }
-                break;
+        position.x = updatePosition(position.x, destination.x,moveSpeed * deltaTime);
+        position.y = updatePosition(position.y, destination.y,moveSpeed * deltaTime);
+
+        if (position.idt(destination)) {
+            activateBlock();
         }
+        //Ore has arrived at destination.
+    }
+
+    private float updatePosition(float currentPosition, float targetDestination, float moveDistance) {
+        float delta = targetDestination - currentPosition;
+
+        if (Math.abs(delta) <= moveDistance) {
+            return targetDestination;
+        }
+
+        return currentPosition + Math.signum(delta) * moveDistance;
     }
 
     public void activateBlock() {

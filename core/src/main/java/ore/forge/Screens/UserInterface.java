@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -142,7 +143,7 @@ public class UserInterface {
 //
 //        nodeTable.setPosition(900f, 700f);
 //        stage.addActor(nodeTable);
-        inventoryWidget.setPosition(Gdx.graphics.getWidth() *.7f, Gdx.graphics.getHeight() * .4f);
+        inventoryWidget.setPosition(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f);
         inventoryWidget.setVisible(false);
 
         shopWidget.setPosition(0, Gdx.graphics.getHeight() * .4f);
@@ -194,6 +195,18 @@ public class UserInterface {
             activeOre.setText("Active Ore: " + oreRealm.getActiveOre().size());
             updateInterval = 0f;
         }
+
+        for (Actor actor : stage.getActors()) {
+            if (actor instanceof InventoryTable inventoryTable) {
+                for (ItemIcon icon : inventoryTable.getAllIcons()) {
+                    if (icon.getNode().getHeldItem().getName().equals("Test Conveyor")) {
+                        Gdx.app.log("UserInterface", "Stored Count Label Text: " + String.valueOf(icon.getStoredCountLabel().getText()));
+                        break;
+                    }
+                }
+                break;
+            }
+        }
         stage.act(deltaT);
         stage.draw();
     }
@@ -214,18 +227,5 @@ public class UserInterface {
         activeOre.setVisible(true);
         stage.addActor(activeOre);
     }
-
-    public void showInventory() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.INSERT)) {
-            inventoryWidget.setVisible(!inventoryWidget.isVisible());
-        }
-        if (inventoryWidget.isVisible()) {
-            Gdx.input.setInputProcessor(this.stage);
-        } else {
-            stage.setKeyboardFocus(null);
-        }
-    }
-
-
 
 }

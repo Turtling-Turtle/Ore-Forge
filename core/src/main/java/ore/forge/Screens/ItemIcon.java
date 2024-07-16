@@ -2,6 +2,7 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +21,7 @@ import ore.forge.Player.InventoryNode;
 //An Item Icon is a rounded Square with a border and a name below it.
 //Inside the square the items icon is held, the border is colored based on the tier of the item, and the name is
 //the name of the item.
-public class ItemIcon extends WidgetGroup {
+public class ItemIcon extends WidgetGroup{
     private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     //    private static final String roundEmpty = "128xRoundEmpty";
     private static final String roundFull = "128xRoundFull";
@@ -28,6 +29,7 @@ public class ItemIcon extends WidgetGroup {
     private final InventoryNode node;
     private InventoryMode processor;
     private TextTooltip tooltip;
+    private Label storedCount, nameLabel;
 
     public ItemIcon(InventoryNode node) {
         this.node = node;
@@ -47,10 +49,6 @@ public class ItemIcon extends WidgetGroup {
         border.setDebug(true);
         border.setSize(Gdx.graphics.getWidth() *.08f, Gdx.graphics.getHeight() *.15f);
 
-
-
-
-
         Table table = new Table();
         table.setBackground(buttonAtlas.getDrawable(roundFull));
         table.setColor(determineColor(node));
@@ -59,7 +57,7 @@ public class ItemIcon extends WidgetGroup {
         labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         labelStyle.fontColor = Color.BLACK;
 
-        Label nameLabel = new Label(node.getName(), labelStyle);
+        nameLabel = new Label(node.getName(), labelStyle);
         nameLabel.setFontScale(.8f, .8f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
@@ -77,16 +75,34 @@ public class ItemIcon extends WidgetGroup {
         tooltip = new TextTooltip(node.getName() + "\nStored: " + node.getStored(), style);
         tooltip.setInstant(true);
 
-        addActor(border);
+//        addActor(border);
         border.setColor(determineColor(node));
         setSize(border.getWidth(), border.getHeight());
         this.setTouchable(Touchable.enabled);
         assert this.addListener(tooltip);
 
+        storedCount = new Label( null, labelStyle);
+        Container<Label> container = new Container<>(storedCount);
+        container.setClip(true);
 
-        if (!node.hasSupply()) {
-            setColor(Color.BLACK);
-        }
+        Stack stack = new Stack();
+        stack.setSize(border.getWidth(), border.getHeight());
+        stack.add(border);
+        container.align(Align.topLeft);
+        stack.add(container);
+
+        this.addActor(stack);
+
+
+//        border.add(storedCount).top().left();
+
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+//        storedCount.setText("Stored: " + node.getStored());
+//        Gdx.app.log("ItemIcon", String.valueOf(storedCount.getText()));
 
     }
 
@@ -139,21 +155,12 @@ public class ItemIcon extends WidgetGroup {
     }
 
     public void updateToolTip(String newMessage) {
-        Label label = tooltip.getActor();
-        label.setText(newMessage);
-        tooltip.getManager().hideAll();
+        storedCount.setText(newMessage);
+        Gdx.app.log("ItemIcon--StoredCountValue", String.valueOf(storedCount.getText()));
+    }
 
-        for (var value : this.getListeners()) {
-            if (value instanceof TextTooltip) {
-                assert value == tooltip;
-                String text = String.valueOf(((TextTooltip) value).getActor().getText());
-                Gdx.app.log("ItemIcon-NewText", text);
-                assert text.equals(newMessage);
-            }
-        }
-//        Gdx.app.log("ItemIcon", newMessage);
-//        this.addListener(tooltip);
-
+    public Label getStoredCountLabel() {
+        return storedCount;
     }
 
 }

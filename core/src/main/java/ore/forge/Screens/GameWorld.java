@@ -118,29 +118,15 @@ public class GameWorld extends CustomScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             delta *= timeScalar();
         stopwatch.restart();
-//        shader.bind();
-//        shader.setUniformf("speed",2f);
-//        shader.setUniformf("time", delta);
-//        shader.setUniformf("u_time", delta);
-//        shader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        batch.setShader(shader);
-//        updateMouse
-//        inputHandler.updateMouse(camera);
 
-        //handleInput.
-//        inputHandler.handleInput(delta, camera, game);
         inputHandler.update(delta, camera);
 
-        //update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-//        executor.submit(() -> updateOre(finalDelta));
 
 
         //Draw game
         batch.begin();
-
-//        batch.disableBlending();
 
         drawWorldTiles(camera); //Draw World Tiles.
 
@@ -157,14 +143,11 @@ public class GameWorld extends CustomScreen {
         //Draw Held Item.
         drawHeldItem(); // Draw it that we are building with.
 
-//        physicsWorld.step(1/60f, 6, 2);
 
         batch.end();
-//        Gdx.app.log("Render Calls", String.valueOf(batch.renderCalls));
 
         userInterface.draw(delta);
-//        frameTimes.add(stopwatch.getTimeStamp());
-//        Gdx.app.log("Frame Time", stopwatch.toString());
+
     }
 
 

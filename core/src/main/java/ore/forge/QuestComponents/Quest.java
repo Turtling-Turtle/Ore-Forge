@@ -1,7 +1,9 @@
 package ore.forge.QuestComponents;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Queue;
+import ore.forge.Color;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestCompletedEvent;
 import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
@@ -46,8 +48,9 @@ public class Quest {
         if (this.state == QuestState.COMPLETED) {
             return;
         } else {
-            this.currentStep = incompleteSteps.first();
+            incompleteSteps.first();
         }
+
     }
 
     public QuestState getState() {
@@ -58,39 +61,53 @@ public class Quest {
         return this.state == QuestState.COMPLETED;
     }
 
-    public void nextStep() {
-        assert this.currentStep.isCompleted();
-        completedSteps.add(incompleteSteps.removeFirst());
+//    public void nextStep() {
+//        assert this.currentStep.isCompleted();
+//        completedSteps.add(incompleteSteps.removeFirst());
+//
+//        if (incompleteSteps.isEmpty()) {
+//            this.complete();
+//        }
+//
+//        currentStep = incompleteSteps.first();
+//        currentStep.registerConditions();
+//    }
 
-        if (incompleteSteps.isEmpty()) {
-            this.complete();
-        }
 
-        currentStep = incompleteSteps.first();
-        currentStep.registerConditions();
-    }
-
-
-    public void update(QuestCondition[] conditions) {
-        completedSteps.add(incompleteSteps.removeFirst());
-
-        if (!incompleteSteps.isEmpty()) {
-            currentStep = incompleteSteps.first();
-            for (QuestCondition condition : currentStep.getConditionArray()) {
-                eventManger.registerListener(condition.getEventType(), condition);
-            }
-        } else {
-            complete();
-        }
-    }
+//    public void update(QuestCondition[] conditions) {
+//        completedSteps.add(incompleteSteps.removeFirst());
+//
+//        if (!incompleteSteps.isEmpty()) {
+//            currentStep = incompleteSteps.first();
+//            for (QuestCondition condition : currentStep.getConditionArray()) {
+//                eventManger.registerListener(condition);
+//            }
+//        } else {
+//            complete();
+//        }
+//    }
 
     public void checkForCompletion() {
-        assert incompleteSteps.first().isCompleted();
+        Gdx.app.log("Quest","Called");
+//        assert questSteps.size() == (completedSteps.size() + incompleteSteps.size);
 
-        completedSteps.add(incompleteSteps.removeFirst());
         if (!incompleteSteps.isEmpty()) {
-            currentStep = incompleteSteps.first();
-            currentStep.registerConditions();
+            assert incompleteSteps.first().isCompleted();
+        }
+
+//        Gdx.app.log("Quest - Incomplete Steps","Step:" + incompleteSteps.first().toString());
+//        Gdx.app.log("Quest","Incomplete Steps Size: " + incompleteSteps.size);
+
+        if (!incompleteSteps.isEmpty()) {
+            completedSteps.add(incompleteSteps.removeFirst());
+        } else {
+            Gdx.app.log("Quest", Color.highlightString("Bug Triggered", Color.YELLOW));
+        }
+
+        if (!incompleteSteps.isEmpty()) {
+            incompleteSteps.first().registerConditions();
+//            currentStep = incompleteSteps.first();
+//            currentStep.registerConditions();
         } else {
             complete();
         }
@@ -109,7 +126,8 @@ public class Quest {
     }
 
     public void initialize() {
-        currentStep.registerConditions();
+        incompleteSteps.first().registerConditions();
+//        currentStep.registerConditions();
     }
 
     public QuestStep getCurrentStep() {
