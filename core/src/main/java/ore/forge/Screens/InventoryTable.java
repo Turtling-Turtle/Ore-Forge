@@ -144,7 +144,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         allIcons = new ArrayList<>();
         for (InventoryNode node : inventory.getInventoryNodes()) {
             var itemIcon = new ItemIcon(node);
-            allIcons.add(new ItemIcon(node));
+            allIcons.add(itemIcon);
             lookUp.put(itemIcon.getNode().getHeldItemID(), itemIcon);
         }
         addNewIcons(allIcons);
@@ -176,7 +176,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
                 icons.sort(sortMethod); //language implementation is really fast...
 //                    quickSort(icons,sortMethod);
             }
-//            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
+            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
             Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
 //        stopwatch.stop();
@@ -225,8 +225,8 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     @Override
     public void handle(NodeEvent event) {
         var itemIcon = lookUp.get(event.node().getHeldItemID());
-        itemIcon.updateToolTip("Stored: " + event.node().getStored());
-//        asyncSearch(searchBar.getText());
+        Gdx.app.log("Inventory Table--Updating Stored","New Value: " + event.node().getStored());
+        itemIcon.updateStoredCount("Stored: " + event.node().getStored());
     }
 
     @Override

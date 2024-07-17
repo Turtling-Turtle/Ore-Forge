@@ -2,17 +2,14 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import ore.forge.Constants;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
@@ -23,7 +20,6 @@ import ore.forge.Player.InventoryNode;
 //the name of the item.
 public class ItemIcon extends WidgetGroup{
     private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
-    //    private static final String roundEmpty = "128xRoundEmpty";
     private static final String roundFull = "128xRoundFull";
     private ImageButton button;
     private final InventoryNode node;
@@ -36,15 +32,11 @@ public class ItemIcon extends WidgetGroup{
         var test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
         button = new ImageButton(test);
-//        button.setSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .13f);
         button.setDebug(true);
         Table border = new Table();
         border.setBackground(buttonAtlas.getDrawable(roundFull));
         button.center();
         border.add(button);
-//        border.add(button).size(Gdx.graphics.getWidth() *.08f, Gdx.graphics.getHeight() *.15f).center();
-        border.center();
-//        border.setSize(1.25f * button.getWidth(), 1.25f * button.getHeight());
         border.center();
         border.setDebug(true);
         border.setSize(Gdx.graphics.getWidth() *.08f, Gdx.graphics.getHeight() *.15f);
@@ -61,7 +53,6 @@ public class ItemIcon extends WidgetGroup{
         nameLabel.setFontScale(.8f, .8f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
-//        nameLabel.setSize(border.getWidth() * .9f, border.getHeight() * .1f);
         border.row();
         border.add(nameLabel).expandX().fillX();
 
@@ -70,18 +61,16 @@ public class ItemIcon extends WidgetGroup{
         var background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
         style.background = background;
         style.label = new Label.LabelStyle(labelStyle);
-//        tooltipLabel = new Label(node.getName() + "\nStored: " + node.getStored(), labelStyle);
-//        tooltip = new TextTooltip(tooltipLabel, style);
-        tooltip = new TextTooltip(node.getName() + "\nStored: " + node.getStored(), style);
+
+        tooltip = new TextTooltip(node.getHeldItem().getDescription(), style);
         tooltip.setInstant(true);
 
-//        addActor(border);
         border.setColor(determineColor(node));
         setSize(border.getWidth(), border.getHeight());
         this.setTouchable(Touchable.enabled);
         assert this.addListener(tooltip);
 
-        storedCount = new Label( null, labelStyle);
+        storedCount = new Label( "Stored: " + node.getStored(), labelStyle);
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
@@ -154,7 +143,7 @@ public class ItemIcon extends WidgetGroup{
         processor.handleClicked(this);
     }
 
-    public void updateToolTip(String newMessage) {
+    public void updateStoredCount(String newMessage) {
         storedCount.setText(newMessage);
         Gdx.app.log("ItemIcon--StoredCountValue", String.valueOf(storedCount.getText()));
     }

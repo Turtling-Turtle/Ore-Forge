@@ -196,17 +196,6 @@ public class UserInterface {
             updateInterval = 0f;
         }
 
-        for (Actor actor : stage.getActors()) {
-            if (actor instanceof InventoryTable inventoryTable) {
-                for (ItemIcon icon : inventoryTable.getAllIcons()) {
-                    if (icon.getNode().getHeldItem().getName().equals("Test Conveyor")) {
-                        Gdx.app.log("UserInterface", "Stored Count Label Text: " + String.valueOf(icon.getStoredCountLabel().getText()));
-                        break;
-                    }
-                }
-                break;
-            }
-        }
         stage.act(deltaT);
         stage.draw();
     }
