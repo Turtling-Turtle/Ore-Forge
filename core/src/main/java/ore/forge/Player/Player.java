@@ -87,16 +87,9 @@ public class Player {
         }
     }
 
-    public void prestige() {
+    public boolean canPrestige() {
         Function prestigeFunction = Function.parseFunction("(2.5 * 10^19) * (PRESTIGE_LEVEL + 1)");
-        if (prestigeFunction.calculate(null) <= wallet) {
-            //Clear Map of all items.
-            //Remove all non-prestige proof items from inventory
-            //Reset wallet
-            //Reward player with a prestige item.
-            //Notify Listeners of type PrestigeEvent.
-            //Reward prestige Currency?
-        }
+        return prestigeFunction.calculate(null) <= wallet;
     }
 
     public void initInventory(ItemManager itemManager) {

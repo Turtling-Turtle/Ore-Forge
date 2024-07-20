@@ -22,18 +22,17 @@ public class Inventory {
     private final HashMap<String, InventoryNode> lookUp;
 
     private final HashMap<String, Item> allItems;
-    private final HashMap<String, ArrayList<InventoryNode>> cachedResults;
 
     public Inventory(ItemManager itemManager) {
         inventoryNodes = new ArrayList<>();
         allItems = itemManager.getAllItems();
-        cachedResults = new HashMap<>();
+        lookUp = new HashMap<>(itemManager.getAllItems().size());
 
         loadInventory();
-        lookUp = new HashMap<>(inventoryNodes.size());
-        for (InventoryNode node : inventoryNodes) {
-            lookUp.put(node.getHeldItemID(), node);
-        }
+
+//        for (InventoryNode node : inventoryNodes) {
+//            lookUp.put(node.getHeldItemID(), node);
+//        }
     }
 
 
@@ -92,6 +91,7 @@ public class Inventory {
                     InventoryNode node = new InventoryNode(allItems.get(itemID), owned);
                     node.getHeldItem().setUnlocked(jsonValue.getBoolean("isUnlocked"));
                     inventoryNodes.add(node);
+                    lookUp.put(itemID, node);
                 } else {
                     Gdx.app.log("INVENTORY", Color.highlightString("Unknown item ID: " + jsonValue.getString("id"), Color.YELLOW));
                 }
@@ -116,18 +116,9 @@ public class Inventory {
     }
 
     public void addItem(String itemID, int count) {
-
-        for (InventoryNode node : inventoryNodes) {
-            if (node.getHeldItemID().equals(itemID)) {
-                node.addNew(count);
-                EventManager.getSingleton().notifyListeners(new ObtainedEvent(node.getHeldItem(), count));
-                return;
-            }
-        }
-    }
-
-    public void addItem(Item item, int count) {
-        lookUp.get(item.getID()).addNew(count);
+        var node = lookUp.get(itemID);
+        node.addNew(count);
+        EventManager.getSingleton().notifyListeners(new ObtainedEvent(node.getHeldItem(), count));
     }
 
     public void prestigeReset() {
@@ -143,12 +134,13 @@ public class Inventory {
     }
 
     private boolean containsItem(String targetID) {
-        for (InventoryNode node : inventoryNodes) {
-            if (node.getHeldItemID().equals(targetID)) {
-                return true;
-            }
-        }
-        return false;
+        return lookUp.containsKey(targetID);
+//        for (InventoryNode node : inventoryNodes) {
+//            if (node.getHeldItemID().equals(targetID)) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     public void printInventory() {
@@ -234,31 +226,6 @@ public class Inventory {
         var temp = inventoryNodes.get(secondIndex);
         inventoryNodes.set(secondIndex, inventoryNodes.get(firstIndex));
         inventoryNodes.set(firstIndex, temp);
-    }
-
-    public ArrayList<InventoryNode> searchFor(String userInput) {
-        var stpwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-        stpwatch.start();
-        userInput = userInput.toLowerCase();
-        if (!userInput.isEmpty()) {
-            if (cachedResults.containsKey(userInput)) {
-                stpwatch.stop();
-                Gdx.app.log("INVENTORY", Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.GREEN));
-                return cachedResults.get(userInput);
-            }
-            ArrayList<InventoryNode> desiredItems = new ArrayList<>();
-            for (InventoryNode node : inventoryNodes) {
-                if (node.getName().toLowerCase().contains(userInput)) {
-                    desiredItems.add(node);
-                }
-            }
-            var sortedResults = bubbleSort(new TierComparator(), desiredItems);
-            cachedResults.put(userInput, desiredItems);
-            stpwatch.stop();
-            Gdx.app.log("INVENTORY", Color.highlightString("Search completed in " + stpwatch.getElapsedTime() + " micro seconds", Color.YELLOW));
-            return sortedResults;
-        }
-        return inventoryNodes;
     }
 
     public String toString() {

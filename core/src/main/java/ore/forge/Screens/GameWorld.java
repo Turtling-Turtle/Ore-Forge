@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ore.forge.*;
 import ore.forge.Input.*;
@@ -26,8 +24,6 @@ import java.util.concurrent.*;
 
 public class GameWorld extends CustomScreen {
     private ArrayList<Long> frameTimes;
-    private final World physicsWorld;
-    private final Box2DDebugRenderer debugRenderer;
     private final SpriteBatch batch;
     protected static OreRealm oreRealm = OreRealm.getSingleton();
     public static ItemMap itemMap = ItemMap.getSingleton();
@@ -60,56 +56,18 @@ public class GameWorld extends CustomScreen {
 //        burning.start();
 //        burning.scaleEffect(0.016f);
 
-        physicsWorld = new World(new Vector2(0, 0f), true);
-        debugRenderer = new Box2DDebugRenderer();
-
-        BodyDef groundBodyDef = new BodyDef();
-        groundBodyDef.position.set(25f, 25f);
-        groundBodyDef.type = BodyDef.BodyType.KinematicBody;
-        Body groundBody = physicsWorld.createBody(groundBodyDef);
-        PolygonShape ground = new PolygonShape();
-        ground.setAsBox(25f, 25f);
-        groundBody.createFixture(ground, 0.0f);
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(25.0f, 25.0f);
-        Body dynamicBody = physicsWorld.createBody(bodyDef);
-        PolygonShape dynamicBox = new PolygonShape();
-        dynamicBox.setAsBox(.5f, .5f); // Half-width and half-height
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = dynamicBox;
-        fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.3f;
-        dynamicBody.createFixture(fixtureDef);
-
-
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
-        userInterface = new UserInterface(game, inputHandler.mouseWorld, inputHandler);
-
-        inputHandler.setCurrentMode(inputHandler.getObserverMode());
-        InventoryMode currentMode = inputHandler.getInventoryMode();
-        currentMode.setUserInterface(userInterface);
+        userInterface = new UserInterface(game, inputHandler);
 
         for (ItemIcon icon : userInterface.getInventoryTable().getAllIcons()) {
-            icon.setProcessor(currentMode);
+            icon.setProcessor(inputHandler.getInventoryMode());
         }
 
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
         timeScalar = 1f;
-
-
-//        String vertexShader = Gdx.files.internal("default.vert").readString();
-//        String fragmentShader = Gdx.files.internal("conveyorTest.frag").readString();
-//        System.out.println(fragmentShader);
-//        shader = new ShaderProgram(vertexShader, fragmentShader);
-//        if (!shader.isCompiled()) {
-//            Gdx.app.error("Shader", "Shader compilation failed: " + shader.getLog());
-//            Gdx.app.exit();
-//        }
 
     }
 
@@ -342,25 +300,6 @@ public class GameWorld extends CustomScreen {
             } else if (item instanceof Conveyor) {
                 ((Conveyor) item).update();//Might use this.
             }
-
-            float x = item.getVector2().x;
-            float y = item.getVector2().y;
-//            batch.draw(item.getTexture(),
-//                item.getVector2().x,
-//                item.getVector2().y,
-//                (float) (item.getWidth() / 2f),
-//                (float) (item.getHeight() / 2f),
-//                item.getWidth(),
-//                item.getHeight(),
-//                1,
-//                1,
-//                item.getDirection().getAngle(),
-//                0,
-//                0,
-//                item.getTexture().getWidth(),
-//                item.getTexture().getHeight(),
-//                false,
-//                false);
 
             if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
                 batch.draw(item.getTexture(),

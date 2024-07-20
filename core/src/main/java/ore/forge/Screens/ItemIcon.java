@@ -32,13 +32,13 @@ public class ItemIcon extends WidgetGroup{
         var test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
         button = new ImageButton(test);
-        button.setDebug(true);
+//        button.setDebug(true);
         Table border = new Table();
         border.setBackground(buttonAtlas.getDrawable(roundFull));
         button.center();
         border.add(button);
         border.center();
-        border.setDebug(true);
+//        border.setDebug(true);
         border.setSize(Gdx.graphics.getWidth() *.08f, Gdx.graphics.getHeight() *.15f);
 
         Table table = new Table();

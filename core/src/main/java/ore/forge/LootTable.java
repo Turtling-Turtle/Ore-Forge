@@ -1,9 +1,12 @@
 package ore.forge;
 
 import ore.forge.BreakInfinity.BigDouble;
+import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.Events.PrestigeEvent;
 import ore.forge.Expressions.Function;
 import ore.forge.Expressions.NumericOperator;
 import ore.forge.Items.*;
+import ore.forge.Player.Player;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.Invulnerability;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -21,12 +24,17 @@ import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
 
 
 public class LootTable {
-    private final ItemManager manager;
+    private final ArrayList<Item> lockedPrestigeItems;
     private HashMap<Float, ArrayList<Item>> buckets;
     private final Random random;
 
     public LootTable(ItemManager manager) {
-        this.manager = manager;
+        lockedPrestigeItems = new ArrayList<>();
+        for (Item item : manager.getAllItems().values()) {
+            if (item.getTier() == Item.Tier.PRESTIGE) {
+                lockedPrestigeItems.add(item);
+            }
+        }
         random = new Random(123);
         this.buckets = new HashMap<>();
         updateItems();
@@ -80,10 +88,14 @@ public class LootTable {
 
     //TODO: This probably isn't working as intended.
     public void updateItems() {
-        var allItems = manager.getAllItems();
-        for (Item item : allItems.values()) {
-            if (item.getTier() == Item.Tier.PRESTIGE) {
-                addItem(item);
+        Iterator<Item> iterator = lockedPrestigeItems.iterator();
+        while (iterator.hasNext()) {
+            var item = iterator.next();
+            if (item.getTier() == Item.Tier.PRESTIGE && item.getUnlockMethod() == Item.UnlockMethod.PRESTIGE_LEVEL) {
+                if (item.getUnlockRequirements() <= Player.getSingleton().getPrestigeLevel()) {
+                    addItem(item);
+                    iterator.remove();
+                }
             }
         }
     }
@@ -314,32 +326,7 @@ public class LootTable {
             return binarySearch(data, midPoint + 1, max, target, previous);
         }
 
-//        Float result = null;
-//
-//        int midPoint;
-//        while (!(min > max)) {
-//            midPoint = (min + max) / 2;
-//            var midValue = data.get(midPoint);
-//            if (midValue.compareTo(target) <= 0) {
-//                previous.add(midValue);
-//                result = midValue; // Midpoint value is a potential candidate
-//                min = midPoint + 1; // Move right to find a closer value
-//            } else {
-//                previous.add(midValue);
-//                max = midPoint - 1; // Move left to find a smaller value
-//            }
-//        }
-//        midPoint = (max + min) / 2;
-//        if (previous.contains(data.get(midPoint))) {
-//            var middleData = data.get(midPoint);
-//            if (target.compareTo(middleData) <= 0) {
-//                return data.get(midPoint);
-//            } else {
-//                return data.get(midPoint + 1);
-//            }
-//        }
-//        return result;
-
     }
+
 
 }

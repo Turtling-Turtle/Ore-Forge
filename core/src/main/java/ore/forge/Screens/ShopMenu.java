@@ -134,7 +134,7 @@ public class ShopMenu extends WidgetGroup {
         scrollPane = new ScrollPane(iconTable);
         updateIcons(dropperIcons);
 
-        background.setSize(Gdx.graphics.getWidth() * .5f, Gdx.graphics.getHeight() * .5f);
+        background.setSize(Gdx.graphics.getWidth() * .55f, Gdx.graphics.getHeight() * .5f);
         background.add(topTable).align(Align.topLeft).expandX().fillX().row();
 //        background.pack();
 //        background.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .5f);

@@ -1,27 +1,29 @@
 package ore.forge;
 
+import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.PrestigeEvent;
 import ore.forge.Player.Player;
 
-public class PrestigeManager {
+public class PrestigeManager implements EventListener<PrestigeEvent> {
     private final LootTable lootTable;
     private final static Player player = Player.getSingleton();
     private final static ItemMap itemMap = ItemMap.getSingleton();
 
     public PrestigeManager(ItemManager itemManager) {
         lootTable = new LootTable(itemManager);
-    }
-
-    public boolean canPrestige() {
-        return false;
+        EventManager.getSingleton().registerListener(this);
     }
 
     public void prestige() {
         player.setPrestigeLevel(player.getPrestigeLevel() + 1);
+
         //Event Manager Notifies of a prestige Event
         //Quests check/update their requirements.
         /*
          * Quests/Achievements
          * */
+        lootTable.updateItems();
         awardItem();
         player.addPrestigeCurrency(3);
 
@@ -34,8 +36,20 @@ public class PrestigeManager {
 
     private void awardItem() {
         var reward = lootTable.getRandomItem();
-        player.getInventory().addItem(reward, 1);
+        player.getInventory().addItem(reward.getID(), 1);
     }
 
 
+    @Override
+    public void handle(PrestigeEvent event) {
+        if (event.getSubject()) {
+            prestige();
+        }
+
+    }
+
+    @Override
+    public Class<?> getEventType() {
+        return PrestigeEvent.class;
+    }
 }

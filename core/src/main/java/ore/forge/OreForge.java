@@ -59,6 +59,8 @@ public class OreForge extends Game {
         Player.getSingleton().initInventory(itemManager);
         Player.getSingleton().getInventory().printInventory();
 
+        var prestigeManager = new PrestigeManager(itemManager);
+
 //        ItemMap.getSingleton().loadState(resourceManager);
 		mainMenuScreen = new MainMenu(this, itemManager);
 		settingsMenu = new SettingsMenu(this, itemManager);

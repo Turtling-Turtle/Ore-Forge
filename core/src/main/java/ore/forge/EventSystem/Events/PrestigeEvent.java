@@ -1,22 +1,26 @@
 package ore.forge.EventSystem.Events;
 
 import ore.forge.FontColors;
+import ore.forge.Player.Player;
 
-public record PrestigeEvent(Object object) implements Event{
+public record PrestigeEvent(Boolean result) implements Event<Boolean> {
 
     @Override
-    public Class getEventType() {
-        return null;
+    public Class<?> getEventType() {
+        return PrestigeEvent.class;
     }
 
     @Override
-    public Object getSubject() {
-        return null;
+    public Boolean getSubject() {
+        return result;
     }
 
     @Override
     public String getBriefInfo() {
-        return "";
+        if (result) {
+            return "Successfully prestiged to level " + (Player.getSingleton().getPrestigeLevel() + 1);
+        }
+        return "Failed to prestige.";
     }
 
     @Override
@@ -26,11 +30,11 @@ public record PrestigeEvent(Object object) implements Event{
 
     @Override
     public String eventName() {
-        return "Prestige";
+        return result ? "Successful Prestige" : "Failed Prestige";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.PALE_VIOLET_RED;
+        return result ? FontColors.SKYBLUE : FontColors.RED;
     }
 }

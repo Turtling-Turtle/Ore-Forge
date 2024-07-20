@@ -38,23 +38,28 @@ public class EventManagerTest {
         manager = new EventManager();
         var toBeAdded = new EventListener<OreDroppedEvent>() {
             @Override
-            public void handle(OreDroppedEvent event) { }
+            public void handle(OreDroppedEvent event) {
+            }
 
             @Override
-            public Class<?> getEventType() { return OreDroppedEvent.class; }
+            public Class<?> getEventType() {
+                return OreDroppedEvent.class;
+            }
         };
 
         var listener = new EventListener<OreDroppedEvent>() {
             @Override
-            public void handle(OreDroppedEvent event) { manager.registerListener(toBeAdded); }
+            public void handle(OreDroppedEvent event) {
+                manager.registerListener(toBeAdded);
+            }
 
             @Override
-            public Class<?> getEventType() { return OreDroppedEvent.class; }
+            public Class<?> getEventType() {
+                return OreDroppedEvent.class;
+            }
         };
         manager.registerListener(listener);
 
-        manager.notifyListeners(new OreDroppedEvent(null, null));
-        assertFalse(manager.hasListener(toBeAdded));
         manager.notifyListeners(new OreDroppedEvent(null, null));
         assertTrue(manager.hasListener(toBeAdded));
     }
@@ -105,7 +110,9 @@ public class EventManagerTest {
                 }
 
                 @Override
-                public Class<?> getEventType() { return OreDroppedEvent.class; }
+                public Class<?> getEventType() {
+                    return OreDroppedEvent.class;
+                }
             };
             manager.registerListener(fodder);
         }

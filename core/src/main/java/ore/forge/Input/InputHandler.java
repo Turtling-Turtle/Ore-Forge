@@ -2,7 +2,6 @@ package ore.forge.Input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.ItemMap;
 import ore.forge.Items.Item;
@@ -10,7 +9,9 @@ import ore.forge.OreForge;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
+import ore.forge.Screens.InventoryTable;
 import ore.forge.Screens.ShopMenu;
+import ore.forge.Screens.UserInterface;
 
 public class InputHandler {
 
@@ -19,6 +20,7 @@ public class InputHandler {
 
     private InventoryNode heldNode;
     private Item heldItem;
+
     private final ObserverMode observerMode;
     private final SelectMode selectMode;
     private final BuildMode buildMode;
@@ -26,9 +28,9 @@ public class InputHandler {
     private final OreObserver oreObserver;
 
 
+    private UserInterface userInterface;
     private final static Inventory inventory = Player.getSingleton().getInventory();
     private final static ItemMap itemMap = ItemMap.getSingleton();
-    private ShopMenu shopMenu;
     private final OreForge game;
     public final Vector3 mouseWorld, mouseScreen;
 
@@ -41,6 +43,7 @@ public class InputHandler {
         buildMode = new BuildMode(heldNode, heldItem);
         inventoryMode = new InventoryMode(this);
         oreObserver = new OreObserver();
+        currentMode = observerMode;
     }
 
     public void update(float delta, OrthographicCamera camera) {
@@ -63,15 +66,12 @@ public class InputHandler {
         mouseScreen.x = Gdx.input.getX();
         mouseScreen.y = Gdx.input.getY();
         mouseWorld.set(camera.unproject(mouseScreen));
-//        mouseWorld.x = MathUtils.floor(mouseWorld.x);
-//        mouseWorld.y = MathUtils.floor(mouseWorld.y);
     }
 
     public void setCurrentMode(InputMode newMode) {
         previousMode = this.currentMode;
         this.currentMode = newMode;
         currentMode.setActive(this);
-//        Gdx.app.log("InputHandler", "New Mode:" + currentMode);
     }
 
     public InputMode getPreviousMode() {
@@ -110,21 +110,21 @@ public class InputHandler {
         this.heldNode = inventory.getNode(item.getID());
     }
 
-    public InventoryNode getInventoryNode() {
-        return heldNode;
-    }
-
     public void setHeldItem(Item item) {
         this.heldItem = item;
         setInventoryNode(item);
     }
 
-    public void setShopMenu(ShopMenu shopMenu) {
-        this.shopMenu = shopMenu;
+    public ShopMenu getShopMenu() {
+        return userInterface.getShopUI();
     }
 
-    public ShopMenu getShopMenu() {
-        return shopMenu;
+    public InventoryTable getInventoryUI() {
+        return userInterface.getInventoryTable();
+    }
+
+    public UserInterface getUserInterface() {
+        return userInterface;
     }
 
     public Item getHeldItem() {
@@ -139,6 +139,10 @@ public class InputHandler {
         return mouseWorld;
     }
 
+    public void setUserInterface(UserInterface userInterface) {
+        this.userInterface = userInterface;
+    }
+
     public float getMouseWorldX() {
         return mouseWorld.x;
     }
@@ -147,7 +151,7 @@ public class InputHandler {
         return mouseWorld.y;
     }
 
-    public boolean isCoordinatesInvalid() {
-        return mouseWorld.x > itemMap.mapTiles.length - 1 || mouseWorld.x < 0 || mouseWorld.y > itemMap.mapTiles[0].length - 1 || mouseWorld.y < 0;
+    public boolean isCoordsValid() {
+        return !(mouseWorld.x > itemMap.mapTiles.length - 1) && !(mouseWorld.x < 0) && !(mouseWorld.y > itemMap.mapTiles[0].length - 1) && !(mouseWorld.y < 0);
     }
 }

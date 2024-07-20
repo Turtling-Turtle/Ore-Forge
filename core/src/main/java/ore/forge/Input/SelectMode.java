@@ -16,7 +16,7 @@ public class SelectMode extends InputMode {
     @Override
     public void update(float deltaTime, OrthographicCamera camera, InputHandler context) {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (!context.isCoordinatesInvalid() && itemMap.getBlock(context.getMouseWorld().x, context.getMouseWorld().y) != null) {
+            if (context.isCoordsValid() && itemMap.getBlock(context.getMouseWorld().x, context.getMouseWorld().y) != null) {
                 selectedItem = itemMap.getItem(context.mouseWorld);
                 context.setHeldItem(selectedItem);
             } else {

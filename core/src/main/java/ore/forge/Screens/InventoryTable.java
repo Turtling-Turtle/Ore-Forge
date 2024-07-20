@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -165,22 +166,29 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     }
 
     private void asyncSearch(String target) {
-//        var stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-//        stopwatch.start();
-        String finalizedTarget = target;
+        var stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
+        stopwatch.start();
+
+
+        final String finalizedTarget = target;
+
+
         CompletableFuture.runAsync(() -> {
-            Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-            stopwatch.start();
-            ArrayList<ItemIcon> icons = findIcons(finalizedTarget);
-            if (sortMethod != null) {
-                icons.sort(sortMethod); //language implementation is really fast...
-//                    quickSort(icons,sortMethod);
+
+            ArrayList<ItemIcon> icons;
+            if (finalizedTarget.equals("Search...")) {
+                icons = allIcons;
+            } else {
+                icons = findIcons(finalizedTarget);
             }
-            Gdx.app.log("INVENTORY TABLE", stopwatch.toString());
+
+            if (sortMethod != null) {
+                icons.sort(sortMethod);
+            }
             Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
-//        stopwatch.stop();
-//        Gdx.app.log("Inventory Table", ore.forge.Color.highlightString(stopwatch.toString(), ore.forge.Color.GREEN));
+        stopwatch.stop();
+        Gdx.app.log("Inventory Table", ore.forge.Color.highlightString(stopwatch.toString(), ore.forge.Color.GREEN));
     }
 
     public ArrayList<ItemIcon> getAllIcons() {
@@ -222,11 +230,24 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 //        iconTable.add(icon).left().top().expandX().fillX().align(Align.topLeft).pad(5);
     }
 
+    public void show() {
+        Gdx.app.log("InventoryTable","Showing");
+        this.setVisible(true);
+        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f, 0.13f)));
+//        assert isVisible();
+    }
+
+    public void hide() {
+        Gdx.app.log("InventoryTable","hiding");
+        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f , Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
+//        assert !isVisible();
+    }
+
     @Override
     public void handle(NodeEvent event) {
         var itemIcon = lookUp.get(event.node().getHeldItemID());
-        Gdx.app.log("Inventory Table--Updating Stored","New Value: " + event.node().getStored());
         itemIcon.updateStoredCount("Stored: " + event.node().getStored());
+        asyncSearch(searchBar.getText());
     }
 
     @Override
@@ -258,7 +279,6 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
             }
             //Name
             return node1.getNodeName().compareTo(node2.getNodeName());
-
         }
     }
 
@@ -290,6 +310,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
             //Owned
             Integer result = icon1.getNode().getStored();
             result = result.compareTo(icon2.getNode().getStored());
+            result *= -1;
             if (result != 0) {
                 return result;
             }

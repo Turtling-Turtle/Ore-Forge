@@ -31,7 +31,7 @@ public class ObserverMode extends InputMode {
            handler.setCurrentMode(handler.getInventoryMode());
            return;
         }
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && !handler.isCoordinatesInvalid() && itemMap.getBlock(handler.getMouseWorldX(), handler.getMouseWorldY()) != null) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && handler.isCoordsValid() && itemMap.getBlock(handler.getMouseWorldX(), handler.getMouseWorldY()) != null) {
 //            handler.setMode(InputHandler.Mode.SELECTING);
             handler.setHeldItem(itemMap.getItem(handler.getMouseWorld()));
             handler.setCurrentMode(handler.getSelectMode());
@@ -41,7 +41,6 @@ public class ObserverMode extends InputMode {
             handler.setCurrentMode(handler.getOreObserver());
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            //
             handler.getShopMenu().setVisible(!handler.getShopMenu().isVisible());
         }
     }

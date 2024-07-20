@@ -3,19 +3,20 @@ package ore.forge.Screens;
 //Label for Mouse Coordinates, Memory Usage, and FPS
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.*;
 import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.PrestigeEvent;
 import ore.forge.Input.InputHandler;
 import ore.forge.Input.OreObserver;
 import ore.forge.Player.Inventory;
@@ -32,42 +33,20 @@ public class UserInterface {
     private float updateInterval = 0;
     private final Runtime runtime = Runtime.getRuntime();
     private static final Player player = Player.getSingleton();
-    private com.badlogic.gdx.scenes.scene2d.ui.ScrollPane scrollPane;
     public Stage stage;
-    private Table table,  nodeTable;
-    private ImageButton imageButton;//Icon for
-    private final ProgressBar oreLimit;
     private OrthographicCamera camera;
     private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre, itemOver;
-    private Vector3 mouse;
-    private NumberFormatter numberFormatter;
-    private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private InventoryTable inventoryWidget;
     private ShopMenu shopWidget;
     private InputHandler inputHandler;
     private Label oreInfo;
 
-    public UserInterface(Inventory inventory) {
-        table = new Table();
-        for (InventoryNode node : inventory.getInventoryNodes()) {
-            Skin skin = new Skin();
-            ImageTextButton imageTextButton = new ImageTextButton(node.getName(), skin);
-            table.add(imageTextButton);
-        }
-
-        ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
-        oreLimit = new ProgressBar(0, Constants.ORE_LIMIT, 1, false, style);
-    }
-
-    public UserInterface(OreForge game, Vector3 mouse, InputHandler handler) {
-        numberFormatter = new NumberFormatter();
+    public UserInterface(OreForge game, InputHandler handler) {
 
         this.inputHandler = handler;
 
-        this.mouse = mouse;
         camera = new OrthographicCamera();
         ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
-        oreLimit = new ProgressBar(0, Constants.ORE_LIMIT, 1, false, style);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false);
         Viewport viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -103,13 +82,12 @@ public class UserInterface {
 
 
         stage = new Stage(viewport, game.getSpriteBatch());
-        nodeTable = new Table();
         int count = 0;
 
         inventoryWidget = new InventoryTable(player.getInventory());
 
         shopWidget = new ShopMenu(player.getInventory());
-        handler.setShopMenu(shopWidget);
+        handler.setUserInterface(this);
 
         oreInfo = new Label("", fpsStyle);
         oreInfo.setPosition(Gdx.graphics.getWidth() * .85f, Gdx.graphics.getHeight() * .93f);
@@ -118,6 +96,21 @@ public class UserInterface {
         EventLogger eventLogger = new EventLogger();
         eventLogger.setPosition(Gdx.graphics.getWidth() * 0.01f, Gdx.graphics.getHeight() * .01f);
         EventManager.getSingleton().setEventLogger(eventLogger);
+
+
+        var prestigeButton = ButtonHelper.createRoundTextButton("Prestige", Color.SKY);
+        prestigeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                EventManager.getSingleton().notifyListeners(new PrestigeEvent(Player.getSingleton().canPrestige()));
+            }
+
+        });
+        prestigeButton.setPosition(Gdx.graphics.getWidth() * 0.9f,Gdx.graphics.getHeight() * .8f);
+        prestigeButton.setSize(Gdx.graphics.getWidth() * 0.08f, Gdx.graphics.getHeight() * 0.04f);
+
+
+
 //        do {
 //            stopwatch.restart();
 //                player.getInventory().sortByStored();
@@ -143,7 +136,7 @@ public class UserInterface {
 //
 //        nodeTable.setPosition(900f, 700f);
 //        stage.addActor(nodeTable);
-        inventoryWidget.setPosition(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f);
+        inventoryWidget.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .1f);
         inventoryWidget.setVisible(false);
 
         shopWidget.setPosition(0, Gdx.graphics.getHeight() * .4f);
@@ -157,6 +150,7 @@ public class UserInterface {
         stage.addActor(mouseCoords);
         stage.addActor(itemOver);
         stage.addActor(specialPoints);
+        stage.addActor(prestigeButton);
         createWallet(fpsStyle);
         createActiveOre(fpsStyle);
 
@@ -166,9 +160,10 @@ public class UserInterface {
         return inventoryWidget;
     }
 
-    public ProgressBar getOreLimit() {
-        return oreLimit;
+    public ShopMenu getShopUI() {
+        return shopWidget;
     }
+
 
     public void draw(float deltaT) {
         updateInterval += deltaT;
@@ -176,8 +171,8 @@ public class UserInterface {
         if (updateInterval > 0.1f) {
             camera.update();
             fpsCounter.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
-            if (ITEM_MAP.getItem(mouse) != null) {
-                itemOver.setText("Item: " + ITEM_MAP.getItem(mouse).getName());
+            if (ITEM_MAP.getItem(inputHandler.getMouseWorld()) != null) {
+                itemOver.setText("Item: " + ITEM_MAP.getItem(inputHandler.getMouseWorld()).getName());
             } else {
                 itemOver.setText("Item: " + null);
             }
@@ -189,7 +184,7 @@ public class UserInterface {
             }
 //
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024) + " MB");
-            this.mouseCoords.setText("X: " + (int) mouse.x + " Y: " + (int) mouse.y);
+            this.mouseCoords.setText("X: " + (int) inputHandler.getMouseWorld().x + " Y: " + (int) inputHandler.getMouseWorld().y);
             wallet.setText("$ " + String.format("%.2e", player.getWallet()));
             specialPoints.setText("SP: " + player.getSpecialPoints());
             activeOre.setText("Active Ore: " + oreRealm.getActiveOre().size());
@@ -215,6 +210,10 @@ public class UserInterface {
         activeOre.setPosition(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .98f);
         activeOre.setVisible(true);
         stage.addActor(activeOre);
+    }
+
+    public void setInputHandler(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
     }
 
 }

@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import ore.forge.Constants;
 import ore.forge.CoolDown;
 import ore.forge.EventSystem.Events.Event;
+import ore.forge.EventSystem.Events.OreDroppedEvent;
+import ore.forge.EventSystem.Events.OreSoldEvent;
 import ore.forge.FontColors;
 
 import java.text.SimpleDateFormat;
@@ -42,7 +44,8 @@ public class EventLogger extends WidgetGroup {
 
     public EventLogger() {
         disabledEvents = new HashSet<>();
-//        disabledEvents.add(OreDroppedEvent.class);
+        disabledEvents.add(OreDroppedEvent.class);
+        disabledEvents.add(OreSoldEvent.class);
         coolDown = new CoolDown(0.3f);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         font2.getData().markupEnabled = true;

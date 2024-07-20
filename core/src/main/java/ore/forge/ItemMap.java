@@ -14,6 +14,7 @@ import ore.forge.Player.Player;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 //@author Nathan Ulmen
 //The ItemMap is responsible for keeping track of placed items and retrieving the positions of their blocks
@@ -154,7 +155,8 @@ public class ItemMap {
     }
 
     public void reset(Inventory inventory) {
-        for (Item item : placedItems) {
+        var temp = new ArrayList<>(placedItems);
+        for (Item item : temp) {
             item.removeItem();
             inventory.pickUp(item);
         }

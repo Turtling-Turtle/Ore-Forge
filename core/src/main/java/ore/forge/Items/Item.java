@@ -446,6 +446,10 @@ public abstract class Item {
         return sellPrice;
     }
 
+    public double getUnlockRequirements() {
+        return unlockRequirements;
+    }
+
     @SuppressWarnings("unchecked")
     protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
         try {
