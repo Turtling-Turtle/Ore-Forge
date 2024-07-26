@@ -57,12 +57,16 @@ public class Stopwatch {
         startTime = System.nanoTime();
     }
 
+    public void print() {
+        System.out.println(this);
+    }
+
     public boolean isRunning() {
         return state == State.RUNNING;
     }
     public String toString() {
         return switch (state) {
-            case RUNNING -> "Current Elpased time: " + getTimeStamp() + " " + this.timeUnit;
+            case RUNNING -> "Current Elapsed time: " + getTimeStamp() + " " + this.timeUnit;
             case STOPPED -> "Elapsed Time: " + getElapsedTime() + " " + this.timeUnit;
             case RESET -> "Stopwatch has not been started.";
         };

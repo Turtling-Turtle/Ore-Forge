@@ -2,6 +2,7 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -84,14 +85,6 @@ public class ItemIcon extends WidgetGroup{
 
 
 //        border.add(storedCount).top().left();
-
-    }
-
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-//        storedCount.setText("Stored: " + node.getStored());
-//        Gdx.app.log("ItemIcon", String.valueOf(storedCount.getText()));
 
     }
 

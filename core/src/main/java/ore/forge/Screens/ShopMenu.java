@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -219,8 +220,6 @@ public class ShopMenu extends WidgetGroup {
         var table = new Table();
         var itemPurchaseIcon = new ItemIcon(icon.getNode());
         table.add(itemPurchaseIcon).left().fillY();
-//        table.add(ButtonHelper.createRoundTextButton("Buy", Color.GREEN)).right();
-//        table.add(ButtonHelper.createRoundTextButton("Cancel", Color.LIGHT_GRAY)).right();
         var cancelButton = ButtonHelper.createRoundTextButton("Cancel", Color.LIGHT_GRAY);
         cancelButton.addListener(new ClickListener() {
             @Override
@@ -243,4 +242,31 @@ public class ShopMenu extends WidgetGroup {
         background.add(table).align(Align.bottomLeft).left().bottom().expandX().fillX();
     }
 
+    public void show() {
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * 0f, Gdx.graphics.getHeight() * .4f, 0.13f)));
+    }
+
+    public void hide() {
+        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth() , Gdx.graphics.getHeight() * .4f, 0.13f), Actions.hide()));
+    }
+
+
+    public double normalize(double mantissa, long exponent) {
+        //For multiplication
+        while (mantissa >= 10) {
+            mantissa /= 10;
+            exponent += 1;
+        }
+
+        //For division
+        while (mantissa < 1) {
+            mantissa *= 10;
+            exponent -= 1;
+        }
+
+        return 0;
+    }
+
+
 }
+

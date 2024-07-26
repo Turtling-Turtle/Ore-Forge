@@ -232,8 +232,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
     public void show() {
         Gdx.app.log("InventoryTable","Showing");
-        this.setVisible(true);
-        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f, 0.13f)));
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f, 0.13f)));
 //        assert isVisible();
     }
 
@@ -310,7 +309,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
             //Owned
             Integer result = icon1.getNode().getStored();
             result = result.compareTo(icon2.getNode().getStored());
-            result *= -1;
+            result *= -1; //Flip result so that its most to least.
             if (result != 0) {
                 return result;
             }

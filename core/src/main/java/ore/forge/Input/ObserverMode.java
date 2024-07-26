@@ -41,7 +41,13 @@ public class ObserverMode extends InputMode {
             handler.setCurrentMode(handler.getOreObserver());
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            handler.getShopMenu().setVisible(!handler.getShopMenu().isVisible());
+            var shop = handler.getShopMenu();
+            if (shop.isVisible()) {
+                shop.hide();
+            } else {
+                shop.show();
+            }
+//            handler.getShopMenu().setVisible(!handler.getShopMenu().isVisible());
         }
     }
 
