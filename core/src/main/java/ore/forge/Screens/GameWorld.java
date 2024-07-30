@@ -25,10 +25,9 @@ import java.util.concurrent.*;
 public class GameWorld extends CustomScreen {
     private ArrayList<Long> frameTimes;
     private final SpriteBatch batch;
-    protected static OreRealm oreRealm = OreRealm.getSingleton();
-    public static ItemMap itemMap = ItemMap.getSingleton();
-    protected static Player player = Player.getSingleton();
-    public Actor a;
+    private final OreRealm oreRealm = OreRealm.getSingleton();
+    private final ItemMap itemMap = ItemMap.getSingleton();
+    private final Player player = Player.getSingleton();
     private final InputHandler inputHandler;
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
@@ -74,8 +73,9 @@ public class GameWorld extends CustomScreen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            delta *= timeScalar();
+        delta *= timeScalar();
         stopwatch.restart();
+        viewport.apply();
 
         inputHandler.update(delta, camera);
 
@@ -104,7 +104,7 @@ public class GameWorld extends CustomScreen {
 
         batch.end();
 
-        userInterface.draw(delta);
+        userInterface.draw(camera, batch, delta);
 
     }
 

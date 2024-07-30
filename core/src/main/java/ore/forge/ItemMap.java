@@ -88,7 +88,7 @@ public class ItemMap {
 
     public Item getItem(Vector3 vector3) {
         if (!isInvalid(vector3) && mapTiles[(int) vector3.x][(int) vector3.y] != null) {
-            return mapTiles[(int) vector3.x][(int) vector3.y].getParentItem() ;
+            return mapTiles[(int) vector3.x][(int) vector3.y].getParentItem();
         }
         return null;
     }
@@ -102,7 +102,7 @@ public class ItemMap {
         Json json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         for (Item item : placedItems) {
-           //print Item ID, direction, and position.
+            //print Item ID, direction, and position.
             mapData.add(new MapData(item.getID(), item.getDirection(), item.getVector2()));
         }
         String jsonOutput = json.prettyPrint(mapData);
@@ -114,6 +114,11 @@ public class ItemMap {
 
     }
 
+    public void loadSetup() {
+        //Load data whether that be from memory or from a file remains unknown.
+
+    }
+
     public void loadState(ItemManager itemManager) {
         //TODO: Need to make sure that this goes through the players inventory so that they cant place items they dont have.
 //        System.out.println("Made it to beginning of load State!");
@@ -121,7 +126,7 @@ public class ItemMap {
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents;
         try {
-        fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
+            fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
         } catch (SerializationException e) {
             return;//Nothing to load so no we just leave the function.
         }
@@ -145,7 +150,7 @@ public class ItemMap {
             int y = jsonValue.get("position").getInt("y");
             itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")));
             //place the item
-            itemToPlace.placeItem(x,y);
+            itemToPlace.placeItem(x, y);
             System.out.println(itemToPlace);
         }
     }

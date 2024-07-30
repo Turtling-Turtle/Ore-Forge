@@ -4,14 +4,14 @@ package ore.forge.Strategies.UpgradeStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.Expressions.Condition;
-import ore.forge.Strategies.ReflectionLoader;
+import ore.forge.ReflectionLoader;
 
 /**@author Nathan Ulmen
 * TODO: Add support so that you can evaluate whether or not ore is under the influence of specific effects.
 * A conditional Upgrade takes two upgrade Strategies, a trueBranchStrategy and a falseBranchStrategy, and a condition.
 * The condition is evaluated and either the trueBranch or the falseBranch is activated based on the result.
 */
-public class ConditionalUpgrade implements UpgradeStrategy , ReflectionLoader<UpgradeStrategy> {
+public class ConditionalUpgrade implements UpgradeStrategy {
     private final Condition condition;
     private final UpgradeStrategy trueBranchStrategy;
     private final UpgradeStrategy falseBranchStrategy;
@@ -25,8 +25,8 @@ public class ConditionalUpgrade implements UpgradeStrategy , ReflectionLoader<Up
 
     //used to create from JSON Data.
     public ConditionalUpgrade(JsonValue jsonValue) {
-        trueBranchStrategy = createOrNull(jsonValue, "trueBranch", "upgradeName");
-        falseBranchStrategy = createOrNull(jsonValue, "falseBranch", "upgradeName");
+        trueBranchStrategy = ReflectionLoader.createOrNull(jsonValue, "trueBranch", "upgradeName");
+        falseBranchStrategy = ReflectionLoader.createOrNull(jsonValue, "falseBranch", "upgradeName");
         condition = Condition.parseCondition(jsonValue.getString("condition"));
     }
 

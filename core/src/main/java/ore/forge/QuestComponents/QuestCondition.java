@@ -60,7 +60,6 @@ public class QuestCondition implements EventListener<Event<?>> {
             checkCondition(null);
         }
 
-
     }
 
     private Class<?> getEvent(JsonValue jsonValue, String fieldName) {

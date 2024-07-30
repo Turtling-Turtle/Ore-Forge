@@ -12,9 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
 import ore.forge.Currency;
+import ore.forge.EventSystem.EventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.FailedPurchaseEvent;
-import ore.forge.EventSystem.Events.PurchaseEvent;
+import ore.forge.EventSystem.Events.NodeEvent;
 import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
@@ -22,6 +22,7 @@ import ore.forge.Player.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -37,14 +38,14 @@ import java.util.List;
  *
  *
  * */
-public class ShopMenu extends WidgetGroup {
+public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     private final static Player player = Player.getSingleton();
-    private TextButton droppers, furnaces, processItems, specialPoints, prestigeItems;
-    private ArrayList<ItemIcon> dropperIcons, furnaceIcons, processItemsIcons, specialPointsIcons, prestigeItemsIcons;
-    private ScrollPane scrollPane;
-    private HorizontalGroup horizontalGroup;
-    private Table background, iconTable, topTable;
-    private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
+    private final TextButton droppers, furnaces, processItems, specialPoints, prestigeItems;
+    private final ArrayList<ItemIcon> dropperIcons, furnaceIcons, processItemsIcons, specialPointsIcons, prestigeItemsIcons;
+    private final HashMap<String, ItemIcon> iconLookUp;
+    private final ScrollPane scrollPane;
+    private final Table background, iconTable, topTable;
+    private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
 
     public ShopMenu(Inventory inventory) {
@@ -53,6 +54,7 @@ public class ShopMenu extends WidgetGroup {
         processItemsIcons = new ArrayList<>();
         specialPointsIcons = new ArrayList<>();
         prestigeItemsIcons = new ArrayList<>();
+        iconLookUp = new HashMap<>();
 
         createIcons(inventory.getInventoryNodes());
 
@@ -129,18 +131,12 @@ public class ShopMenu extends WidgetGroup {
         topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(5);
         topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(5);
         topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(5);
-//        topTable.pack();
-//        topTable.setFillParent(true);
 
         scrollPane = new ScrollPane(iconTable);
         updateIcons(dropperIcons);
 
         background.setSize(Gdx.graphics.getWidth() * .55f, Gdx.graphics.getHeight() * .5f);
         background.add(topTable).align(Align.topLeft).expandX().fillX().row();
-//        background.pack();
-//        background.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .5f);
-//        background.pack();
-
 
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setVisible(true);
@@ -154,11 +150,11 @@ public class ShopMenu extends WidgetGroup {
 //        scrollPane.setDebug(true);
 
         background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
+        EventManager.getSingleton().registerListener(this);
     }
 
     private void createIcons(ArrayList<InventoryNode> nodes) {
         for (InventoryNode node : nodes) {
-            System.out.println(node.getName());
             if (node.getHeldItem().getCurrencyBoughtWith() == Currency.NONE) {
                 assert node.getHeldItem().getUnlockMethod() == Item.UnlockMethod.QUEST;
                 Gdx.app.log("SHOP MENU", node.getName() + "Is not a shop item.");
@@ -166,6 +162,8 @@ public class ShopMenu extends WidgetGroup {
             }
 
             var icon = new ItemIcon(node);
+            iconLookUp.put(node.getHeldItemID(),icon);
+            icon.updateTopLeftText("Owned: " + node.getTotalOwned());
             icon.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -189,6 +187,8 @@ public class ShopMenu extends WidgetGroup {
                 case Conveyor ignored -> addToList(icon, processItemsIcons);
                 default -> throw new IllegalStateException("Unexpected value: " + node.getHeldItem());
             }
+
+
             Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Normal List");
         }
     }
@@ -250,23 +250,19 @@ public class ShopMenu extends WidgetGroup {
         this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth() , Gdx.graphics.getHeight() * .4f, 0.13f), Actions.hide()));
     }
 
-
-    public double normalize(double mantissa, long exponent) {
-        //For multiplication
-        while (mantissa >= 10) {
-            mantissa /= 10;
-            exponent += 1;
+    @Override
+    public void handle(NodeEvent event) {
+        var icon = iconLookUp.get(event.node().getHeldItemID());
+        if (icon != null) {
+            icon.updateTopLeftText("Owned: " + event.node().getTotalOwned());
+            //TODO? update the sorted order of the list.
         }
 
-        //For division
-        while (mantissa < 1) {
-            mantissa *= 10;
-            exponent -= 1;
-        }
-
-        return 0;
     }
 
-
+    @Override
+    public Class<?> getEventType() {
+        return NodeEvent.class;
+    }
 }
 

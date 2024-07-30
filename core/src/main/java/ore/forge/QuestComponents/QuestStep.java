@@ -4,11 +4,11 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
 import ore.forge.QuestComponents.Rewards.Reward;
-import ore.forge.Strategies.ReflectionLoader;
+import ore.forge.ReflectionLoader;
 
 //A QuestStep holds a reward, and an array of conditions.
 //The QuestStep is only complete
-public class QuestStep implements ReflectionLoader<Reward> {
+public class QuestStep {
     private final EventManager eventManager = EventManager.getSingleton();
     private Quest parent;
     private final String stepDescription, stepName;
@@ -34,7 +34,7 @@ public class QuestStep implements ReflectionLoader<Reward> {
         }
 
         this.state = QuestState.valueOf(jsonValue.getString("state"));
-        reward = createOrNull(jsonValue.get("reward"), "rewardType");
+        reward = ReflectionLoader.createOrNull(jsonValue.get("reward"), "rewardType");
     }
 
     public void registerConditions() {

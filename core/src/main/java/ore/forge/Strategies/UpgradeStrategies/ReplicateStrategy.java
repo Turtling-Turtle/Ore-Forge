@@ -20,13 +20,6 @@ public class ReplicateStrategy implements OreEffect, UpgradeStrategy {
 
     @Override
     public void activate(float deltaT, Ore ore) {
-//        if ((rand.nextFloat() * 100) < 50) {
-//            Ore replicant = oreRealm.queueOre();
-//            replicant.setVector(ore.getVector());
-//            replicant.setDestination(ore.getDestination(), ore.getMoveSpeed(), ore.getDirection());
-//            replicant.applyEffect(new UpgradeOreEffect(0, 0.5f, new BasicUpgrade(0.1, NumericOperator.ASSIGNMENT, NumericOreProperties.SPEED_SCALAR)));
-//            replicant.applyBaseStats(ore.getOreValue(), ore.getOreTemp(), ore.getMultiOre(), ore.getName(), ore.getID(), this);
-//        }
         applyTo(ore);
     }
 

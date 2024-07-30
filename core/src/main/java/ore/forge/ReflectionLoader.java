@@ -1,14 +1,14 @@
-package ore.forge.Strategies;
+package ore.forge;
 
 import com.badlogic.gdx.utils.JsonValue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public interface ReflectionLoader<E> {
+public class ReflectionLoader {
 
     @SuppressWarnings("unchecked")
-    default E createOrNull(JsonValue jsonValue, String valueToGet, String fieldName) {
+    public static <E> E createOrNull(JsonValue jsonValue, String valueToGet, String fieldName) {
         Class<?> aClass;
         try {
             try {
@@ -24,7 +24,8 @@ public interface ReflectionLoader<E> {
         }
     }
 
-    default E createOrNull(JsonValue jsonValue, String fieldName) {
+    @SuppressWarnings("unchecked")
+    public static <E> E createOrNull(JsonValue jsonValue, String fieldName) {
         Class<?> aClass;
         try {
             try {
@@ -36,7 +37,7 @@ public interface ReflectionLoader<E> {
             return (E) constructor.newInstance(jsonValue);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            throw new RuntimeException(e + "\nJson value:" +jsonValue.toString() + "\t" + fieldName);
+            throw new RuntimeException(e + "\nJson value:" + jsonValue.toString() + "\t" + fieldName);
         }
     }
 

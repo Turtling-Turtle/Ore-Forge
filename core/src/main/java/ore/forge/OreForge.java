@@ -14,7 +14,7 @@ import ore.forge.Player.Player;
 import ore.forge.QuestComponents.QuestManager;
 import ore.forge.Screens.*;
 
-//@author Nathan Ulmen
+/**@author Nathan Ulmen*/
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
 	private ItemManager itemManager;
@@ -22,11 +22,9 @@ public class OreForge extends Game {
 	public Player player;
 
 
-//	public TycoonBuilder tycoonBuilder =  TycoonBuilder.getTycoonBuilderInstance();
 	public PauseMenu pauseMenu;
 	public GameWorld gameWorld;
 	public SettingsMenu settingsMenu;
-	public UserInterface userInterface;
 
 	private SpriteBatch spriteBatch;
 
@@ -37,11 +35,6 @@ public class OreForge extends Game {
 		memoryCounter.setFontScale(0.6f);
 		memoryCounter.setPosition(99, 100);
 		memoryCounter.setVisible(false);
-
-
-
-
-
 
         /*
 		* Things to Initialize here:
@@ -67,15 +60,6 @@ public class OreForge extends Game {
 		gameWorld = new GameWorld(this, itemManager);
 		pauseMenu = new PauseMenu(this, itemManager);
 
-//        Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-//        do {
-//            stopwatch.restart();
-//            Player.getSingleton().getInventory().sortByTier();
-//            Player.getSingleton().getInventory().sortByName();
-//            Player.getSingleton().getInventory().sortByType();
-//            Player.getSingleton().getInventory().sortByStored();
-//            stopwatch.stop();
-//        } while (stopwatch.getElapsedTime() >= 50);
 
 		setScreen(mainMenuScreen);
 	}
@@ -93,7 +77,6 @@ public class OreForge extends Game {
 
 	@Override
 	public void dispose() {
-		// Dispose of resources when the game is closed
 		super.dispose();
 	}
 

@@ -2,7 +2,7 @@ package ore.forge;
 
 import com.badlogic.gdx.utils.JsonValue;
 
-//@author Nathan Ulmen
+/**@author Nathan Ulmen*/
 public class UpgradeTag {
     private final String name, id;
     private final int maxUpgrades;

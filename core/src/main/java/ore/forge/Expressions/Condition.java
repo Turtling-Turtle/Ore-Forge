@@ -188,17 +188,13 @@ public class Condition {
     }
 
     public record NumericMethodOperand(String targetID, MethodBasedOperand source) implements NumericOperand {
-
         @Override
         public double calculate(Ore ore) {
             return source.calculate(ore, targetID);
         }
-
-
     }
 
     public record BooleanMethodOperand(String targetID, MethodBasedOperand source) implements BooleanExpression {
-
         @Override
         public boolean evaluate(Ore ore) {
             return source.evaluate(ore, targetID);

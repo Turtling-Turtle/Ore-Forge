@@ -27,7 +27,7 @@ public class ItemManager {
 
         Stopwatch stopwatch = new Stopwatch(TimeUnit.MILLISECONDS);
         stopwatch.start();
-        mongoConnect();
+//        mongoConnect();
 
         stopwatch.restart();
         loadItems(Constants.CONVEYORS_FP);
@@ -36,9 +36,6 @@ public class ItemManager {
         loadItems(Constants.FURNACE_FP);
         stopwatch.stop();
         Gdx.app.log("Resource Manager", Color.highlightString("Loaded: " + loadCount + " items in " + stopwatch.getElapsedTime() + " ms.", Color.GREEN));
-//        for (Item item: allItems.values()) {
-//            item.logInfo();
-//        }
     }
 
     public HashMap<String, Item> getAllItems() {
@@ -102,7 +99,7 @@ public class ItemManager {
         try {
             MongoClient mongoClient = MongoClients.create("mongodb+srv://client:JAaTk8dtGkpSe42u@primarycluster.bonuplz.mongodb.net/");
             MongoDatabase database = mongoClient.getDatabase("OreForge");
-            //Void specifies that this function isnt returning anything, Async loading.
+
             CompletableFuture<Void> conveyorFuture = CompletableFuture.runAsync(() -> checkVersion("Conveyors", Constants.CONVEYORS_FP, database));
             CompletableFuture<Void> upgraderFuture = CompletableFuture.runAsync(() -> checkVersion("Upgraders", Constants.UPGRADER_FP, database));
             CompletableFuture<Void> furnaceFuture = CompletableFuture.runAsync(() -> checkVersion("Furnaces", Constants.FURNACE_FP, database));

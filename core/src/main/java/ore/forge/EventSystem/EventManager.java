@@ -4,9 +4,7 @@ package ore.forge.EventSystem;
 import ore.forge.EventSystem.Events.Event;
 import ore.forge.Screens.EventLogger;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 
 
@@ -17,16 +15,11 @@ import java.util.HashMap;
  * */
 public class EventManager {
     private static EventManager eventManager = new EventManager();
-    private final HashMap<Class<?>, ArrayList<EventListener>> subscribers;
+    private final HashMap<Class<?>, ArrayList<EventListener<?>>> subscribers;
     private EventLogger eventLogger;
-//    private final Deque<EventListener<?>> removalStack, additionStack;
-    private boolean isNotifying;
 
     public EventManager() {
         subscribers = new HashMap<>();
-//        removalStack = new ArrayDeque<>();
-//        additionStack = new ArrayDeque<>();
-        isNotifying = false;
     }
 
     public static EventManager getSingleton() {
@@ -67,17 +60,14 @@ public class EventManager {
         subscribers.get(listener.getEventType()).remove(listener);
     }
 
-    public void notifyListeners(Event event) {
-//        while (!additionStack.isEmpty()) {
-//            addListener(additionStack.pop());
-//        }
+    @SuppressWarnings("unchecked")
+    public void notifyListeners(Event<?> event) {
 
         if (eventLogger != null) {
             this.eventLogger.logEvent(event);
         }
 
-        isNotifying = true;
-        ArrayList<EventListener> listeners;
+        ArrayList<EventListener<?>> listeners;
         if (subscribers.get(event.getEventType()) != null) {
             listeners = new ArrayList<>(subscribers.get(event.getEventType()));
             if (!listeners.isEmpty()) {
@@ -86,12 +76,6 @@ public class EventManager {
                 }
             }
         }
-        isNotifying = false;
-
-//        while (!removalStack.isEmpty()) {
-//            removeListener(removalStack.pop());
-//        }
-
     }
 
     public void setEventLogger(EventLogger eventLogger) {

@@ -2,7 +2,6 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -19,8 +18,8 @@ import ore.forge.Player.InventoryNode;
 //An Item Icon is a rounded Square with a border and a name below it.
 //Inside the square the items icon is held, the border is colored based on the tier of the item, and the name is
 //the name of the item.
-public class ItemIcon extends WidgetGroup{
-    private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
+public class ItemIcon extends WidgetGroup {
+    private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
     private ImageButton button;
     private final InventoryNode node;
@@ -30,21 +29,25 @@ public class ItemIcon extends WidgetGroup{
 
     public ItemIcon(InventoryNode node) {
         this.node = node;
-        var test = new TextureRegionDrawable(node.getHeldItem().getTexture());
+        TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
         button = new ImageButton(test);
+        Table imageButtonTable = new Table();
+        imageButtonTable.add(button).size(Gdx.graphics.getWidth() * 0.04f,Gdx.graphics.getHeight() * 0.075f);
+
 //        button.setDebug(true);
         Table border = new Table();
         border.setBackground(buttonAtlas.getDrawable(roundFull));
         button.center();
-        border.add(button);
+        border.add(imageButtonTable);
         border.center();
 //        border.setDebug(true);
-        border.setSize(Gdx.graphics.getWidth() *.08f, Gdx.graphics.getHeight() *.15f);
+        border.setSize(Gdx.graphics.getWidth() * .08f, Gdx.graphics.getHeight() * .15f);
 
         Table table = new Table();
         table.setBackground(buttonAtlas.getDrawable(roundFull));
         table.setColor(determineColor(node));
+
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
@@ -54,12 +57,13 @@ public class ItemIcon extends WidgetGroup{
         nameLabel.setFontScale(.8f, .8f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
+
+        nameLabel.setDebug(true);
         border.row();
-        border.add(nameLabel).expandX().fillX();
 
 
-        var style = new TextTooltip.TextTooltipStyle();
-        var background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
+        NinePatchDrawable background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
         style.background = background;
         style.label = new Label.LabelStyle(labelStyle);
 
@@ -71,7 +75,7 @@ public class ItemIcon extends WidgetGroup{
         this.setTouchable(Touchable.enabled);
         assert this.addListener(tooltip);
 
-        storedCount = new Label( "Stored: " + node.getStored(), labelStyle);
+        storedCount = new Label("Stored: " + node.getStored(), labelStyle);
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
@@ -84,8 +88,11 @@ public class ItemIcon extends WidgetGroup{
         this.addActor(stack);
 
 
+        border.add(nameLabel).expand().fill();
+
 //        border.add(storedCount).top().left();
 
+        border.debugAll();
     }
 
     public String getNodeName() {
@@ -136,13 +143,12 @@ public class ItemIcon extends WidgetGroup{
         processor.handleClicked(this);
     }
 
-    public void updateStoredCount(String newMessage) {
+    public void updateTopLeftText(String newMessage) {
         storedCount.setText(newMessage);
-        Gdx.app.log("ItemIcon--StoredCountValue", String.valueOf(storedCount.getText()));
     }
 
-    public Label getStoredCountLabel() {
-        return storedCount;
+    public void updateToolTipText(String newMessage) {
+        tooltip.getActor().setText(newMessage);
     }
 
 }

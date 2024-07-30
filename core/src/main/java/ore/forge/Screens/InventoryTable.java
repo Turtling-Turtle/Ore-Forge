@@ -154,9 +154,9 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         scrollPane.setScrollingDisabled(true, false);
         horizontalGroup.setVisible(true);
 
-        background.setSize(Gdx.graphics.getWidth() * .352f, Gdx.graphics.getHeight() * .8f);
+        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
 
-        background.add(topTable).align(Align.topLeft).expandX().fillX().row();
+        background.add(topTable).expandX().fillX().row();
         background.add(scrollPane).top().left().expand().fill();
         this.addActor(background);
 //        background.setDebug(true);
@@ -232,7 +232,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
     public void show() {
         Gdx.app.log("InventoryTable","Showing");
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .647f, Gdx.graphics.getHeight() * .1f, 0.13f)));
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .643f, Gdx.graphics.getHeight() * .1f, 0.13f)));
 //        assert isVisible();
     }
 
@@ -245,7 +245,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     @Override
     public void handle(NodeEvent event) {
         var itemIcon = lookUp.get(event.node().getHeldItemID());
-        itemIcon.updateStoredCount("Stored: " + event.node().getStored());
+        itemIcon.updateTopLeftText("Stored: " + event.node().getStored());
         asyncSearch(searchBar.getText());
     }
 

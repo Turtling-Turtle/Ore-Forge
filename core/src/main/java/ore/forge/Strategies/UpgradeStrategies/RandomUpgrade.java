@@ -2,13 +2,13 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.ReflectionLoader;
+import ore.forge.ReflectionLoader;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public class RandomUpgrade implements UpgradeStrategy, ReflectionLoader<UpgradeStrategy> {
+public class RandomUpgrade implements UpgradeStrategy {
     private final Random random = new Random(123);
     private final HashMap<Float, ArrayList<UpgradeStrategy>> chanceTable;
     private final ArrayList<Float> keys;
@@ -18,7 +18,7 @@ public class RandomUpgrade implements UpgradeStrategy, ReflectionLoader<UpgradeS
         chanceTable = new HashMap<>();
         JsonValue upgrades = jsonValue.get("upgrades");
         for (JsonValue upgrade : upgrades) {
-            addUpgrade(upgrade.getFloat("chance"), createOrNull(upgrade, "upgradeName"));
+            addUpgrade(upgrade.getFloat("chance"), ReflectionLoader.createOrNull(upgrade, "upgradeName"));
         }
 
         keys = new ArrayList<>(chanceTable.keySet());

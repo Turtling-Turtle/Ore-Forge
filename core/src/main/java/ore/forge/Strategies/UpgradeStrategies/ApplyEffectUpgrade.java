@@ -2,9 +2,9 @@ package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
+import ore.forge.ReflectionLoader;
 import ore.forge.Strategies.OreEffects.OreEffect;
 
-import java.lang.reflect.InvocationTargetException;
 
 /**@author Nathan Ulmen
 Applies an OreEffect to an ore.*/
@@ -16,15 +16,9 @@ public class ApplyEffectUpgrade implements UpgradeStrategy {
     }
 
     public ApplyEffectUpgrade(JsonValue jsonValue) {
-        try {
-            Class<?> clasz = Class.forName(jsonValue.get("effectToApply").getString("effectName"));
-            effect = (OreEffect) clasz.getConstructor(JsonValue.class).newInstance(jsonValue.get("effectToApply"));
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        effect = ReflectionLoader.createOrNull(jsonValue.get("effectToApply"),"effectName");
+        assert effect != null;
     }
-
 
     @Override
     public void applyTo(Ore ore) {

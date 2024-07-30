@@ -40,13 +40,11 @@ public class EventLogger extends WidgetGroup {
     private final BitmapFont font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
     private final Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
     private boolean autoScroll = true;
-    private final CoolDown coolDown;
 
     public EventLogger() {
         disabledEvents = new HashSet<>();
         disabledEvents.add(OreDroppedEvent.class);
         disabledEvents.add(OreSoldEvent.class);
-        coolDown = new CoolDown(0.3f);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         font2.getData().markupEnabled = true;
         font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

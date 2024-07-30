@@ -36,7 +36,6 @@ public class SelectMode extends InputMode {
         this.selectedItem = context.getHeldItem();
     }
 
-
     public Item getSelectedItem() {
         return selectedItem;
     }
@@ -64,8 +63,10 @@ public class SelectMode extends InputMode {
             var node = player.getInventory().getNode(selectedItem.getID());
             node.sellFromBase();
             switch (selectedItem.getCurrencyBoughtWith()) {
-                case PRESTIGE_POINTS -> player.setPrestigeCurrency((int) (player.getPrestigeCurrency() + selectedItem.getSellPrice()));
-                case SPECIAL_POINTS -> player.setSpecialPoints((long) (player.getSpecialPoints() + selectedItem.getSellPrice()));
+                case PRESTIGE_POINTS ->
+                    player.setPrestigeCurrency((int) (player.getPrestigeCurrency() + selectedItem.getSellPrice()));
+                case SPECIAL_POINTS ->
+                    player.setSpecialPoints((long) (player.getSpecialPoints() + selectedItem.getSellPrice()));
                 case CASH -> player.setWallet(player.getWallet() + selectedItem.getSellPrice());
             }
             handler.setCurrentMode(handler.getObserverMode());
@@ -79,7 +80,6 @@ public class SelectMode extends InputMode {
     public void setSelectedItem(Item item) {
         this.selectedItem = item;
     }
-
 
     public String toString() {
         return "Select Mode";

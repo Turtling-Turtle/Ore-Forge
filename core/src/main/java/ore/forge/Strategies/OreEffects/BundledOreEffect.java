@@ -2,9 +2,9 @@ package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
-import ore.forge.Strategies.ReflectionLoader;
+import ore.forge.ReflectionLoader;
 
-public class BundledOreEffect implements OreEffect , ReflectionLoader<OreEffect> {
+public class BundledOreEffect implements OreEffect {
     private final OreEffect[] strategies;
 
     public BundledOreEffect(OreEffect... effects) {
@@ -23,7 +23,7 @@ public class BundledOreEffect implements OreEffect , ReflectionLoader<OreEffect>
         var effectArray = jsonValue.get("effects");
         strategies = new OreEffect[effectArray.size];
         for (int i = 0; i < effectArray.size; i++) {
-            strategies[i] = createOrNull(effectArray.get(i), "effectName");
+            strategies[i] = ReflectionLoader.createOrNull(effectArray.get(i), "effectName");
         }
     }
 

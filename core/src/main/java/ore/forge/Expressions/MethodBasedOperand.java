@@ -5,6 +5,8 @@ import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
 
+import java.time.temporal.ChronoField;
+
 /*
  * Basically We are going to have an object that contains a custom lambda/function, a "collection", and a search param(string)
  * */
@@ -30,10 +32,7 @@ public enum MethodBasedOperand {
         };
     }
 
-    public static boolean methodIsValid(String token) {
-        return token.equals("CONTAINS") || token.equals("GET_COUNT");
-    }
-
+    public static boolean methodIsValid(String token) { return token.equals("CONTAINS") || token.equals("GET_COUNT"); }
 
     public double calculate(Ore ore, String id) {
         return valueRetriever.retrieve(ore, id);
@@ -48,7 +47,6 @@ public enum MethodBasedOperand {
     private final OreRealm oreRealm = OreRealm.getSingleton();
     private final BooleanRetriever booleanRetriever;
     private final ValueRetriever valueRetriever;
-
 
     MethodBasedOperand() {
         booleanRetriever = switch (this) {

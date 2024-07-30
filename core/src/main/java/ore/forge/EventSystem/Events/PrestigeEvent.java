@@ -35,6 +35,6 @@ public record PrestigeEvent(Boolean result) implements Event<Boolean> {
 
     @Override
     public FontColors getColor() {
-        return result ? FontColors.SKYBLUE : FontColors.RED;
+        return result ? FontColors.SKY_BLUE : FontColors.RED;
     }
 }

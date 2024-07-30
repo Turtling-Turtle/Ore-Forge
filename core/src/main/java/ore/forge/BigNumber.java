@@ -1,6 +1,8 @@
 package ore.forge;
 
 
+import java.math.BigInteger;
+
 /**
  * @author Nathan Ulmen
  */
@@ -136,9 +138,7 @@ public class BigNumber {
         if (this.canBeDouble() && absOther.canBeDouble()) {
             double numThis = this.convertToDouble();
             double numOther = absOther.convertToDouble();
-            if (Double.isFinite(numThis) && Double.isFinite(numOther) && numThis != 0 && numOther != 0) {
-                return normalize(numThis % numOther, 0);
-            }
+            return normalize(numThis % numOther, 0);
         }
 
         long difference = digitDifference(absOther);
@@ -216,7 +216,7 @@ public class BigNumber {
         while (power > 1) {
             if (power % 2 != 0) {
                 y = newDouble.multiply(y);
-                power = power - 1;
+                power -= 1;
             }
             newDouble = newDouble.multiply(newDouble);
             power /= 2;
@@ -231,7 +231,7 @@ public class BigNumber {
      * ln(10) = 2.302585092994046
      * */
     public BigNumber log() {
-        var result = log10();
+        BigNumber result = log10();
         return normalize(result.mantissa * 2.302585092994046, result.exponent);
     }
 
@@ -277,7 +277,6 @@ public class BigNumber {
     public boolean equals(Object o) {
         return o instanceof BigNumber otherNumber && (this.mantissa == otherNumber.mantissa && this.exponent == otherNumber.exponent);
     }
-
 
     private class MutableBigNumber {
         private double mantissa;
