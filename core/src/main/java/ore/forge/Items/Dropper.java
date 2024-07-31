@@ -10,6 +10,7 @@ import ore.forge.Expressions.NumericOperator;
 import ore.forge.Expressions.NumericOreProperties;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
+import ore.forge.ReflectionLoader;
 import ore.forge.Stopwatch;
 import ore.forge.Strategies.DropperStrategies.BurstDrop;
 import ore.forge.Strategies.DropperStrategies.DropStrategy;
@@ -57,7 +58,8 @@ public class Dropper extends Item {
         this.oreValue = jsonValue.getDouble("oreValue");
         this.oreTemp = jsonValue.getInt("oreTemp");
         this.multiOre = jsonValue.getInt("multiOre");
-        this.oreEffect = loadViaReflection(jsonValue.get("oreStrategy"), "effectName");
+//        this.oreEffect = loadViaReflection(jsonValue.get("oreStrategy"), "effectName");
+        this.oreEffect = ReflectionLoader.createOrNull(jsonValue.get("oreStrategy"),"effectName");
         timeSinceLast = 0f;
 
         initBlockConfiguration(this.numberConfig);

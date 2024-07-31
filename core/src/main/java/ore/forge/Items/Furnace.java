@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.FurnaceBlock;
+import ore.forge.ReflectionLoader;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
 //@author Nathan Ulmen
@@ -31,7 +32,7 @@ public class Furnace extends Item {
         super(jsonValue);
         this.rewardThreshold = jsonValue.getInt("rewardThreshold");
         this.specialPointReward = jsonValue.getInt("specialPointReward");
-        this.upgrade = loadViaReflection(jsonValue.get("upgrade"), "upgradeName");
+        this.upgrade = ReflectionLoader.createOrNull(jsonValue.get("upgrade"),"upgradeName");
         initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }

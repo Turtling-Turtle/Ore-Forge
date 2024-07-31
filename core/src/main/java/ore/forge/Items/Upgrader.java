@@ -7,6 +7,7 @@ import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 import ore.forge.Items.Blocks.UpgradeBlock;
+import ore.forge.ReflectionLoader;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 import ore.forge.UpgradeTag;
 
@@ -33,7 +34,7 @@ public class Upgrader extends Item {
         super(jsonValue);
         this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
         this.upgradeTag = new UpgradeTag(jsonValue.get("upgradeTag"));
-        this.upgrade = loadViaReflection(jsonValue.get("upgrade"), "upgradeName");
+        this.upgrade = ReflectionLoader.createOrNull(jsonValue.get("upgrade"),"upgradeName");
         setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
         initBlockConfiguration(this.numberConfig);
     }

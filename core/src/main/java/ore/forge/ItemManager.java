@@ -83,7 +83,7 @@ public class ItemManager {
 
     private void addToAllItems(Item item, Color color) {
         if (allItems.containsKey(item.getID())) {
-            throw new IllegalArgumentException("Conflicting IDs between " + item.getName() + " and " + allItems.get(item.getID()).getName() + ".");
+//            throw new IllegalArgumentException("Conflicting IDs between " + item.getName() + " and " + allItems.get(item.getID()).getName() + ".");
 
         }
         allItems.put(item.getID(), item);
