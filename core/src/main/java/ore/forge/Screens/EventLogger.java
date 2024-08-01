@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -37,8 +38,8 @@ public class EventLogger extends WidgetGroup {
     private final Table logTable;
     private final ScrollPane scrollPane;
     private final static int MAX_EVENTS = 1_000;
-    private final BitmapFont font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
-    private final Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
+    private BitmapFont font2;
+    private final Label.LabelStyle fpsStyle;
     private boolean autoScroll = true;
 
     public EventLogger() {
@@ -46,8 +47,16 @@ public class EventLogger extends WidgetGroup {
         disabledEvents.add(OreDroppedEvent.class);
         disabledEvents.add(OreSoldEvent.class);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param.size = 40;
+        param.genMipMaps = true;
+        param.minFilter = Texture.TextureFilter.MipMapLinearNearest;
+        param.magFilter = Texture.TextureFilter.MipMapLinearNearest;
+        font2 = generator.generateFont(param);
+        fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
         font2.getData().markupEnabled = true;
-        font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         logTable = new Table();
 

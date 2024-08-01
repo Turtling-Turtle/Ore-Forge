@@ -124,4 +124,26 @@ public class BigNumberTest {
         System.out.println(3 % 2);
     }
 
+    @Test
+    void testSQRT() {
+        var result = new BigNumber(3, 10).sqrt();
+        assertEquals(Math.sqrt(3), result.mantissa());
+        assertEquals(5, result.exponent());
+    }
+
+    @Test
+    void testOddSQRT() {
+        var result = new BigNumber(3, 11).sqrt();
+        assertEquals(Math.sqrt(30), result.mantissa());
+        assertEquals(5, result.exponent());
+    }
+
+    @Test
+    void foo() {
+        var result = new BigNumber(3, 390).modulo(new BigNumber(3,90));
+        System.out.println("foo" + result);
+    }
+
+
+
 }

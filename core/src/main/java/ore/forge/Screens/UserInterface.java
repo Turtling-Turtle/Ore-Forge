@@ -3,9 +3,11 @@ package ore.forge.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -52,8 +54,17 @@ public class UserInterface {
 
 //        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 //        camera.setToOrtho(false);
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param.size = 40;
+        param.genMipMaps = true;
+        param.minFilter = Texture.TextureFilter.MipMapLinearNearest;
+        param.magFilter = Texture.TextureFilter.MipMapLinearNearest;
 
-        BitmapFont font2 = new BitmapFont(Gdx.files.internal(Constants.FONT_FP));
+
+        BitmapFont font2 = generator.generateFont(param);
+        font2.getData().markupEnabled = true;
+
         Label.LabelStyle fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
 
         fpsCounter = new Label("", fpsStyle);
@@ -128,7 +139,7 @@ public class UserInterface {
         stage.addActor(prestigeButton);
 //        stage.addActor(progressBar);
         createWallet(fpsStyle);
-        fpsStyle.fontColor = Color.CORAL;
+//        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
         createActiveOreProgressBar();
 
@@ -167,9 +178,9 @@ public class UserInterface {
 //
             memoryUsage.setText(((runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024) + " MB");
             this.mouseCoords.setText("X: " + (int) inputHandler.getMouseWorld().x + " Y: " + (int) inputHandler.getMouseWorld().y);
-            wallet.setText("$ " + String.format("%.2e", player.getWallet()));
-            specialPoints.setText("SP: " + player.getSpecialPoints());
-            activeOre.setText("Active Ore: " + oreRealm.getActiveOre().size());
+            wallet.setText(FontColors.highlightString("$ " + String.format("%.2e", player.getWallet()), FontColors.LIME_GREEN));
+            specialPoints.setText(FontColors.highlightString("SP: " + player.getSpecialPoints(), FontColors.CORAL));
+            activeOre.setText(FontColors.highlightString("Active Ore: " + oreRealm.getActiveOre().size(), FontColors.SANDY_BROWN));
             updateInterval = 0f;
         }
 

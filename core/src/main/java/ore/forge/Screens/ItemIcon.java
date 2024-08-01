@@ -2,8 +2,10 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -50,7 +52,21 @@ public class ItemIcon extends WidgetGroup {
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.genMipMaps = true;
+        //Prestige
+        //40 size for 4k, 32 for 1440p, 20 for 1080p?
+        parameter.size = 40; //for 4k
+
+        parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
+        parameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;
+        parameter.borderStraight = true;
+        labelStyle.font = generator.generateFont(parameter);
+
+
+
+//        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         labelStyle.fontColor = Color.BLACK;
 
         nameLabel = new Label(node.getName(), labelStyle);

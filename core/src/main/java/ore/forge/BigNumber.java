@@ -244,8 +244,8 @@ public class BigNumber {
         if (this.exponent % 2 == 0) {
             return normalize(Math.sqrt(this.mantissa), this.exponent / 2);
         } else {
-            //TODO Implement sqrt for odd exponents.
-            return null;
+
+            return normalize(Math.sqrt(this.mantissa * 10), (this.exponent - 1) / 2);
         }
     }
 
@@ -260,7 +260,6 @@ public class BigNumber {
     public boolean canBeDouble() {
         return this.exponent < 308 || (this.exponent == 308 && this.mantissa <= 1.7976931348623157);
     }
-
 
     public double convertToDouble() {
         //TODO: implement Guards for minimum values (negatives)

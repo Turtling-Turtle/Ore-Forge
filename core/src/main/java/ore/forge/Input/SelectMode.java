@@ -55,7 +55,7 @@ public class SelectMode extends InputMode {
             //Change to BuildMode
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            player.purchaseItem(selectedItem);
+            player.purchaseItem(selectedItem, 1);
             //Handle logic for purchasing a copy of an item.
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {

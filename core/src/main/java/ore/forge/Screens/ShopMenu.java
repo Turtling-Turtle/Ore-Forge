@@ -3,6 +3,7 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -162,7 +163,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
             }
 
             var icon = new ItemIcon(node);
-            iconLookUp.put(node.getHeldItemID(),icon);
+            iconLookUp.put(node.getHeldItemID(), icon);
             icon.updateTopLeftText("Owned: " + node.getTotalOwned());
             icon.addListener(new ClickListener() {
                 @Override
@@ -187,8 +188,6 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
                 case Conveyor ignored -> addToList(icon, processItemsIcons);
                 default -> throw new IllegalStateException("Unexpected value: " + node.getHeldItem());
             }
-
-
             Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Normal List");
         }
     }
@@ -217,6 +216,56 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     }
 
     public void selectedWidget(ItemIcon icon) {
+        VerticalGroup verticalGroup = new VerticalGroup();
+
+        Button upButton = ButtonHelper.createRoundTextButton("Up", Color.LIGHT_GRAY);
+        Button downButton = ButtonHelper.createRoundTextButton("Down", Color.LIGHT_GRAY);
+
+
+        var textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        textFieldStyle.fontColor = Color.BLACK;
+        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        TextField count = new TextField("1", textFieldStyle);
+        TextField.TextFieldFilter filter = new TextField.TextFieldFilter.DigitsOnlyFilter();
+        count.setTextFieldFilter(filter);
+//        count.setMessageText("1");
+
+        upButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int newCount;
+                if (count.getText().isEmpty()) {
+                    newCount = 1;
+                } else {
+                    newCount = Integer.valueOf(count.getText()).intValue();
+                    newCount++;
+                }
+                count.setText(String.valueOf(newCount));
+            }
+        });
+
+        downButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int newCount;
+                if (count.getText().isEmpty()) {
+                    newCount = 1;
+                } else {
+                    newCount = Integer.parseInt(count.getText());
+                }
+                if (newCount > 1) {
+                    newCount--;
+                }
+                count.setText(String.valueOf(newCount));
+            }
+        });
+
+        verticalGroup.addActor(upButton);
+        verticalGroup.addActor(count);
+        verticalGroup.addActor(downButton);
+
+
         var table = new Table();
         var itemPurchaseIcon = new ItemIcon(icon.getNode());
         table.add(itemPurchaseIcon).left().fillY();
@@ -232,12 +281,24 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         buyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                var item = itemPurchaseIcon.getNode().getHeldItem();
-                player.purchaseItem(item);
+                if (!count.getText().isEmpty()) {
+                    int numberToBuy = Integer.parseInt(count.getText());
+                    if (numberToBuy >= 1) {
+                        var item = itemPurchaseIcon.getNode().getHeldItem();
+                        player.purchaseItem(item, numberToBuy);
+                    }
+                }
             }
         });
-        table.add(buyButton).right().expandX().fillX();
-        table.add(cancelButton).right().expandX().fillX();
+
+        var purchaseVbox = new VerticalGroup();
+        purchaseVbox.addActor(buyButton);
+        purchaseVbox.addActor(cancelButton);
+        table.add(verticalGroup).right().expand().fill();
+//        table.add(buyButton).right();
+//        table.add(cancelButton).right();
+        table.add(purchaseVbox).right().expand().fill();
+        table.setDebug(true,true);
         background.row();
         background.add(table).align(Align.bottomLeft).left().bottom().expandX().fillX();
     }
@@ -247,7 +308,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     }
 
     public void hide() {
-        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth() , Gdx.graphics.getHeight() * .4f, 0.13f), Actions.hide()));
+        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .4f, 0.13f), Actions.hide()));
     }
 
     @Override
@@ -257,6 +318,48 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
             icon.updateTopLeftText("Owned: " + event.node().getTotalOwned());
             //TODO? update the sorted order of the list.
         }
+
+    }
+
+    private void purchaseCountButton() {
+        VerticalGroup verticalGroup = new VerticalGroup();
+
+        Button upButton = ButtonHelper.createRoundTextButton("Up", Color.LIGHT_GRAY);
+        Button downButton = ButtonHelper.createRoundTextButton("Down", Color.LIGHT_GRAY);
+
+
+        var textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        textFieldStyle.fontColor = Color.BLACK;
+        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        TextField count = new TextField("", textFieldStyle);
+        TextField.TextFieldFilter filter = new TextField.TextFieldFilter.DigitsOnlyFilter();
+        count.setTextFieldFilter(filter);
+        count.setMessageText("1");
+
+        upButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int newCount = Integer.valueOf(count.getText()).intValue();
+                newCount++;
+                count.setText(String.valueOf(newCount));
+            }
+        });
+
+        downButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int newCount = Integer.valueOf(count.getText()).intValue();
+                if (newCount > 1) {
+                    newCount--;
+                }
+                count.setText(String.valueOf(newCount));
+            }
+        });
+
+        verticalGroup.addActor(upButton);
+        verticalGroup.addActor(count);
+        verticalGroup.addActor(downButton);
 
     }
 
