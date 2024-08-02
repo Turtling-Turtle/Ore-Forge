@@ -36,6 +36,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     private final CheckBox[] checkBoxes;
     private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
+    private final Value padValue;
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
@@ -52,6 +53,9 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
         EventManager.getSingleton().registerListener(this);
 
+        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+        padValue = Value.percentWidth(0.0025f, background);
+
         searchBar.setTextFieldListener(new TextFieldListener() {
             String last;
 
@@ -64,7 +68,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
             }
         });
         this.iconTable = new Table();
-        topTable.add(searchBar).top().left().expand().fill().align(Align.topLeft).pad(5);
+        topTable.add(searchBar).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
 
         checkBoxes = new CheckBox[3];
         horizontalGroup = new HorizontalGroup();
@@ -136,11 +140,12 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         this.scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
+            topTable.add(checkBox).top().left().size(Value.percentWidth(0.2f, background), Value.percentWidth(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
         }
 
-        topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(checkBoxes[1]).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(checkBoxes[2]).top().left().expand().fill().align(Align.topLeft).pad(5);
+//        topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
+//        topTable.add(checkBoxes[1]).top().left().expand().fill().align(Align.topLeft).pad(5);
+//        topTable.add(checkBoxes[2]).top().left().expand().fill().align(Align.topLeft).pad(5);
 
         allIcons = new ArrayList<>();
         for (InventoryNode node : inventory.getInventoryNodes()) {
@@ -163,6 +168,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 //        horizontalGroup.setDebug(true);
 //        iconTable.setDebug(true);
 //        scrollPane.setDebug(true);
+//        this.debugAll();
     }
 
     private void asyncSearch(String target) {
@@ -226,19 +232,18 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(5);
-//        iconTable.add(icon).left().top().expandX().fillX().align(Align.topLeft).pad(5);
+        iconTable.add(icon).left().top().size(icon.getWidth(),icon.getHeight()).expandX().fillX().align(Align.topLeft).pad(padValue).padBottom(Value.percentHeight(0.015f, background));
     }
 
     public void show() {
-        Gdx.app.log("InventoryTable","Showing");
+        Gdx.app.log("InventoryTable", "Showing");
         this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .643f, Gdx.graphics.getHeight() * .1f, 0.13f)));
 //        assert isVisible();
     }
 
     public void hide() {
-        Gdx.app.log("InventoryTable","hiding");
-        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f , Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
+        Gdx.app.log("InventoryTable", "hiding");
+        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f, Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
 //        assert !isVisible();
     }
 
