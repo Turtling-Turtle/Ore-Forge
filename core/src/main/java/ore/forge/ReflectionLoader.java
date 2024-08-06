@@ -1,5 +1,6 @@
 package ore.forge;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 
 import java.lang.reflect.Constructor;
@@ -28,24 +29,26 @@ public class ReflectionLoader {
 
     @SuppressWarnings("unchecked")
     public static <E> E createOrNull(JsonValue jsonValue, String fieldName) {
+        if (jsonValue == null) {
+            return null;
+        }
+
         try {
             Constructor<?> constructor = cachedResults.get(jsonValue.getString(fieldName));
-            try {
-                if (constructor != null) {
-                    return (E) constructor.newInstance(jsonValue);
-                }
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException ignored) {
-
+            if (constructor != null) {
+                return (E) constructor.newInstance(jsonValue);
             }
-        } catch (NullPointerException | IllegalArgumentException e) {
-            return null;
+        } catch (IllegalArgumentException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
+
+            Gdx.app.log("Reflection Loader", Color.highlightString(fieldName + " not found in: " + jsonValue, Color.YELLOW));
         }
 
         Class<?> aClass;
         try {
             try {
                 aClass = Class.forName(jsonValue.getString(fieldName));
-            } catch (NullPointerException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return null;
             }
             Constructor<?> constructor = aClass.getConstructor(JsonValue.class);

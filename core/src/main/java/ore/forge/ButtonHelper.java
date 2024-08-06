@@ -32,13 +32,20 @@ public class ButtonHelper {
     private static final Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/UIClick.wav"));
     private static final Sound placeSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/impact.wav"));
     private static final Sound specialPointReward = Gdx.audio.newSound(Gdx.files.internal("Sounds/outbreak_perk.mp3"));
-
+    private static final TextureAtlas iconAtlas = new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas"));
+    private static final TextureAtlas glowSquareAtlas = new TextureAtlas(Gdx.files.internal("UIAssets/GlowSquare.atlas"));
 
     public ButtonHelper() {
 
     }
 
+    public static TextureAtlas getGlowSquareAtlas() {
+        return glowSquareAtlas;
+    }
 
+    public static TextureAtlas getIconAtlas() {
+        return iconAtlas;
+    }
 
     public static Button createButton() {
 //        hudStage = new Stage();

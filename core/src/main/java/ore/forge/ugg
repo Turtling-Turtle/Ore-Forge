@@ -1,6 +1,15 @@
 Ternary =  if ? then : else
 Should use ternary only to return, not to branch.
 
+Ultimate weapon focussed warframe:
+Passive: Dealing precision damage causes you to regenerate 25 energy over 5 seconds.
+
+1st: for X seconds your weapons have better recoil (-25% base) and increased fire rate (25%).
+2nd: for x seconds killing enemies grants X over guard to you and allies within range. Precision kills grant 100% more over guard.
+3rd: Imbue your weapons with power granting your weapons +1.5 punch through, +20% status chance, and +50% damage for x seconds. Allies within X meters of you gain these effects.
+4th: Precision hits ricochet between enemies(8 meters base range, 1st bounce is guaranteed after that it goes to punch through) Grant X% ammo efficiency to yourself. Damaging enemies with your weapons causes them to take X% increased damage up to a max of X%.
+
+
 
 
 Conditional Upgrades using upgrade charge even if they don't do anything.

@@ -5,9 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -48,13 +50,20 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
+
+//        Stack searchStack = new Stack();
+//        Image search = new Image(ButtonHelper.getIconAtlas().createSprite("icon_magnifier"));
+//        search.setColor(Color.BLACK);
+//        Container<Image> searchIconContainer = new Container<>(search);
+//        searchIconContainer.setClip(true);
 
         EventManager.getSingleton().registerListener(this);
 
         background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        padValue = Value.percentWidth(0.0025f, background);
+        padValue = Value.Fixed.valueOf(0.01f);
 
         searchBar.setTextFieldListener(new TextFieldListener() {
             String last;
@@ -67,9 +76,19 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
                 last = textField.getText();
             }
         });
-        this.iconTable = new Table();
         topTable.add(searchBar).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
 
+//        searchStack.add(searchBar);
+//        searchStack.add(searchIconContainer);
+//        search.setScale(0.5f, 0.5f);
+//        searchIconContainer.align(Align.topRight);
+
+
+//        searchStack.setDebug(true);
+//        topTable.add(searchStack).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
+//        search.setSize(search.getWidth()/2f, search.getHeight()/2f);
+
+        this.iconTable = new Table();
         checkBoxes = new CheckBox[3];
         horizontalGroup = new HorizontalGroup();
         horizontalGroup.align(Align.topLeft);
@@ -177,8 +196,6 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
 
         final String finalizedTarget = target;
-
-
         CompletableFuture.runAsync(() -> {
 
             ArrayList<ItemIcon> icons;

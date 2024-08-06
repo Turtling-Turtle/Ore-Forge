@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import ore.forge.ButtonHelper;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
@@ -20,7 +22,7 @@ import ore.forge.Player.InventoryNode;
 //An Item Icon is a rounded Square with a border and a name below it.
 //Inside the square the items icon is held, the border is colored based on the tier of the item, and the name is
 //the name of the item.
-public class ItemIcon extends WidgetGroup {
+public class ItemIcon extends Table {
     private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
     private ImageButton button;
@@ -35,20 +37,18 @@ public class ItemIcon extends WidgetGroup {
         test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
         button = new ImageButton(test);
         Table imageButtonTable = new Table();
-        imageButtonTable.add(button).size(Gdx.graphics.getWidth() * 0.04f,Gdx.graphics.getHeight() * 0.075f);
+        imageButtonTable.add(button).size(Gdx.graphics.getWidth() * 0.04f, Gdx.graphics.getHeight() * 0.075f);
 
 //        button.setDebug(true);
         Table border = new Table();
+//        border.setBackground(buttonAtlas.getDrawable(roundFull));
+//        border.setColor(Color.BLACK);
         border.setBackground(buttonAtlas.getDrawable(roundFull));
         button.center();
         border.add(imageButtonTable);
         border.center();
 //        border.setDebug(true);
         border.setSize(Gdx.graphics.getWidth() * .08f, Gdx.graphics.getHeight() * .15f);
-
-        Table table = new Table();
-        table.setBackground(buttonAtlas.getDrawable(roundFull));
-        table.setColor(determineColor(node));
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -65,7 +65,6 @@ public class ItemIcon extends WidgetGroup {
         labelStyle.font = generator.generateFont(parameter);
 
 
-
 //        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         labelStyle.fontColor = Color.BLACK;
 
@@ -74,7 +73,7 @@ public class ItemIcon extends WidgetGroup {
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
 
-        nameLabel.setDebug(true);
+//        nameLabel.setDebug(true);
         border.row();
 
 
@@ -95,20 +94,36 @@ public class ItemIcon extends WidgetGroup {
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
+        Container<Label> nameContainer = new Container<>(nameLabel);
+        nameContainer.setSize(nameLabel.getWidth(), nameLabel.getHeight());
+        nameContainer.setClip(true);
+
         Stack stack = new Stack();
         stack.setSize(border.getWidth(), border.getHeight());
         stack.add(border);
         container.align(Align.topLeft);
         stack.add(container);
+        nameLabel.setAlignment(Align.bottomLeft);
+        stack.add(nameLabel);
+        nameLabel.setAlignment(Align.bottom);
 
         this.addActor(stack);
+//        this.add(stack).expand().fill();
+//        this.setBackground(glowAtlas.getDrawable("glow_square1"));
+//        NinePatch patch = glowAtlas.getPatch("glow_square1");
+//        NinePatchDrawable drawable = new NinePatchDrawable(patch);
+//        this.setBackground(drawable);
+//        this.setColor(Color.PINK);
+//        this.setSize(stack.getWidth(), stack.getHeight());
+//        this.setSize(900,900);
+//        border.add(nameContainer).bottom().center();
 
 
-        border.add(nameLabel).expand().fill();
+//        border.add(nameLabel).expand().fill();
 
 //        border.add(storedCount).top().left();
 
-        border.debugAll();
+//        border.debugAll();
     }
 
     public String getNodeName() {

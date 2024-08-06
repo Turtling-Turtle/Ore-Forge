@@ -222,8 +222,17 @@ public class UserInterface {
         table.add(activeOreStack);
 
         stage.addActor(table);
+    }
 
-
+    private void createInventoryButton() {
+        TextButton inventory = ButtonHelper.createRoundTextButton("Inventory", Color.LIGHT_GRAY);
+        inventory.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                inputHandler.setCurrentMode(inputHandler.getInventoryMode());
+                inventory.setVisible(false);
+            }
+        });
     }
 
 }

@@ -251,6 +251,23 @@ Terra, Geo,
         - If ore is odd, upgrades by 5x
 
 
+- **3rd Time's the Charm**
+    - Multiplies ore value by 2x. Every Third upgrade multiplies ore Value by 5x.
+
+    
+- **Random Upgrader**
+    - 55% chance to upgrade ore value 3.5x.
+    - 10% Chance to increase multiore by + 1.
+    - 35% Chance to multiply temp by 1.3x.
+
+- **Random Upgrader 2**
+    - Every other upgrade has an X% chance to multiply multiore by 2x.
+    - Normally multiplies ore value by 3x.
+
+
+- **Something**
+  - Makes ore lighter increasing, which increases the speed at which they are transported by +X permanently.
+
 ## Pinnacle Tier
 - **Exponential**
     - Effects:
@@ -261,6 +278,9 @@ Terra, Geo,
     - Effects:
         - Adds a XXX to ore and upgrades it by 1.1x
         - XXX status makes it so whenever ore is upgraded, it's also upgraded by 1.1x.
+
+
+
 
 # Conveyors:
 - **Basic Conveyor**
