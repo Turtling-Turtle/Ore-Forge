@@ -208,7 +208,7 @@ Terra, Geo,
         - Upgrades ore by 5x
         - Chills the ore a large amount (-75)
 
-
+> Dog
 - **Vent System/Coolant Chamber**
     - Effects:
         - Upgrades ore by 3x

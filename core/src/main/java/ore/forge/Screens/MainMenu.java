@@ -13,6 +13,8 @@ import ore.forge.OreForge;
 import ore.forge.Player.Player;
 import ore.forge.ItemManager;
 
+import java.net.http.WebSocket;
+
 public class MainMenu extends CustomScreen {
     private final TextButton start, exit, settings;
     private final Table table;

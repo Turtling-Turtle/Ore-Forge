@@ -2,7 +2,6 @@ package ore.forge.Items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
@@ -32,7 +31,7 @@ public class Furnace extends Item {
         super(jsonValue);
         this.rewardThreshold = jsonValue.getInt("rewardThreshold");
         this.specialPointReward = jsonValue.getInt("specialPointReward");
-        this.upgrade = ReflectionLoader.createOrNull(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.create(jsonValue.get("upgrade"),"upgradeName");
         initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }

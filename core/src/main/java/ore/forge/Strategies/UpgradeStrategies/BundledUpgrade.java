@@ -27,7 +27,7 @@ public class BundledUpgrade implements UpgradeStrategy {
         JsonValue strategyArray = jsonValue.get("upgrades");
         this.upgradeStrategies = new UpgradeStrategy[strategyArray.size];
         for (int i = 0; i < strategyArray.size; i++) {
-            this.upgradeStrategies[i] = ReflectionLoader.createOrNull(strategyArray.get(i), "upgradeName");
+            this.upgradeStrategies[i] = ReflectionLoader.create(strategyArray.get(i), "upgradeName");
         }
 
     }

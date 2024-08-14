@@ -16,7 +16,7 @@ public class ApplyEffectUpgrade implements UpgradeStrategy {
     }
 
     public ApplyEffectUpgrade(JsonValue jsonValue) {
-        effect = ReflectionLoader.createOrNull(jsonValue.get("effectToApply"),"effectName");
+        effect = ReflectionLoader.create(jsonValue.get("effectToApply"),"effectName");
         assert effect != null;
     }
 

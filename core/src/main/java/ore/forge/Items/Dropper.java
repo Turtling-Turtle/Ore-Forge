@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Expressions.Function;
-import ore.forge.Expressions.NumericOperand;
 import ore.forge.Expressions.NumericOperator;
 import ore.forge.Expressions.NumericOreProperties;
 import ore.forge.Items.Blocks.Block;
@@ -14,7 +13,6 @@ import ore.forge.ReflectionLoader;
 import ore.forge.Stopwatch;
 import ore.forge.Strategies.DropperStrategies.BurstDrop;
 import ore.forge.Strategies.DropperStrategies.DropStrategy;
-import ore.forge.Strategies.OreEffects.Burning;
 import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.UpgradeOreEffect;
 import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
@@ -52,6 +50,7 @@ public class Dropper extends Item {
     }
 
     public Dropper(JsonValue jsonValue) {
+
         super(jsonValue);
         this.dropInterval = jsonValue.getFloat("dropInterval");
         this.oreName = jsonValue.getString("oreName");
@@ -59,7 +58,17 @@ public class Dropper extends Item {
         this.oreTemp = jsonValue.getInt("oreTemp");
         this.multiOre = jsonValue.getInt("multiOre");
 //        this.oreEffect = loadViaReflection(jsonValue.get("oreStrategy"), "effectName");
-        this.oreEffect = ReflectionLoader.createOrNull(jsonValue.get("oreStrategy"),"effectName");
+
+        OreEffect oreEffect1;
+        try {
+            oreEffect1 = ReflectionLoader.create(jsonValue.get("oreStrategy"),"effectName");
+        } catch (RuntimeException ignored) {
+            oreEffect1 = null;
+
+        }
+
+
+        this.oreEffect = oreEffect1;
         timeSinceLast = 0f;
 
         initBlockConfiguration(this.numberConfig);

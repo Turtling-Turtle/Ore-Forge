@@ -25,7 +25,8 @@ public class ObserverOreEffect implements OreEffect  {
     public ObserverOreEffect(JsonValue jsonValue) {
         this.duration = jsonValue.getFloat("duration");
         this.charges = jsonValue.getInt("charges");
-        upgradeStrategy = ReflectionLoader.createOrNull(jsonValue, "upgrade", "upgradeName");
+//        upgradeStrategy = ReflectionLoader.create(jsonValue, "upgrade", "upgradeName");
+        upgradeStrategy = ReflectionLoader.create(jsonValue.get("upgrade"), "upgradeName");
     }
 
     //Clone Constructor
