@@ -18,7 +18,7 @@ public class RandomUpgrade implements UpgradeStrategy {
         chanceTable = new HashMap<>();
         JsonValue upgrades = jsonValue.get("upgrades");
         for (JsonValue upgrade : upgrades) {
-            addUpgrade(upgrade.getFloat("chance"), ReflectionLoader.create(upgrade,"upgradeName"));
+            addUpgrade(upgrade.getFloat("chance"), ReflectionLoader.load(upgrade,"upgradeName"));
         }
 
         keys = new ArrayList<>(chanceTable.keySet());

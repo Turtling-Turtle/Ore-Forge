@@ -23,7 +23,7 @@ public class BundledOreEffect implements OreEffect {
         var effectArray = jsonValue.get("effects");
         strategies = new OreEffect[effectArray.size];
         for (int i = 0; i < effectArray.size; i++) {
-            strategies[i] = ReflectionLoader.create(effectArray.get(i), "effectName");
+            strategies[i] = ReflectionLoader.load(effectArray.get(i), "effectName");
         }
     }
 

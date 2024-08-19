@@ -25,8 +25,8 @@ public class ConditionalUpgrade implements UpgradeStrategy {
 
     //used to create from JSON Data.
     public ConditionalUpgrade(JsonValue jsonValue) {
-        trueBranchStrategy = ReflectionLoader.create(jsonValue.get("trueBranch"), "upgradeName");
-        falseBranchStrategy= ReflectionLoader.create(jsonValue.get("falseBranch"), "upgradeName");
+        trueBranchStrategy = ReflectionLoader.load(jsonValue.get("trueBranch"), "upgradeName");
+        falseBranchStrategy= ReflectionLoader.load(jsonValue.get("falseBranch"), "upgradeName");
         condition = Condition.parseCondition(jsonValue.getString("condition"));
     }
 

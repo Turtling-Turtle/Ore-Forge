@@ -25,6 +25,7 @@ public class Stopwatch {
     }
 
     public long getTimeStamp() {
+        System.currentTimeMillis();
         if (state == State.RESET) {
             throw new IllegalStateException("Stopwatch is not running");
         }

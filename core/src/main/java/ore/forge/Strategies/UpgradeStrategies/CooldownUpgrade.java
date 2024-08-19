@@ -25,7 +25,7 @@ public class CooldownUpgrade implements UpgradeStrategy {
     }
 
     public CooldownUpgrade(JsonValue jsonValue) {
-        this.upgrade = ReflectionLoader.create(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
         this.cooldownTime = jsonValue.getFloat("cooldownTime");
     }
 

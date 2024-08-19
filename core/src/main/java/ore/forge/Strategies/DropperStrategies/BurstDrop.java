@@ -1,55 +1,77 @@
 package ore.forge.Strategies.DropperStrategies;
 
+import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.CoolDown;
 
 public class BurstDrop implements DropStrategy {
-    private float currentCooldownInterval, cooldownInterval;
-    private float burstCount;
-    private float currentBurstDuration, burstDuration;
+    private final float orePerMinute;
+    private final float burstCount;
     private int currentOreInBurst;
     private boolean isDropping;
-    private float intervalPerOre, currentIntervalPerOre;
 
-    private final CoolDown CCI, CIPO;
+    //burstCooldown in the CD between bursts.
+    //intervalBetween is the time between each ore in the burst
+    private final CoolDown burstCooldown, intervalBetween;
 
-    // oreCooldown, burstCount, ore per minute.
-    public BurstDrop(int orePerMinute, float burstCount) {
-        this.burstCount = burstCount;
-        var burstPerSec = (orePerMinute / burstCount) / 60f;
-        cooldownInterval = 1 / burstPerSec;
+
+    public BurstDrop(JsonValue jsonValue) {
+        orePerMinute = jsonValue.getFloat("orePerMinute");
+        burstCount = jsonValue.getInt("burstCount");
+        var burstPerSec = (orePerMinute/ burstCount) /60f;
+        var cooldownInterval = 1/ burstPerSec;
         var orePerSec = orePerMinute / 60f;
-        intervalPerOre = 1 / orePerSec;
-        burstDuration = intervalPerOre * burstCount;
+        var intervalPerOre = 1 / orePerSec;
 
         cooldownInterval /= 2;
-        currentCooldownInterval = cooldownInterval;
-        CCI = new CoolDown(cooldownInterval);
+        burstCooldown = new CoolDown(cooldownInterval);
         currentOreInBurst = 0;
 
 
-        currentBurstDuration = burstDuration;
-        intervalPerOre /= 2;
-        currentIntervalPerOre = intervalPerOre;
-        CIPO = new CoolDown(intervalPerOre);
+        intervalPerOre /=2;
+        intervalBetween = new CoolDown(intervalPerOre);
         isDropping = false;
+
+    }
+
+    // oreCooldown, burstCount, ore per minute.
+    public BurstDrop(float orePerMinute, float burstCount) {
+        this.orePerMinute = orePerMinute;
+        this.burstCount = burstCount;
+        var burstPerSec = (orePerMinute / burstCount) / 60f;
+        var cooldownInterval = 1 / burstPerSec;
+        var orePerSec = orePerMinute / 60f;
+        var intervalPerOre = 1 / orePerSec;
+
+        cooldownInterval /= 2;
+        burstCooldown = new CoolDown(cooldownInterval);
+        currentOreInBurst = 0;
+
+
+        intervalPerOre /= 2f;
+        intervalBetween = new CoolDown(intervalPerOre);
+        isDropping = false;
+    }
+
+    public BurstDrop(BurstDrop toBeCloned) {
+        this(toBeCloned.orePerMinute, toBeCloned.burstCount);
     }
 
 
     @Override
     public boolean drop(float delta) {
         if (!isDropping) {
-            if (CCI.update(delta)) {
+            if (burstCooldown.update(delta)) {
                 isDropping = true;
                 currentOreInBurst = 0;
             }
         } else {
-            if (CIPO.update(delta) && currentOreInBurst < burstCount) {
+            if (intervalBetween.update(delta) && currentOreInBurst < burstCount) {
                 currentOreInBurst++;
                 if (currentOreInBurst == burstCount) {
-                    CCI.resetCurrentTime();
+                    burstCooldown.resetCurrentTime();
                     isDropping = false;
                 }
-                CIPO.resetCurrentTime();
+                intervalBetween.resetCurrentTime();
                 return true;
             }
         }

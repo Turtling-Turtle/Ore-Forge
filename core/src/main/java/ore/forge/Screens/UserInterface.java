@@ -37,7 +37,7 @@ public class UserInterface {
     private ShopMenu shopWidget;
     private InputHandler inputHandler;
     private Label oreInfo;
-    private final Viewport uiViewport;
+    private final ScreenViewport uiViewport;
     private ProgressBar progressBar;
 
     public UserInterface(OreForge game, InputHandler handler) {

@@ -12,31 +12,32 @@ public class ReflectionLoader {
 
 
     @SuppressWarnings("unchecked")
-    public static <E> E create(JsonValue jsonValue, String fieldName) {
+    public static <E> E load(JsonValue jsonValue, String fieldName) throws IllegalArgumentException {
+        if (jsonValue == null) {
+            throw new IllegalArgumentException("JsonValue with argument: " + fieldName + " is null.");
+        }
 
+
+        Constructor<?> constructor = cachedResults.get(jsonValue.getString(fieldName));
         try {
-            Constructor<?> constructor = cachedResults.get(jsonValue.getString(fieldName));
             if (constructor != null) {
                 return (E) constructor.newInstance(jsonValue);
             }
-        } catch (IllegalArgumentException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            Gdx.app.log("Reflection Loader", Color.highlightString(fieldName + " not found in: " + jsonValue, Color.YELLOW));
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            Gdx.app.log("ReflectionLoader", Color.highlightString("Error loading class: " + constructor.getClass().getSimpleName() + " from JsonValue:\n" + jsonValue , Color.RED));
+            throw new RuntimeException(e);
         }
 
         Class<?> aClass;
         try {
-            try {
-                aClass = Class.forName(jsonValue.getString(fieldName));
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e + "\nJson value:" + jsonValue.toString() + "\t" + fieldName);
-            }
-            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
+            aClass = Class.forName(jsonValue.getString(fieldName));
+            constructor = aClass.getConstructor(JsonValue.class);
             cachedResults.put(jsonValue.getString(fieldName), constructor);
             return (E) constructor.newInstance(jsonValue);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            throw new RuntimeException(e + "\nJson value:" + jsonValue.toString() + "\t" + fieldName);
+            Gdx.app.log("ReflectionLoader", Color.highlightString( "Error in:\n" + jsonValue + "\nWhen trying to retrieve value linked to key: " + fieldName, Color.RED));
+            throw new RuntimeException(e);
         }
     }
 

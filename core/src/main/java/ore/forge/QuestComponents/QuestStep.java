@@ -35,7 +35,7 @@ public class QuestStep {
 
         this.state = QuestState.valueOf(jsonValue.getString("state"));
         if (jsonValue.has("reward")) {
-            reward = ReflectionLoader.create(jsonValue.get("reward"), "rewardType");
+            reward = ReflectionLoader.load(jsonValue.get("reward"), "rewardType");
         } else {
             reward = null;
         }

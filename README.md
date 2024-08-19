@@ -21,4 +21,3 @@ Once you've created your item the script should add it automatically to the corr
 ## Libraries Used:
 [LibGDX]
 
-[BreakingInfinity.java]

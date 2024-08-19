@@ -31,7 +31,7 @@ public class Furnace extends Item {
         super(jsonValue);
         this.rewardThreshold = jsonValue.getInt("rewardThreshold");
         this.specialPointReward = jsonValue.getInt("specialPointReward");
-        this.upgrade = ReflectionLoader.create(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
         initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }

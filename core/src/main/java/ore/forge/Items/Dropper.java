@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 //@author Nathan Ulmen
 public class Dropper extends Item {
     protected final float ejectionSpeed = 6f;
-    private final DropStrategy strategy = new BurstDrop(720,1);
+    private final BurstDrop dropBehavior;
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
@@ -36,6 +36,7 @@ public class Dropper extends Item {
     //Used to create from scratch.
     public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
         super(name, description, blockLayout, tier, itemValue, rarity);
+        dropBehavior = new BurstDrop(450, 3);
         this.dropInterval = dropInterval;
         this.oreName = oreName;
         this.oreValue = oreVal;
@@ -57,18 +58,15 @@ public class Dropper extends Item {
         this.oreValue = jsonValue.getDouble("oreValue");
         this.oreTemp = jsonValue.getInt("oreTemp");
         this.multiOre = jsonValue.getInt("multiOre");
-//        this.oreEffect = loadViaReflection(jsonValue.get("oreStrategy"), "effectName");
 
-        OreEffect oreEffect1;
-        try {
-            oreEffect1 = ReflectionLoader.create(jsonValue.get("oreStrategy"),"effectName");
-        } catch (RuntimeException ignored) {
-            oreEffect1 = null;
-
+        if (jsonValue.has("oreStrategy") && !jsonValue.get("oreStrategy").isNull()) {
+            this.oreEffect = ReflectionLoader.load(jsonValue.get("oreStrategy"), "effectName");
+        } else {
+            this.oreEffect = null;
         }
 
+        this.dropBehavior = new BurstDrop(jsonValue);
 
-        this.oreEffect = oreEffect1;
         timeSinceLast = 0f;
 
         initBlockConfiguration(this.numberConfig);
@@ -85,6 +83,7 @@ public class Dropper extends Item {
         this.dropInterval = itemToClone.getDropInterval();
         this.timeSinceLast = 0f;
         this.oreEffect = itemToClone.oreEffect;
+        this.dropBehavior = new BurstDrop(itemToClone.dropBehavior);
         initBlockConfiguration(this.numberConfig);
         alignWith(itemToClone.direction);
     }
@@ -96,7 +95,7 @@ public class Dropper extends Item {
         }
 //        timeSinceLast += deltaTime;
 
-        if (strategy.drop(deltaTime)) {
+        if (dropBehavior.drop(deltaTime)) {
             dropOre();
         }
 //        if (stopwatch.getTimeStamp() == 60) {
