@@ -161,8 +161,11 @@ public class BigNumber {
             return this.subtract(results[1]);
         }
 
-        //IDK what to do at this point.
-        return null;
+        BigNumber[] results = new BigNumber[2];
+        results[0] = this.divide(absOther);
+        results[1] = absOther.multiply(results[0].floor());
+        return this.subtract(results[1]);
+//        return null;
 
     }
 
@@ -181,7 +184,18 @@ public class BigNumber {
 
 
     public BigNumber floor() {
-        return new BigNumber(Math.floor(this.mantissa), this.exponent);
+        if (exponent < SIGNIFICANT_DIGITS) {
+            int shifts = (int) exponent;
+            double temp = mantissa;
+            for (int i = 0; i < shifts; i++) {
+                temp *= 10;
+            }
+            for (int i = 0; i < shifts; i++) {
+                temp /= 10;
+            }
+            return normalize(temp, exponent);
+        }
+        return this;
     }
 
     public BigNumber modulo(double other) {
@@ -281,5 +295,6 @@ public class BigNumber {
         private double mantissa;
         private long exponent;
     }
+
 
 }

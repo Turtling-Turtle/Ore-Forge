@@ -200,5 +200,4 @@ public class Condition {
             return source.evaluate(ore, targetID);
         }
     }
-
 }

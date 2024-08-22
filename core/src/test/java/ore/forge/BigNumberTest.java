@@ -113,6 +113,11 @@ public class BigNumberTest {
     }
 
     @Test
+    void testFloor() {
+        assertEquals(54236,new BigNumber("5.423697E4").floor().convertToDouble());
+    }
+
+    @Test
     void testModulo() {
         var result = new BigNumber(1, 1).modulo(3);
         assertEquals(10 % 3, result.convertToDouble());
@@ -120,8 +125,7 @@ public class BigNumberTest {
 
     @Test
     void testModuloBig() {
-        System.out.println(new BigNumber("3e500").modulo(new BigNumber("2e300")));
-        System.out.println(3 % 2);
+        assertEquals(Double.MAX_VALUE % 3, new BigNumber(Double.MAX_VALUE).modulo(new BigNumber(3)));
     }
 
     @Test
@@ -140,8 +144,12 @@ public class BigNumberTest {
 
     @Test
     void foo() {
-        var result = new BigNumber(3, 390).modulo(new BigNumber(3,90));
-        System.out.println("foo" + result);
+        System.out.println(Double.MAX_VALUE % 3);
+        System.out.println(Double.MAX_VALUE - (30000 * Math.floor(Double.MAX_VALUE/30000)));
+        System.out.println(Math.floor(Double.MAX_VALUE/3));
+        System.out.println(3 * Math.floor(Double.MAX_VALUE/3));
+
+        System.out.println();
     }
 
 
