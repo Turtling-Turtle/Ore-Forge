@@ -27,17 +27,16 @@ public class Dropper extends Item {
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
-    protected float timeSinceLast, dropInterval;
+    protected float timeSinceLast;
     private int totalOreDropped;
     public OreEffect testEffect = new UpgradeOreEffect(0.1f, 30, new InfluencedUpgrade(Function.parseFunction("ACTIVE_ORE.GET_COUNT(760-pfWQURud)"), new BasicUpgrade(0, NumericOperator.ADD, NumericOreProperties.ORE_VALUE), -9999999, 999999));
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore
     protected final Stopwatch stopwatch = new Stopwatch(TimeUnit.SECONDS);
 
     //Used to create from scratch.
-    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, String oreName, double oreVal, int oreTemp, int multiOre, float dropInterval, OreEffect oreStrategies) {
+    public Dropper(String name, String description, int[][] blockLayout, Tier tier, double itemValue, float rarity, String oreName, double oreVal, int oreTemp, int multiOre, OreEffect oreStrategies) {
         super(name, description, blockLayout, tier, itemValue, rarity);
         dropBehavior = new BurstDrop(450, 3);
-        this.dropInterval = dropInterval;
         this.oreName = oreName;
         this.oreValue = oreVal;
         this.oreTemp = oreTemp;
@@ -53,7 +52,6 @@ public class Dropper extends Item {
     public Dropper(JsonValue jsonValue) {
 
         super(jsonValue);
-        this.dropInterval = jsonValue.getFloat("dropInterval");
         this.oreName = jsonValue.getString("oreName");
         this.oreValue = jsonValue.getDouble("oreValue");
         this.oreTemp = jsonValue.getInt("oreTemp");
@@ -80,7 +78,6 @@ public class Dropper extends Item {
         this.oreValue = itemToClone.oreValue;
         this.oreTemp = itemToClone.oreTemp;
         this.multiOre = itemToClone.multiOre;
-        this.dropInterval = itemToClone.getDropInterval();
         this.timeSinceLast = 0f;
         this.oreEffect = itemToClone.oreEffect;
         this.dropBehavior = new BurstDrop(itemToClone.dropBehavior);
@@ -138,7 +135,7 @@ public class Dropper extends Item {
     @Override
     public void logInfo() {
         String info = "\nName: " + getName() + " \tID: " + getID() + "\tTier: " + getTier();
-        String stats = "Drop Interval: " + getDropInterval();
+        String stats = "Drop Behavior: " + dropBehavior.toString();
         String oreInfo = "Ore Name: " + getOreName() + "\tOre Value: " + oreValue + "\tOre Temperature: " + oreTemp + "\tMultiOre: " + multiOre;
         info += "\n" + stats + "\n" + oreInfo + "\n Ore Effect:" + oreEffect;
         Gdx.app.log("Dropper", Color.highlightString(info, Color.PINK));
@@ -162,10 +159,6 @@ public class Dropper extends Item {
 
     public OreEffect getOreEffects() {
         return oreEffect;
-    }
-
-    public float getDropInterval() {
-        return dropInterval;
     }
 
     public void incrementTotalOreDropped() {

@@ -6,7 +6,7 @@ import java.math.BigInteger;
 /**
  * @author Nathan Ulmen
  */
-public class BigNumber {
+public class BigNumber implements Comparable<BigNumber> {
     private final static int SIGNIFICANT_DIGITS = 16;
     public final static BigNumber MAX_VALUE = new BigNumber(9, Long.MAX_VALUE);
     protected final double mantissa;
@@ -165,7 +165,6 @@ public class BigNumber {
         results[0] = this.divide(absOther);
         results[1] = absOther.multiply(results[0].floor());
         return this.subtract(results[1]);
-//        return null;
 
     }
 
@@ -190,6 +189,7 @@ public class BigNumber {
             for (int i = 0; i < shifts; i++) {
                 temp *= 10;
             }
+            temp = Math.floor(temp);
             for (int i = 0; i < shifts; i++) {
                 temp /= 10;
             }
@@ -268,7 +268,7 @@ public class BigNumber {
     }
 
     public String toString() {
-        return mantissa + " E " + String.format("%,3d", exponent);
+        return mantissa + " E " + String.format("%s,3d", Long.valueOf(exponent));
     }
 
     public boolean canBeDouble() {
@@ -289,6 +289,17 @@ public class BigNumber {
     @Override
     public boolean equals(Object o) {
         return o instanceof BigNumber otherNumber && (this.mantissa == otherNumber.mantissa && this.exponent == otherNumber.exponent);
+    }
+
+    @Override
+    public int compareTo(BigNumber o) {
+        if (this.mantissa == o.mantissa && this.exponent == o.exponent) {
+            return 0;
+        } else if (this.exponent > o.exponent && this.mantissa > o.mantissa) {
+            return 1;
+        }
+        return -1;
+
     }
 
     private class MutableBigNumber {

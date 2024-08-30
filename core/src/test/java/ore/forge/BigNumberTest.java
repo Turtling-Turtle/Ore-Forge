@@ -114,7 +114,7 @@ public class BigNumberTest {
 
     @Test
     void testFloor() {
-        assertEquals(54236,new BigNumber("5.423697E4").floor().convertToDouble());
+        assertEquals(54236, new BigNumber("5.423697E4").floor().convertToDouble());
     }
 
     @Test
@@ -145,13 +145,12 @@ public class BigNumberTest {
     @Test
     void foo() {
         System.out.println(Double.MAX_VALUE % 3);
-        System.out.println(Double.MAX_VALUE - (30000 * Math.floor(Double.MAX_VALUE/30000)));
-        System.out.println(Math.floor(Double.MAX_VALUE/3));
-        System.out.println(3 * Math.floor(Double.MAX_VALUE/3));
+        System.out.println(Double.MAX_VALUE - (30000 * Math.floor(Double.MAX_VALUE / 30000)));
+        System.out.println(Math.floor(Double.MAX_VALUE / 3));
+        System.out.println(3 * Math.floor(Double.MAX_VALUE / 3));
 
         System.out.println();
     }
-
 
 
 }

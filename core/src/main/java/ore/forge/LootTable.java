@@ -145,7 +145,7 @@ public class LootTable {
         furnace.setID("Test Furnace");
         Conveyor conveyor = new Conveyor("Test Conveyor", "test", conveyorConfig, Item.Tier.COMMON, 0.0, 32.58f, 8);
         conveyor.setID("Test Conveyor");
-        Dropper dropper = new Dropper("Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, 1.12312f, "Test Ore", 20, 1, 1, .001f, dropperStrat);
+        Dropper dropper = new Dropper("Test Dropper", "test", dropperConfig, Item.Tier.COMMON, 0.0, 1.12312f, "Test Ore", 20, 1, 1, dropperStrat);
         dropper.setID("Test Dropper");
         Upgrader upgrader = new Upgrader("Test Upgrader", "test", upgraderConfig, Item.Tier.COMMON, 0.0, 59, 5, influencedUpgrade, upgradeTag);
         upgrader.setID("Test Upgrader");

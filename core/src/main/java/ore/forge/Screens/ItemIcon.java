@@ -56,8 +56,14 @@ public class ItemIcon extends Table {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.genMipMaps = true;
         //Prestige
-        //40 size for 4k, 32 for 1440p, 20 for 1080p?
-        parameter.size = 40; //for 4k
+
+        //Determine Item Icon Font Sizes
+        switch (Gdx.graphics.getHeight()) {
+            case 1080 -> parameter.size = 22;
+            case 1440 -> parameter.size = 32;
+            case 2160 -> parameter.size = 40;
+            default -> parameter.size = 24;
+        }
 
         parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
         parameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;

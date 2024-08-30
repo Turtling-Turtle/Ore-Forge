@@ -116,8 +116,9 @@ public abstract class Item {
                     rarity = -1;
                     unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
                     switch (unlockMethod) {
-                        case SPECIAL_POINTS, PRESTIGE_LEVEL -> unlockRequirements = jsonValue.getDouble("unlockRequirement");
-                        case QUEST , NONE-> unlockRequirements = -1;
+                        case SPECIAL_POINTS, PRESTIGE_LEVEL ->
+                            unlockRequirements = jsonValue.getDouble("unlockRequirement");
+                        case QUEST, NONE -> unlockRequirements = -1;
                     }
                     currencyBoughtWith = Currency.SPECIAL_POINTS;
                     canBeSold = true;
@@ -142,7 +143,7 @@ public abstract class Item {
                 isUnlocked = true;
             }
         } catch (Exception e) {
-            Gdx.app.log("Item", Color.highlightString( "Error Occurred While Loading Acquisition " +  name + "s' Info: " + e, Color.YELLOW));
+            Gdx.app.log("Item", Color.highlightString("Error Occurred While Loading Acquisition " + name + "s' Info: " + e, Color.YELLOW));
         }
 
 
