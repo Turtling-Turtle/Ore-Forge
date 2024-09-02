@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -47,9 +48,20 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
         background.setColor(Color.DARK_GRAY);
         var textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+//        textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.genMipMaps = true;
+        parameter.size = switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 20;
+            case 1440 -> 32;
+            case 2160 -> 40;
+            default -> 22;
+        };
+        textFieldStyle.font = generator.generateFont(parameter);
 
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
@@ -76,7 +88,9 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
                 last = textField.getText();
             }
         });
-        topTable.add(searchBar).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(searchBar).top().left().size(Value.percentWidth(0.35f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+//        topTable.add(searchBar).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
+
 
 //        searchStack.add(searchBar);
 //        searchStack.add(searchIconContainer);
@@ -94,7 +108,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         horizontalGroup.align(Align.topLeft);
 
         CheckBox.CheckBoxStyle buttonStyle = new CheckBox.CheckBoxStyle();
-        buttonStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
+        buttonStyle.font = searchBar.getStyle().font;
         buttonStyle.fontColor = Color.BLACK;
         buttonStyle.up = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
 
@@ -159,7 +173,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         this.scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
-            topTable.add(checkBox).top().left().size(Value.percentWidth(0.2f, background), Value.percentWidth(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+            topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
         }
 
 //        topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
@@ -249,7 +263,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(),icon.getHeight()).expandX().fillX().align(Align.topLeft).pad(padValue).padBottom(Value.percentHeight(0.015f, background));
+        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fillX().align(Align.topLeft).pad(padValue).padBottom(Value.percentHeight(0.015f, background));
     }
 
     public void show() {

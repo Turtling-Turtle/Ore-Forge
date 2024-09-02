@@ -1,7 +1,6 @@
 package ore.forge;
 
 
-import java.math.BigInteger;
 
 /**
  * @author Nathan Ulmen

@@ -65,7 +65,7 @@ public class BuildMode extends InputMode {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             heldItem.rotateClockwise();
         }
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (heldNode.hasSupply() && heldItem.didPlace(handler.getMouseWorld(), contiguousPlacedItems)) { //make sure the item was placed down
                 heldNode.place();
                 contiguousPlacedItems.add(heldItem);
