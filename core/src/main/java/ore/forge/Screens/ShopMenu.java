@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -136,7 +137,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         scrollPane = new ScrollPane(iconTable);
         updateIcons(dropperIcons);
 
-        background.setSize(Gdx.graphics.getWidth() * .55f, Gdx.graphics.getHeight() * .5f);
+        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         background.add(topTable).align(Align.topLeft).expandX().fillX().row();
 
         scrollPane.setScrollingDisabled(true, false);
@@ -304,11 +305,11 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     }
 
     public void show() {
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * 0f, Gdx.graphics.getHeight() * .4f, 0.13f)));
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * 0f, Gdx.graphics.getHeight() * .1f, 0.13f)));
     }
 
     public void hide() {
-        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .4f, 0.13f), Actions.hide()));
+        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
     }
 
     @Override

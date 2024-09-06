@@ -48,7 +48,7 @@ public class ItemIcon extends Table {
         border.add(imageButtonTable);
         border.center();
 //        border.setDebug(true);
-        border.setSize(Gdx.graphics.getWidth() * .08f, Gdx.graphics.getHeight() * .15f);
+        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -96,7 +96,7 @@ public class ItemIcon extends Table {
         this.setTouchable(Touchable.enabled);
         assert this.addListener(tooltip);
 
-        storedCount = new Label("Stored: " + node.getStored(), labelStyle);
+        storedCount = new Label(" Stored: " + node.getStored(), labelStyle);
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
@@ -181,7 +181,7 @@ public class ItemIcon extends Table {
     }
 
     public void updateTopLeftText(String newMessage) {
-        storedCount.setText(newMessage);
+        storedCount.setText(" " + newMessage);
     }
 
     public void updateToolTipText(String newMessage) {

@@ -451,23 +451,6 @@ public abstract class Item {
         return unlockRequirements;
     }
 
-//    @SuppressWarnings("unchecked")
-//    protected <E> E loadViaReflection(JsonValue jsonValue, String field) {
-//        try {
-//            jsonValue.getString(field);
-//        } catch (NullPointerException | IllegalArgumentException e) {
-//            return null;
-//        }
-//        try {
-//            Class<?> aClass = Class.forName(jsonValue.getString(field));
-//            Constructor<?> constructor = aClass.getConstructor(JsonValue.class);
-//            return (E) constructor.newInstance(jsonValue);
-//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-//                 ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     public String toString() {
         return name + "\t" + description + "\tID: " + id + "\tposition:" + vector2.toString();
     }

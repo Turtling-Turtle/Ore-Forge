@@ -1,6 +1,6 @@
 # OreForge
 
-## The Game 
+## What is Ore Forge? 
 In Ore Forge you assemble your tycoon out of tons of unique items. Each time you prestige you gain access to increasingly
 powerful and unique items. 
 

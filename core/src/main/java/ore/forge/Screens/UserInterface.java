@@ -125,7 +125,7 @@ public class UserInterface {
         inventoryWidget.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .1f);
         inventoryWidget.setVisible(false);
 
-        shopWidget.setPosition(0, Gdx.graphics.getHeight() * .4f);
+        shopWidget.setPosition(0, Gdx.graphics.getHeight() * .1f);
         shopWidget.setVisible(false);
         stage.addActor(eventLogger);
         stage.addActor(oreInfo);

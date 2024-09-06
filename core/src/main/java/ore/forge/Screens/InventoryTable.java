@@ -32,7 +32,6 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
     private final Table background, iconTable, topTable;
-    private final HorizontalGroup horizontalGroup;
     private ScrollPane scrollPane;
     private final ArrayList<ItemIcon> allIcons;
     private final HashMap<String, ItemIcon> lookUp;
@@ -42,6 +41,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     private final Value padValue;
 
     public InventoryTable(Inventory inventory) {
+
         lookUp = new HashMap<>();
         topTable = new Table();
         this.background = new Table();
@@ -66,16 +66,11 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
 
-//        Stack searchStack = new Stack();
-//        Image search = new Image(ButtonHelper.getIconAtlas().createSprite("icon_magnifier"));
-//        search.setColor(Color.BLACK);
-//        Container<Image> searchIconContainer = new Container<>(search);
-//        searchIconContainer.setClip(true);
-
         EventManager.getSingleton().registerListener(this);
 
         background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        padValue = Value.Fixed.valueOf(0.01f);
+        padValue = Value.Fixed.percentHeight(0.005f, background);
+
 
         searchBar.setTextFieldListener(new TextFieldListener() {
             String last;
@@ -104,8 +99,6 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
         this.iconTable = new Table();
         checkBoxes = new CheckBox[3];
-        horizontalGroup = new HorizontalGroup();
-        horizontalGroup.align(Align.topLeft);
 
         CheckBox.CheckBoxStyle buttonStyle = new CheckBox.CheckBoxStyle();
         buttonStyle.font = searchBar.getStyle().font;
@@ -173,8 +166,10 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         this.scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
-            topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+            topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
         }
+//        topTable.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
+//        topTable.setColor(Color.BLACK);
 
 //        topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
 //        topTable.add(checkBoxes[1]).top().left().expand().fill().align(Align.topLeft).pad(5);
@@ -190,17 +185,11 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
 
         scrollPane.setScrollingDisabled(true, false);
-        horizontalGroup.setVisible(true);
 
-        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
 
-        background.add(topTable).expandX().fillX().row();
-        background.add(scrollPane).top().left().expand().fill();
+        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
+        background.add(scrollPane).top().left().expand().pad(padValue).fill();
         this.addActor(background);
-//        background.setDebug(true);
-//        horizontalGroup.setDebug(true);
-//        iconTable.setDebug(true);
-//        scrollPane.setDebug(true);
 //        this.debugAll();
     }
 
@@ -263,7 +252,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fillX().align(Align.topLeft).pad(padValue).padBottom(Value.percentHeight(0.015f, background));
+        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
     }
 
     public void show() {
