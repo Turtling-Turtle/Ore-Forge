@@ -67,7 +67,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.genMipMaps = true;
         parameter.size = switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
+            case 1080 -> 16;
             case 1440 -> 30;
             case 2160 -> 38;
             default -> 22;
@@ -161,17 +161,17 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         iconTable = new Table();
 
 
-        background.setSize(Gdx.graphics.getWidth() * .358f, Gdx.graphics.getHeight() * .8f);
+        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         padValue = Value.Fixed.percentHeight(0.005f, background);
         background.add(topTable).align(Align.topLeft).expandX().fillX().padRight(padValue).padTop(padValue).row();
-        Value buttonSize = Value.Fixed.percentWidth(.15f, background);
+        Value buttonSize = Value.Fixed.percentWidth(.175f, background);
 
         topTable.top().left();
-        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(padValue);
-        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(padValue);
-        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(padValue);
-        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(padValue);
-        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
         topTable.row();
         searchBar.setSize(topTable.getWidth()/2f,100);
         topTable.add(searchBar).size(topTable.getWidth(), 100).expand().fill().top().left().pad(padValue);
