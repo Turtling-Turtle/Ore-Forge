@@ -1,12 +1,14 @@
 
 ## What is Ore Forge? 
 
+
 In Ore Forge you assemble your tycoon out of 4 item types, each of which have tons of unique variants,
 **Droppers, Conveyors, Upgraders, and Furnaces**. Droppers generate/produce ore which is transported through your
 custom-built system of conveyors and upgraders(This is what your tycoon is primarily comprised of). As the ore moves
 through your tycoon each upgrader upgrades it, increasing its value. Finally, the ore is delivered to a furnace, where
 it is sold, often with a bonus, earning you cash. This cash can be used purchase items from the shop or to prestige,
 granting you a random prestige tier to use in your tycoon. 
+
 ---
 
 ## How to Install and Play
