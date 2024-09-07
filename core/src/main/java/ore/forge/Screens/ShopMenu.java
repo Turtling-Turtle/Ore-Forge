@@ -63,6 +63,24 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
 
 
         createIcons(inventory.getInventoryNodes());
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.genMipMaps = true;
+        parameter.size = switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 20;
+            case 1440 -> 30;
+            case 2160 -> 38;
+            default -> 22;
+        };
+
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        style.font = generator.generateFont(parameter);
+        style.up = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.down = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.over = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.pressedOffsetY = -2f;
+        style.fontColor = Color.BLACK;
+
 
         dropperIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
         furnaceIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
@@ -71,11 +89,12 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
 
 
         //Initialize "tab" buttons
-        droppers = ButtonHelper.createRoundTextButton("Droppers", Color.LIGHT_GRAY);
-        furnaces = ButtonHelper.createRoundTextButton("Furnaces", Color.LIGHT_GRAY);
-        processItems = ButtonHelper.createRoundTextButton("Process Items", Color.LIGHT_GRAY);
-        specialPoints = ButtonHelper.createRoundTextButton("Special Items", Color.LIGHT_GRAY);
-        prestigeItems = ButtonHelper.createRoundTextButton("Prestige Items", Color.SKY);
+
+        droppers = new TextButton("Droppers",style);
+        furnaces = new TextButton("Furnaces", style);
+        processItems = new TextButton("Process Items", style);
+        specialPoints = new TextButton("Special Items", style);
+        prestigeItems = new TextButton("Prestige Items", style);
 
 
         droppers.setSize(0, 0);
@@ -126,20 +145,12 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
             }
         });
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.genMipMaps = true;
-        parameter.size = switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 40;
-            default -> 22;
-        };
-        TextField.TextFieldStyle style = new TextField.TextFieldStyle();
-        style.font = generator.generateFont(parameter);
-        style.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
-        style.fontColor = Color.BLACK;
-        TextField searchBar = new TextField("Search...", style);
+
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = generator.generateFont(parameter);
+        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        textFieldStyle.fontColor = Color.BLACK;
+        TextField searchBar = new TextField("Search...", textFieldStyle);
 
 
 
@@ -153,7 +164,9 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         background.setSize(Gdx.graphics.getWidth() * .358f, Gdx.graphics.getHeight() * .8f);
         padValue = Value.Fixed.percentHeight(0.005f, background);
         background.add(topTable).align(Align.topLeft).expandX().fillX().padRight(padValue).padTop(padValue).row();
+        Value buttonSize = Value.Fixed.percentWidth(.15f, background);
 
+        topTable.top().left();
         topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(padValue);
         topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(padValue);
         topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(padValue);
