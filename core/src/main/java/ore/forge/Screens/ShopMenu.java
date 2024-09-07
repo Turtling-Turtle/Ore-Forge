@@ -21,6 +21,7 @@ import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,6 +50,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     private final Table background, iconTable, topTable;
     private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private static final String roundFull = "128xRoundFull";
+    private final Value padValue;
 
     public ShopMenu(Inventory inventory) {
         dropperIcons = new ArrayList<>();
@@ -57,6 +59,8 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         specialPointsIcons = new ArrayList<>();
         prestigeItemsIcons = new ArrayList<>();
         iconLookUp = new HashMap<>();
+
+
 
         createIcons(inventory.getInventoryNodes());
 
@@ -122,28 +126,56 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
             }
         });
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.genMipMaps = true;
+        parameter.size = switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 20;
+            case 1440 -> 32;
+            case 2160 -> 40;
+            default -> 22;
+        };
+        TextField.TextFieldStyle style = new TextField.TextFieldStyle();
+        style.font = generator.generateFont(parameter);
+        style.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.fontColor = Color.BLACK;
+        TextField searchBar = new TextField("Search...", style);
+
+
+
 
         //Initialize Tables
         topTable = new Table();
         background = new Table();
         iconTable = new Table();
 
-        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(5);
-        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(5);
+
+        background.setSize(Gdx.graphics.getWidth() * .358f, Gdx.graphics.getHeight() * .8f);
+        padValue = Value.Fixed.percentHeight(0.005f, background);
+        background.add(topTable).align(Align.topLeft).expandX().fillX().padRight(padValue).padTop(padValue).row();
+
+        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.row();
+        searchBar.setSize(topTable.getWidth()/2f,100);
+        topTable.add(searchBar).size(topTable.getWidth(), 100).expand().fill().top().left().pad(padValue);
+
+//        topTable.setDebug(true);
 
         scrollPane = new ScrollPane(iconTable);
         updateIcons(dropperIcons);
 
-        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        background.add(topTable).align(Align.topLeft).expandX().fillX().row();
+
+
 
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setVisible(true);
 
-        background.add(scrollPane).top().left().expand().fill();
+        background.add(scrollPane).top().left().expand().fill().padRight(padValue).padTop(padValue);
+//        scrollPane.debugAll();
         background.setColor(Color.OLIVE);
         this.addActor(background);
 
@@ -177,7 +209,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
                 Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Special Point Items");
                 addToList(icon, specialPointsIcons);
                 continue;
-            } else if (node.getHeldItem().getCurrencyBoughtWith() == Currency.PRESTIGE_POINTS) {
+            } else if (node.getHeldItem().getCurrencyBoughtWith() == Currency.PRESTIGE_POINTS || node.getHeldItem().getTier() == Item.Tier.PRESTIGE) {
                 Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Prestige Items");
                 addToList(icon, prestigeItemsIcons);
                 continue;
@@ -210,10 +242,10 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
-        if (count % 8 == 0) {
+        if (count % 4 == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(5);
+        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(padValue);
     }
 
     public void selectedWidget(ItemIcon icon) {

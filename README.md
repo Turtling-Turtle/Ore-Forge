@@ -1,8 +1,19 @@
-# OreForge
 
 ## What is Ore Forge? 
-In Ore Forge you assemble your tycoon out of tons of unique items. Each time you prestige you gain access to increasingly
-powerful and unique items. 
+In Ore Forge you assemble your tycoon out of 4 item types, each of which have tons of unique variants,
+**Droppers, Conveyors, Upgraders, and Furnaces**. Droppers generate/produce ore which is transported through your
+custom-built system of conveyors and upgraders(This is what your tycoon is primarily comprised of). As the ore moves
+through your tycoon each upgrader upgrades it, increasing its value. Finally, the ore is delivered to a furnace, where
+it is sold, often with a bonus, earning you cash. This cash can be used purchase items from the shop or to prestige,
+granting you a random prestige tier to use in your tycoon. 
+---
+
+## How to Install and Play
+
+_**{INSERT HERE WHEN DONE}**_
+
+---
+
 
 ## Controls
 * **Camera Movement** - You can use _**W**_, _**A**_, _**S**_, _**D**_ to move the camera up, left, down, and right respectively. Holding down _**Shift**_ while 
@@ -30,15 +41,17 @@ The hotkey for the inventory is _**F1**_ and the hotkey for the shop is _**F**_.
 the X button/icon. To select an item from the shop simply click on the item you wish to select and it will either allow you to purchase more of that item
 or allow you to place that item.
 
+---
 ## Adding/Creating Your Own Custom Items
 You can use [this](https://github.com/NathanUlmen/OreForge-Item-Json-Generator) tool to generate/create item data for Ore Forge and to manage the items that you have created so far.
 
+---
 ## Key Components:
 * The [GameWorld](https://github.com/NathanUlmen/OreForge/blob/main/core/src/main/java/ore/forge/Screens/GameWorld.java) class is where the game is rendered and the game logic is driven from.
 * Under the [Strategies Folder](https://github.com/NathanUlmen/OreForge/tree/main/core/src/main/java/ore/forge/Strategies) you can find the classes that are responsible upgrade logic and effect logic.
 * The [Ore](https://github.com/NathanUlmen/OreForge/blob/main/core/src/main/java/ore/forge/Ore.java) class is pretty important as it's what the game revolves around. 
 
-
+---
 ## Libraries Used:
-[LibGDX](https://github.com/libgdx/libgdx)
+* [LibGDX](https://github.com/libgdx/libgdx)
 
