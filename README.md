@@ -1,5 +1,6 @@
 
 ## What is Ore Forge? 
+
 In Ore Forge you assemble your tycoon out of 4 item types, each of which have tons of unique variants,
 **Droppers, Conveyors, Upgraders, and Furnaces**. Droppers generate/produce ore which is transported through your
 custom-built system of conveyors and upgraders(This is what your tycoon is primarily comprised of). As the ore moves
