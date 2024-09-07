@@ -1,10 +1,12 @@
-package ore.forge.Expressions;
+package ore.forge.Expressions.Operators;
 
 public enum LogicalOperator {
     NOT,
     XOR,
     AND,
-    OR;
+    OR,
+    BICONDITIONAL;
+
 
     public boolean evaluate(boolean left, boolean right) {
         return operator.evaluate(left, right);
@@ -21,13 +23,14 @@ public enum LogicalOperator {
             case "XOR", "^" -> LogicalOperator.XOR;
             case "AND", "&&" -> LogicalOperator.AND;
             case "OR", "||" -> LogicalOperator.OR;
+            case "<->" -> LogicalOperator.BICONDITIONAL;
             default -> throw new IllegalStateException("Unexpected value: " + string);
         };
     }
 
     public static boolean isOperator(String string) {
         return switch (string) {
-            case "NOT", "!",  "XOR", "^", "AND", "&&", "OR", "||" -> true;
+            case "NOT", "!",  "XOR", "^", "AND", "&&", "OR", "||", "->", "<->" -> true;
             default -> false;
         };
     }
@@ -38,6 +41,7 @@ public enum LogicalOperator {
             case XOR -> "^";
             case AND -> "&&";
             case OR -> "||";
+            case BICONDITIONAL -> "<->";
         };
     }
 
@@ -48,6 +52,7 @@ public enum LogicalOperator {
             case XOR -> (left, right) -> left ^ right;
             case AND -> (left, right) -> left && right;
             case OR -> (left, right) -> left || right;
+            case BICONDITIONAL -> (left, right) -> (left && right) || (!left && !right);
         };
     }
 }

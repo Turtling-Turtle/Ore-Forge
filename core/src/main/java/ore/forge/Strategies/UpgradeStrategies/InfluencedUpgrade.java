@@ -1,10 +1,9 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.*;
-import ore.forge.Expressions.NumericOperator;
-import ore.forge.Expressions.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
+import ore.forge.Expressions.Operands.NumericOreProperties;
 import ore.forge.Expressions.Function;
 
 /**

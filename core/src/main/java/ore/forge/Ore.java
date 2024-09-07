@@ -1,7 +1,7 @@
 package ore.forge;
 
 import com.badlogic.gdx.math.Vector2;
-import ore.forge.Expressions.ValueOfInfluence;
+import ore.forge.Expressions.Operands.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.Burning;

@@ -1,6 +1,10 @@
 package ore.forge.Expressions;
 
 import com.badlogic.gdx.utils.JsonValue;
+import ore.forge.Expressions.Operands.MethodBasedOperand;
+import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operands.ValueOfInfluence;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Ore;
 
 import java.util.Objects;

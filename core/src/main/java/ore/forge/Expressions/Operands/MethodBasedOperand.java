@@ -1,11 +1,9 @@
-package ore.forge.Expressions;
+package ore.forge.Expressions.Operands;
 
 import ore.forge.ItemMap;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
-
-import java.time.temporal.ChronoField;
 
 /*
  * Basically We are going to have an object that contains a custom lambda/function, a "collection", and a search param(string)

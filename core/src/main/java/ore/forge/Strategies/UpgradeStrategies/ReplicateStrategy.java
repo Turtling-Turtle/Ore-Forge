@@ -1,8 +1,8 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import ore.forge.ButtonHelper;
-import ore.forge.Expressions.NumericOperator;
-import ore.forge.Expressions.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
+import ore.forge.Expressions.Operands.NumericOreProperties;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Strategies.OreEffects.OreEffect;

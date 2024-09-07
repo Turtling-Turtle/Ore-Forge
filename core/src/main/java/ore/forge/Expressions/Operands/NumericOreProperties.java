@@ -1,5 +1,6 @@
-package ore.forge.Expressions;
+package ore.forge.Expressions.Operands;
 
+import ore.forge.Expressions.NumericOperand;
 import ore.forge.Ore;
 
 

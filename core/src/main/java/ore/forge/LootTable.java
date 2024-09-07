@@ -1,7 +1,7 @@
 package ore.forge;
 
 import ore.forge.Expressions.Function;
-import ore.forge.Expressions.NumericOperator;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Items.*;
 import ore.forge.Player.Player;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
@@ -17,7 +17,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static ore.forge.Expressions.NumericOreProperties.ORE_VALUE;
+import static ore.forge.Expressions.Operands.NumericOreProperties.ORE_VALUE;
 
 
 public class LootTable {

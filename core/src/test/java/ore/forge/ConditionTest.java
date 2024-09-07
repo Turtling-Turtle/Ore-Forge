@@ -86,4 +86,39 @@ class ConditionTest {
         var testCase = Condition.parseCondition("TEMPERATURE < 0");
         assertTrue(testCase.evaluate(ore));
     }
+
+    @Test
+    void testBiconditionalIsTrue() {
+        ore.setOreName("foo");
+        ore.setOreValue(20);
+        var testCase = Condition.parseCondition("ORE_NAME == foo <-> ORE_VALUE >= 20");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testBiconditionalIsFalse() {
+        ore.setOreName("bar");
+        ore.setOreValue(20);
+        //Left is True. Right is False. Result should be False.
+        var testCase = Condition.parseCondition("ORE_NAME == bar <-> ORE_VALUE > 100");
+        assertFalse(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testTwoFalseBiconditional() {
+        ore.setOreName("foo");
+        ore.setOreValue(44);
+        //Left is False. Right is False. Result should be True.
+        var testCase = Condition.parseCondition("ORE_NAME == bar <-> ORE_VALUE > 100");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testParen() {
+        ore.setOreName("foo");
+        ore.setOreValue(3);
+        var testCase = Condition.parseCondition("!(ORE_NAME == foo && ORE_VALUE == 2)");
+        assertTrue(testCase.evaluate(ore));
+    }
+
 }

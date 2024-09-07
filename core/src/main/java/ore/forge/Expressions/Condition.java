@@ -1,12 +1,17 @@
 package ore.forge.Expressions;
 
+import ore.forge.Expressions.Operands.MethodBasedOperand;
+import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operands.StringOreProperty;
+import ore.forge.Expressions.Operands.ValueOfInfluence;
+import ore.forge.Expressions.Operators.ComparisonOperator;
+import ore.forge.Expressions.Operators.LogicalOperator;
 import ore.forge.Ore;
 
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  * @author Nathan Ulmen
  * Represents a Boolean Expression, evaluates an argument, returning a booelan result.
@@ -16,13 +21,9 @@ import java.util.regex.Pattern;
  * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
  */
 
-public class Condition {
-    private interface BooleanExpression {
-        boolean evaluate(Ore ore);
-    }
-
+public class Condition implements BooleanExpression {
     //TODO: Regex expression wont identify names that have spaces in them.
-    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
+    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
 
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
@@ -43,6 +44,12 @@ public class Condition {
             if (token.isEmpty() || token.equals(" ")) {
                 //ignore " "
                 continue;
+            } else if (token.equals("(")) {
+//                logicalOperators.push(null);
+            } else if (token.equals(")")) {
+//                while (logicalOperators.peek() != null) {
+//                }
+//                logicalOperators.pop(); //remove null
             } else if (token.contains("{") && token.contains("}")) {
                 token = token.replace("{", "").replace("}", "");
                 Function function = Function.parseFunction(token);
@@ -115,7 +122,7 @@ public class Condition {
         if (logicalOperators != null && !logicalOperators.isEmpty()) {
             for (LogicalOperator operator : logicalOperators) {
                 switch (operator) {
-                    case AND, OR, XOR:
+                    case AND, OR, XOR, BICONDITIONAL:
                         boolean right = results[--top];
                         boolean left = results[--top];
                         results[top++] = operator.evaluate(left, right);

@@ -1,4 +1,4 @@
-package ore.forge.Expressions;
+package ore.forge.Expressions.Operators;
 
 
 public enum ComparisonOperator {

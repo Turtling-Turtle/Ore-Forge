@@ -17,12 +17,6 @@ public enum UniqueMathFunctions {
 
 
     public static UniqueMathFunctions fromSymbol(String symbol) {
-//        return switch (symbol.toLowerCase()) {
-//            case "ln", "ln(", "ln()" -> LN;
-//            case "log", "log(", "log()" -> LOG;
-//            case "sqrt", "sqrt(", "sqrt()" -> SQRT;
-//            default -> throw new IllegalStateException("Unexpected symbol: " + symbol);
-//        };
         if (symbol.contains("ln(") && symbol.charAt(1) == 'n') return UniqueMathFunctions.LN;
         if (symbol.contains("log(") && symbol.charAt(1) == 'o') return UniqueMathFunctions.LOG;
         if (symbol.contains("sqrt(")&& symbol.charAt(1) == 'q') return UniqueMathFunctions.SQRT;

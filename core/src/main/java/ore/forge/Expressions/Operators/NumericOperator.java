@@ -1,4 +1,4 @@
-package ore.forge.Expressions;
+package ore.forge.Expressions.Operators;
 
 import java.util.function.DoubleBinaryOperator;
 
