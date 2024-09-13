@@ -20,7 +20,7 @@ _**{INSERT HERE WHEN DONE}**_
 
 ## Controls
 * **Camera Movement** - You can use `W` , `A` , `S`, `D` to move the camera up, left, down, and right respectively. Holding down `Shift` while 
-pressing one of the movement keys doubles the speed.
+pressing one of the movement keys doubles the speed of the camera.
  
 
 * **Camera Zoom** - You can use `E` to zoom the camera inwards and `Q` to zoom the camera outwards.
@@ -40,7 +40,7 @@ While in build mode placing an item on top of another already placed item will r
 
  
 * **Shop and Inventory** - The shop and inventory can be accessed by clicking on their respective buttons/icons or by pressing their hotkeys.
-The hotkey for the inventory is `F1` and the hotkey for the shop is `F`. To close these menus you can either press the respective hotkey, `ESC` or
+The inventory can be opened by pressing `F1` or `I`. The shop can be opened by pressing `F`. To close these menus you can either press their respective hotkey, `ESC` or
 the X button/icon. To select an item from the shop simply click on the item you wish to select and it will either allow you to purchase more of that item
 or allow you to place that item.
 
