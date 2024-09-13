@@ -16,7 +16,7 @@ _**{INSERT HERE WHEN DONE}**_
 
 
 ## Controls
-* **Camera Movement** - You can use `W` , `A` , `S`, `D` to move the camera up, left, down, and right respectively. Holding down _**Shift**_ while 
+* **Camera Movement** - You can use `W` , `A` , `S`, `D` to move the camera up, left, down, and right respectively. Holding down `Shift` while 
 pressing one of the movement keys doubles the speed.
  
 
