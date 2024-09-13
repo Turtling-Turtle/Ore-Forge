@@ -29,12 +29,12 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
 
     public void activateQuest(String questId) {
         var quest = allQuests.get(questId);
-        assert quest != null && quest.getState() == QuestState.LOCKED;
+        assert quest != null && quest.getStatus() == QuestStatus.LOCKED;
         quest.start();
     }
 
     private void handleQuest(Quest quest) {
-        switch (quest.getState()) {
+        switch (quest.getStatus()) {
             case COMPLETED -> completedQuests.add(quest);
             case LOCKED -> lockedQuests.add(quest);
             case IN_PROGRESS -> quest.initialize();
@@ -48,7 +48,7 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
     @Override
     public void handle(QuestCompletedEvent event) {
         var finishedQuest = event.getSubject();
-        assert finishedQuest.getState() == QuestState.COMPLETED;
+        assert finishedQuest.getStatus() == QuestStatus.COMPLETED;
         completedQuests.add(finishedQuest);
     }
 

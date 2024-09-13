@@ -18,6 +18,7 @@ import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeEvent;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
+import ore.forge.Screens.Widgets.ItemIcon;
 import ore.forge.Stopwatch;
 
 import java.util.*;

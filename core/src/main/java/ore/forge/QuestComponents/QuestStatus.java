@@ -1,7 +1,7 @@
 package ore.forge.QuestComponents;
 
 
-public enum QuestState {
+public enum QuestStatus {
     IN_PROGRESS, //
     LOCKED, //
     COMPLETED //

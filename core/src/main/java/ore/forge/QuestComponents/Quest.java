@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Queue;
 import ore.forge.Color;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestCompletedEvent;
-import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ import java.util.ArrayList;
  * */
 public class Quest {
     private final EventManager eventManger = EventManager.getSingleton();
-    private QuestState state;
+    private QuestStatus state;
     private boolean isActive;
     private QuestStep currentStep;
     private final String id, name, description;
@@ -31,7 +30,7 @@ public class Quest {
         this.questSteps = new ArrayList<>();
         this.completedSteps = new ArrayList<>();
         this.incompleteSteps = new Queue<>();
-        this.state = QuestState.valueOf(jsonValue.getString("state"));
+        this.state = QuestStatus.valueOf(jsonValue.getString("state"));
 
         for (JsonValue step : jsonValue.get("steps")) {
             var questStep = new QuestStep(this, step);
@@ -40,12 +39,12 @@ public class Quest {
         }
 
 
-        while (!incompleteSteps.isEmpty() && incompleteSteps.first().getState() == QuestState.COMPLETED) {
+        while (!incompleteSteps.isEmpty() && incompleteSteps.first().getState() == QuestStatus.COMPLETED) {
             completedSteps.add(incompleteSteps.removeFirst());
         }
 
 
-        if (this.state == QuestState.COMPLETED) {
+        if (this.state == QuestStatus.COMPLETED) {
             return;
         } else {
             incompleteSteps.first();
@@ -53,12 +52,12 @@ public class Quest {
 
     }
 
-    public QuestState getState() {
+    public QuestStatus getStatus() {
         return this.state;
     }
 
     public boolean isActive() {
-        return this.state == QuestState.COMPLETED;
+        return this.state == QuestStatus.COMPLETED;
     }
 
 //    public void nextStep() {
@@ -114,14 +113,14 @@ public class Quest {
     }
 
     public void start() {
-        assert this.state == QuestState.LOCKED;
-        this.state = QuestState.IN_PROGRESS;
+        assert this.state == QuestStatus.LOCKED;
+        this.state = QuestStatus.IN_PROGRESS;
         initialize();
     }
 
     public void complete() {
         assert incompleteSteps.isEmpty();
-        this.state = QuestState.COMPLETED;
+        this.state = QuestStatus.COMPLETED;
         eventManger.notifyListeners(new QuestCompletedEvent(this));
     }
 

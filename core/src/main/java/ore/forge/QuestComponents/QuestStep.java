@@ -14,7 +14,7 @@ public class QuestStep {
     private final String stepDescription, stepName;
     private final QuestCondition[] conditionArray;
     private Reward reward;
-    private QuestState state;
+    private QuestStatus state;
 
     public QuestStep(String stepDescription, String stepName, QuestCondition... questCondition) {
         this.stepName = stepName;
@@ -33,7 +33,7 @@ public class QuestStep {
             conditionArray[i] = new QuestCondition(this, questConditions.get(i));
         }
 
-        this.state = QuestState.valueOf(jsonValue.getString("state"));
+        this.state = QuestStatus.valueOf(jsonValue.getString("state"));
         if (jsonValue.has("reward")) {
             reward = ReflectionLoader.load(jsonValue.get("reward"), "rewardType");
         } else {
@@ -53,7 +53,7 @@ public class QuestStep {
         return stepDescription;
     }
 
-    public QuestCondition[] getConditionArray() {
+    public QuestCondition[] getConditions() {
         return conditionArray;
     }
 
@@ -62,17 +62,17 @@ public class QuestStep {
      * */
     public void checkState() {
         for (QuestCondition questCondition : conditionArray) {
-            if (questCondition.getState() != QuestState.COMPLETED) {
+            if (questCondition.getState() != QuestStatus.COMPLETED) {
                 return;
             }
         }
-        this.state = QuestState.COMPLETED;
+        this.state = QuestStatus.COMPLETED;
         eventManager.notifyListeners(new QuestStepCompletedEvent(this));
         grantReward();
         parent.checkForCompletion();
     }
 
-    public QuestState getState() {
+    public QuestStatus getState() {
         return this.state;
     }
 
@@ -81,7 +81,7 @@ public class QuestStep {
     }
 
     public boolean isCompleted() {
-        return state == QuestState.COMPLETED;
+        return state == QuestStatus.COMPLETED;
     }
 
     public void grantReward() {

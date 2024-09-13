@@ -12,19 +12,21 @@ public class QuestCondition implements EventListener<Event<?>> {
     private final EventManager eventManager = EventManager.getSingleton();
     private final QuestStep parent;
     private final Condition condition;
-    private QuestState state;
+    private QuestStatus state;
+    private final String description;
 
     public QuestCondition(QuestStep parent, JsonValue jsonValue) {
         this.parent = parent;
         condition = Condition.parseCondition(jsonValue.getString("condition"));
-        state = QuestState.valueOf(jsonValue.getString("state"));
+        state = QuestStatus.valueOf(jsonValue.getString("state"));
         eventType = getEvent(jsonValue, "eventType");
+        description = jsonValue.getString("description");
         assert eventType != null;
     }
 
     public void checkCondition(Ore ore) {
         if (condition.evaluate(ore)) {
-            state = QuestState.COMPLETED;
+            state = QuestStatus.COMPLETED;
             this.unregister();
             parent.checkState();
         }
@@ -43,7 +45,7 @@ public class QuestCondition implements EventListener<Event<?>> {
         eventManager.unregisterListener(this);
     }
 
-    public QuestState getState() {
+    public QuestStatus getState() {
         return this.state;
     }
 
@@ -51,8 +53,12 @@ public class QuestCondition implements EventListener<Event<?>> {
         return eventType + "\t" + condition;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
-    public void handle(Event event) {
+    public void handle(Event<?> event) {
 //        assert event.getSubject().getClass() == Ore.class;
         if (event.getSubject() instanceof Ore) {
             checkCondition((Ore) event.getSubject());

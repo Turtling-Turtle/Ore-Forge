@@ -10,13 +10,13 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import ore.forge.*;
 import ore.forge.Input.*;
 import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.Player.Player;
+import ore.forge.Screens.Widgets.ItemIcon;
 
 import java.util.ArrayList;
 import java.util.concurrent.*;

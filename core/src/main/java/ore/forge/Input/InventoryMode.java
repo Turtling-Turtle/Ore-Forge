@@ -3,8 +3,7 @@ package ore.forge.Input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import ore.forge.Screens.ItemIcon;
-import ore.forge.Screens.UserInterface;
+import ore.forge.Screens.Widgets.ItemIcon;
 
 public class InventoryMode extends InputMode {
     private final InputHandler handler;

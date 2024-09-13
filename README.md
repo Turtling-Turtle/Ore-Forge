@@ -16,28 +16,28 @@ _**{INSERT HERE WHEN DONE}**_
 
 
 ## Controls
-* **Camera Movement** - You can use _**W**_, _**A**_, _**S**_, _**D**_ to move the camera up, left, down, and right respectively. Holding down _**Shift**_ while 
+* **Camera Movement** - You can use `W` , `A` , `S`, `D` to move the camera up, left, down, and right respectively. Holding down _**Shift**_ while 
 pressing one of the movement keys doubles the speed.
  
 
-* **Camera Zoom** - You can use _**E**_ to zoom the camera inwards and _**Q**_ to zoom the camera outwards.
+* **Camera Zoom** - You can use `E` to zoom the camera inwards and `Q` to zoom the camera outwards.
  
 
-* **Ore Observer Mode** - To lock the camera onto a specific ore and observer its stats you can press _**F2**_. To cycle between other ore you can
-use _**W**_ and _**S**_. To exit Ore Observer mode press _**ESC**_.
+* **Ore Observer Mode** - To lock the camera onto a specific ore and observer its stats you can press `F2`. To cycle between other ore you can
+use `W` and `S`. To exit Ore Observer mode press `ESC`.
  
 
-* **Selecting Items** - To select and item move your mose so that its hovering over the item the _**Left-Click**_ on it, The item should now
-be highlighted green. From here you can move the item by pressing _**R**_, remove the item by pressing _**Z**_, {INSERT OTHER ACTIONS HERE}
+* **Selecting Items** - To select and item move your mose so that its hovering over the item the `Left-Click` on it, The item should now
+be highlighted green. From here you can move the item by pressing `R`, remove the item by pressing `Z`, {INSERT OTHER ACTIONS HERE}
  
 
-* **Placing Items** - To place an item you can either press _**Left-Click**_ or _**SPACE**_. Holding down either of these keys
+* **Placing Items** - To place an item you can either press `Left-Click` or `SPACE`. Holding down either of these keys
 makes it so you don't have to press the button each time you want it to be placed, instead the item will automatically be placed if it's a valid position.
 While in build mode placing an item on top of another already placed item will remove it unless that item was placed during the current build mode session.
 
  
 * **Shop and Inventory** - The shop and inventory can be accessed by clicking on their respective buttons/icons or by pressing their hotkeys.
-The hotkey for the inventory is _**F1**_ and the hotkey for the shop is _**F**_. To close these menus you can either press the respective hotkey, _**ESC**_ or
+The hotkey for the inventory is `F1` and the hotkey for the shop is `F`. To close these menus you can either press the respective hotkey, `ESC` or
 the X button/icon. To select an item from the shop simply click on the item you wish to select and it will either allow you to purchase more of that item
 or allow you to place that item.
 

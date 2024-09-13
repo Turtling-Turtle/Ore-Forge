@@ -21,7 +21,7 @@ import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
-import org.w3c.dom.Text;
+import ore.forge.Screens.Widgets.ItemIcon;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -161,7 +161,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
         iconTable = new Table();
 
 
-        background.setSize(Gdx.graphics.getWidth() * .358f, Gdx.graphics.getHeight() * .8f);
+        background.setSize(Gdx.graphics.getWidth() * .364f, Gdx.graphics.getHeight() * .8f);
         padValue = Value.Fixed.percentHeight(0.005f, background);
         background.add(topTable).align(Align.topLeft).expandX().fillX().padRight(padValue).padTop(padValue).row();
         Value buttonSize = Value.Fixed.percentWidth(.175f, background);
