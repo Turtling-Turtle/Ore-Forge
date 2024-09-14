@@ -1,8 +1,6 @@
 package ore.forge.QuestComponents.Rewards;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.RewardEvent;
 import ore.forge.Player.Player;
 
 public class ItemReward implements Reward {

@@ -2,7 +2,7 @@ package ore.forge.Player;
 
 
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.NodeEvent;
+import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.Items.*;
 
 //@author Nathan Ulmen
@@ -59,13 +59,13 @@ public class InventoryNode {
     public void place() {
         stored--;
         placed++;
-        EventManager.getSingleton().notifyListeners(new NodeEvent(this));
+        EventManager.getSingleton().notifyListeners(new NodeGameEvent(this));
     }
 
     public void pickUp() {
         stored++;
         placed--;
-        EventManager.getSingleton().notifyListeners(new NodeEvent(this));
+        EventManager.getSingleton().notifyListeners(new NodeGameEvent(this));
     }
 
     public boolean hasSupply() {
@@ -82,14 +82,14 @@ public class InventoryNode {
     public void addNew() {
         totalOwned++;
         stored++;
-        EventManager.getSingleton().notifyListeners(new NodeEvent(this));
+        EventManager.getSingleton().notifyListeners(new NodeGameEvent(this));
         assertCheck();
     }
 
     public void addNew(int numBought) {
         totalOwned += numBought;
         stored += numBought;
-        EventManager.getSingleton().notifyListeners(new NodeEvent(this));
+        EventManager.getSingleton().notifyListeners(new NodeGameEvent(this));
         assertCheck();
     }
 
@@ -108,7 +108,7 @@ public class InventoryNode {
     public void sellFromBase() {
         totalOwned--;
         placed--;
-        EventManager.getSingleton().notifyListeners(new NodeEvent(this));
+        EventManager.getSingleton().notifyListeners(new NodeGameEvent(this));
         assertCheck();
     }
 

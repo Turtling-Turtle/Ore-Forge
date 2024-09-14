@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.PrestigeEvent;
+import ore.forge.EventSystem.Events.PrestigeGameEvent;
 import ore.forge.Player.Player;
 
 /**@author Nathan Ulmen
@@ -28,7 +28,7 @@ public class PrestigeMenu extends Table {
         prestigeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventManager.getSingleton().notifyListeners(new PrestigeEvent(Player.getSingleton().canPrestige()));
+                EventManager.getSingleton().notifyListeners(new PrestigeGameEvent(Player.getSingleton().canPrestige()));
             }
 
         });

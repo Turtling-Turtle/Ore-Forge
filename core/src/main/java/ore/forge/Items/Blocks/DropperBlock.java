@@ -1,7 +1,7 @@
 package ore.forge.Items.Blocks;
 
 import ore.forge.Direction;
-import ore.forge.EventSystem.Events.OreDroppedEvent;
+import ore.forge.EventSystem.Events.OreDroppedGameEvent;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.OreRealm;
@@ -61,7 +61,7 @@ public class DropperBlock extends Block {
             .setDestination(blockInFront.getVector(), ejectionSpeed, direction);
 
         increaseTotalOreDropped();
-        eventManager.notifyListeners(new OreDroppedEvent(ore, (Dropper) this.getParentItem()));
+        eventManager.notifyListeners(new OreDroppedGameEvent(ore, (Dropper) this.getParentItem()));
     }
 
     private void increaseTotalOreDropped() {

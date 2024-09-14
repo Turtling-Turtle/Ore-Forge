@@ -3,11 +3,11 @@ package ore.forge.EventSystem.Events;
 import ore.forge.FontColors;
 import ore.forge.QuestComponents.Quest;
 
-public record QuestCompletedEvent(Quest compeletedQuest) implements Event<Quest> {
+public record QuestCompletedGameEvent(Quest compeletedQuest) implements GameEvent<Quest> {
 
     @Override
     public Class getEventType() {
-        return QuestCompletedEvent.class;
+        return QuestCompletedGameEvent.class;
     }
 
     public Quest getSubject() {

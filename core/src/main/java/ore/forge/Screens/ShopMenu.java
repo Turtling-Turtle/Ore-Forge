@@ -14,9 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
 import ore.forge.Currency;
-import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.NodeEvent;
+import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
@@ -41,7 +41,7 @@ import java.util.List;
  *
  *
  * */
-public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
+public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameEvent> {
     private final static Player player = Player.getSingleton();
     private final TextButton droppers, furnaces, processItems, specialPoints, prestigeItems;
     private final ArrayList<ItemIcon> dropperIcons, furnaceIcons, processItemsIcons, specialPointsIcons, prestigeItemsIcons;
@@ -358,7 +358,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
     }
 
     @Override
-    public void handle(NodeEvent event) {
+    public void handle(NodeGameEvent event) {
         var icon = iconLookUp.get(event.node().getHeldItemID());
         if (icon != null) {
             icon.updateTopLeftText("Owned: " + event.node().getTotalOwned());
@@ -411,7 +411,7 @@ public class ShopMenu extends WidgetGroup implements EventListener<NodeEvent> {
 
     @Override
     public Class<?> getEventType() {
-        return NodeEvent.class;
+        return NodeGameEvent.class;
     }
 }
 

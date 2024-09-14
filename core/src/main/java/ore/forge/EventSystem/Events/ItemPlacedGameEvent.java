@@ -3,35 +3,35 @@ package ore.forge.EventSystem.Events;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
-public record RewardEvent(Item reward, int count) implements Event{
+public record ItemPlacedGameEvent(Item item) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return RewardEvent.class;
+        return ItemPlacedGameEvent.class;
     }
 
     @Override
     public Object getSubject() {
-        return null;
+        return Item.class;
     }
 
     @Override
     public String getBriefInfo() {
-        return "Unimplemented REWARD Event";
+        return item.getName() + " placed at " + item.getVector2();
     }
 
     @Override
     public String getInDepthInfo() {
-        return "Unimplemented Reward Event";
+        return "";
     }
 
     @Override
     public String eventName() {
-        return "Reward";
+        return "Item Placed";
     }
 
     @Override
     public FontColors getColor() {
-        return null;
+        return FontColors.CHOCOLATE;
     }
 }

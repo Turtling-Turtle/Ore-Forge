@@ -5,8 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
 import ore.forge.*;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.FailedPurchaseEvent;
-import ore.forge.EventSystem.Events.PurchaseEvent;
+import ore.forge.EventSystem.Events.FailedPurchaseGameEvent;
+import ore.forge.EventSystem.Events.PurchaseGameEvent;
 import ore.forge.Expressions.Function;
 import ore.forge.Items.Item;
 
@@ -112,9 +112,9 @@ public class Player {
                 case SPECIAL_POINTS -> setSpecialPoints((long) (playerCurrency - itemToPurchase.getItemValue()*count));
                 case PRESTIGE_POINTS -> setPrestigeCurrency((int) (playerCurrency - itemToPurchase.getItemValue()*count));
             }
-            EventManager.getSingleton().notifyListeners(new PurchaseEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
+            EventManager.getSingleton().notifyListeners(new PurchaseGameEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
         } else {
-            EventManager.getSingleton().notifyListeners(new FailedPurchaseEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
+            EventManager.getSingleton().notifyListeners(new FailedPurchaseGameEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
         }
     }
 

@@ -3,11 +3,10 @@
 
 
 In Ore Forge you assemble your tycoon out of 4 item types, each of which have tons of unique variants,
-**Droppers, Conveyors, Upgraders, and Furnaces**. Droppers generate/produce ore which is transported through your
-custom-built system of conveyors and upgraders(This is what your tycoon is primarily comprised of). As the ore moves
-through your tycoon each upgrader upgrades it, increasing its value. Finally, the ore is delivered to a furnace, where
-it is sold, often with a bonus, earning you cash. This cash can be used purchase items from the shop or to prestige,
-granting you a random prestige tier item to use in your tycoon. 
+__*Droppers, Conveyors, Upgraders,*__ and __*Furnaces*__. Droppers generate/produce ore which is transported through your
+custom-built tycoon of conveyors and upgraders. As the ore moves through your tycoon each upgrader upgrades it,
+increasing its value. Finally, the ore is delivered to a furnace where it is sold, often applying a bonus to the ore, earning you cash.
+This cash can be used purchase items from the shop or to prestige, granting you a random prestige tier item to use in your tycoon. 
 
 ---
 
@@ -27,17 +26,14 @@ pressing one of the movement keys doubles the speed of the camera.
  
 
 * **Ore Observer Mode** - To lock the camera onto a specific ore and observer its stats you can press `F2`. To cycle between other ore you can
-use `W` and `S`. To exit Ore Observer mode press `ESC`.
- 
+use `W` and `S`. To exit Ore Observer mode press `ESC`. 
 
-* **Selecting Items** - To select and item move your mose so that its hovering over the item the `Left-Click` on it, The item should now
-be highlighted green. From here you can move the item by pressing `R`, remove the item by pressing `Z`, {INSERT OTHER ACTIONS HERE}
- 
+* **Selecting Items** - To select and item move your mouse over the item you wish to select then `Left-Click` on it, The item should now
+be highlighted green. From here you can pick up the item by pressing `R`, remove the item by pressing `Z`, {INSERT OTHER ACTIONS HERE} 
 
 * **Placing Items** - To place an item you can either press `Left-Click` or `SPACE`. Holding down either of these keys
 makes it so you don't have to press the button each time you want it to be placed, instead the item will automatically be placed if it's a valid position.
-While in build mode placing an item on top of another already placed item will remove it unless that item was placed during the current build mode session.
-
+While in build mode placing an item on top of another already placed item will remove it unless that item was placed during the current build mode session. 
  
 * **Shop and Inventory** - The shop and inventory can be accessed by clicking on their respective buttons/icons or by pressing their hotkeys.
 The inventory can be opened by pressing `F1` or `I`. The shop can be opened by pressing `F`. To close these menus you can either press their respective hotkey, `ESC` or

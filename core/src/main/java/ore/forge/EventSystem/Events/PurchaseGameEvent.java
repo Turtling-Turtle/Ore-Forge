@@ -1,13 +1,14 @@
 package ore.forge.EventSystem.Events;
 
+import ore.forge.Currency;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
-public record ObtainedEvent(Item item, int count) implements Event {
+public record PurchaseGameEvent(Item item, Currency currency, int amountPurchased) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return ObtainedEvent.class;
+        return PurchaseGameEvent.class;
     }
 
     @Override
@@ -17,7 +18,7 @@ public record ObtainedEvent(Item item, int count) implements Event {
 
     @Override
     public String getBriefInfo() {
-        return "Obtained " + count + " " + item.getName();
+        return "Purchased " + amountPurchased + " " + item.getName() + " for " + (item.getItemValue() * amountPurchased) + " " + currency;
     }
 
     @Override
@@ -27,11 +28,11 @@ public record ObtainedEvent(Item item, int count) implements Event {
 
     @Override
     public String eventName() {
-        return "Item Obtained";
+        return "Purchase Event";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.PALE_TURQUOISE;
+        return FontColors.SEA_GREEN;
     }
 }

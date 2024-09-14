@@ -3,11 +3,11 @@ package ore.forge.EventSystem.Events;
 
 import ore.forge.FontColors;
 
-public record OnUpgradeEvent() implements Event{
+public record OnUpgradeGameEvent() implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return OnUpgradeEvent.class;
+        return OnUpgradeGameEvent.class;
     }
 
     @Override

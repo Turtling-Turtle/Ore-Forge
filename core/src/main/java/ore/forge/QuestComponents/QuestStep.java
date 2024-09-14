@@ -2,7 +2,7 @@ package ore.forge.QuestComponents;
 
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.QuestStepCompletedEvent;
+import ore.forge.EventSystem.Events.QuestStepCompletedGameEvent;
 import ore.forge.QuestComponents.Rewards.Reward;
 import ore.forge.ReflectionLoader;
 
@@ -67,7 +67,7 @@ public class QuestStep {
             }
         }
         this.state = QuestStatus.COMPLETED;
-        eventManager.notifyListeners(new QuestStepCompletedEvent(this));
+        eventManager.notifyListeners(new QuestStepCompletedGameEvent(this));
         grantReward();
         parent.checkForCompletion();
     }

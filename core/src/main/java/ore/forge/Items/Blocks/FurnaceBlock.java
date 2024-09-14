@@ -1,16 +1,12 @@
 package ore.forge.Items.Blocks;
 
 
-import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.OreDroppedEvent;
-import ore.forge.EventSystem.Events.OreSoldEvent;
+import ore.forge.EventSystem.Events.OreSoldGameEvent;
 import ore.forge.Items.Furnace;
 import ore.forge.Items.Item;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Player.Player;
-import ore.forge.QuestComponents.QuestManager;
-import ore.forge.QuestComponents.UpdateType;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 
 //@author Nathan Ulmen
@@ -32,7 +28,7 @@ public class FurnaceBlock extends Block implements Worker{
     public void handle(Ore ore) {
         upgrade.applyTo(ore);
         player.addToWallet(ore.getOreValue() * ore.getMultiOre());
-        eventManager.notifyListeners(new OreSoldEvent(ore, (Furnace) this.getParentItem()));
+        eventManager.notifyListeners(new OreSoldGameEvent(ore, (Furnace) this.getParentItem()));
 //        Gdx.app.log("Sold For:", String.valueOf(ore.getOreValue() * ore.getMultiOre()));
         calculateSpecialReward(ore);
         oreRealm.takeOre(ore);

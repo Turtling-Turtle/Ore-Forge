@@ -13,9 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
-import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.NodeEvent;
+import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Screens.Widgets.ItemIcon;
@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class InventoryTable extends WidgetGroup implements EventListener<NodeEvent> {
+public class InventoryTable extends WidgetGroup implements GameEventListener<NodeGameEvent> {
     private final static int ROW_COUNT = 4;
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
@@ -266,7 +266,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
     }
 
     @Override
-    public void handle(NodeEvent event) {
+    public void handle(NodeGameEvent event) {
         var itemIcon = lookUp.get(event.node().getHeldItemID());
         itemIcon.updateTopLeftText("Stored: " + event.node().getStored());
         asyncSearch(searchBar.getText());
@@ -274,7 +274,7 @@ public class InventoryTable extends WidgetGroup implements EventListener<NodeEve
 
     @Override
     public Class<?> getEventType() {
-        return NodeEvent.class;
+        return NodeGameEvent.class;
     }
 
     static class NameComparator implements Comparator<ItemIcon> {

@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Queue;
 import ore.forge.Color;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.QuestCompletedEvent;
+import ore.forge.EventSystem.Events.QuestCompletedGameEvent;
 
 import java.util.ArrayList;
 
@@ -121,7 +121,7 @@ public class Quest {
     public void complete() {
         assert incompleteSteps.isEmpty();
         this.state = QuestStatus.COMPLETED;
-        eventManger.notifyListeners(new QuestCompletedEvent(this));
+        eventManger.notifyListeners(new QuestCompletedGameEvent(this));
     }
 
     public void initialize() {

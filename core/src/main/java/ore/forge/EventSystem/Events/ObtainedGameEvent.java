@@ -3,21 +3,21 @@ package ore.forge.EventSystem.Events;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
-public record ItemPlacedEvent(Item item) implements Event {
+public record ObtainedGameEvent(Item item, int count) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return ItemPlacedEvent.class;
+        return ObtainedGameEvent.class;
     }
 
     @Override
     public Object getSubject() {
-        return Item.class;
+        return null;
     }
 
     @Override
     public String getBriefInfo() {
-        return item.getName() + " placed at " + item.getVector2();
+        return "Obtained " + count + " " + item.getName();
     }
 
     @Override
@@ -27,11 +27,11 @@ public record ItemPlacedEvent(Item item) implements Event {
 
     @Override
     public String eventName() {
-        return "Item Placed";
+        return "Item Obtained";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.CHOCOLATE;
+        return FontColors.PALE_TURQUOISE;
     }
 }

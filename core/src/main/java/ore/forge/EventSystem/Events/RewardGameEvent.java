@@ -1,13 +1,13 @@
 package ore.forge.EventSystem.Events;
 
 import ore.forge.FontColors;
-import ore.forge.QuestComponents.QuestStep;
+import ore.forge.Items.Item;
 
-public record QuestStepCompletedEvent(QuestStep step) implements Event {
+public record RewardGameEvent(Item reward, int count) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return QuestStepCompletedEvent.class;
+        return RewardGameEvent.class;
     }
 
     @Override
@@ -17,21 +17,21 @@ public record QuestStepCompletedEvent(QuestStep step) implements Event {
 
     @Override
     public String getBriefInfo() {
-        return "Completed " + step.getStepName() + " quest step.";
+        return "Unimplemented REWARD Event";
     }
 
     @Override
     public String getInDepthInfo() {
-        return "Unimplemented";
+        return "Unimplemented Reward Event";
     }
 
     @Override
     public String eventName() {
-        return "Quest Step Completed";
+        return "Reward";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.LIGHT_GREEN;
+        return null;
     }
 }

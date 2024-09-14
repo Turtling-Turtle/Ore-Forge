@@ -2,7 +2,7 @@ package ore.forge.EventSystem.Events;
 
 import ore.forge.FontColors;
 
-public interface Event<E> {
+public interface GameEvent<E> {
     Class<?> getEventType();
 
     E getSubject();

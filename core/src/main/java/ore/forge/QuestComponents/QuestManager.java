@@ -3,14 +3,14 @@ package ore.forge.QuestComponents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.QuestCompletedEvent;
+import ore.forge.EventSystem.Events.QuestCompletedGameEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class QuestManager implements EventListener<QuestCompletedEvent> {
+public class QuestManager implements GameEventListener<QuestCompletedGameEvent> {
     private HashMap<String, Quest> allQuests;
     private ArrayList<Quest> completedQuests, lockedQuests;
     private final EventManager eventManager = EventManager.getSingleton();
@@ -46,7 +46,7 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
     }
 
     @Override
-    public void handle(QuestCompletedEvent event) {
+    public void handle(QuestCompletedGameEvent event) {
         var finishedQuest = event.getSubject();
         assert finishedQuest.getStatus() == QuestStatus.COMPLETED;
         completedQuests.add(finishedQuest);
@@ -54,7 +54,7 @@ public class QuestManager implements EventListener<QuestCompletedEvent> {
 
     @Override
     public Class<?> getEventType() {
-        return QuestCompletedEvent.class;
+        return QuestCompletedGameEvent.class;
     }
 
 }

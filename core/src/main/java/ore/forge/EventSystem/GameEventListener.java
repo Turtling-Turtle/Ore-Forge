@@ -1,7 +1,7 @@
 package ore.forge.EventSystem;
 
 
-public interface EventListener<E> {
+public interface GameEventListener<E> {
     void handle(E event);
     Class<?> getEventType();
 

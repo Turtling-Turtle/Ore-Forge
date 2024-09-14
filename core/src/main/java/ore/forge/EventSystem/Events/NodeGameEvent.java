@@ -3,10 +3,10 @@ package ore.forge.EventSystem.Events;
 import ore.forge.FontColors;
 import ore.forge.Player.InventoryNode;
 
-public record NodeEvent(InventoryNode node) implements Event<InventoryNode>{
+public record NodeGameEvent(InventoryNode node) implements GameEvent<InventoryNode> {
     @Override
     public Class<?> getEventType() {
-        return NodeEvent.class;
+        return NodeGameEvent.class;
     }
 
     @Override

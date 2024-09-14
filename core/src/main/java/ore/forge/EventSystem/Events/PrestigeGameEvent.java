@@ -3,11 +3,11 @@ package ore.forge.EventSystem.Events;
 import ore.forge.FontColors;
 import ore.forge.Player.Player;
 
-public record PrestigeEvent(Boolean result) implements Event<Boolean> {
+public record PrestigeGameEvent(Boolean result) implements GameEvent<Boolean> {
 
     @Override
     public Class<?> getEventType() {
-        return PrestigeEvent.class;
+        return PrestigeGameEvent.class;
     }
 
     @Override

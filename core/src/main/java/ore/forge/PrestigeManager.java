@@ -1,11 +1,11 @@
 package ore.forge;
 
-import ore.forge.EventSystem.EventListener;
+import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.PrestigeEvent;
+import ore.forge.EventSystem.Events.PrestigeGameEvent;
 import ore.forge.Player.Player;
 
-public class PrestigeManager implements EventListener<PrestigeEvent> {
+public class PrestigeManager implements GameEventListener<PrestigeGameEvent> {
     private final LootTable lootTable;
     private final static Player player = Player.getSingleton();
     private final static ItemMap itemMap = ItemMap.getSingleton();
@@ -41,7 +41,7 @@ public class PrestigeManager implements EventListener<PrestigeEvent> {
 
 
     @Override
-    public void handle(PrestigeEvent event) {
+    public void handle(PrestigeGameEvent event) {
         if (event.getSubject()) {
             prestige();
         }
@@ -50,6 +50,6 @@ public class PrestigeManager implements EventListener<PrestigeEvent> {
 
     @Override
     public Class<?> getEventType() {
-        return PrestigeEvent.class;
+        return PrestigeGameEvent.class;
     }
 }

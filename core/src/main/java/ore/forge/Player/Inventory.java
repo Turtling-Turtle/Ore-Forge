@@ -6,14 +6,12 @@ import com.badlogic.gdx.utils.*;
 import ore.forge.Color;
 import ore.forge.Constants;
 import ore.forge.EventSystem.EventManager;
-import ore.forge.EventSystem.Events.ObtainedEvent;
+import ore.forge.EventSystem.Events.ObtainedGameEvent;
 import ore.forge.Items.Item;
 import ore.forge.ItemManager;
-import ore.forge.Stopwatch;
 
 import java.lang.StringBuilder;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 //@author Nathan Ulmen
 public class Inventory {
@@ -118,7 +116,7 @@ public class Inventory {
     public void addItem(String itemID, int count) {
         var node = lookUp.get(itemID);
         node.addNew(count);
-        EventManager.getSingleton().notifyListeners(new ObtainedEvent(node.getHeldItem(), count));
+        EventManager.getSingleton().notifyListeners(new ObtainedGameEvent(node.getHeldItem(), count));
     }
 
     public void prestigeReset() {

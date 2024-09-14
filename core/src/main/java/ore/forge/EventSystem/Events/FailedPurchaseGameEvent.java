@@ -4,11 +4,11 @@ import ore.forge.Currency;
 import ore.forge.FontColors;
 import ore.forge.Items.Item;
 
-public record FailedPurchaseEvent(Item item, Currency currency, int amount) implements Event{
+public record FailedPurchaseGameEvent(Item item, Currency currency, int amount) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return FailedPurchaseEvent.class;
+        return FailedPurchaseGameEvent.class;
     }
 
     @Override

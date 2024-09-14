@@ -1,14 +1,13 @@
 package ore.forge.EventSystem.Events;
 
-import ore.forge.Currency;
 import ore.forge.FontColors;
-import ore.forge.Items.Item;
+import ore.forge.QuestComponents.QuestStep;
 
-public record PurchaseEvent(Item item, Currency currency, int amountPurchased) implements Event {
+public record QuestStepCompletedGameEvent(QuestStep step) implements GameEvent {
 
     @Override
     public Class getEventType() {
-        return PurchaseEvent.class;
+        return QuestStepCompletedGameEvent.class;
     }
 
     @Override
@@ -18,21 +17,21 @@ public record PurchaseEvent(Item item, Currency currency, int amountPurchased) i
 
     @Override
     public String getBriefInfo() {
-        return "Purchased " + amountPurchased + " " + item.getName() + " for " + (item.getItemValue() * amountPurchased) + " " + currency;
+        return "Completed " + step.getStepName() + " quest step.";
     }
 
     @Override
     public String getInDepthInfo() {
-        return "";
+        return "Unimplemented";
     }
 
     @Override
     public String eventName() {
-        return "Purchase Event";
+        return "Quest Step Completed";
     }
 
     @Override
     public FontColors getColor() {
-        return FontColors.SEA_GREEN;
+        return FontColors.LIGHT_GREEN;
     }
 }

@@ -5,11 +5,11 @@ import ore.forge.FontColors;
 import ore.forge.Items.Dropper;
 import ore.forge.Ore;
 
-public record OreDroppedEvent(Ore ore, Dropper dropper) implements Event<Ore> {
+public record OreDroppedGameEvent(Ore ore, Dropper dropper) implements GameEvent<Ore> {
 
     @Override
     public Class<?> getEventType() {
-        return OreDroppedEvent.class;
+        return OreDroppedGameEvent.class;
     }
 
     @Override

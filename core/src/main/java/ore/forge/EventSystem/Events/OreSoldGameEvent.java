@@ -5,12 +5,12 @@ import ore.forge.FontColors;
 import ore.forge.Items.Furnace;
 import ore.forge.Ore;
 
-public record OreSoldEvent(Ore ore, Furnace item) implements Event<Ore> {
+public record OreSoldGameEvent(Ore ore, Furnace item) implements GameEvent<Ore> {
 
 
     @Override
     public Class getEventType() {
-        return OreSoldEvent.class;
+        return OreSoldGameEvent.class;
     }
 
     @Override

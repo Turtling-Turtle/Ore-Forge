@@ -11,11 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.TimeUtils;
-import ore.forge.Constants;
-import ore.forge.CoolDown;
-import ore.forge.EventSystem.Events.Event;
-import ore.forge.EventSystem.Events.OreDroppedEvent;
-import ore.forge.EventSystem.Events.OreSoldEvent;
+import ore.forge.EventSystem.Events.GameEvent;
+import ore.forge.EventSystem.Events.OreDroppedGameEvent;
+import ore.forge.EventSystem.Events.OreSoldGameEvent;
 import ore.forge.FontColors;
 
 import java.text.SimpleDateFormat;
@@ -44,8 +42,8 @@ public class EventLogger extends WidgetGroup {
 
     public EventLogger() {
         disabledEvents = new HashSet<>();
-        disabledEvents.add(OreDroppedEvent.class);
-        disabledEvents.add(OreSoldEvent.class);
+        disabledEvents.add(OreDroppedGameEvent.class);
+        disabledEvents.add(OreSoldGameEvent.class);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -89,7 +87,7 @@ public class EventLogger extends WidgetGroup {
 
 
     //TODO:Update this so that it removes events, make sure it isn't super jittery.
-    public void logEvent(Event event) {
+    public void logEvent(GameEvent event) {
         if (disabledEvents.contains(event.getClass())) {
             return;
         }
@@ -109,14 +107,14 @@ public class EventLogger extends WidgetGroup {
         scrollPane.updateVisualScroll();
     }
 
-    private Label createLabel(Event event) {
+    private Label createLabel(GameEvent event) {
         var label = new Label(formatText(event), fpsStyle);
         label.getStyle().font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         label.setFontScale(.55f, .55f);
         return label;
     }
 
-    private String formatText(Event event) {
+    private String formatText(GameEvent event) {
         String info = event.getBriefInfo();
         String timestamp = simpleDateFormat.format(new Date(TimeUtils.millis()));
         timestamp = FontColors.highlightString("[" + timestamp + "]", FontColors.PALE_GOLDEN_ROD);
