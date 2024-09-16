@@ -2,17 +2,14 @@ package ore.forge.Screens.Widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.Listener;
 import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestCondition;
-import ore.forge.QuestComponents.QuestStep;
+import ore.forge.QuestComponents.QuestStatus;
 
-import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * @author Nathan Ulmen
@@ -31,7 +28,7 @@ import javax.swing.*;
  * |  |___________________________________________|  |
  * |_________________________________________________|
  */
-public class QuestIcon extends Table implements Listener {
+public class QuestIcon extends Table {
     private final Table descriptionTable;
     private final Quest heldQuest;
     private Label questName, questDescription, questStep;
@@ -41,7 +38,7 @@ public class QuestIcon extends Table implements Listener {
         descriptionTable = new Table();
         ScrollPane scrollPane = new ScrollPane(descriptionTable);
 
-        /*
+        /* TODO
          * Configure Background shape and color
          * Configure Font
          *
@@ -59,9 +56,9 @@ public class QuestIcon extends Table implements Listener {
 
     private void configureLocked() {
         for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
-            descriptionTable.add(createConditionWidget(condition)).row();
+            var widget = new ConditionWidget(condition);
+            descriptionTable.add(widget).row();
         }
-
     }
 
     private void configureCompleted() {
@@ -72,32 +69,39 @@ public class QuestIcon extends Table implements Listener {
 
     }
 
-    private Actor createConditionWidget(QuestCondition questCondition) {
-        Table widget = new Table();
-        Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas")));
+    private static class ConditionWidget extends Table implements Listener<QuestCondition> {
 
-        Image moreInfoIcon = new Image(buttonAtlas.getDrawable("icon_question"));
+        public ConditionWidget(QuestCondition questCondition) {
+            Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas")));
 
-        TextTooltip.TextTooltipStyle tooltipStyle = new TextTooltip.TextTooltipStyle();
-        /*
-        * Configure tooltip style.
-        * */
-        moreInfoIcon.addListener(new TextTooltip("Triggers on: " + questCondition.getEventType().getSimpleName() + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle));
+            Image moreInfoIcon = new Image(buttonAtlas.getDrawable("icon_question"));
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        /*
-         * Configure Label Style
-         * */
-        Label condition = new Label(questCondition.getDescription(), labelStyle);
+            TextTooltip.TextTooltipStyle tooltipStyle = new TextTooltip.TextTooltipStyle();
+            /*TODO
+             * Configure tooltip style.
+             * */
+            moreInfoIcon.addListener(new TextTooltip("Triggers on: " + questCondition.getEventType().getSimpleName() + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle));
 
-        widget.add(condition).left().align(Align.topLeft);
-        widget.add(moreInfoIcon).right().align(Align.topRight);
+            Label.LabelStyle labelStyle = new Label.LabelStyle();
+            /*TODO
+             * Configure Label Style
+             * */
+            Label condition = new Label(questCondition.getDescription(), labelStyle);
 
-        return widget;
+            this.add(condition).left().align(Align.topLeft);
+            this.add(moreInfoIcon).right().align(Align.topRight);
+            questCondition.addListener(this);
+        }
+
+        @Override
+        public void update(QuestCondition quest) {
+            if (quest.getState() == QuestStatus.COMPLETED) {
+                /*TODO
+                * Grey out elements of this quest and add a completed label.
+                * */
+            }
+        }
+
     }
 
-    @Override
-    public void update() {
-
-    }
 }

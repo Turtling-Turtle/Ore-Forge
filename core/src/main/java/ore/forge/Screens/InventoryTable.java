@@ -20,6 +20,7 @@ import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Screens.Widgets.ItemIcon;
 import ore.forge.Stopwatch;
+import ore.forge.UIHelper;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -34,32 +35,20 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
     private final ArrayList<ItemIcon> allIcons;
     private final HashMap<String, ItemIcon> lookUp;
     private final CheckBox[] checkBoxes;
-    private final static Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
-    private static final String roundFull = "128xRoundFull";
     private final Value padValue;
 
     public InventoryTable(Inventory inventory) {
-
         lookUp = new HashMap<>();
         topTable = new Table();
         this.background = new Table();
-        background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
+        background.setBackground(UIHelper.getRoundFull());
         background.setColor(Color.DARK_GRAY);
         var textFieldStyle = new TextField.TextFieldStyle();
 //        textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        textFieldStyle.background = UIHelper.getRoundFull();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.genMipMaps = true;
-        parameter.size = switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 40;
-            default -> 22;
-        };
-        textFieldStyle.font = generator.generateFont(parameter);
+        textFieldStyle.font = UIHelper.generateFont(determineFontSize());
 
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
@@ -101,7 +90,7 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
         CheckBox.CheckBoxStyle buttonStyle = new CheckBox.CheckBoxStyle();
         buttonStyle.font = searchBar.getStyle().font;
         buttonStyle.fontColor = Color.BLACK;
-        buttonStyle.up = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        buttonStyle.up = UIHelper.getRoundFull();
 
         checkBoxes[0] = new CheckBox("Type", buttonStyle);
         checkBoxes[0].addListener(new ClickListener() {
@@ -350,6 +339,15 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
             //Name
             return icon1.getNodeName().compareTo(icon2.getNodeName());
         }
+    }
+
+    private int determineFontSize() {
+        return switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 20;
+            case 1440 -> 32;
+            case 2160 -> 40;
+            default -> 22;
+        };
     }
 
     public TextField getSearchBar() {

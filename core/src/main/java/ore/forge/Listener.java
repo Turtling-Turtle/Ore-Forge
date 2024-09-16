@@ -1,5 +1,5 @@
 package ore.forge;
 
-public interface Listener {
-    public void update();
+public interface Listener<E> {
+    void update(E element);
 }

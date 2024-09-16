@@ -22,6 +22,7 @@ import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
 import ore.forge.Screens.Widgets.ItemIcon;
+import ore.forge.UIHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,8 +49,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
     private final HashMap<String, ItemIcon> iconLookUp;
     private final ScrollPane scrollPane;
     private final Table background, iconTable, topTable;
-    private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
-    private static final String roundFull = "128xRoundFull";
     private final Value padValue;
 
     public ShopMenu(Inventory inventory) {
@@ -61,23 +60,13 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         iconLookUp = new HashMap<>();
 
 
-
         createIcons(inventory.getInventoryNodes());
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.genMipMaps = true;
-        parameter.size = switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 16;
-            case 1440 -> 30;
-            case 2160 -> 34;
-            default -> 22;
-        };
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.font = generator.generateFont(parameter);
-        style.up = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
-        style.down = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
-        style.over = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        style.font = UIHelper.generateFont(determineFontSize());
+        style.up = UIHelper.getRoundFull();
+        style.down = UIHelper.getRoundFull();
+        style.over = UIHelper.getRoundFull();
         style.pressedOffsetY = -2f;
         style.fontColor = Color.BLACK;
 
@@ -147,8 +136,8 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
 
 
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = generator.generateFont(parameter);
-        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        textFieldStyle.font = UIHelper.generateFont(determineFontSize());
+        textFieldStyle.background = UIHelper.getRoundFull();
         textFieldStyle.fontColor = Color.BLACK;
         TextField searchBar = new TextField("Search...", textFieldStyle);
 
@@ -196,7 +185,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
 //        iconTable.setDebug(true);
 //        scrollPane.setDebug(true);
 
-        background.setBackground(new NinePatchDrawable(buttonAtlas.getPatch(roundFull)));
+        background.setBackground(UIHelper.getRoundFull());
         EventManager.getSingleton().registerListener(this);
     }
 
@@ -271,7 +260,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         var textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        textFieldStyle.background = UIHelper.getRoundFull();
         TextField count = new TextField("1", textFieldStyle);
         TextField.TextFieldFilter filter = new TextField.TextFieldFilter.DigitsOnlyFilter();
         count.setTextFieldFilter(filter);
@@ -377,7 +366,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         var textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
+        textFieldStyle.background = UIHelper.getRoundFull();
         TextField count = new TextField("", textFieldStyle);
         TextField.TextFieldFilter filter = new TextField.TextFieldFilter.DigitsOnlyFilter();
         count.setTextFieldFilter(filter);
@@ -412,6 +401,16 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
     @Override
     public Class<?> getEventType() {
         return NodeGameEvent.class;
+    }
+
+
+    private int determineFontSize() {
+        return switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 16;
+            case 1440 -> 30;
+            case 2160 -> 34;
+            default -> 22;
+        };
     }
 }
 

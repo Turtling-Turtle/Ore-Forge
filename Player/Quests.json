@@ -12,7 +12,7 @@
         {
           "description": "Have 100 ore active on your base at once.",
           "condition": "ACTIVE_ORE >= 100",
-          "eventType": "ore.forge.EventSystem.Events.OreDroppedEvent",
+          "eventType": "ore.forge.EventSystem.Events.OreDroppedGameEvent",
           "state": "IN_PROGRESS"
         }
       ],
@@ -25,7 +25,7 @@
         {
           "description": "Have a median ore value greater than or equal to 10.",
           "condition": "MEDIAN_ORE_VALUE >= 10",
-          "eventType": "ore.forge.EventSystem.Events.OreDroppedEvent",
+          "eventType": "ore.forge.EventSystem.Events.OreDroppedGameEvent",
           "state": "LOCKED"
         }
       ],
@@ -51,7 +51,7 @@
         {
           "description": "Place an item on your base.",
           "condition": "1==1",
-          "eventType": "ore.forge.EventSystem.Events.ItemPlacedEvent",
+          "eventType": "ore.forge.EventSystem.Events.ItemPlacedGameEvent",
           "state": "IN_PROGRESS"
         }
       ],

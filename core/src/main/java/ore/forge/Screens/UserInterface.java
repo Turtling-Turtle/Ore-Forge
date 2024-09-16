@@ -38,7 +38,6 @@ public class UserInterface {
     private InputHandler inputHandler;
     private Label oreInfo;
     private final ScreenViewport uiViewport;
-    private ProgressBar progressBar;
 
     public UserInterface(OreForge game, InputHandler handler) {
 
@@ -47,10 +46,10 @@ public class UserInterface {
 
         uiViewport = new ScreenViewport();
         ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
-        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
-        style.knobBefore = skin.getDrawable("128xVeryRoundFull");
+//        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
+//        style.knobBefore = skin.getDrawable("128xVeryRoundFull");
 //        style.background = skin.getDrawable("128xCircleEmpty");
-        progressBar = new ProgressBar(0, 2500f, 1, false, style);
+//        progressBar = new ProgressBar(0, 2500f, 1, false, style);
 
 //        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 //        camera.setToOrtho(false);
@@ -141,8 +140,7 @@ public class UserInterface {
         createWallet(fpsStyle);
 //        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
-        createActiveOreProgressBar();
-
+//        createActiveOreProgressBar();
     }
 
     public InventoryTable getInventoryTable() {
@@ -157,7 +155,7 @@ public class UserInterface {
     public void draw(OrthographicCamera camera, SpriteBatch batch, float deltaT) {
         updateInterval += deltaT;
         uiViewport.apply();
-        progressBar.setValue(OreRealm.getSingleton().getActiveOre().size());
+//        progressBar.setValue(OreRealm.getSingleton().getActiveOre().size());
 
 //        showInventory();
 
@@ -209,20 +207,20 @@ public class UserInterface {
         this.inputHandler = inputHandler;
     }
 
-    private void createActiveOreProgressBar() {
-        Table table = new Table();
-        Stack activeOreStack = new Stack();
-        progressBar.setSize(Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.15f);
-        progressBar.setDebug(true);
-        table.setPosition(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .97f);
-        activeOreStack.add(progressBar);
-        activeOreStack.add(activeOre);
-//        activeOreStack.setDebug(true);
-
-        table.add(activeOreStack);
-
-        stage.addActor(table);
-    }
+//    private void createActiveOreProgressBar() {
+//        Table table = new Table();
+//        Stack activeOreStack = new Stack();
+//        progressBar.setSize(Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.15f);
+//        progressBar.setDebug(true);
+//        table.setPosition(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .97f);
+//        activeOreStack.add(progressBar);
+//        activeOreStack.add(activeOre);
+////        activeOreStack.setDebug(true);
+//
+//        table.add(activeOreStack);
+//
+//        stage.addActor(table);
+//    }
 
     private void createInventoryButton() {
         TextButton inventory = ButtonHelper.createRoundTextButton("Inventory", Color.LIGHT_GRAY);
