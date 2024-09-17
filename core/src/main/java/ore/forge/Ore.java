@@ -17,8 +17,8 @@ import java.util.Stack;
  */
 public class Ore {
     //Ore can be classified by name, id, type. Ores can have multiple types.
-    protected static ItemMap itemMap = ItemMap.getSingleton();
-    protected static OreRealm oreRealm = OreRealm.getSingleton();
+    protected final static ItemMap itemMap = ItemMap.getSingleton();
+    protected final static OreRealm oreRealm = OreRealm.getSingleton();
     private final HashMap<String, UpgradeTag> tagMap;
     private final Vector2 position, destination;
     private final ArrayList<OreEffect> effects;

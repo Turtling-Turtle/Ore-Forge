@@ -33,12 +33,18 @@ public class UserInterface {
     private float updateInterval = 0;
     private final Runtime runtime = Runtime.getRuntime();
     private static final Player player = Player.getSingleton();
-    public Stage stage;
-    private Label fpsCounter, wallet, memoryUsage, specialPoints, mouseCoords, activeOre, itemOver;
-    private InventoryTable inventoryWidget;
-    private ShopMenu shopWidget;
+    public final Stage stage;
+    private final Label fpsCounter;
+    private Label wallet;
+    private final Label memoryUsage;
+    private final Label specialPoints;
+    private final Label mouseCoords;
+    private Label activeOre;
+    private final Label itemOver;
+    private final InventoryTable inventoryWidget;
+    private final ShopMenu shopWidget;
     private InputHandler inputHandler;
-    private Label oreInfo;
+    private final Label oreInfo;
     private final ScreenViewport uiViewport;
     private final QuestManager questManager;
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QuestManager implements GameEventListener<QuestCompletedGameEvent> {
-    private HashMap<String, Quest> allQuests;
+    private final HashMap<String, Quest> allQuests;
     private ArrayList<Quest> completedQuests, lockedQuests;
     private final EventManager eventManager = EventManager.getSingleton();
 

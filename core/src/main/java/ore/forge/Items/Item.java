@@ -23,7 +23,7 @@ public abstract class Item {
 
     protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
     protected Block[][] blockConfig;
-    protected int[][] numberConfig;
+    protected final int[][] numberConfig;
     //Example config
 //    { 0, 1, 1, 0},
 //    { 0, 2, 2, 0},
@@ -31,9 +31,9 @@ public abstract class Item {
     protected Direction direction;
 
     //Tier could be used to identify how to load Acquisition info.
-    protected Tier tier;
+    protected final Tier tier;
     private Texture itemTexture;
-    protected Vector2 vector2;
+    protected final Vector2 vector2;
     protected String name, description, id;
 
     protected boolean isPrestigeProof;

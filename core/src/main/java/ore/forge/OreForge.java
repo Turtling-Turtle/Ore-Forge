@@ -17,8 +17,7 @@ import ore.forge.Screens.*;
 /**@author Nathan Ulmen*/
 public class OreForge extends Game {
 	public MainMenu mainMenuScreen;
-	private ItemManager itemManager;
-	public Label memoryCounter;
+    public Label memoryCounter;
 	public Player player;
 
 
@@ -45,7 +44,7 @@ public class OreForge extends Game {
 		*
 		* */
 		spriteBatch = new SpriteBatch();
-		itemManager = new ItemManager();
+        ItemManager itemManager = new ItemManager();
         var questManager = new QuestManager();
         OreRealm.getSingleton().populate(); //Create/pool all ore.
         Player.getSingleton().loadSaveData();

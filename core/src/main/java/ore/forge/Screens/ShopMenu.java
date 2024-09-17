@@ -98,7 +98,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
                 updateIcons(dropperIcons);
             }
 
-            ;
         });
 
         furnaces.addListener(new ClickListener() {
@@ -107,7 +106,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
                 updateIcons(furnaceIcons);
             }
 
-            ;
         });
         processItems.addListener(new ClickListener() {
             @Override
@@ -115,7 +113,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
                 updateIcons(processItemsIcons);
             }
 
-            ;
         });
 
         specialPoints.addListener(new ClickListener() {
@@ -124,7 +121,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
                 updateIcons(specialPointsIcons);
             }
 
-            ;
         });
 
         prestigeItems.addListener(new ClickListener() {

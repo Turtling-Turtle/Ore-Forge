@@ -11,8 +11,8 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 //On state change/notify evaluate a condition then do something depending on the result of this evaluation.
 public class ObserverOreEffect implements OreEffect  {
     //On upgrade(temp change, value change, multi-ore change, Speed Change,
-    private float duration;
-    private int charges;
+    private final float duration;
+    private final int charges;
     private final UpgradeStrategy upgradeStrategy;
 
 

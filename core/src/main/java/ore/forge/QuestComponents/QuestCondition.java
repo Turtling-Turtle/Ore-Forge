@@ -96,7 +96,7 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
             }
             return aClass;
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e + "\nJson value:" + jsonValue.toString() + "\t" + fieldName);
+            throw new RuntimeException(e + "\nJson value:" + jsonValue + "\t" + fieldName);
         }
     }
 

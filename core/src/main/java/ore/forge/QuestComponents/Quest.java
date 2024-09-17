@@ -47,7 +47,6 @@ public class Quest {
 
 
         if (this.state == QuestStatus.COMPLETED) {
-            return;
         } else {
             incompleteSteps.first();
         }
@@ -92,9 +91,7 @@ public class Quest {
         Gdx.app.log("Quest","Called");
 //        assert questSteps.size() == (completedSteps.size() + incompleteSteps.size);
 
-        if (!incompleteSteps.isEmpty()) {
-            assert incompleteSteps.first().isCompleted();
-        }
+        assert incompleteSteps.isEmpty() || incompleteSteps.first().isCompleted();
 
 //        Gdx.app.log("Quest - Incomplete Steps","Step:" + incompleteSteps.first().toString());
 //        Gdx.app.log("Quest","Incomplete Steps Size: " + incompleteSteps.size);

@@ -12,8 +12,8 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 //@author Nathan Ulmen
 public class FurnaceBlock extends Block implements Worker{
     private final UpgradeStrategy upgrade;
-    protected static OreRealm oreRealm = OreRealm.getSingleton();
-    protected static Player player = Player.getSingleton();
+    protected final static OreRealm oreRealm = OreRealm.getSingleton();
+    protected final static Player player = Player.getSingleton();
 
     private final int specialPointReward;
 

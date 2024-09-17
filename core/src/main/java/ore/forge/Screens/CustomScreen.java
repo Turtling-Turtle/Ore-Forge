@@ -43,7 +43,8 @@ public abstract class CustomScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        if (width == 0 || height == 0) return;
+        if (width == 0 || height == 0) {
+        }
     }
 
     @Override

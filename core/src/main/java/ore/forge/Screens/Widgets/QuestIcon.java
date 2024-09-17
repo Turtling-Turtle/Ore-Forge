@@ -33,7 +33,9 @@ import java.util.ArrayList;
 public class QuestIcon extends Table implements Listener<Quest>{
     private final Table descriptionTable;
     private final Quest heldQuest;
-    private Label questName, questDescription, questStep;
+    private final Label questName;
+    private final Label questDescription;
+    private final Label questStep;
 
     public QuestIcon(Quest quest) {
         this.heldQuest = quest;

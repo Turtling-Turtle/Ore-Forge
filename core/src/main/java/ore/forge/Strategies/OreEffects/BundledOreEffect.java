@@ -9,9 +9,7 @@ public class BundledOreEffect implements OreEffect {
 
     public BundledOreEffect(OreEffect... effects) {
         strategies = new OreEffect[effects.length];
-        for (int i = 0; i < strategies.length; i++) {
-            strategies[i] = effects[i];
-        }
+        System.arraycopy(effects, 0, strategies, 0, strategies.length);
     }
 
     public BundledOreEffect(JsonValue jsonValue) {

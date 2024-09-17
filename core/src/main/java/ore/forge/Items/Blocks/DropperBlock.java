@@ -18,7 +18,6 @@ public class DropperBlock extends Block {
     private OreEffect strategy;
     private DropperStrategy dropperEffect;
     private float dropInterval;
-    private float timeSinceLast;
 
     public DropperBlock(Direction direction, int x, int y) {
         super(direction, x, y);
@@ -33,7 +32,6 @@ public class DropperBlock extends Block {
         this.ejectionSpeed = speed;
         this.strategy = strategy;
         setProcessBlock(false);
-        timeSinceLast = 0f;
     }
 
     public void dropOre() {

@@ -13,9 +13,7 @@ public class BundledUpgrade implements UpgradeStrategy {
 
     public BundledUpgrade(UpgradeStrategy... upgradeStrategies) {
         this.upgradeStrategies = new UpgradeStrategy[upgradeStrategies.length];
-        for (int i = 0; i < upgradeStrategies.length; i++) {
-            this.upgradeStrategies[i] = upgradeStrategies[i];
-        }
+        System.arraycopy(upgradeStrategies, 0, this.upgradeStrategies, 0, upgradeStrategies.length);
     }
 
     public BundledUpgrade(JsonValue jsonValue) {
@@ -44,9 +42,9 @@ public class BundledUpgrade implements UpgradeStrategy {
 
     @Override
     public void applyTo(Ore ore) {
-        for (UpgradeStrategy upgStrat : upgradeStrategies) {
-            if (upgStrat != null) {
-                upgStrat.applyTo(ore);
+        for (UpgradeStrategy upgradeStrat : upgradeStrategies) {
+            if (upgradeStrat != null) {
+                upgradeStrat.applyTo(ore);
             }
         }
     }

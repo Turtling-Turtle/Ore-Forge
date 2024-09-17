@@ -15,6 +15,7 @@ import ore.forge.EventSystem.Events.GameEvent;
 import ore.forge.EventSystem.Events.OreDroppedGameEvent;
 import ore.forge.EventSystem.Events.OreSoldGameEvent;
 import ore.forge.FontColors;
+import ore.forge.UIHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +37,6 @@ public class EventLogger extends WidgetGroup {
     private final Table logTable;
     private final ScrollPane scrollPane;
     private final static int MAX_EVENTS = 1_000;
-    private BitmapFont font2;
     private final Label.LabelStyle fpsStyle;
     private boolean autoScroll = true;
 
@@ -45,13 +45,7 @@ public class EventLogger extends WidgetGroup {
         disabledEvents.add(OreDroppedGameEvent.class);
         disabledEvents.add(OreSoldGameEvent.class);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = 40;
-        param.genMipMaps = true;
-        param.minFilter = Texture.TextureFilter.MipMapLinearNearest;
-        param.magFilter = Texture.TextureFilter.MipMapLinearNearest;
-        font2 = generator.generateFont(param);
+        BitmapFont font2 = UIHelper.generateFont(40);
         fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
         font2.getData().markupEnabled = true;
 //        font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

@@ -16,14 +16,12 @@ import ore.forge.ItemManager;
 import java.net.http.WebSocket;
 
 public class MainMenu extends CustomScreen {
-    private final TextButton start, exit, settings;
-    private final Table table;
 
     public MainMenu(final OreForge game, final ItemManager itemManager) {
         super(game, itemManager);
 
         Gdx.input.setInputProcessor(this.stage);
-        start = ButtonHelper.createRoundTextButton("Start", Color.DARK_GRAY, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/22.5f);
+        TextButton start = ButtonHelper.createRoundTextButton("Start", Color.DARK_GRAY, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 22.5f);
         start.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -33,7 +31,7 @@ public class MainMenu extends CustomScreen {
         });
 
 
-        exit = ButtonHelper.createRoundTextButton("Exit", Color.DARK_GRAY, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/22.5f);
+        TextButton exit = ButtonHelper.createRoundTextButton("Exit", Color.DARK_GRAY, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 22.5f);
         exit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -45,7 +43,7 @@ public class MainMenu extends CustomScreen {
             }
         });
 
-        settings = ButtonHelper.createRoundTextButton("Settings", Color.DARK_GRAY, Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/22.5f);
+        TextButton settings = ButtonHelper.createRoundTextButton("Settings", Color.DARK_GRAY, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 22.5f);
         settings.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -56,7 +54,7 @@ public class MainMenu extends CustomScreen {
             }
         });
 
-        table =  new Table();
+        Table table = new Table();
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         table.add(start).pad(20).width((float) Gdx.graphics.getWidth() /5).height((float) Gdx.graphics.getHeight() /20);
         table.row();

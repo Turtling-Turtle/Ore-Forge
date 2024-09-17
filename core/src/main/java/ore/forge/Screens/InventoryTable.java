@@ -30,8 +30,7 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
     private final static int ROW_COUNT = 4;
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
-    private final Table background, iconTable, topTable;
-    private ScrollPane scrollPane;
+    private final Table iconTable;
     private final ArrayList<ItemIcon> allIcons;
     private final HashMap<String, ItemIcon> lookUp;
     private final CheckBox[] checkBoxes;
@@ -39,8 +38,8 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
-        topTable = new Table();
-        this.background = new Table();
+        Table topTable = new Table();
+        Table background = new Table();
         background.setBackground(UIHelper.getRoundFull());
         background.setColor(Color.DARK_GRAY);
         var textFieldStyle = new TextField.TextFieldStyle();
@@ -150,7 +149,7 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
             }
         });
 
-        this.scrollPane = new ScrollPane(this.iconTable);
+        ScrollPane scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
             topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);

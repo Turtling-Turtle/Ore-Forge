@@ -26,7 +26,6 @@ public class Dropper extends Item {
     protected final String oreName;
     protected final double oreValue;
     protected final int oreTemp, multiOre;
-    protected float timeSinceLast;
     private int totalOreDropped;
     public OreEffect testEffect = new UpgradeOreEffect(0.1f, 30, new InfluencedUpgrade(Function.parseFunction("ACTIVE_ORE.GET_COUNT(760-pfWQURud)"), new BasicUpgrade(0, NumericOperator.ADD, NumericOreProperties.ORE_VALUE), -9999999, 999999));
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore
@@ -40,7 +39,6 @@ public class Dropper extends Item {
         this.oreValue = oreVal;
         this.oreTemp = oreTemp;
         this.multiOre = multiOre;
-        timeSinceLast = 0;
         this.oreEffect = oreStrategies;
         totalOreDropped = 0;
 
@@ -64,7 +62,6 @@ public class Dropper extends Item {
 
         this.dropBehavior = new BurstDrop(jsonValue);
 
-        timeSinceLast = 0f;
 
         initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Dropper.png")));
@@ -77,7 +74,6 @@ public class Dropper extends Item {
         this.oreValue = itemToClone.oreValue;
         this.oreTemp = itemToClone.oreTemp;
         this.multiOre = itemToClone.multiOre;
-        this.timeSinceLast = 0f;
         this.oreEffect = itemToClone.oreEffect;
         this.dropBehavior = new BurstDrop(itemToClone.dropBehavior);
         initBlockConfiguration(this.numberConfig);

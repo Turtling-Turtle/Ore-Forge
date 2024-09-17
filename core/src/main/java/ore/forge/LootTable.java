@@ -22,7 +22,7 @@ import static ore.forge.Expressions.Operands.NumericOreProperties.ORE_VALUE;
 
 public class LootTable {
     private final ArrayList<Item> lockedPrestigeItems;
-    private HashMap<Float, ArrayList<Item>> buckets;
+    private final HashMap<Float, ArrayList<Item>> buckets;
     private final Random random;
 
     public LootTable(ItemManager manager) {

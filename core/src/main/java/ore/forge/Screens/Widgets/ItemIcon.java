@@ -14,25 +14,23 @@ import com.badlogic.gdx.utils.Align;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
+import ore.forge.UIHelper;
 
 
 //An Item Icon is a rounded Square with a border and a name below it.
 //Inside the square the items icon is held, the border is colored based on the tier of the item, and the name is
 //the name of the item.
 public class ItemIcon extends Table {
-    private final Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
-    private static final String roundFull = "128xRoundFull";
-    private ImageButton button;
     private final InventoryNode node;
     private InventoryMode processor;
-    private TextTooltip tooltip;
-    private Label storedCount, nameLabel;
+    private final TextTooltip tooltip;
+    private final Label storedCount;
 
     public ItemIcon(InventoryNode node) {
         this.node = node;
         TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
-        button = new ImageButton(test);
+        ImageButton button = new ImageButton(test);
         Table imageButtonTable = new Table();
         imageButtonTable.add(button).size(Gdx.graphics.getWidth() * 0.04f, Gdx.graphics.getHeight() * 0.075f);
 
@@ -40,7 +38,7 @@ public class ItemIcon extends Table {
         Table border = new Table();
 //        border.setBackground(buttonAtlas.getDrawable(roundFull));
 //        border.setColor(Color.BLACK);
-        border.setBackground(buttonAtlas.getDrawable(roundFull));
+        border.setBackground(UIHelper.getRoundFull());
         button.center();
         border.add(imageButtonTable);
         border.center();
@@ -49,29 +47,13 @@ public class ItemIcon extends Table {
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.genMipMaps = true;
-        //Prestige
-
-        //Determine Item Icon Font Sizes
-        switch (Gdx.graphics.getHeight()) {
-            case 1080 -> parameter.size = 22;
-            case 1440 -> parameter.size = 32;
-            case 2160 -> parameter.size = 40;
-            default -> parameter.size = 24;
-        }
-
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;
-        parameter.borderStraight = true;
-        labelStyle.font = generator.generateFont(parameter);
+        labelStyle.font = UIHelper.generateFont(determineFont());
 
 
 //        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         labelStyle.fontColor = Color.BLACK;
 
-        nameLabel = new Label(node.getName(), labelStyle);
+        Label nameLabel = new Label(node.getName(), labelStyle);
         nameLabel.setFontScale(.8f, .8f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
@@ -81,8 +63,7 @@ public class ItemIcon extends Table {
 
 
         TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
-        NinePatchDrawable background = new NinePatchDrawable(buttonAtlas.getPatch(roundFull));
-        style.background = background;
+        style.background = UIHelper.getRoundFull();
         style.label = new Label.LabelStyle(labelStyle);
 
         tooltip = new TextTooltip(node.getHeldItem().getDescription(), style);
@@ -184,5 +165,12 @@ public class ItemIcon extends Table {
     public void updateToolTipText(String newMessage) {
         tooltip.getActor().setText(newMessage);
     }
-
+    private int determineFont() {
+        return switch (Gdx.graphics.getHeight()) {
+            case 1080 -> 20;
+            case 1440 -> 32;
+            case 2160 -> 40;
+            default -> 22;
+        };
+    }
 }
