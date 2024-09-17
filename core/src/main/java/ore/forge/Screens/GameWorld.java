@@ -16,6 +16,7 @@ import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
 import ore.forge.Player.Player;
+import ore.forge.QuestComponents.QuestManager;
 import ore.forge.Screens.Widgets.ItemIcon;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class GameWorld extends CustomScreen {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
-    public GameWorld(OreForge game, ItemManager itemManager) {
+    public GameWorld(OreForge game, ItemManager itemManager, QuestManager questManager) {
         super(game, itemManager);
 //        frameTimes = new ArrayList<>((int) 2e8);
 //            frostbite.load(Gdx.files.internal("Effects/Frostbite.p"),Gdx.files.internal("Effects"));
@@ -58,7 +59,7 @@ public class GameWorld extends CustomScreen {
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
-        userInterface = new UserInterface(game, inputHandler);
+        userInterface = new UserInterface(game, inputHandler, questManager);
 
         for (ItemIcon icon : userInterface.getInventoryTable().getAllIcons()) {
             icon.setProcessor(inputHandler.getInventoryMode());

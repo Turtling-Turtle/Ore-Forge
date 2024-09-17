@@ -57,7 +57,7 @@ public class OreForge extends Game {
 //        ItemMap.getSingleton().loadState(resourceManager);
 		mainMenuScreen = new MainMenu(this, itemManager);
 		settingsMenu = new SettingsMenu(this, itemManager);
-		gameWorld = new GameWorld(this, itemManager);
+		gameWorld = new GameWorld(this, itemManager, questManager);
 		pauseMenu = new PauseMenu(this, itemManager);
 
 

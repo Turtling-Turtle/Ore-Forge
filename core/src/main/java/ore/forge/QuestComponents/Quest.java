@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Queue;
 import ore.forge.Color;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestCompletedGameEvent;
+import ore.forge.Listener;
 
 import java.util.ArrayList;
 
@@ -18,12 +19,13 @@ public class Quest {
     private final EventManager eventManger = EventManager.getSingleton();
     private QuestStatus state;
     private boolean isActive;
-    private QuestStep currentStep;
     private final String id, name, description;
     private final Queue<QuestStep> incompleteSteps;
     private final ArrayList<QuestStep> completedSteps, questSteps;
+    private final ArrayList<Listener<Quest>> listeners;
 
     public Quest(JsonValue jsonValue) {
+        listeners = new ArrayList<>();
         this.id = jsonValue.getString("id");
         this.name = jsonValue.getString("name");
         this.description = jsonValue.getString("description");
@@ -112,6 +114,10 @@ public class Quest {
         }
     }
 
+    public int getStepCount() {
+        return questSteps.size();
+    }
+
     public void start() {
         assert this.state == QuestStatus.LOCKED;
         this.state = QuestStatus.IN_PROGRESS;
@@ -129,8 +135,22 @@ public class Quest {
 //        currentStep.registerConditions();
     }
 
+    public void addListener(Listener<Quest> listener) {
+        this.listeners.add(listener);
+    }
+
+    public void notifyListeners() {
+        for (Listener<Quest> listener : listeners) {
+            listener.update(this);
+        }
+    }
+
     public QuestStep getCurrentStep() {
-        return this.currentStep;
+        return this.incompleteSteps.first();
+    }
+
+    public int stepOf() {
+        return questSteps.indexOf(incompleteSteps.first()) + 1;
     }
 
     public String getId() {

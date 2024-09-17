@@ -22,7 +22,7 @@ public class QuestManager implements GameEventListener<QuestCompletedGameEvent> 
 
         for (JsonValue questData : allQuestData) {
             Quest quest = new Quest(questData);
-            allQuests.put(quest.getName(), quest);
+            allQuests.put(quest.getId(), quest);
             handleQuest(quest);
         }
     }

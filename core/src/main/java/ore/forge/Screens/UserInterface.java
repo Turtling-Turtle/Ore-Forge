@@ -20,6 +20,8 @@ import ore.forge.EventSystem.Events.PrestigeGameEvent;
 import ore.forge.Input.InputHandler;
 import ore.forge.Input.OreObserver;
 import ore.forge.Player.Player;
+import ore.forge.QuestComponents.QuestManager;
+import ore.forge.Screens.Widgets.QuestIcon;
 
 
 /**
@@ -38,9 +40,10 @@ public class UserInterface {
     private InputHandler inputHandler;
     private Label oreInfo;
     private final ScreenViewport uiViewport;
+    private final QuestManager questManager;
 
-    public UserInterface(OreForge game, InputHandler handler) {
-
+    public UserInterface(OreForge game, InputHandler handler, QuestManager questManager) {
+        this.questManager = questManager;
 
         this.inputHandler = handler;
 
@@ -140,6 +143,7 @@ public class UserInterface {
         createWallet(fpsStyle);
 //        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
+        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
 //        createActiveOreProgressBar();
     }
 

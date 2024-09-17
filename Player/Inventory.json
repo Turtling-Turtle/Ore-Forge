@@ -75,7 +75,7 @@
 	"class": "ore.forge.Player.Inventory$InventoryData",
 	"itemName": "Special Test Dropper",
 	"type": "Dropper",
-	"totalOwned": 0,
+	"totalOwned": 9,
 	"id": "925-TflakZoc",
 	"isUnlocked": true
 },
