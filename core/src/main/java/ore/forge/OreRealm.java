@@ -8,7 +8,6 @@ package ore.forge;//The OreRealm is a stack of max Length 500(Ore limit) and whe
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Stack;
 
 //@author Nathan Ulmen
 public class OreRealm {

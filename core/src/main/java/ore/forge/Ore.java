@@ -5,8 +5,8 @@ import ore.forge.Expressions.Operands.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
 import ore.forge.Strategies.OreEffects.Burning;
-import ore.forge.Strategies.OreEffects.OreEffect;
 import ore.forge.Strategies.OreEffects.ObserverOreEffect;
+import ore.forge.Strategies.OreEffects.OreEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,17 +117,18 @@ public class Ore {
     }
 
     public void applyEffect(OreEffect strategy) {
-        if (strategy == null) {
-            return;
-        } //Base case
-        if (strategy instanceof BundledOreEffect) {//Base case
-            for (OreEffect effect : ((BundledOreEffect) strategy).getStrategies()) {
-                applyEffect(effect);
+        switch (strategy) {
+            case null -> {
+                return;
             }
-        } else if (strategy instanceof ObserverOreEffect) {
-            observerEffects.add((ObserverOreEffect) strategy.cloneOreEffect());
-        } else {
-            effects.add(strategy.cloneOreEffect());
+            case BundledOreEffect bundledOreEffect -> {
+                for (OreEffect effect : bundledOreEffect.getStrategies()) {
+                    applyEffect(effect);
+                } //Base case
+            }
+            case ObserverOreEffect observerOreEffect ->
+                observerEffects.add((ObserverOreEffect) strategy.cloneOreEffect());
+            default -> effects.add(strategy.cloneOreEffect());
         }
     }
 

@@ -1,7 +1,6 @@
 package ore.forge.Strategies.OreEffects;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.CoolDown;
 import ore.forge.Ore;
 
 public class Burning implements OreEffect {

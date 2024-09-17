@@ -70,7 +70,7 @@ public enum NumericOperator {
 
     NumericOperator() {
         operator = switch (this) {
-            case ADD -> (x, y) -> x + y;
+            case ADD -> Double::sum;
             case SUBTRACT -> (x, y) -> x - y;
             case MULTIPLY -> (x, y) -> x * y;
             case DIVIDE -> (x, y) -> y == 0 ? 1 : x / y;

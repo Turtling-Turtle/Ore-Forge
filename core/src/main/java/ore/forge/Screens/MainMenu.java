@@ -9,11 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ore.forge.ButtonHelper;
+import ore.forge.ItemManager;
 import ore.forge.OreForge;
 import ore.forge.Player.Player;
-import ore.forge.ItemManager;
 
-import java.net.http.WebSocket;
 
 public class MainMenu extends CustomScreen {
 

@@ -2,7 +2,6 @@ package ore.forge.Screens.Widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.Listener;
@@ -11,7 +10,6 @@ import ore.forge.QuestComponents.QuestCondition;
 import ore.forge.QuestComponents.QuestStatus;
 import ore.forge.UIHelper;
 
-import java.util.ArrayList;
 
 /**
  * @author Nathan Ulmen

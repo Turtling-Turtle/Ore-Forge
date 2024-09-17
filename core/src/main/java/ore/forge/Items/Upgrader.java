@@ -35,7 +35,6 @@ public class Upgrader extends Item {
         this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
         this.upgradeTag = new UpgradeTag(jsonValue.get("upgradeTag"));
         this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
-        assert this.upgrade != null;
         setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
         initBlockConfiguration(this.numberConfig);
     }

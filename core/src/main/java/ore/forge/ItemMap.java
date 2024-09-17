@@ -5,16 +5,14 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
-import ore.forge.Items.*;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
+import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
-import ore.forge.Player.Player;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 //@author Nathan Ulmen
 //The ItemMap is responsible for keeping track of placed items and retrieving the positions of their blocks
