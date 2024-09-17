@@ -5,9 +5,11 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
 //Resets all nonResetterTags on an ore.
-public class ResetterUpgrade implements UpgradeStrategy{
+@SuppressWarnings("unused")
+public class ResetterUpgrade implements UpgradeStrategy {
 
-    public ResetterUpgrade() {}
+    public ResetterUpgrade() {
+    }
 
     public ResetterUpgrade(JsonValue jsonValue) {
 

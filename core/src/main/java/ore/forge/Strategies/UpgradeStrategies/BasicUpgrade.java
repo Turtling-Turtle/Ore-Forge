@@ -1,14 +1,17 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Ore;
 
 import java.util.function.Consumer;
 
-/**@author Nathan Ulmen
-A Basic upgrade modifies an Ore property by applying the Modifier to it using a Numeric Operator.*/
+/**
+ * @author Nathan Ulmen
+ * A Basic upgrade modifies an Ore property by applying the Modifier to it using a Numeric Operator.
+ */
+@SuppressWarnings("unused")
 public class BasicUpgrade implements UpgradeStrategy {
     //More VTMS: effect, Duration.
     private double modifier;
@@ -56,7 +59,7 @@ public class BasicUpgrade implements UpgradeStrategy {
             case TEMPERATURE -> (Ore ore) -> ore.setTemp((float) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
             case MULTIORE -> (Ore ore) -> ore.setMultiOre((int) Math.round(numericOperator.apply(ore.getOreTemp(), modifier)));
             case SPEED_SCALAR -> (Ore ore) -> ore.setSpeedScalar((float) numericOperator.apply(ore.getSpeedScalar(), modifier));
-            case UPGRADE_COUNT, SPEED, RESET_COUNT-> throw new IllegalArgumentException( valueToModify + " is not a valid value to Modify.");
+            case UPGRADE_COUNT, SPEED, RESET_COUNT -> throw new IllegalArgumentException(valueToModify + " is not a valid value to Modify.");
         };
     }
 

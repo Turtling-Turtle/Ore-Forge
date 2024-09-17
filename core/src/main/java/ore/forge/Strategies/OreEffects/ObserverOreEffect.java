@@ -9,7 +9,8 @@ import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
 //@author Nathan Ulmen
 //TODO: Invulnerability could have its implementation changed to be an ObserverEffect???
 //On state change/notify evaluate a condition then do something depending on the result of this evaluation.
-public class ObserverOreEffect implements OreEffect  {
+@SuppressWarnings("unused")
+public class ObserverOreEffect implements OreEffect {
     //On upgrade(temp change, value change, multi-ore change, Speed Change,
     private final float duration;
     private final int charges;

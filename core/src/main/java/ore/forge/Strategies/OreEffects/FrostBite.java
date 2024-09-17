@@ -3,6 +3,7 @@ package ore.forge.Strategies.OreEffects;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
+@SuppressWarnings("unused")
 public class FrostBite implements OreEffect {
     private float currentDuration;
     private final float tempDecrease, duration;

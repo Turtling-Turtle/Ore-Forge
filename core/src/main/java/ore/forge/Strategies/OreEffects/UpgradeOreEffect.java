@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 //@author Nathan Ulmen
+@SuppressWarnings("unused")
 public class UpgradeOreEffect implements OreEffect {
     private final float interval;
     private float duration;
@@ -51,7 +52,7 @@ public class UpgradeOreEffect implements OreEffect {
             ore.removeEffect(this);
         }
         currentTime += deltaT;
-        while(currentTime >= interval) {
+        while (currentTime >= interval) {
             strategy.applyTo(ore);
             currentTime -= interval;
         }
@@ -63,7 +64,7 @@ public class UpgradeOreEffect implements OreEffect {
     }
 
     public String toString() {
-        return "\n" +getClass().getSimpleName() + "\tInterval: " + interval +
+        return "\n" + getClass().getSimpleName() + "\tInterval: " + interval +
             "\tDuration: " + duration + "\nUpgradeStrategy: " + strategy.toString();
     }
 }

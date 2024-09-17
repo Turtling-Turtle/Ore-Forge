@@ -3,7 +3,8 @@ package ore.forge.Strategies.DropperStrategies;
 import ore.forge.Items.Dropper;
 import ore.forge.Ore;
 
-public class Influenced implements DropperStrategy{
+@SuppressWarnings("unused")
+public class Influenced implements DropperStrategy {
 
     public Influenced() {
 
@@ -14,10 +15,6 @@ public class Influenced implements DropperStrategy{
         ore.setOreValue(parentDropper.getOreValue() * parentDropper.getTotalOreDropped());//Dropped Ore have their value increased based on totalOreDropped
         return ore;
     }
-
-
-
-
 
 
 }

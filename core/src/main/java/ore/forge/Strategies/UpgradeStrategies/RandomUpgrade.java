@@ -6,8 +6,12 @@ import ore.forge.ReflectionLoader;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Random;
 
+@SuppressWarnings("unused")
 public class RandomUpgrade implements UpgradeStrategy {
     private final Random random = new Random(123);
     private final HashMap<Float, ArrayList<UpgradeStrategy>> chanceTable;
@@ -18,7 +22,7 @@ public class RandomUpgrade implements UpgradeStrategy {
         chanceTable = new HashMap<>();
         JsonValue upgrades = jsonValue.get("upgrades");
         for (JsonValue upgrade : upgrades) {
-            addUpgrade(upgrade.getFloat("chance"), ReflectionLoader.load(upgrade,"upgradeName"));
+            addUpgrade(upgrade.getFloat("chance"), ReflectionLoader.load(upgrade, "upgradeName"));
         }
 
         keys = new ArrayList<>(chanceTable.keySet());

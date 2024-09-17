@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.ReflectionLoader;
 
+@SuppressWarnings("unused")
 public class BundledOreEffect implements OreEffect {
     private final OreEffect[] strategies;
 

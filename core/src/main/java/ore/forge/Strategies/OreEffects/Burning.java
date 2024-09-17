@@ -3,6 +3,7 @@ package ore.forge.Strategies.OreEffects;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
+@SuppressWarnings("unused")
 public class Burning implements OreEffect {
     private float currentDuration;
     private final float tempIncrease, duration;
@@ -14,9 +15,9 @@ public class Burning implements OreEffect {
     }
 
     public Burning(JsonValue jsonValue) {
-       this.currentDuration = jsonValue.getFloat("duration");
-       this.duration = currentDuration;
-       this.tempIncrease = jsonValue.getFloat("tempIncrease");
+        this.currentDuration = jsonValue.getFloat("duration");
+        this.duration = currentDuration;
+        this.tempIncrease = jsonValue.getFloat("tempIncrease");
     }
 
     //Clone constructor
@@ -29,7 +30,7 @@ public class Burning implements OreEffect {
     @Override
     public void activate(float deltaTime, Ore ore) {
         currentDuration -= deltaTime;
-        if (currentDuration <=0) {
+        if (currentDuration <= 0) {
             ore.setIsDoomed(true);
             ore.removeEffect(this);
         } else {

@@ -65,8 +65,7 @@ public class Upgrader extends Item {
                         this.blockConfig[i][j] = new UpgradeBlock(this, upgrade, upgradeTag, conveyorSpeed);
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid Block Config Value For item Type: " + numberConfig[i][j]);
-                }
+                        throw new IllegalArgumentException("Invalid Block Config Value For item Type: " + numberConfig[i][j]);}
             }
         }
     }

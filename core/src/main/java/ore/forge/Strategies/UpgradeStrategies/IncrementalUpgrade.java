@@ -7,6 +7,7 @@ import ore.forge.ReflectionLoader;
 /**
  * @author Nathan Ulmen *
  */
+@SuppressWarnings("unused")
 public class IncrementalUpgrade implements UpgradeStrategy {
     private int currentIndex;
     private final UpgradeStrategy[] strategies;
@@ -24,7 +25,7 @@ public class IncrementalUpgrade implements UpgradeStrategy {
         currentIndex = 0;
         strategies = new UpgradeStrategy[jsonValue.size];
         for (int i = 0; i < strategies.length; i++) {
-            strategies[i] = ReflectionLoader.load(jsonValue.get(i),"upgradeName");
+            strategies[i] = ReflectionLoader.load(jsonValue.get(i), "upgradeName");
             if (strategies[i] == null) {
                 throw new IllegalArgumentException("Could not find UpgradeStrategy for " + jsonValue.get(i));
             }

@@ -3,9 +3,11 @@ package ore.forge.Strategies.UpgradeStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 
+@SuppressWarnings("unused")
 public class DestructionUpgrade implements UpgradeStrategy {
 
-    public DestructionUpgrade(JsonValue jsonValue) {}
+    public DestructionUpgrade(JsonValue jsonValue) {
+    }
 
     @Override
     public void applyTo(Ore ore) {

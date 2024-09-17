@@ -5,7 +5,10 @@ import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Ore;
 import ore.forge.ReflectionLoader;
 
-/**@author Nathan Ulmen*/
+/**
+ * @author Nathan Ulmen
+ */
+@SuppressWarnings("unused")
 public class CooldownUpgrade implements UpgradeStrategy {
     private final UpgradeStrategy upgrade;
     private final float cooldownTime;
@@ -25,7 +28,7 @@ public class CooldownUpgrade implements UpgradeStrategy {
     }
 
     public CooldownUpgrade(JsonValue jsonValue) {
-        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"), "upgradeName");
         this.cooldownTime = jsonValue.getFloat("cooldownTime");
     }
 

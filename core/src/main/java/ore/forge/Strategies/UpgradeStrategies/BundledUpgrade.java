@@ -8,6 +8,7 @@ import ore.forge.ReflectionLoader;
  * @author Nathan Ulmen
  * Used to wrap/bundled any number of upgrades into one.
  */
+@SuppressWarnings("unused")
 public class BundledUpgrade implements UpgradeStrategy {
     private final UpgradeStrategy[] upgradeStrategies;
 

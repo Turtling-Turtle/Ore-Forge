@@ -1,8 +1,8 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import ore.forge.ButtonHelper;
-import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Ore;
 import ore.forge.OreRealm;
 import ore.forge.Strategies.OreEffects.OreEffect;
@@ -10,6 +10,7 @@ import ore.forge.Strategies.OreEffects.UpgradeOreEffect;
 
 import java.util.Random;
 
+@SuppressWarnings("unused")
 public class ReplicateStrategy implements OreEffect, UpgradeStrategy {
     private final static OreRealm oreRealm = OreRealm.getSingleton();
     private final Random rand;

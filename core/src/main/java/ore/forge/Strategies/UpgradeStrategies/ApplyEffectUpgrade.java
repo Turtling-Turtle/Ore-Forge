@@ -6,8 +6,11 @@ import ore.forge.ReflectionLoader;
 import ore.forge.Strategies.OreEffects.OreEffect;
 
 
-/**@author Nathan Ulmen
-Applies an OreEffect to an ore.*/
+/**
+ * @author Nathan Ulmen
+ * Applies an OreEffect to an ore.
+ */
+@SuppressWarnings("unused")
 public class ApplyEffectUpgrade implements UpgradeStrategy {
     private final OreEffect effect;
 
@@ -16,7 +19,7 @@ public class ApplyEffectUpgrade implements UpgradeStrategy {
     }
 
     public ApplyEffectUpgrade(JsonValue jsonValue) {
-        effect = ReflectionLoader.load(jsonValue.get("effectToApply"),"effectName");
+        effect = ReflectionLoader.load(jsonValue.get("effectToApply"), "effectName");
     }
 
     @Override
@@ -31,6 +34,6 @@ public class ApplyEffectUpgrade implements UpgradeStrategy {
 
     @Override
     public String toString() {
-        return  "[" + getClass().getSimpleName() + "]\t" + effect.toString();
+        return "[" + getClass().getSimpleName() + "]\t" + effect.toString();
     }
 }

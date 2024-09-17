@@ -1,16 +1,17 @@
 package ore.forge.Strategies.UpgradeStrategies;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.*;
-import ore.forge.Expressions.Operators.NumericOperator;
-import ore.forge.Expressions.Operands.NumericOreProperties;
 import ore.forge.Expressions.Function;
+import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
+import ore.forge.Ore;
 
 /**
  * @author Nathan Ulmen
  * An Influenced Upgrade dynamically changes/adapts the value of its Modifier based on the returned result of its Function.
  * A maximum and minimum value can be set to ensure the modifier stays within a specified range.
  */
+@SuppressWarnings("unused")
 public class InfluencedUpgrade implements UpgradeStrategy {
     private final BasicUpgrade baseUpgrade;
     private final Function upgradeFunction;

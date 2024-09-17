@@ -3,6 +3,7 @@ package ore.forge.Strategies.DropperStrategies;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.CoolDown;
 
+@SuppressWarnings("unused")
 public class BurstDrop implements DropStrategy {
     private final float orePerMinute;
     private final float burstCount;
@@ -17,8 +18,8 @@ public class BurstDrop implements DropStrategy {
     public BurstDrop(JsonValue jsonValue) {
         orePerMinute = jsonValue.getFloat("orePerMinute");
         burstCount = jsonValue.getInt("burstCount");
-        var burstPerSec = (orePerMinute/ burstCount) /60f;
-        var cooldownInterval = 1/ burstPerSec;
+        var burstPerSec = (orePerMinute / burstCount) / 60f;
+        var cooldownInterval = 1 / burstPerSec;
         var orePerSec = orePerMinute / 60f;
         var intervalPerOre = 1 / orePerSec;
 
@@ -27,7 +28,7 @@ public class BurstDrop implements DropStrategy {
         currentOreInBurst = 0;
 
 
-        intervalPerOre /=2;
+        intervalPerOre /= 2;
         intervalBetween = new CoolDown(intervalPerOre);
         isDropping = false;
 
