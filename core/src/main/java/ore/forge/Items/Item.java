@@ -21,7 +21,6 @@ public abstract class Item {
 
     public enum UnlockMethod {SPECIAL_POINTS, PRESTIGE_LEVEL, QUEST, NONE}
 
-
     protected static final ItemMap ITEM_MAP = ItemMap.getSingleton();
     protected Block[][] blockConfig;
     protected final int[][] numberConfig;
@@ -146,45 +145,6 @@ public abstract class Item {
         } catch (Exception e) {
             Gdx.app.log("Item", Color.highlightString("Error Occurred While Loading Acquisition " + name + "s' Info: " + e, Color.YELLOW));
         }
-
-
-//
-//        try {
-//            var tempRarity = BigDecimal.valueOf(jsonValue.getFloat("rarity"));
-//            this.rarity = tempRarity.setScale(1, RoundingMode.HALF_UP).floatValue();
-//            isShopItem = jsonValue.getBoolean("isShopItem");
-//            if (!isShopItem) {
-//                itemValue = 0;
-//                currencyBoughtWith = Currency.NONE;
-//            } else {
-//                currencyBoughtWith = Currency.valueOf(jsonValue.getString("currencyBoughtWith"));
-//                itemValue = jsonValue.getDouble("itemValue");
-//            }
-//
-//            canBeSold = jsonValue.getBoolean("canBeSold");
-//
-//            if (canBeSold) {
-//                sellPrice = jsonValue.getDouble("sellPrice");
-//            } else {
-//                sellPrice = 0;
-//            }
-//
-//
-//            unlockMethod = UnlockMethod.valueOf(jsonValue.getString("unlockMethod"));
-//            if (unlockMethod == UnlockMethod.NONE) {
-//                isUnlocked = true;
-//                unlockRequirements = 0;
-//            } else if (unlockMethod == UnlockMethod.QUEST) {
-//                unlockRequirements = 0;
-//                isUnlocked = false;
-//            } else {
-//                unlockRequirements = jsonValue.getDouble("unlockRequirements");
-//                isUnlocked = false;
-//            }
-//        } catch (Exception e) {
-//            Gdx.app.log("ITEM", Color.highlightString("Error Occurred while Loading Acquisition Info.", Color.YELLOW));
-//        }
-
 
     }
 

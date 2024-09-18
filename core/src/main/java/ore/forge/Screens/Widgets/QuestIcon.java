@@ -28,7 +28,7 @@ import ore.forge.UIHelper;
  * |  |___________________________________________|  |
  * |_________________________________________________|
  */
-public class QuestIcon extends Table implements Listener<Quest>{
+public class QuestIcon extends Table implements Listener<Quest> {
     private final Table descriptionTable;
     private final Quest heldQuest;
     private final Label questName;
@@ -40,44 +40,61 @@ public class QuestIcon extends Table implements Listener<Quest>{
         heldQuest.addListener(this);
         descriptionTable = new Table();
         descriptionTable.setBackground(UIHelper.getRoundFull());
+        this.setSize(Gdx.graphics.getWidth() * .8f, Gdx.graphics.getHeight() * .22f);
+        this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
 
+        Label.LabelStyle descriptionStyle = new Label.LabelStyle();
+        descriptionStyle.font = UIHelper.generateFont(determineFontSize());
+        descriptionStyle.fontColor = Color.BLACK;
+        descriptionStyle.background = UIHelper.getRoundFull();
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = UIHelper.generateFont(determineFontSize());
-        labelStyle.fontColor = Color.BLACK;
-        labelStyle.background = UIHelper.getRoundFull();
+        Label.LabelStyle titleStyle = new Label.LabelStyle();
+        titleStyle.font = UIHelper.generateFont((determineFontSize() * 2));
+        titleStyle.fontColor = Color.BLACK;
+        titleStyle.background = UIHelper.getRoundFull();
 
-        questName = new Label(quest.getName(), labelStyle);
-        questDescription = new Label(quest.getDescription(), labelStyle);
-        questStep = new Label("Step " + heldQuest.stepOf() + " of " + heldQuest.getStepCount(), labelStyle);
+        questName = new Label(quest.getName(), titleStyle);
+        questDescription = new Label(quest.getDescription(), descriptionStyle);
+
+        Label.LabelStyle labelStyle2 = new Label.LabelStyle();
+        labelStyle2.font = UIHelper.generateFont((int) (determineFontSize() * .85f));
+        labelStyle2.fontColor = Color.DARK_GRAY;
+        questStep = new Label("Step " + heldQuest.currentStepIndex() + " of " + heldQuest.getTotalSteps(), labelStyle2);
 
         System.out.println(quest.getStatus());
+
+        ScrollPane scrollPane = new ScrollPane(descriptionTable);
+
+        Table topRow = new Table();
+
+        topRow.add(questName).top().align(Align.topLeft);
+        topRow.add(questStep).bottom().left().padBottom(25);
+
+        this.add(topRow).top().left().row();
+        this.add(questDescription).top().left().expandX().fillX().row();
+        this.setBackground(UIHelper.getRoundFull());
+
         switch (quest.getStatus()) {
             case LOCKED -> configureLocked();
             case COMPLETED -> configureCompleted();
             case IN_PROGRESS -> configureInProgress();
         }
-        ScrollPane scrollPane = new ScrollPane(descriptionTable);
 
-        this.add(questName).top().left().expandX().fillX();
-        this.add(questStep).top().left().expandX().fillX().row();
-        this.add(questDescription).top().left().expandX().fillX().row();
-        this.setBackground(UIHelper.getRoundFull());
-
-        this.add(scrollPane).top().left().expand().fill();
+        this.add(scrollPane).top().expandX().fillX();
         scrollPane.setDebug(true);
-        scrollPane.setScrollingDisabled(true,false);
+        scrollPane.setScrollingDisabled(true, false);
 
-        this.setSize(Gdx.graphics.getWidth() * .8f , Gdx.graphics.getHeight() * .2f);
-        this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
-//        this.setDebug(true);
+
+        this.setDebug(true);
+
 
     }
 
     private void configureLocked() {
+        //How do I only adjust the height of these tables?
         for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
             var widget = new ConditionWidget(condition);
-            descriptionTable.add(widget).top().left().expand().fill().row();
+            descriptionTable.add(widget).top().left().row();
         }
     }
 
@@ -104,11 +121,11 @@ public class QuestIcon extends Table implements Listener<Quest>{
     @Override
     public void update(Quest subject) {
         /*
-        * TODO:
-        *  update step label
-        *   update state of quest (is it completed or not)
-        *   update conditions if step changed
-        * */
+         * TODO:
+         *  update step label
+         *   update state of quest (is it completed or not)
+         *   update conditions if step changed
+         * */
     }
 
     private static class ConditionWidget extends Table implements Listener<QuestCondition> {
@@ -135,10 +152,8 @@ public class QuestIcon extends Table implements Listener<Quest>{
             moreInfoIcon.addListener(new TextTooltip("Triggers on: " + questCondition.getEventType().getSimpleName()
                 + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle));
 
-
-
-            this.add(condition).expand().fill().top().left().align(Align.topLeft);
-            this.add(moreInfoIcon).top().right().align(Align.topRight);
+            this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
+            this.add(moreInfoIcon).right().align(Align.topRight);
             this.setBackground(UIHelper.getRoundFull());
             this.setColor(Color.BLACK);
             questCondition.addListener(this);

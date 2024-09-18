@@ -1,7 +1,5 @@
 package ore.forge;
 
-
-
 /**
  * @author Nathan Ulmen
  */

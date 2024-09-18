@@ -34,12 +34,8 @@ public class Ore {
     private float deltaTime;
     private boolean isActive;
     private int resetCount;
-//    private final ParticleEffect frostbiteEffect = new ParticleEffect();
 
     public Ore() {
-//        frostbiteEffect.load(Gdx.files.internal("Effects/Frostbite.p"), Gdx.files.internal("Effects"));
-//        frostbiteEffect.start();
-//        frostbiteEffect.scaleEffect(0.016f);
         this.oreValue = 0;
         this.oreTemperature = 0;
         this.oreName = "";
@@ -347,10 +343,6 @@ public class Ore {
         }
         return false;
     }
-
-//    public ParticleEffect getFrostbiteEffect() {
-//        return frostbiteEffect;
-//    }
 
     public String toString() {
         //Name, Value, Temp, Multi-Ore, Upgrade Count, Position, Active Effects.
