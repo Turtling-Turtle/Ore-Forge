@@ -85,9 +85,6 @@ public class QuestIcon extends Table implements Listener<Quest> {
         scrollPane.setScrollingDisabled(true, false);
 
 
-        this.setDebug(true);
-
-
     }
 
     private void configureLocked() {
@@ -136,7 +133,6 @@ public class QuestIcon extends Table implements Listener<Quest> {
 
             Label.LabelStyle labelStyle = new Label.LabelStyle();
             labelStyle.font = UIHelper.generateFont(determineFontSize());
-            labelStyle.background = UIHelper.getRoundFull();
             labelStyle.fontColor = Color.BLACK;
             /*TODO
              * Configure Label Style
@@ -149,15 +145,19 @@ public class QuestIcon extends Table implements Listener<Quest> {
             /*TODO
              * Configure tooltip style.
              * */
-            moreInfoIcon.addListener(new TextTooltip("Triggers on: " + questCondition.getEventType().getSimpleName()
-                + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle));
+            moreInfoIcon.setColor(Color.BLACK);
+            var toolTip = new TextTooltip("Triggers on: " + questCondition.getEventType().getSimpleName()
+                + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle);
+            toolTip.setInstant(true);
+            moreInfoIcon.addListener(toolTip);
+            questCondition.addListener(this);
 
             this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
-            this.add(moreInfoIcon).right().align(Align.topRight);
-            this.setBackground(UIHelper.getRoundFull());
+            this.add(moreInfoIcon).size(50, 50).top().right().align(Align.topRight);
+            this.setBackground(UIHelper.getButton("128xRoundBold"));
             this.setColor(Color.BLACK);
             questCondition.addListener(this);
-            this.setDebug(true);
+//            this.setDebug(true);
         }
 
         @Override
@@ -171,9 +171,9 @@ public class QuestIcon extends Table implements Listener<Quest> {
 
         private int determineFontSize() {
             return switch (Gdx.graphics.getHeight()) {
-                case 1080 -> 20;
-                case 1440 -> 32;
-                case 2160 -> 40;
+                case 1080 -> 16;
+                case 1440 -> 26;
+                case 2160 -> 32;
                 default -> 22;
             };
         }

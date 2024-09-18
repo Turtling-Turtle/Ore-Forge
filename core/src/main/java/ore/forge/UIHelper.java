@@ -45,7 +45,7 @@ public class UIHelper {
         if (buttonLookup.containsKey(name)) {
             return buttonLookup.get(name);
         }
-        var newNinePatch = new NinePatchDrawable();
+        var newNinePatch = new NinePatchDrawable(buttonTextures.getPatch(name));
         buttonLookup.put(name, newNinePatch);
         return newNinePatch;
     }
@@ -59,10 +59,9 @@ public class UIHelper {
             return iconLookup.get(name);
         }
         var newNinePatch = new NinePatchDrawable(icons.getPatch(name));
-        iconLookup.put(name,newNinePatch);
+        iconLookup.put(name, newNinePatch);
         return newNinePatch;
     }
-
 
 
 }
