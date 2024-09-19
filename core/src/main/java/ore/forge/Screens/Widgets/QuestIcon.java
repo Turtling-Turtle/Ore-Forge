@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import ore.forge.ButtonType;
 import ore.forge.Listener;
 import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestCondition;
@@ -39,12 +40,11 @@ public class QuestIcon extends Table implements Listener<Quest> {
         this.heldQuest = quest;
         heldQuest.addListener(this);
         descriptionTable = new Table();
-        descriptionTable.setBackground(UIHelper.getRoundFull());
         this.setSize(Gdx.graphics.getWidth() * .8f, Gdx.graphics.getHeight() * .22f);
         this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
 
         Label.LabelStyle descriptionStyle = new Label.LabelStyle();
-        descriptionStyle.font = UIHelper.generateFont(determineFontSize());
+        descriptionStyle.font = UIHelper.generateFont((int) (determineFontSize() * .85f));
         descriptionStyle.fontColor = Color.BLACK;
         descriptionStyle.background = UIHelper.getRoundFull();
 
@@ -80,8 +80,13 @@ public class QuestIcon extends Table implements Listener<Quest> {
             case IN_PROGRESS -> configureInProgress();
         }
 
-        this.add(scrollPane).top().expandX().fillX();
-        scrollPane.setDebug(true);
+//        this.add(scrollPane).top().expandX().fillX();
+//        scrollPane.setDebug(true);
+        Table scrollBorder = new Table();
+        scrollBorder.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        scrollBorder.setColor(Color.BLACK);
+        scrollBorder.add(scrollPane).expandX().fillX();
+        this.add(scrollBorder).top().expandX().fillX();
         scrollPane.setScrollingDisabled(true, false);
 
 
@@ -154,7 +159,7 @@ public class QuestIcon extends Table implements Listener<Quest> {
 
             this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
             this.add(moreInfoIcon).size(50, 50).top().right().align(Align.topRight);
-            this.setBackground(UIHelper.getButton("128xRoundBold"));
+            this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
             this.setColor(Color.BLACK);
             questCondition.addListener(this);
 //            this.setDebug(true);
@@ -172,7 +177,7 @@ public class QuestIcon extends Table implements Listener<Quest> {
         private int determineFontSize() {
             return switch (Gdx.graphics.getHeight()) {
                 case 1080 -> 16;
-                case 1440 -> 26;
+                case 1440 -> 28;
                 case 2160 -> 32;
                 default -> 22;
             };

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import java.util.HashMap;
 
 public class UIHelper {
+    @SuppressWarnings("GDXJavaStaticResource")
     private final static FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
     private final static HashMap<Integer, BitmapFont> fontLookup = new HashMap<>();
 
@@ -28,28 +29,30 @@ public class UIHelper {
         return font;
     }
 
+    @SuppressWarnings("GDXJavaStaticResource")
     private final static Skin buttonTextures = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
     private final static HashMap<String, NinePatchDrawable> buttonLookup = new HashMap<>();
 
 
     public static NinePatchDrawable getRoundFull() {
-        if (buttonLookup.containsKey("128xRoundFull")) {
-            return buttonLookup.get("128xRoundFull");
+        if (buttonLookup.containsKey(ButtonType.ROUND_FULL_128.getName())) {
+            return buttonLookup.get(ButtonType.ROUND_FULL_128.getName());
         }
         var roundFull = new NinePatchDrawable(buttonTextures.getPatch("128xRoundFull"));
-        buttonLookup.put("128xRoundFull", roundFull);
+        buttonLookup.put(ButtonType.ROUND_FULL_128.getName(), roundFull);
         return roundFull;
     }
 
-    public static NinePatchDrawable getButton(String name) {
-        if (buttonLookup.containsKey(name)) {
-            return buttonLookup.get(name);
+    public static NinePatchDrawable getButton(ButtonType type) {
+        if (buttonLookup.containsKey(type.getName())) {
+            return buttonLookup.get(type.getName());
         }
-        var newNinePatch = new NinePatchDrawable(buttonTextures.getPatch(name));
-        buttonLookup.put(name, newNinePatch);
+        var newNinePatch = new NinePatchDrawable(buttonTextures.getPatch(type.getName()));
+        buttonLookup.put(type.getName(), newNinePatch);
         return newNinePatch;
     }
 
+    @SuppressWarnings("GDXJavaStaticResource")
     private final static Skin icons = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas")));
     private final static HashMap<String, NinePatchDrawable> iconLookup = new HashMap<>();
 
