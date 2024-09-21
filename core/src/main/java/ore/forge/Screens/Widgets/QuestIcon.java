@@ -107,7 +107,7 @@ public class QuestIcon extends Table implements Listener<Quest> {
     private void configureInProgress() {
         for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
             var widget = new ConditionWidget(condition);
-            descriptionTable.add(widget).top().left().expand().fill().row();
+            descriptionTable.add(widget).top().left().expand().fill().pad(5f).row();
         }
     }
 
@@ -139,6 +139,7 @@ public class QuestIcon extends Table implements Listener<Quest> {
             Label.LabelStyle labelStyle = new Label.LabelStyle();
             labelStyle.font = UIHelper.generateFont(determineFontSize());
             labelStyle.fontColor = Color.BLACK;
+
             /*TODO
              * Configure Label Style
              * */
