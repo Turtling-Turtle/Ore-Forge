@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import ore.forge.ButtonType;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
@@ -37,7 +38,7 @@ public class ItemIcon extends Table {
 //        border.setColor(Color.BLACK);
         border.setBackground(UIHelper.getRoundFull());
         button.center();
-        border.add(imageButtonTable);
+        border.add(imageButtonTable).fill().expand();
         border.center();
 //        border.setDebug(true);
         border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
@@ -88,7 +89,17 @@ public class ItemIcon extends Table {
         stack.add(nameLabel);
         nameLabel.setAlignment(Align.bottom);
 
-        this.addActor(stack);
+        this.add(stack).expand().fill().center();
+        this.pad(2.5f);
+//        this.defaults().pad(0);
+//        this.defaults().space(0);
+//        stack.setFillParent(true);
+//        this.setActor(stack);
+//        stack.setFillParent(true);
+        this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        this.setColor(Color.BLACK);
+//        this.setSize(this.getWidth() * 1.01f, this.getHeight() * 1.01f);
+//        this.debugAll();
 //        this.add(stack).expand().fill();
 //        this.setBackground(glowAtlas.getDrawable("glow_square1"));
 //        NinePatch patch = glowAtlas.getPatch("glow_square1");
@@ -124,7 +135,6 @@ public class ItemIcon extends Table {
     }
 
     public void setProcessor(InventoryMode processor) {
-        this.processor = processor;
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -162,6 +172,7 @@ public class ItemIcon extends Table {
     public void updateToolTipText(String newMessage) {
         tooltip.getActor().setText(newMessage);
     }
+
     private int determineFont() {
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
