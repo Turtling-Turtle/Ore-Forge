@@ -76,17 +76,19 @@ public class ItemIcon extends Table {
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
-        Container<Label> nameContainer = new Container<>(nameLabel);
-        nameContainer.setSize(nameLabel.getWidth(), nameLabel.getHeight());
-        nameContainer.setClip(true);
+//        Container<Label> nameContainer = new Container<>(nameLabel);
+//        nameContainer.setSize(nameLabel.getWidth(), nameLabel.getHeight());
+//        nameContainer.setClip(true);
+//        nameContainer.padBottom(2f);
 
         Stack stack = new Stack();
         stack.setSize(border.getWidth(), border.getHeight());
         stack.add(border);
         container.align(Align.topLeft);
         stack.add(container);
-        nameLabel.setAlignment(Align.bottomLeft);
+//        nameLabel.setAlignment(Align.bottomLeft);
         stack.add(nameLabel);
+//        nameContainer.align(Align.bottom);
         nameLabel.setAlignment(Align.bottom);
 
         this.add(stack).expand().fill().center();
