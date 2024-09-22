@@ -177,7 +177,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         background.add(scrollPane).top().left().expand().pad(padValue).fill();
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-        this.pad(2.5f);
+//        this.pad(2.5f);
+        this.pad(2.4f, 2.4f, 2.4f, 0);
         this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         this.add(background).expand().fill();
 //        this.add(background).fill().expand();
