@@ -91,6 +91,7 @@ public class ItemIcon extends Table {
 
         this.add(stack).expand().fill().center();
         this.pad(2.5f);
+
 //        this.defaults().pad(0);
 //        this.defaults().space(0);
 //        stack.setFillParent(true);

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
+import ore.forge.ButtonType;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.EventSystem.GameEventListener;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class InventoryTable extends WidgetGroup implements GameEventListener<NodeGameEvent> {
+public class InventoryTable extends Table implements GameEventListener<NodeGameEvent> {
     private final static int ROW_COUNT = 4;
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
@@ -174,7 +175,13 @@ public class InventoryTable extends WidgetGroup implements GameEventListener<Nod
 
         background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
         background.add(scrollPane).top().left().expand().pad(padValue).fill();
-        this.addActor(background);
+        this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        this.setColor(Color.BLACK);
+        this.pad(2.5f);
+        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+        this.add(background).expand().fill();
+//        this.add(background).fill().expand();
+
 //        this.debugAll();
     }
 
