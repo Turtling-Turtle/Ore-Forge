@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
+import ore.forge.ButtonType;
 import ore.forge.Currency;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeGameEvent;
@@ -39,7 +40,7 @@ import java.util.List;
  *
  *
  * */
-public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameEvent> {
+public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> {
     private final static Player player = Player.getSingleton();
     private final TextButton droppers, furnaces, processItems, specialPoints, prestigeItems;
     private final ArrayList<ItemIcon> dropperIcons, furnaceIcons, processItemsIcons, specialPointsIcons, prestigeItemsIcons;
@@ -76,7 +77,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
 
         //Initialize "tab" buttons
 
-        droppers = new TextButton("Droppers",style);
+        droppers = new TextButton("Droppers", style);
         furnaces = new TextButton("Furnaces", style);
         processItems = new TextButton("Process Items", style);
         specialPoints = new TextButton("Special Items", style);
@@ -135,8 +136,6 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         TextField searchBar = new TextField("Search...", textFieldStyle);
 
 
-
-
         //Initialize Tables
         topTable = new Table();
         background = new Table();
@@ -155,7 +154,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
         topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
         topTable.row();
-        searchBar.setSize(topTable.getWidth()/2f,100);
+        searchBar.setSize(topTable.getWidth() / 2f, 100);
         topTable.add(searchBar).size(topTable.getWidth(), 100).expand().fill().top().left().pad(padValue);
 
 //        topTable.setDebug(true);
@@ -164,15 +163,18 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
         updateIcons(dropperIcons);
 
 
-
-
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setVisible(true);
 
         background.add(scrollPane).top().left().expand().fill().padRight(padValue).padTop(padValue);
 //        scrollPane.debugAll();
         background.setColor(Color.OLIVE);
-        this.addActor(background);
+        this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        this.setColor(Color.BLACK);
+        this.pad(2.4f, 0, 2.4f, 2.4f);
+        this.setSize(background.getWidth(), background.getHeight());
+        this.add(background).center().expand().fill();
+
 
 //        background.setDebug(true);
 //        iconTable.setDebug(true);
@@ -180,6 +182,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
 
         background.setBackground(UIHelper.getRoundFull());
         EventManager.getSingleton().registerListener(this);
+
     }
 
     private void createIcons(ArrayList<InventoryNode> nodes) {
@@ -326,7 +329,7 @@ public class ShopMenu extends WidgetGroup implements GameEventListener<NodeGameE
 //        table.add(buyButton).right();
 //        table.add(cancelButton).right();
         table.add(purchaseVbox).right().expand().fill();
-        table.setDebug(true,true);
+        table.setDebug(true, true);
         background.row();
         background.add(table).align(Align.bottomLeft).left().bottom().expandX().fillX();
     }
