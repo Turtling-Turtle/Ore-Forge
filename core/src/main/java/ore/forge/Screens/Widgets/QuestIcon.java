@@ -36,30 +36,38 @@ public class QuestIcon extends Table implements Listener<Quest> {
     private final Label questDescription;
     private final Label questStep;
 
+
+    /*
+     * TODO:
+     *  Figure out a way to shrink/scale down font size for descriptions that are super long to prevent excessive wrapping.
+     *  Figure out a way to better scale
+     * */
+
     public QuestIcon(Quest quest) {
         this.heldQuest = quest;
         heldQuest.addListener(this);
         descriptionTable = new Table();
-        this.setSize(Gdx.graphics.getWidth() * .8f, Gdx.graphics.getHeight() * .22f);
+        this.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .25f);
         this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
 
         Label.LabelStyle descriptionStyle = new Label.LabelStyle();
-        descriptionStyle.font = UIHelper.generateFont((int) (determineFontSize() * .85f));
+        descriptionStyle.font = UIHelper.generateFont((int) (determineFontSize() * .65f));
         descriptionStyle.fontColor = Color.BLACK;
         descriptionStyle.background = UIHelper.getRoundFull();
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = UIHelper.generateFont((determineFontSize() * 2));
+        titleStyle.font = UIHelper.generateFont((int) (determineFontSize() * 1.55));
         titleStyle.fontColor = Color.BLACK;
         titleStyle.background = UIHelper.getRoundFull();
 
         questName = new Label(quest.getName(), titleStyle);
         questDescription = new Label(quest.getDescription(), descriptionStyle);
+        questDescription.setWrap(true);
 
-        Label.LabelStyle labelStyle2 = new Label.LabelStyle();
-        labelStyle2.font = UIHelper.generateFont((int) (determineFontSize() * .85f));
-        labelStyle2.fontColor = Color.DARK_GRAY;
-        questStep = new Label("Step " + heldQuest.currentStepIndex() + " of " + heldQuest.getTotalSteps(), labelStyle2);
+        Label.LabelStyle stepOfStyle = new Label.LabelStyle();
+        stepOfStyle.font = UIHelper.generateFont((int) (determineFontSize() * .75f));
+        stepOfStyle.fontColor = Color.LIGHT_GRAY;
+        questStep = new Label("Step " + heldQuest.currentStepIndex() + " of " + heldQuest.getTotalSteps(), stepOfStyle);
 
         System.out.println(quest.getStatus());
 
@@ -85,8 +93,8 @@ public class QuestIcon extends Table implements Listener<Quest> {
         Table scrollBorder = new Table();
         scrollBorder.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         scrollBorder.setColor(Color.BLACK);
-        scrollBorder.add(scrollPane).expandX().fillX();
-        this.add(scrollBorder).top().expandX().fillX();
+        scrollBorder.add(scrollPane).expand().fill();
+        this.add(scrollBorder).top().expandX().fillX().minHeight(this.getHeight() / 2f);
         scrollPane.setScrollingDisabled(true, false);
 
 

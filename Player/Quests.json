@@ -2,7 +2,7 @@
   {
     "id": "Test Quest 1.0",
     "name": "Test Quest",
-    "description": "A quest to test event Manager.",
+    "description": "A quest to test event Manager. This description is also going to be long in order to test how the QuestIcon handles it. This text exists to make this label wrap :). Blarg Foog Doog Moog Loog Woog.",
     "state": "IN_PROGRESS",
     "steps": [
       {
