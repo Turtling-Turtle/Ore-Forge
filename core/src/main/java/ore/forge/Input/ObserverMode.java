@@ -28,8 +28,8 @@ public class ObserverMode extends InputMode {
             handler.pauseGame();
             return;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.F1) || Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-           handler.setCurrentMode(handler.getInventoryMode());
-           return;
+            handler.setCurrentMode(handler.getInventoryMode());
+            return;
         }
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && handler.isCoordsValid() && itemMap.getBlock(handler.getMouseWorldX(), handler.getMouseWorldY()) != null) {
 //            handler.setMode(InputHandler.Mode.SELECTING);
@@ -37,17 +37,21 @@ public class ObserverMode extends InputMode {
             handler.setCurrentMode(handler.getSelectMode());
             return;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
             handler.setCurrentMode(handler.getOreObserver());
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B) || Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             var shop = handler.getShopMenu();
             if (shop.isVisible()) {
                 shop.hide();
             } else {
                 shop.show();
             }
+            return;
 //            handler.getShopMenu().setVisible(!handler.getShopMenu().isVisible());
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.J) || Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
+//            handler.setCurrentMode(QuestMode());
         }
     }
 
