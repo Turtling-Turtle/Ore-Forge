@@ -106,6 +106,7 @@ public class ItemIcon extends Table {
     }
 
     public void setProcessor(InventoryMode processor) {
+        this.processor = processor;
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
