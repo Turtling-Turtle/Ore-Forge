@@ -135,12 +135,10 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         textFieldStyle.fontColor = Color.BLACK;
         TextField searchBar = new TextField("Search...", textFieldStyle);
 
-
         //Initialize Tables
         topTable = new Table();
         background = new Table();
         iconTable = new Table();
-
 
         background.setSize(Gdx.graphics.getWidth() * .364f, Gdx.graphics.getHeight() * .8f);
         padValue = Value.Fixed.percentHeight(0.005f, background);
@@ -148,13 +146,13 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         Value buttonSize = Value.Fixed.percentWidth(.175f, background);
 
         topTable.top().left();
-        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
-        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
-        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
-        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
-        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.defaults().top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
+        topTable.add(droppers);
+        topTable.add(furnaces);
+        topTable.add(processItems);
+        topTable.add(specialPoints);
+        topTable.add(prestigeItems);
         topTable.row();
-        searchBar.setSize(topTable.getWidth() / 2f, 100);
         topTable.add(searchBar).expand().fill().top().left().pad(padValue).colspan(3);
 
         topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
@@ -225,6 +223,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
             }
             Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Normal List");
         }
+        
     }
 
     private void addToList(ItemIcon icon, List<ItemIcon> list) {
