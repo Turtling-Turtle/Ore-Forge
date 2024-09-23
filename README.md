@@ -24,8 +24,7 @@ _**{INSERT HERE WHEN DONE}**_
   pressing one of the movement keys doubles the speed of the camera.
 
 
-* **Camera Zoom** - You can use `E` to zoom the camera inwards and `Q` to zoom the camera outwards. The
-  scroll wheel can also be used to zoom the camera in and out.
+* **Camera Zoom** - You can use `E` to zoom the camera inwards and `Q` to zoom the camera outwards.
 
 
 * **Ore Observer Mode** - To lock the camera onto a specific ore and observer its stats you can press `V`. To cycle
