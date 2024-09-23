@@ -223,7 +223,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
             }
             Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Normal List");
         }
-        
+
     }
 
     private void addToList(ItemIcon icon, List<ItemIcon> list) {
@@ -374,7 +374,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         upButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                int newCount = Integer.valueOf(count.getText()).intValue();
+                int newCount = Integer.parseInt(count.getText());
                 newCount++;
                 count.setText(String.valueOf(newCount));
             }
@@ -383,7 +383,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         downButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                int newCount = Integer.valueOf(count.getText()).intValue();
+                int newCount = Integer.parseInt(count.getText());
                 if (newCount > 1) {
                     newCount--;
                 }
