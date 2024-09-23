@@ -34,8 +34,6 @@ public class ItemIcon extends Table {
 
 //        button.setDebug(true);
         Table border = new Table();
-//        border.setBackground(buttonAtlas.getDrawable(roundFull));
-//        border.setColor(Color.BLACK);
         border.setBackground(UIHelper.getRoundFull());
         button.center();
         border.add(imageButtonTable).fill().expand();
@@ -48,7 +46,6 @@ public class ItemIcon extends Table {
         labelStyle.font = UIHelper.generateFont(determineFont());
 
 
-//        labelStyle.font = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
         labelStyle.fontColor = Color.BLACK;
 
         Label nameLabel = new Label(node.getName(), labelStyle);
@@ -56,7 +53,6 @@ public class ItemIcon extends Table {
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
 
-//        nameLabel.setDebug(true);
         border.row();
 
 
@@ -76,47 +72,19 @@ public class ItemIcon extends Table {
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
-//        Container<Label> nameContainer = new Container<>(nameLabel);
-//        nameContainer.setSize(nameLabel.getWidth(), nameLabel.getHeight());
-//        nameContainer.setClip(true);
-//        nameContainer.padBottom(2f);
-
         Stack stack = new Stack();
         stack.setSize(border.getWidth(), border.getHeight());
         stack.add(border);
         container.align(Align.topLeft);
         stack.add(container);
-//        nameLabel.setAlignment(Align.bottomLeft);
         stack.add(nameLabel);
-//        nameContainer.align(Align.bottom);
         nameLabel.setAlignment(Align.bottom);
 
         this.add(stack).expand().fill().center();
         this.pad(2.5f);
 
-//        this.defaults().pad(0);
-//        this.defaults().space(0);
-//        stack.setFillParent(true);
-//        this.setActor(stack);
-//        stack.setFillParent(true);
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-//        this.setSize(this.getWidth() * 1.01f, this.getHeight() * 1.01f);
-//        this.debugAll();
-//        this.add(stack).expand().fill();
-//        this.setBackground(glowAtlas.getDrawable("glow_square1"));
-//        NinePatch patch = glowAtlas.getPatch("glow_square1");
-//        NinePatchDrawable drawable = new NinePatchDrawable(patch);
-//        this.setBackground(drawable);
-//        this.setColor(Color.PINK);
-//        this.setSize(stack.getWidth(), stack.getHeight());
-//        this.setSize(900,900);
-//        border.add(nameContainer).bottom().center();
-
-
-//        border.add(nameLabel).expand().fill();
-
-//        border.add(storedCount).top().left();
 
 //        border.debugAll();
     }

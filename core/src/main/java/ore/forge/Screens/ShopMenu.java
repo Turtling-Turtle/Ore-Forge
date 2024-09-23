@@ -155,7 +155,10 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).pad(padValue).width(buttonSize);
         topTable.row();
         searchBar.setSize(topTable.getWidth() / 2f, 100);
-        topTable.add(searchBar).size(topTable.getWidth(), 100).expand().fill().top().left().pad(padValue);
+        topTable.add(searchBar).expand().fill().top().left().pad(padValue).colspan(3);
+
+        topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        topTable.setColor(Color.BLACK);
 
 //        topTable.setDebug(true);
 
@@ -174,6 +177,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         this.pad(2.4f, 0, 2.4f, 2.4f);
         this.setSize(background.getWidth(), background.getHeight());
         this.add(background).center().expand().fill();
+        background.setFillParent(true);
 
 
 //        background.setDebug(true);

@@ -39,6 +39,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
         Table topTable = new Table();
+        topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
+        topTable.setColor(Color.BLACK);
         Table background = new Table();
         background.setBackground(UIHelper.getRoundFull());
         background.setColor(Color.DARK_GRAY);
@@ -148,7 +150,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
                 }
             }
         });
-
+//        iconTable.setColor(Color.BLACK);
+//        iconTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         ScrollPane scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
@@ -174,7 +177,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
 
         background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
-        background.add(scrollPane).top().left().expand().pad(padValue).fill();
+        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 //        this.pad(2.5f);
