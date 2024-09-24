@@ -151,6 +151,7 @@ public class UserInterface {
         createActiveOre(fpsStyle);
         stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
 //        createActiveOreProgressBar();
+        inventoryWidget.postStageProcess();
     }
 
     public InventoryTable getInventoryTable() {

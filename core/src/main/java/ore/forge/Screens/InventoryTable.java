@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
@@ -35,6 +36,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private final HashMap<String, ItemIcon> lookUp;
     private final CheckBox[] checkBoxes;
     private final Value padValue;
+    private boolean isSearching;
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
@@ -65,13 +67,17 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
             @Override
             public void keyTyped(TextField textField, char c) {
+
                 if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) && last != null && !last.equals(textField.getText())) {
                     asyncSearch(textField.getText());
                 }
                 last = textField.getText();
+                System.out.println("Key Typed Result: " + isSearching());
             }
         });
         topTable.add(searchBar).top().left().size(Value.percentWidth(0.35f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+
+
 //        topTable.add(searchBar).top().left().size(Value.percentWidth(0.30f, background), Value.percentWidth(0.08f,background)).expand().fill().align(Align.topLeft).pad(padValue);
 
 
@@ -275,6 +281,10 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         return NodeGameEvent.class;
     }
 
+    public boolean isSearching() {
+        return isSearching;
+    }
+
     static class NameComparator implements Comparator<ItemIcon> {
         @Override
         public int compare(ItemIcon node1, ItemIcon node2) {
@@ -361,6 +371,23 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
     public TextField getSearchBar() {
         return searchBar;
+    }
+
+    public void postStageProcess() {
+        searchBar.getStage().addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (searchBar != searchBar.getStage().hit(x, y, true)) {
+                    isSearching = false;
+                    searchBar.getStage().setKeyboardFocus(null);
+                } else {
+                    isSearching = true;
+                    searchBar.getStage().setKeyboardFocus(searchBar);
+                }
+                System.out.println("Is Search Selected: " + isSearching);
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
     }
 
 }
