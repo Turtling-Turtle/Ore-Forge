@@ -181,7 +181,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 //        this.pad(2.5f);
-        this.pad(2.4f, 2.4f, 2.4f, 0);
+        this.pad(2.4f, 2.5f, 2.4f, 0);
         this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         this.add(background).expand().fill();
 //        this.add(background).fill().expand();
@@ -240,7 +240,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             }
         }
         iconTable.setFillParent(true);
-        iconTable.pack();
+//        iconTable.pack();
     }
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
@@ -248,12 +248,12 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
+        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue).colspan(1);
     }
 
     public void show() {
         Gdx.app.log("InventoryTable", "Showing");
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .643f, Gdx.graphics.getHeight() * .1f, 0.13f)));
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .640f, Gdx.graphics.getHeight() * .1f, 0.13f)));
 //        assert isVisible();
     }
 
