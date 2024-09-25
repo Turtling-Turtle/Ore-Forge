@@ -21,7 +21,6 @@ import ore.forge.Input.InputHandler;
 import ore.forge.Input.OreObserver;
 import ore.forge.Player.Player;
 import ore.forge.QuestComponents.QuestManager;
-import ore.forge.Screens.Widgets.QuestIcon;
 
 
 /**
@@ -149,7 +148,8 @@ public class UserInterface {
         createWallet(fpsStyle);
 //        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
-        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
+//        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
+        stage.addActor(new QuestMenu(questManager));
 //        createActiveOreProgressBar();
     }
 

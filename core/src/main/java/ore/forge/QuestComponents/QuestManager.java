@@ -3,9 +3,9 @@ package ore.forge.QuestComponents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.QuestCompletedGameEvent;
+import ore.forge.EventSystem.GameEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +55,10 @@ public class QuestManager implements GameEventListener<QuestCompletedGameEvent> 
     @Override
     public Class<?> getEventType() {
         return QuestCompletedGameEvent.class;
+    }
+
+    public HashMap<String, Quest> getAllQuests() {
+        return allQuests;
     }
 
 }

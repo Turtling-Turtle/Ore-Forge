@@ -138,6 +138,10 @@ public class QuestIcon extends Table implements Listener<Quest> {
          * */
     }
 
+    public QuestStatus getStatus() {
+        return heldQuest.getStatus();
+    }
+
     private static class ConditionWidget extends Table implements Listener<QuestCondition> {
         private final Image moreInfoIcon = new Image(UIHelper.getIcon("icon_question"));
 
