@@ -5,13 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import ore.forge.*;
-import ore.forge.Input.*;
+import ore.forge.Input.BuildMode;
+import ore.forge.Input.InputHandler;
+import ore.forge.Input.OreObserver;
+import ore.forge.Input.SelectMode;
 import ore.forge.Items.Conveyor;
 import ore.forge.Items.Dropper;
 import ore.forge.Items.Item;
@@ -20,7 +20,7 @@ import ore.forge.QuestComponents.QuestManager;
 import ore.forge.Screens.Widgets.ItemIcon;
 
 import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class GameWorld extends CustomScreen {
@@ -30,10 +30,8 @@ public class GameWorld extends CustomScreen {
     private final ItemMap itemMap = ItemMap.getSingleton();
     private final Player player = Player.getSingleton();
     private final InputHandler inputHandler;
-    BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private float timeScalar;
-    private ShaderProgram shader;
 
 
     private final UserInterface userInterface;
@@ -41,20 +39,9 @@ public class GameWorld extends CustomScreen {
     private final Texture blockTexture = new Texture(Gdx.files.internal("RockTile.png"));
     private final Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
 
-    private final ParticleEffect burning = new ParticleEffect();
-    private final ParticleEffect frostbite = new ParticleEffect();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
 
     public GameWorld(OreForge game, ItemManager itemManager, QuestManager questManager) {
         super(game, itemManager);
-//        frameTimes = new ArrayList<>((int) 2e8);
-//            frostbite.load(Gdx.files.internal("Effects/Frostbite.p"),Gdx.files.internal("Effects"));
-//            frostbite.start();
-//            frostbite.scaleEffect(0.016f);
-//        burning.load(Gdx.files.internal("Effects/BurningEffect.p"), Gdx.files.internal("Effects"));
-//        burning.start();
-//        burning.scaleEffect(0.016f);
 
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
@@ -111,26 +98,6 @@ public class GameWorld extends CustomScreen {
 
 
     private void drawSelectedItem() {
-//        if (inputHandler.isSelecting()) {
-//            batch.setColor(.2f, 1, .2f, 0.5f);
-//            batch.draw(inputHandler.selectedItem.getTexture(),
-//                (int) inputHandler.selectedItem.getVector2().x,
-//                (int) inputHandler.selectedItem.getVector2().y,
-//                (inputHandler.selectedItem.getWidth() / 2f),
-//                (inputHandler.selectedItem.getHeight() / 2f),
-//                inputHandler.selectedItem.getWidth(),
-//                inputHandler.selectedItem.getHeight(),
-//                1,
-//                1,
-//                inputHandler.selectedItem.getDirection().getAngle(),
-//                0,
-//                0,
-//                inputHandler.selectedItem.getTexture().getWidth(),
-//                inputHandler.selectedItem.getTexture().getHeight(),
-//                false,
-//                false);
-//            batch.setColor(1, 1, 1, 1f);
-//        }
         if (inputHandler.getCurrentMode() instanceof SelectMode mode) {
             var selectedItem = mode.getSelectedItem();
             batch.setColor(.2f, 1, .2f, 0.5f);
