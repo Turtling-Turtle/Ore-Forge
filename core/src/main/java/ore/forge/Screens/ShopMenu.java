@@ -46,8 +46,10 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
     private final ArrayList<ItemIcon> dropperIcons, furnaceIcons, processItemsIcons, specialPointsIcons, prestigeItemsIcons;
     private final HashMap<String, ItemIcon> iconLookUp;
     private final ScrollPane scrollPane;
+    private final TextField searchBar;
     private final Table background, iconTable, topTable;
     private final Value padValue;
+    private boolean isSearching;
 
     public ShopMenu(Inventory inventory) {
         dropperIcons = new ArrayList<>();
@@ -133,7 +135,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         textFieldStyle.font = UIHelper.generateFont(determineFontSize());
         textFieldStyle.background = UIHelper.getRoundFull();
         textFieldStyle.fontColor = Color.BLACK;
-        TextField searchBar = new TextField("Search...", textFieldStyle);
+        searchBar = new TextField("Search...", textFieldStyle);
 
         //Initialize Tables
         topTable = new Table();
@@ -240,6 +242,10 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         }
         iconTable.setFillParent(true);
 //        iconTable.pack();
+    }
+
+    public boolean isSearching() {
+        return isSearching;
     }
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {

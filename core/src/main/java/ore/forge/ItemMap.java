@@ -61,7 +61,12 @@ public class ItemMap {
 //        return mapTiles[(int) target.x][(int) target.y];
     }
 
+    public Block getBlock(Vector3 target) {
+        return mapTiles[(int) Math.floor(target.x)][(int) Math.floor(target.y)];
+    }
+
     public Block getBlock(float X, float Y) {
+
         return mapTiles[(int) X][(int) Y];
 //        int x = (int) Math.floor(X);
 //        int y = (int) Math.floor(Y);

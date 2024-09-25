@@ -31,8 +31,20 @@ Each state is responsible for allowing/permiting changes to other states.
 EX: Its Inventories responsiblity to ensure you cant enter select mode.
 
 
+Tab will be used to toggle into TextField without having to click on the search field.
+When the shop and the inventory are both open
+tab will toggle between the two.
 
 Potential future menus:
 Encyclopedia.
 Stats page
 
+
+
+Approach 1:
+Game Mode goes first.
+UI elements go second.
+
+Game Mode would need to 
+
+Approach 2:

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
+import ore.forge.ItemMap;
 import ore.forge.Screens.UserInterface;
 
 import static com.badlogic.gdx.Input.Keys.*;
@@ -13,6 +15,16 @@ public class InputManager {
     private final OrthographicCamera camera;
     private final Game game;
     private final UserInterface ui;
+    private Vector3 mouseWorld;
+    private final static ItemMap ITEM_MAP = ItemMap.getSingleton();
+
+    /*
+     * Default Mode
+     * Selecting
+     * Building
+     * Observing Ore
+     *
+     * */
 
 
     private boolean moveUp, moveDown, moveLeft, moveRight;
@@ -23,43 +35,53 @@ public class InputManager {
         this.game = game;
         multiplexer = new InputMultiplexer();
         this.ui = ui;
+
     }
 
     public void updateCamera() {
 
     }
 
+    public static boolean handleKey(int keycode, boolean isPressed, CameraController controller) {
+        return switch (keycode) {
+            case Q -> {
+                controller.setZoomIn(isPressed);
+                yield true;
+            }
+            case E -> {
+                controller.setZoomOut(isPressed);
+                yield true;
+            }
+            case W -> {
+                controller.setMoveUp(isPressed);
+                yield true;
+            }
+            case S -> {
+                controller.setMoveDown(isPressed);
+                yield true;
+            }
+            case A -> {
+                controller.setMoveLeft(isPressed);
+                yield true;
+            }
+            case D -> {
+                controller.setMoveRight(isPressed);
+                yield true;
+            }
+            default -> false;
+        };
+    }
+
+    public Vector3 mouseWorld() {
+        return mouseWorld;
+    }
+
+    public boolean isCoordsValid() {
+        return !(mouseWorld.x > ITEM_MAP.mapTiles.length - 1) && !(mouseWorld.x < 0) && !(mouseWorld.y > ITEM_MAP.mapTiles[0].length - 1) && !(mouseWorld.y < 0);
+    }
+
     private class DefaultController extends InputAdapter {
 
-        private boolean handleKey(int keycode, boolean isPressed) {
-            return switch (keycode) {
-                case Q -> {
-                    zoomIn = isPressed;
-                    yield true;
-                }
-                case E -> {
-                    zoomOut = isPressed;
-                    yield true;
-                }
-                case W -> {
-                    moveUp = isPressed;
-                    yield true;
-                }
-                case S -> {
-                    moveDown = isPressed;
-                    yield true;
-                }
-                case A -> {
-                    moveLeft = isPressed;
-                    yield true;
-                }
-                case D -> {
-                    moveRight = isPressed;
-                    yield true;
-                }
-                default -> false;
-            };
-        }
 
         @Override
         public boolean keyDown(int keycode) {
