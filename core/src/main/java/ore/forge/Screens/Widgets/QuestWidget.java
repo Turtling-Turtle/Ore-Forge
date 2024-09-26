@@ -29,7 +29,7 @@ import ore.forge.UIHelper;
  * |  |___________________________________________|  |
  * |_________________________________________________|
  */
-public class QuestIcon extends Table implements Listener<Quest> {
+public class QuestWidget extends Table implements Listener<Quest> {
     private final Table descriptionTable;
     private final Quest heldQuest;
     private final Label questName;
@@ -43,11 +43,11 @@ public class QuestIcon extends Table implements Listener<Quest> {
      *  Figure out a way to better scale
      * */
 
-    public QuestIcon(Quest quest) {
+    public QuestWidget(Quest quest) {
         this.heldQuest = quest;
         heldQuest.addListener(this);
         descriptionTable = new Table();
-        this.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .25f);
+        this.setSize(Gdx.graphics.getWidth() * .38f, Gdx.graphics.getHeight() * .25f);
         this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
 
         Label.LabelStyle descriptionStyle = new Label.LabelStyle();
