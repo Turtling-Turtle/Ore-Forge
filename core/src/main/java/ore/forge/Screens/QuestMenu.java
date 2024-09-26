@@ -3,6 +3,7 @@ package ore.forge.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonType;
 import ore.forge.EventSystem.Events.QuestStepCompletedGameEvent;
@@ -22,6 +23,18 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
     private QuestStatus filterType;
 
     public QuestMenu(QuestManager questManager) {
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.fontColor = Color.BLACK;
+        textButtonStyle.up = UIHelper.getRoundFull();
+        textButtonStyle.down = UIHelper.getRoundFull();
+        textButtonStyle.checked = UIHelper.getRoundFull();
+        textButtonStyle.over = UIHelper.getRoundFull();
+        textButtonStyle.font = UIHelper.generateFont(10);
+        TextButton completed = new TextButton("Completed", textButtonStyle);
+        TextButton inProgress = new TextButton("In Progress", textButtonStyle);
+        TextButton locked = new TextButton("Locked", textButtonStyle);
+        TextButton all = new TextButton("Unlocked", textButtonStyle);
         /*
          * Completed
          * Locked

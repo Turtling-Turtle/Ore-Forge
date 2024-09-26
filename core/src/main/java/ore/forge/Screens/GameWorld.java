@@ -42,7 +42,6 @@ public class GameWorld extends CustomScreen {
 
     public GameWorld(OreForge game, ItemManager itemManager, QuestManager questManager) {
         super(game, itemManager);
-
         batch = new SpriteBatch(4000);
         inputHandler = new InputHandler(game);
         camera.zoom = 0.04f;
