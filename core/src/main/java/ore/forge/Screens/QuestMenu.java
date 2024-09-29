@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
-import ore.forge.ButtonType;
 import ore.forge.EventSystem.Events.QuestStepCompletedGameEvent;
 import ore.forge.EventSystem.GameEventListener;
 import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestManager;
 import ore.forge.QuestComponents.QuestStatus;
 import ore.forge.Screens.Widgets.QuestWidget;
-import ore.forge.UIHelper;
+import ore.forge.UI.ButtonType;
+import ore.forge.UI.UIHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,13 +53,16 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
             lookup.put(quest.getId(), questIcon);
             questWidgets.add(questIcon);
             count++;
-            iconTable.add(questIcon).top().left().size(questIcon.getWidth(), questIcon.getHeight())
-                .align(Align.topLeft).expand().fill();
+//            iconTable.add(questIcon).top().left().size(questIcon.getWidth(), questIcon.getHeight())
+//                .align(Align.topLeft).expand().fill().pad(2f);
+
+            iconTable.add(questIcon).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
             if (count % 2 == 0) {
                 iconTable.row();
             }
         }
 
+        iconTable.setDebug(true);
 //        this.pad(2f);
 //        iconTable.setFillParent(true);
         this.pad(2.75f);

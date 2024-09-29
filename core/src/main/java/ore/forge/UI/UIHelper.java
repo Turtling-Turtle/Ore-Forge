@@ -1,4 +1,4 @@
-package ore.forge;
+package ore.forge.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -63,6 +63,19 @@ public class UIHelper {
         }
         var newNinePatch = new NinePatchDrawable(icons.getPatch(name));
         iconLookup.put(name, newNinePatch);
+        return newNinePatch;
+    }
+
+    @SuppressWarnings("GDXJavaStaticResource")
+    private final static Skin glowSquares = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/GlowSquare.atlas")));
+    private final static HashMap<String, NinePatchDrawable> glowSquareLookup = new HashMap<>();
+
+    public static NinePatchDrawable getGlowSquare(GlowSquare glowSquare) {
+        if (glowSquareLookup.containsKey(glowSquare.getName())) {
+            return glowSquareLookup.get(glowSquare.getName());
+        }
+        var newNinePatch = new NinePatchDrawable(glowSquares.getPatch(glowSquare.getName()));
+        iconLookup.put(glowSquare.getName(), newNinePatch);
         return newNinePatch;
     }
 

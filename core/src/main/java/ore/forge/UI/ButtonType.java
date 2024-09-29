@@ -1,4 +1,4 @@
-package ore.forge;
+package ore.forge.UI;
 
 public enum ButtonType {
     CIRCLE_BOLD_128("128xCircleBold"),

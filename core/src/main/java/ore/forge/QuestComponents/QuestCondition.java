@@ -1,9 +1,9 @@
 package ore.forge.QuestComponents;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.EventSystem.GameEventListener;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.GameEvent;
+import ore.forge.EventSystem.GameEventListener;
 import ore.forge.Expressions.Condition;
 import ore.forge.Listener;
 import ore.forge.Ore;
@@ -17,7 +17,7 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
     private final Condition condition;
     private QuestStatus state;
     private final String description;
-    private final ArrayList<Listener> listeners;
+    private final ArrayList<Listener<QuestCondition>> listeners;
 
     public QuestCondition(QuestStep parent, JsonValue jsonValue) {
         listeners = new ArrayList<>(5);
@@ -35,6 +35,9 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
             state = QuestStatus.COMPLETED;
             this.unregister();
             parent.checkState();
+            for (Listener<QuestCondition> listener : listeners) {
+                listener.update(this);
+            }
         }
     }
 
@@ -65,8 +68,7 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
 
     /**
      * @return returns the description of the quest condition.
-     *
-     * */
+     */
     public String getDescription() {
         return description;
     }

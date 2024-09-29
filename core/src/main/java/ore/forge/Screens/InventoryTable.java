@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonHelper;
-import ore.forge.ButtonType;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.EventSystem.GameEventListener;
@@ -18,7 +17,8 @@ import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Screens.Widgets.ItemIcon;
 import ore.forge.Stopwatch;
-import ore.forge.UIHelper;
+import ore.forge.UI.ButtonType;
+import ore.forge.UI.UIHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;

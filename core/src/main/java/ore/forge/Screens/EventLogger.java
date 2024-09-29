@@ -17,7 +17,7 @@ import ore.forge.EventSystem.Events.GameEvent;
 import ore.forge.EventSystem.Events.OreDroppedGameEvent;
 import ore.forge.EventSystem.Events.OreSoldGameEvent;
 import ore.forge.FontColors;
-import ore.forge.UIHelper;
+import ore.forge.UI.UIHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,7 +97,7 @@ public class EventLogger extends WidgetGroup {
         label.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.45f)));
 
 
-        if (autoScroll && scrollPane.getScrollY() > 0 ) {
+        if (autoScroll && scrollPane.getScrollY() > 0) {
             scrollPane.scrollTo(0, 0, 0, 0);
         }
         scrollPane.updateVisualScroll();

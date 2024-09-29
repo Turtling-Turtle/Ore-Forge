@@ -1,4 +1,5 @@
 ## Gradle:
+.env
 .gradle/
 gradle-app.setting
 /build/

@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
-import ore.forge.ButtonType;
 import ore.forge.Listener;
 import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestCondition;
 import ore.forge.QuestComponents.QuestStatus;
-import ore.forge.UIHelper;
+import ore.forge.UI.ButtonType;
+import ore.forge.UI.UIHelper;
 
 
 /**
@@ -75,11 +75,12 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
         Table topRow = new Table();
 
+        topRow.pad(0);
         topRow.add(questName).top().align(Align.topLeft);
         topRow.add(questStep).bottom().left().padBottom(25);
 
         this.add(topRow).top().left().row();
-        this.add(questDescription).top().left().expandX().fillX().row();
+        this.add(questDescription).top().left().pad(0).expandX().fillX().row();
         this.setBackground(UIHelper.getRoundFull());
 
         switch (quest.getStatus()) {
@@ -97,6 +98,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
         this.add(scrollBorder).top().expandX().fillX().minHeight(this.getHeight() / 2f);
         scrollPane.setScrollingDisabled(true, false);
 
+        this.debug();
 
     }
 
@@ -121,9 +123,9 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
     private int determineFontSize() {
         return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 40;
+            case 1080 -> 18;
+            case 1440 -> 30;
+            case 2160 -> 38;
             default -> 22;
         };
     }
@@ -144,6 +146,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
     private static class ConditionWidget extends Table implements Listener<QuestCondition> {
         private final Image moreInfoIcon = new Image(UIHelper.getIcon("icon_question"));
+        private Label condition;
 
         public ConditionWidget(QuestCondition questCondition) {
 //            Skin buttonAtlas = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas")));
@@ -155,7 +158,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
             /*TODO
              * Configure Label Style
              * */
-            Label condition = new Label(questCondition.getDescription(), labelStyle);
+            condition = new Label(questCondition.getDescription(), labelStyle);
 
             TextTooltip.TextTooltipStyle tooltipStyle = new TextTooltip.TextTooltipStyle();
             tooltipStyle.label = labelStyle;
@@ -168,7 +171,6 @@ public class QuestWidget extends Table implements Listener<Quest> {
                 + " Event   " + "Condition: " + questCondition.getCondition().toString(), tooltipStyle);
             toolTip.setInstant(true);
             moreInfoIcon.addListener(toolTip);
-            questCondition.addListener(this);
 
             this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
             this.add(moreInfoIcon).size(50, 50).top().right().align(Align.topRight);
@@ -184,6 +186,18 @@ public class QuestWidget extends Table implements Listener<Quest> {
                 /*TODO
                  * Grey out elements of this quest and add a completed label.
                  * */
+
+                condition.getStyle().fontColor = Color.LIGHT_GRAY;
+                Label.LabelStyle labelStyle = new Label.LabelStyle();
+                labelStyle.font = UIHelper.generateFont(determineFontSize() * 2);
+                labelStyle.fontColor = Color.OLIVE;
+//                this.addActorBefore(new Label("Completed", labelStyle), moreInfoIcon);
+
+                this.clear();
+                this.add(condition).expandY().fillY().top().left().align(Align.topLeft).padRight(10f);
+                this.add(new Label("Completed", labelStyle)).expand().fill().top().left().align(Align.topLeft);
+                this.add(moreInfoIcon).size(50, 50).right().align(Align.right);
+                System.out.println("Quest Widget Updated");
             }
         }
 

@@ -8,11 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import ore.forge.ButtonType;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
-import ore.forge.UIHelper;
+import ore.forge.UI.ButtonType;
+import ore.forge.UI.UIHelper;
 
 
 //An Item Icon is a rounded Square with a border and a name below it.
