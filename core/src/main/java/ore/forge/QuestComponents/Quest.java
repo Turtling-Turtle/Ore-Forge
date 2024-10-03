@@ -89,12 +89,8 @@ public class Quest {
 
     public void checkForCompletion() {
         Gdx.app.log("Quest", "Called");
-//        assert questSteps.size() == (completedSteps.size() + incompleteSteps.size);
 
         assert incompleteSteps.isEmpty() || incompleteSteps.first().isCompleted();
-
-//        Gdx.app.log("Quest - Incomplete Steps","Step:" + incompleteSteps.first().toString());
-//        Gdx.app.log("Quest","Incomplete Steps Size: " + incompleteSteps.size);
 
         if (!incompleteSteps.isEmpty()) {
             completedSteps.add(incompleteSteps.removeFirst());
@@ -104,11 +100,10 @@ public class Quest {
 
         if (!incompleteSteps.isEmpty()) {
             incompleteSteps.first().registerConditions();
-//            currentStep = incompleteSteps.first();
-//            currentStep.registerConditions();
         } else {
             complete();
         }
+        this.notifyListeners();
     }
 
     public int getTotalSteps() {
@@ -146,8 +141,12 @@ public class Quest {
         return this.incompleteSteps.first();
     }
 
-    public int currentStepIndex() {
+    public int currentStepNumber() {
         return questSteps.indexOf(incompleteSteps.first()) + 1;
+    }
+
+    public ArrayList<QuestStep> getQuestSteps() {
+        return questSteps;
     }
 
     public String getId() {

@@ -10,6 +10,7 @@ import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Player.Player;
 import ore.forge.Screens.InventoryTable;
+import ore.forge.Screens.QuestMenu;
 import ore.forge.Screens.ShopMenu;
 import ore.forge.Screens.UserInterface;
 
@@ -26,6 +27,7 @@ public class InputHandler {
     private final BuildMode buildMode;
     private final InventoryMode inventoryMode;
     private final OreObserver oreObserver;
+    private final QuestMode questMode;
 
 
     private UserInterface userInterface;
@@ -43,6 +45,7 @@ public class InputHandler {
         buildMode = new BuildMode(heldNode, heldItem);
         inventoryMode = new InventoryMode(this);
         oreObserver = new OreObserver();
+        questMode = new QuestMode();
         currentMode = observerMode;
     }
 
@@ -98,6 +101,10 @@ public class InputHandler {
         return inventoryMode;
     }
 
+    public QuestMenu getQuestMenu() {
+        return userInterface.getQuestMenu();
+    }
+
     public OreObserver getOreObserver() {
         return oreObserver;
     }
@@ -141,6 +148,10 @@ public class InputHandler {
 
     public void setUserInterface(UserInterface userInterface) {
         this.userInterface = userInterface;
+    }
+
+    public QuestMode getQuestMode() {
+        return questMode;
     }
 
     public float getMouseWorldX() {

@@ -2,12 +2,15 @@ package ore.forge.Screens.Widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.Listener;
 import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestCondition;
 import ore.forge.QuestComponents.QuestStatus;
+import ore.forge.QuestComponents.QuestStep;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
 
@@ -20,7 +23,7 @@ import ore.forge.UI.UIHelper;
  */
 /*
  * ___________________________________________________
- * | QUEST NAME (Step X of X)            Reward      |
+ * | QUEST NAME <-(Step X of X)->        Reward      |
  * | Description                                     |
  * |   ___________________________________________   |
  * |  | * Condition description                ?  |  |
@@ -28,6 +31,7 @@ import ore.forge.UI.UIHelper;
  * |  | * Condition description  (COMPLETED)   ?  |  |
  * |  |___________________________________________|  |
  * |_________________________________________________|
+ * Reward will display Item Icon if Item
  */
 public class QuestWidget extends Table implements Listener<Quest> {
     private final Table descriptionTable;
@@ -35,6 +39,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
     private final Label questName;
     private final Label questDescription;
     private final Label questStep;
+    private int index;
 
 
     /*
@@ -44,6 +49,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
      * */
 
     public QuestWidget(Quest quest) {
+        index = 0;
         this.heldQuest = quest;
         heldQuest.addListener(this);
         descriptionTable = new Table();
@@ -66,8 +72,8 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
         Label.LabelStyle stepOfStyle = new Label.LabelStyle();
         stepOfStyle.font = UIHelper.generateFont((int) (determineFontSize() * .75f));
-        stepOfStyle.fontColor = Color.LIGHT_GRAY;
-        questStep = new Label("Step " + heldQuest.currentStepIndex() + " of " + heldQuest.getTotalSteps(), stepOfStyle);
+        stepOfStyle.fontColor = Color.DARK_GRAY;
+        questStep = new Label("Step " + heldQuest.currentStepNumber() + " of " + heldQuest.getTotalSteps(), stepOfStyle);
 
         System.out.println(quest.getStatus());
 
@@ -75,50 +81,71 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
         Table topRow = new Table();
 
+
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("UIAssets/Icons.atlas"));
+        Skin skin = new Skin(atlas);
+        Sprite previousSprite = new Sprite(skin.getRegion("icon_next_thin"));
+        previousSprite.flip(true, true);
+        Image previousStepButton = new Image(previousSprite);
+        previousStepButton.setColor(Color.BLACK);
+//        previousStepButton.setDebug(true);
+
+        Image nextStepButton = new Image(UIHelper.getIcon("icon_next_thin"));
+        nextStepButton.setColor(Color.BLACK);
+//        nextStepButton.setDebug(true);
+
+        float dimensions = questStep.getHeight();
+
         topRow.pad(0);
         topRow.add(questName).top().align(Align.topLeft);
+        topRow.add(previousStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padRight(1f);
         topRow.add(questStep).bottom().left().padBottom(25);
+        topRow.add(nextStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padLeft(1f);
+
 
         this.add(topRow).top().left().row();
         this.add(questDescription).top().left().pad(0).expandX().fillX().row();
         this.setBackground(UIHelper.getRoundFull());
 
-        switch (quest.getStatus()) {
-            case LOCKED -> configureLocked();
-            case COMPLETED -> configureCompleted();
-            case IN_PROGRESS -> configureInProgress();
-        }
+
+        this.update(heldQuest);
 
 //        this.add(scrollPane).top().expandX().fillX();
 //        scrollPane.setDebug(true);
         Table scrollBorder = new Table();
         scrollBorder.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         scrollBorder.setColor(Color.BLACK);
-        scrollBorder.add(scrollPane).expand().fill();
-        this.add(scrollBorder).top().expandX().fillX().minHeight(this.getHeight() / 2f);
+        scrollBorder.add(scrollPane).size(scrollBorder.getWidth(), this.getHeight() / 2f).expand().fill();
+//        this.add(scrollBorder).top().expand().fill().minHeight(this.getHeight() / 2f);
+        this.add(scrollBorder).expand().fill();
         scrollPane.setScrollingDisabled(true, false);
 
-        this.debug();
+//        this.debug();
 
     }
 
     private void configureLocked() {
-        //How do I only adjust the height of these tables?
-        for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
-            var widget = new ConditionWidget(condition);
-            descriptionTable.add(widget).top().left().row();
-        }
+//        for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
+//            var widget = new ConditionWidget(condition);
+//            descriptionTable.add(widget).top().left().row();
+//        }
+        var locked = new Image(UIHelper.getIcon("icon_lock"));
+        locked.setColor(Color.BLACK);
+        float dimensions = locked.getHeight();
+        descriptionTable.add(locked).size(dimensions, dimensions);
     }
 
     private void configureCompleted() {
 
     }
 
-    private void configureInProgress() {
-        for (QuestCondition condition : heldQuest.getCurrentStep().getConditions()) {
+    private void configureInProgress(QuestStep step) {
+        descriptionTable.clear();
+        for (QuestCondition condition : step.getConditions()) {
             var widget = new ConditionWidget(condition);
-            descriptionTable.add(widget).top().left().expand().fill().pad(5f).row();
+            descriptionTable.add(widget).top().expand().fill().left().pad(5f).row();
         }
+        questStep.setText("Step " + heldQuest.currentStepNumber() + " of " + heldQuest.getTotalSteps());
     }
 
     private int determineFontSize() {
@@ -130,18 +157,33 @@ public class QuestWidget extends Table implements Listener<Quest> {
         };
     }
 
+
     @Override
     public void update(Quest subject) {
-        /*
-         * TODO:
-         *  update step label
-         *   update state of quest (is it completed or not)
-         *   update conditions if step changed
-         * */
+        switch (subject.getStatus()) {
+            case IN_PROGRESS -> {
+                configureInProgress(subject.getCurrentStep());
+            }
+            case LOCKED -> {
+                configureLocked();
+                //Set widget to be grayed out and have lock icon over it.
+            }
+            case COMPLETED -> {
+                this.setColor(Color.OLIVE);
+            }
+        }
     }
 
     public QuestStatus getStatus() {
         return heldQuest.getStatus();
+    }
+
+    public void changeStep(int step) {
+        var questSteps = heldQuest.getQuestSteps();
+        if (step <= questSteps.size() && step >= 0) {
+            var questStep = questSteps.get(step);
+            configureInProgress(questStep);
+        }
     }
 
     private static class ConditionWidget extends Table implements Listener<QuestCondition> {
@@ -189,7 +231,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
 
                 condition.getStyle().fontColor = Color.LIGHT_GRAY;
                 Label.LabelStyle labelStyle = new Label.LabelStyle();
-                labelStyle.font = UIHelper.generateFont(determineFontSize() * 2);
+                labelStyle.font = UIHelper.generateFont(determineFontSize());
                 labelStyle.fontColor = Color.OLIVE;
 //                this.addActorBefore(new Label("Completed", labelStyle), moreInfoIcon);
 

@@ -8,11 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-/**@author Nathan Ulmen
- *
- *
- *
- * */
+/**
+ * @author Nathan Ulmen
+ */
 public class EventManager {
     private static EventManager eventManager = new EventManager();
     private final HashMap<Class<?>, ArrayList<GameEventListener<?>>> subscribers;
@@ -30,11 +28,7 @@ public class EventManager {
     }
 
     public void registerListener(GameEventListener<?> listener) {
-//        if (isNotifying) {
-//            additionStack.push(listener);
-//        } else {
-            addListener(listener);
-//        }
+        addListener(listener);
     }
 
     private void addListener(GameEventListener<?> gameEventListener) {
@@ -49,18 +43,14 @@ public class EventManager {
     }
 
     public void unregisterListener(GameEventListener<?> listener) {
-//        if (isNotifying) {
-//            removalStack.push(listener);
-//        } else {
-            removeListener(listener);
-//        }
+        removeListener(listener);
     }
 
     private void removeListener(GameEventListener<?> listener) {
         subscribers.get(listener.getEventType()).remove(listener);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void notifyListeners(GameEvent<?> event) {
 
         if (eventLogger != null) {
@@ -90,6 +80,5 @@ public class EventManager {
     public String toString() {
         return subscribers.toString();
     }
-
 
 }

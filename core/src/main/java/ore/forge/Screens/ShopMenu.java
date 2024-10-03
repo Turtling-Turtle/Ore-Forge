@@ -334,7 +334,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
 //        table.add(buyButton).right();
 //        table.add(cancelButton).right();
         table.add(purchaseVbox).right().expand().fill();
-        table.setDebug(true, true);
+//        table.setDebug(true, true);
         background.row();
         background.add(table).align(Align.bottomLeft).left().bottom().expandX().fillX();
     }

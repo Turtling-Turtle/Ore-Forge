@@ -2,8 +2,10 @@ package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.EventSystem.Events.QuestStepCompletedGameEvent;
 import ore.forge.EventSystem.GameEventListener;
@@ -16,13 +18,20 @@ import ore.forge.UI.UIHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 public class QuestMenu extends Table implements GameEventListener<QuestStepCompletedGameEvent> {
     private final ArrayList<QuestWidget> questWidgets;
     private final HashMap<String, QuestWidget> lookup;
     private QuestStatus filterType;
+    private final Table widgetTable;
 
+    /*
+     * Sort Quests by Name, Completed Progress, Reward Type?
+     * */
     public QuestMenu(QuestManager questManager) {
+        questWidgets = new ArrayList<>(questManager.getAllQuests().size());
+        lookup = new HashMap<>(questManager.getAllQuests().size());
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.fontColor = Color.BLACK;
@@ -35,18 +44,33 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
         TextButton inProgress = new TextButton("In Progress", textButtonStyle);
         TextButton locked = new TextButton("Locked", textButtonStyle);
         TextButton all = new TextButton("Unlocked", textButtonStyle);
+
+        this.addListener(completed, () -> {
+            changeFilter(QuestStatus.COMPLETED);
+        });
+
+        this.addListener(inProgress, () -> {
+            changeFilter(QuestStatus.IN_PROGRESS);
+        });
+
+        this.addListener(locked, () -> {
+            changeFilter(QuestStatus.LOCKED);
+        });
+
+        this.addListener(all, () -> {
+            changeFilter(null);
+        });
+
         /*
          * Completed
          * Locked
          * Active
          * */
-        Table iconTable = new Table();
-        iconTable.setBackground(UIHelper.getButton(ButtonType.ROUND_FULL_128));
-        iconTable.setColor(Color.ORANGE);
+        widgetTable = new Table();
+        widgetTable.setBackground(UIHelper.getButton(ButtonType.ROUND_FULL_128));
+        widgetTable.setColor(Color.ORANGE);
 
 
-        questWidgets = new ArrayList<>(questManager.getAllQuests().size());
-        lookup = new HashMap<>(questManager.getAllQuests().size());
         int count = 0;
         for (Quest quest : questManager.getAllQuests().values()) {
             var questIcon = new QuestWidget(quest);
@@ -56,17 +80,17 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
 //            iconTable.add(questIcon).top().left().size(questIcon.getWidth(), questIcon.getHeight())
 //                .align(Align.topLeft).expand().fill().pad(2f);
 
-            iconTable.add(questIcon).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
+            widgetTable.add(questIcon).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
             if (count % 2 == 0) {
-                iconTable.row();
+                widgetTable.row();
             }
         }
 
-        iconTable.setDebug(true);
+//        widgetTable.setDebug(true);
 //        this.pad(2f);
 //        iconTable.setFillParent(true);
         this.pad(2.75f);
-        this.add(iconTable).expand().fill().top().left().align(Align.topLeft);
+        this.add(widgetTable).expand().fill().top().left().align(Align.topLeft);
         this.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 
@@ -75,6 +99,50 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
 
 //        this.debugAll();
 
+    }
+
+    private void addListener(TextButton button, Runnable clickedLogic) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickedLogic.run();
+            }
+        });
+    }
+
+    private void changeFilter(QuestStatus status) {
+        if (this.filterType != status) {
+            this.filterType = status;
+            CompletableFuture.supplyAsync(() -> {
+                ArrayList<QuestWidget> widgetsToAdd = new ArrayList<>(questWidgets);
+                for (QuestWidget widget : questWidgets) {
+                    if (widget.getStatus() == this.filterType || this.filterType == null) {
+                        widgetsToAdd.add(widget);
+                    }
+                }
+                return widgetsToAdd;
+            }).thenAccept(widgetsToAdd -> {
+                Gdx.app.postRunnable(() -> {
+                    addIcons(widgetsToAdd);
+                });
+            });
+
+        }
+    }
+
+    private void updateIcons() {
+
+    }
+
+    public void addIcons(ArrayList<QuestWidget> icons) {
+        widgetTable.clear();
+        int count = 0;
+        for (QuestWidget widget : icons) {
+            widgetTable.add(widget).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
+            if (++count % 2 == 0) {
+                widgetTable.row();
+            }
+        }
     }
 
     private void foo() {
@@ -93,5 +161,13 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
     @Override
     public Class<?> getEventType() {
         return QuestStepCompletedGameEvent.class;
+    }
+
+    public void hide() {
+        this.setVisible(false);
+    }
+
+    public void show() {
+        this.setVisible(true);
     }
 }

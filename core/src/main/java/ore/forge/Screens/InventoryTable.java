@@ -16,7 +16,6 @@ import ore.forge.EventSystem.GameEventListener;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Screens.Widgets.ItemIcon;
-import ore.forge.Stopwatch;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
 
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class InventoryTable extends Table implements GameEventListener<NodeGameEvent> {
     private final static int ROW_COUNT = 4;
@@ -35,10 +33,11 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private final HashMap<String, ItemIcon> lookUp;
     private final CheckBox[] checkBoxes;
     private final Value padValue;
+    private Table topTable;
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
-        Table topTable = new Table();
+        topTable = new Table();
         topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         topTable.setColor(Color.BLACK);
         Table background = new Table();
@@ -163,7 +162,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 //        topTable.add(checkBoxes[0]).top().left().expand().fill().align(Align.topLeft).pad(5);
 //        topTable.add(checkBoxes[1]).top().left().expand().fill().align(Align.topLeft).pad(5);
 //        topTable.add(checkBoxes[2]).top().left().expand().fill().align(Align.topLeft).pad(5);
-
         allIcons = new ArrayList<>();
         for (InventoryNode node : inventory.getInventoryNodes()) {
             var itemIcon = new ItemIcon(node);
@@ -178,6 +176,13 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
         background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
         background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
+        System.out.println("TOP TABLE WIDTH: " + topTable.getWidth());
+
+        iconTable.columnDefaults(0).width(Value.percentWidth(0.245f, topTable));
+        iconTable.columnDefaults(1).width(Value.percentWidth(0.245f, topTable));
+        iconTable.columnDefaults(2).width(Value.percentWidth(0.245f, topTable));
+        iconTable.columnDefaults(3).width(Value.percentWidth(0.245f, topTable));
+
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 //        this.pad(2.5f);
@@ -189,14 +194,9 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 //        this.debugAll();
     }
 
-    private void asyncSearch(String target) {
-        var stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
-        stopwatch.start();
-
-
+    public void asyncSearch(String target) {
         final String finalizedTarget = target;
-        CompletableFuture.runAsync(() -> {
-
+        CompletableFuture.supplyAsync(() -> {
             ArrayList<ItemIcon> icons;
             if (finalizedTarget.equals("Search...")) {
                 icons = allIcons;
@@ -207,10 +207,10 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             if (sortMethod != null) {
                 icons.sort(sortMethod);
             }
+            return icons;
+        }).thenAccept(icons -> {
             Gdx.app.postRunnable(() -> addNewIcons(icons));
         });
-        stopwatch.stop();
-        Gdx.app.log("Inventory Table", ore.forge.Color.highlightString(stopwatch.toString(), ore.forge.Color.GREEN));
     }
 
     public ArrayList<ItemIcon> getAllIcons() {
@@ -246,9 +246,12 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
         if (count % ROW_COUNT == 0) {
+//            iconTable.add(icon).left().top().expandX().fillX().align(Align.topLeft).padTop(padValue).padBottom(padValue).colspan(1);
             iconTable.row();
         }
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue).colspan(1);
+        iconTable.add(icon).height(icon.getHeight()).left().top().align(Align.topLeft).padTop(padValue).padBottom(padValue).padRight(padValue).colspan(1);
+//        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue).colspan(1);
+
     }
 
     public void show() {

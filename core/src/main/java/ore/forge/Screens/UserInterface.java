@@ -46,6 +46,7 @@ public class UserInterface {
     private final Label oreInfo;
     private final ScreenViewport uiViewport;
     private final QuestManager questManager;
+    private final QuestMenu questMenu;
 
     public UserInterface(OreForge game, InputHandler handler, QuestManager questManager) {
         this.questManager = questManager;
@@ -101,9 +102,11 @@ public class UserInterface {
 
 //        stage = new Stage(uiViewport, game.getSpriteBatch());
         stage = new Stage(uiViewport);
-        int count = 0;
 
         inventoryWidget = new InventoryTable(player.getInventory());
+
+        questMenu = new QuestMenu(questManager);
+        questMenu.setVisible(false);
 
         shopWidget = new ShopMenu(player.getInventory());
         handler.setUserInterface(this);
@@ -115,6 +118,8 @@ public class UserInterface {
         EventLogger eventLogger = new EventLogger();
         eventLogger.setPosition(Gdx.graphics.getWidth() * 0.01f, Gdx.graphics.getHeight() * .01f);
         EventManager.getSingleton().setEventLogger(eventLogger);
+
+        inventoryWidget.asyncSearch("Search..."); //Hack to rebuild inventory to correct size.
 
 
         var prestigeButton = ButtonHelper.createRoundTextButton("Prestige", Color.SKY);
@@ -149,7 +154,7 @@ public class UserInterface {
 //        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
 //        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
-        stage.addActor(new QuestMenu(questManager));
+        stage.addActor(questMenu);
 //        createActiveOreProgressBar();
     }
 
@@ -241,6 +246,10 @@ public class UserInterface {
                 inventory.setVisible(false);
             }
         });
+    }
+
+    public QuestMenu getQuestMenu() {
+        return questMenu;
     }
 
 }
