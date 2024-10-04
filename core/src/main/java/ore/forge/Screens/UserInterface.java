@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.*;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.PrestigeGameEvent;
@@ -44,7 +46,7 @@ public class UserInterface {
     private final ShopMenu shopWidget;
     private InputHandler inputHandler;
     private final Label oreInfo;
-    private final ScreenViewport uiViewport;
+    private final Viewport uiViewport;
     private final QuestManager questManager;
     private final QuestMenu questMenu;
 
@@ -53,7 +55,7 @@ public class UserInterface {
 
         this.inputHandler = handler;
 
-        uiViewport = new ScreenViewport();
+        uiViewport = new ScalingViewport(Scaling.fill, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
 //        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
 //        style.knobBefore = skin.getDrawable("128xVeryRoundFull");
@@ -196,6 +198,7 @@ public class UserInterface {
             activeOre.setText(FontColors.highlightString("Active Ore: " + oreRealm.getActiveOre().size(), FontColors.SANDY_BROWN));
             updateInterval = 0f;
         }
+
 
         stage.act(deltaT);
         stage.draw();

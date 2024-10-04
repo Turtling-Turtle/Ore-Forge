@@ -81,7 +81,8 @@ public class ItemIcon extends Table {
         nameLabel.setAlignment(Align.bottom);
 
         this.add(stack).expand().fill().center();
-        this.pad(3f);
+//        this.pad(3f);
+        this.pad(Value.percentWidth(0.01f, this));
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
