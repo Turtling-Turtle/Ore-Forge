@@ -189,8 +189,9 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 //        this.pad(2.4f, 2.5f, 2.4f, 0);
         Value borderPad = Value.percentHeight(0.0014f, this);
         this.pad(borderPad, borderPad, borderPad, Value.zero);
-        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         this.add(background).expand().fill();
+        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+
 //        this.add(background).fill().expand();
 
 //        this.debugAll();
