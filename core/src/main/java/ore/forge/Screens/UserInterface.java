@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ore.forge.*;
 import ore.forge.EventSystem.EventManager;
@@ -54,7 +54,7 @@ public class UserInterface {
 
         this.inputHandler = handler;
 
-        uiViewport = new ScreenViewport();
+        uiViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
 //        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
 //        style.knobBefore = skin.getDrawable("128xVeryRoundFull");
@@ -149,7 +149,7 @@ public class UserInterface {
         stage.addActor(mouseCoords);
         stage.addActor(itemOver);
         stage.addActor(specialPoints);
-        stage.addActor(prestigeButton);
+//        stage.addActor(prestigeButton);
 //        stage.addActor(progressBar);
         createWallet(fpsStyle);
 //        fpsStyle.fontColor = Color.WHITE;
