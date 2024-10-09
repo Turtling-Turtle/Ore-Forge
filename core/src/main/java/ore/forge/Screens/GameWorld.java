@@ -6,9 +6,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import ore.forge.*;
 import ore.forge.Input.*;
@@ -20,7 +18,7 @@ import ore.forge.QuestComponents.QuestManager;
 import ore.forge.Screens.Widgets.ItemIcon;
 
 import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class GameWorld extends CustomScreen {
@@ -33,18 +31,12 @@ public class GameWorld extends CustomScreen {
     BitmapFont font2 = new BitmapFont(Gdx.files.internal("UIAssets/Blazam.fnt"));
     private final Stopwatch stopwatch = new Stopwatch(TimeUnit.MICROSECONDS);
     private float timeScalar;
-    private ShaderProgram shader;
-
-
     private final UserInterface userInterface;
     private final Texture buildModeTexture = new Texture(Gdx.files.internal("PlayerSelect.png"));
     private final Texture blockTexture = new Texture(Gdx.files.internal("RockTile.png"));
     private final Texture oreTexture = new Texture(Gdx.files.internal("Ruby2.png"));
 
-    private final ParticleEffect burning = new ParticleEffect();
-    private final ParticleEffect frostbite = new ParticleEffect();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+    private InputManager inputManager;
 
     public GameWorld(OreForge game, ItemManager itemManager, QuestManager questManager) {
         super(game, itemManager);
@@ -65,9 +57,12 @@ public class GameWorld extends CustomScreen {
             icon.setProcessor(inputHandler.getInventoryMode());
         }
 
+        inputManager = new InputManager(camera, game, userInterface);
+
         camera.position.set(Constants.GRID_DIMENSIONS / 2f, Constants.GRID_DIMENSIONS / 2f, 0f);
 
         timeScalar = 1f;
+        inputManager.updateProcessor();
 
     }
 
@@ -78,7 +73,9 @@ public class GameWorld extends CustomScreen {
         stopwatch.restart();
         viewport.apply();
 
-        inputHandler.update(delta, camera);
+        inputManager.update();
+
+//        inputHandler.update(delta, camera);
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
@@ -252,14 +249,15 @@ public class GameWorld extends CustomScreen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(userInterface.stage);
+//        Gdx.input.setInputProcessor(userInterface.stage);
+        inputManager.updateProcessor();
         game.memoryCounter.setPosition(camera.position.x, camera.position.y);
         stage.addActor(game.memoryCounter);
     }
 
     @Override
     public void resume() {
-        Gdx.input.setInputProcessor(userInterface.stage);
+//        Gdx.input.setInputProcessor(userInterface.stage);
     }
 
     private void drawWorldTiles(Camera camera) {

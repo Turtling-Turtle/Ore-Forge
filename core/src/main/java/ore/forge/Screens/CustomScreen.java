@@ -1,6 +1,5 @@
 package ore.forge.Screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -54,11 +53,13 @@ public abstract class CustomScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
     public void resume() {
-        Gdx.input.setInputProcessor(stage);
+//        Gdx.input.setInputProcessor(stage);
+
     }
 
     @Override
@@ -74,12 +75,14 @@ public abstract class CustomScreen implements Screen {
     public void addToStage(Actor actor) {
         stage.addActor(actor);
     }
+
     //Call on screen Show
     public void screenFadeIn(float fadeInTime) {
         stage.getRoot().getColor().a = 0f;
         AlphaAction fadeIn = Actions.fadeIn(fadeInTime);
         stage.getRoot().addAction(fadeIn);
     }
+
     //Call on screen Hide
     public void screenFadeOut(float fadeOutTime) {
         stage.getRoot().getColor().a = 1f;

@@ -1,5 +1,6 @@
 package ore.forge.Input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class CameraController {
@@ -12,10 +13,31 @@ public class CameraController {
     }
 
     public void updateCamera(OrthographicCamera camera) {
+        final float delta = Gdx.graphics.getDeltaTime();
+        if (moveUp) {
+            camera.position.y += CAMERA_SPEED * delta;
+        }
+        if (moveRight) {
+            camera.position.x += CAMERA_SPEED * delta;
+        }
+        if (moveLeft) {
+            camera.position.x -= CAMERA_SPEED * delta;
+        }
+        if (moveDown) {
+            camera.position.y -= CAMERA_SPEED * delta;
+        }
+
+        if (zoomIn) {
+            camera.zoom += ZOOM_SPEED * delta;
+        }
+        if (zoomOut) {
+            camera.zoom -= ZOOM_SPEED * delta;
+        }
 
     }
 
     public void setAll(boolean state) {
+        System.out.println("Called Set All");
         moveUp = state;
         moveDown = state;
         moveLeft = state;
