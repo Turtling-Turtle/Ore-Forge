@@ -40,7 +40,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private final Value padValue;
     private boolean isSearching;
     private InputManager inputManager;
-    private DefaultState.Searching searching;
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
@@ -396,14 +395,13 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         isSearching = true;
         inputManager.getController().setAll(false);
         searchBar.getStage().setKeyboardFocus(searchBar);
-        searching = new DefaultState.Searching(this, inputManager.getShop(), inputManager.getMultiplexer());
         inputManager.multiplexer.addProcessor(0, new DefaultState.Searching(this, inputManager.getShop(), inputManager.getMultiplexer()));
     }
 
     public void stopSearching() {
         isSearching = false;
         searchBar.getStage().setKeyboardFocus(null);
-        inputManager.getMultiplexer().removeProcessor(searching);
+        inputManager.getMultiplexer().removeProcessor(0);
     }
 
     public void setInputManager(InputManager manager) {

@@ -20,7 +20,7 @@ public class DefaultState extends InputAdapter {
 
     public DefaultState(InputManager inputManager) {
         this.controller = inputManager.getController();
-        this.inventory = inputManager.getInventoryTable();
+        this.inventory = inputManager.getInventory();
         this.shop = inputManager.getShop();
         this.inputManager = inputManager;
 
@@ -28,9 +28,9 @@ public class DefaultState extends InputAdapter {
 
     public void update(OrthographicCamera camera) {
         controller.updateCamera(camera);
-//        if (mouseHeld && inputManager.isCoordsValid() && ITEM_MAP.getBlock(inputManager.mouseWorld()) != null) {
-        //Transition to Selecting Mode.
-//        }
+        if (mouseHeld && inputManager.isCoordsValid() && ITEM_MAP.getBlock(inputManager.mouseWorld()) != null) {
+            //Transition to Selecting Mode.
+        }
     }
 
     @Override
