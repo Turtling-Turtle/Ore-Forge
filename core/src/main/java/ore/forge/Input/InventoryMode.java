@@ -26,7 +26,7 @@ public class InventoryMode extends InputMode {
     public void setActive(InputHandler context) {
         handler.getInventoryUI().show();
 //        userInterface.getInventoryTable().setVisible(true);
-        Gdx.input.setInputProcessor(handler.getUserInterface().stage);
+//        Gdx.input.setInputProcessor(handler.getUserInterface().stage);
     }
 
     public void handleClicked(ItemIcon icon) {
@@ -44,7 +44,6 @@ public class InventoryMode extends InputMode {
     public String toString() {
         return "InventoryModeProcessor";
     }
-
 
 
 }

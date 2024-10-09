@@ -15,6 +15,8 @@ import ore.forge.ButtonType;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.EventSystem.GameEventListener;
+import ore.forge.Input.DefaultState;
+import ore.forge.Input.InputManager;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
 import ore.forge.Screens.Widgets.ItemIcon;
@@ -37,6 +39,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private final CheckBox[] checkBoxes;
     private final Value padValue;
     private boolean isSearching;
+    private InputManager inputManager;
 
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
@@ -52,6 +55,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         textFieldStyle.background = UIHelper.getRoundFull();
 
         textFieldStyle.font = UIHelper.generateFont(determineFontSize());
+        textFieldStyle.cursor = UIHelper.getButton(ButtonType.ROUND_FULL_128).tint(Color.BLACK);
 
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
@@ -67,7 +71,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
             @Override
             public void keyTyped(TextField textField, char c) {
-
                 if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) && last != null && !last.equals(textField.getText())) {
                     asyncSearch(textField.getText());
                 }
@@ -378,16 +381,31 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (searchBar != searchBar.getStage().hit(x, y, true)) {
-                    isSearching = false;
-                    searchBar.getStage().setKeyboardFocus(null);
+                    stopSearching();
                 } else {
-                    isSearching = true;
-                    searchBar.getStage().setKeyboardFocus(searchBar);
+                    startSearching();
                 }
                 System.out.println("Is Search Selected: " + isSearching);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
+    }
+
+    public void startSearching() {
+        isSearching = true;
+        inputManager.getController().setAll(false);
+        searchBar.getStage().setKeyboardFocus(searchBar);
+        inputManager.multiplexer.addProcessor(0, new DefaultState.Searching(this, inputManager.getShop(), inputManager.getMultiplexer()));
+    }
+
+    public void stopSearching() {
+        isSearching = false;
+        searchBar.getStage().setKeyboardFocus(null);
+        inputManager.getMultiplexer().removeProcessor(0);
+    }
+
+    public void setInputManager(InputManager manager) {
+        this.inputManager = manager;
     }
 
 }
