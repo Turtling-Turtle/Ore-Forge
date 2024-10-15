@@ -72,7 +72,6 @@ public class EventManager {
         this.eventLogger = eventLogger;
     }
 
-
     public boolean hasListener(GameEventListener<?> listener) {
         return subscribers.get(listener.getEventType()).contains(listener);
     }

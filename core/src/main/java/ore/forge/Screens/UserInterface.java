@@ -55,6 +55,7 @@ public class UserInterface {
         this.inputHandler = handler;
 
         uiViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        uiViewport = new ExtendViewport(0, 920, 3000, 920);
         ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
 //        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
 //        style.knobBefore = skin.getDrawable("128xVeryRoundFull");

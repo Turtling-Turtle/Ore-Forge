@@ -188,8 +188,8 @@ public abstract class Item {
     public void placeItem(int X, int Y) {
         if (X > ITEM_MAP.mapTiles.length - 1 || X < 0 || Y > ITEM_MAP.mapTiles[0].length - 1 || Y < 0) return;
         int rows = blockConfig.length;
-        int columns = blockConfig[0].length;
-        //Coordinates of the Item. They are in the bottom left hand corner of it.
+        int columns = blockConfig[1].length;
+        //Coordinates of the Item. they are in the bottom left hand corner of it.
         this.vector2.x = X;
         this.vector2.y = Y;
 
@@ -374,14 +374,6 @@ public abstract class Item {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
-    }
-
-    public boolean isFacingWest() {
-        return direction == Direction.WEST;
-    }
-
-    public boolean isFacingSouth() {
-        return direction == Direction.SOUTH;
     }
 
     public boolean isUnlocked() {

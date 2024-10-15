@@ -225,7 +225,6 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
             }
             Gdx.app.log("SHOP MENU", "Added " + icon.getNodeName() + " to Normal List");
         }
-
     }
 
     private void addToList(ItemIcon icon, List<ItemIcon> list) {
@@ -247,6 +246,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         if (count % 4 == 0) {
             iconTable.row();
         }
+
         iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fill().align(Align.topLeft).padLeft(padValue).padTop(padValue).padBottom(padValue);
 //        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(padValue);
     }
