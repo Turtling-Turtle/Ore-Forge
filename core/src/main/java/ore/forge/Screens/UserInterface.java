@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -54,9 +53,11 @@ public class UserInterface {
 
         this.inputHandler = handler;
 
-        uiViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        uiViewport = new ExtendViewport(0, 920, 3000, 920);
-        ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
+//        uiViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiViewport = new ExtendViewport(0, 920, 3000, 920);
+//        uiViewport = new ExtendViewport(3000, 920, 3000, 920);
+
+//        ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
 //        Skin skin = new Skin(new TextureAtlas(Gdx.files.internal("UIAssets/UIButtons.atlas")));
 //        style.knobBefore = skin.getDrawable("128xVeryRoundFull");
 //        style.background = skin.getDrawable("128xCircleEmpty");

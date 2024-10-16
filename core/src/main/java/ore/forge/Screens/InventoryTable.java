@@ -54,7 +54,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
         EventManager.getSingleton().registerListener(this);
 
-        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+//        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+        background.setSize(700, 736);
         padValue = Value.Fixed.percentHeight(0.005f, background);
 
 
@@ -169,7 +170,9 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         Value borderPad = Value.percentHeight(0.0014f, this);
         this.pad(borderPad, borderPad, borderPad, Value.zero);
         this.add(background).expand().fill();
-        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+//        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+        this.setSize(700, 796);
+//        this.setPosition(1750, 92);
 
     }
 
@@ -232,14 +235,20 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
     public void show() {
         Gdx.app.log("InventoryTable", "Showing");
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .640f, Gdx.graphics.getHeight() * .1f, 0.13f)));
-//        assert isVisible();
+//        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(1800, 92)));
+        this.setPosition(700, 92);
+
+        System.out.println("World Width " + this.getStage().getViewport().getWorldWidth());
+        System.out.println("Screen Width " + this.getStage().getViewport().getScreenWidth());
+        this.setVisible(true);
+        assert this.isVisible();
     }
 
     public void hide() {
         Gdx.app.log("InventoryTable", "hiding");
         this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f, Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
-//        assert !isVisible();
+        this.setVisible(false);
+        assert !isVisible();
     }
 
     @Override

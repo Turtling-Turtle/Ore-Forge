@@ -22,8 +22,8 @@ public class UIHelper {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
         parameter.genMipMaps = true;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
+        parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
+        parameter.magFilter = Texture.TextureFilter.MipMapLinearLinear;
         var font = generator.generateFont(parameter);
         fontLookup.put(size, font);
         return font;

@@ -27,10 +27,10 @@ public class ItemIcon extends Table {
     public ItemIcon(InventoryNode node) {
         this.node = node;
         TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
-        test.setMinSize(Gdx.graphics.getWidth() * .06f, Gdx.graphics.getHeight() * .105f);
+        test.setMinSize(180, 97);
         ImageButton button = new ImageButton(test);
         Table imageButtonTable = new Table();
-        imageButtonTable.add(button).size(Gdx.graphics.getWidth() * 0.04f, Gdx.graphics.getHeight() * 0.075f);
+        imageButtonTable.add(button).size(120, 69);
 
 //        button.setDebug(true);
         Table border = new Table();
@@ -39,7 +39,8 @@ public class ItemIcon extends Table {
         border.add(imageButtonTable).fill().expand();
         border.center();
 //        border.setDebug(true);
-        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
+//        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
+        border.setSize(175, 198);
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -59,6 +60,7 @@ public class ItemIcon extends Table {
         TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
         style.background = UIHelper.getRoundFull();
         style.label = new Label.LabelStyle(labelStyle);
+        labelStyle.font.getData().setScale(.25f, .25f);
 
         tooltip = new TextTooltip(node.getHeldItem().getDescription(), style);
         tooltip.setInstant(true);
@@ -150,7 +152,7 @@ public class ItemIcon extends Table {
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
             case 1440 -> 32;
-            case 2160 -> 40;
+            case 2160 -> 120;
             default -> 22;
         };
     }
