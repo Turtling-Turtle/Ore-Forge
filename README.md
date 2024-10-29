@@ -27,7 +27,7 @@ _**{INSERT HERE WHEN DONE}**_
 * **Camera Zoom** - You can use `E` to zoom the camera inwards and `Q` to zoom the camera outwards.
 
 
-* **Ore Observer Mode** - To lock the camera onto a specific ore and observer its stats you can press `V`. To cycle
+* **Ore Observer Mode** - To lock the camera onto a specific ore and observe its stats you can press `V`. To cycle
   between other ore you can
   use `W` and `S`. To exit Ore Observer mode press `ESC`.
 
