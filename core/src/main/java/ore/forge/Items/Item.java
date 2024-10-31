@@ -15,7 +15,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-//@author Nathan Ulmen
+/**
+ * @author Nathan Ulmen
+ */
 public abstract class Item {
     public enum Tier {PINNACLE, EXOTIC, PRESTIGE, SPECIAL, EPIC, SUPER_RARE, RARE, UNCOMMON, COMMON}
 
@@ -186,9 +188,10 @@ public abstract class Item {
     }
 
     public void placeItem(int X, int Y) {
-        if (X > ITEM_MAP.mapTiles.length - 1 || X < 0 || Y > ITEM_MAP.mapTiles[0].length - 1 || Y < 0) return;
+        if (!ITEM_MAP.isInBounds(X, Y)) return;
         int rows = blockConfig.length;
         int columns = blockConfig[0].length;
+
         //Coordinates of the Item. They are in the bottom left hand corner of it.
         this.vector2.x = X;
         this.vector2.y = Y;
@@ -207,6 +210,55 @@ public abstract class Item {
             }
 
         }
+    }
+
+    /*
+     *
+     */
+    public boolean canBePlaced(int x, int y) {
+        if (!ITEM_MAP.isInBounds(x, y)) {
+            return false;
+        }
+
+        int rows = blockConfig.length;
+        int columns = blockConfig[0].length;
+
+        int xCoord, yCoord;
+        for (int i = 0; i < rows; i++) {
+            for (int j = columns - 1; j >= 0; j--) {
+                xCoord = x + j;
+                yCoord = y + rows - i - 1;
+                if (!ITEM_MAP.isInBounds(xCoord, yCoord) || ITEM_MAP.getBlock(xCoord, yCoord) != null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Places Item without bounds or collision checking. Should only be called if canBePlaced() was called on the item
+     * beforehand.
+     */
+    public void fastPlace(int x, int y) {
+        int rows = blockConfig.length;
+        int columns = blockConfig[0].length;
+
+        //Coordinates of item are in the bottom left hand corner of it.
+        this.vector2.x = x;
+        this.vector2.y = y;
+
+        int xCoord, yCoord;
+        ITEM_MAP.add(this);
+        for (int i = 0; i < rows; i++) {
+            for (int j = columns - 1; j >= 0; j--) {
+                xCoord = x + j;
+                yCoord = (y + rows - i - 1);
+                ITEM_MAP.setBlock(xCoord, yCoord, blockConfig[i][j].setVector2(xCoord, yCoord));
+            }
+        }
+
     }
 
     public boolean didPlace(Vector3 vector3, ArrayList<Item> previousItems) {
@@ -253,7 +305,6 @@ public abstract class Item {
         }
         return true;
     }
-
 
     public void removeItem() {
         ITEM_MAP.remove(this);
@@ -318,8 +369,6 @@ public abstract class Item {
 
     public abstract void initBlockConfiguration(int[][] numberConfig);
 
-    public abstract void logInfo();
-
     public Block[][] getBlockConfig() {
         return blockConfig;
     }
@@ -374,14 +423,6 @@ public abstract class Item {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
-    }
-
-    public boolean isFacingWest() {
-        return direction == Direction.WEST;
-    }
-
-    public boolean isFacingSouth() {
-        return direction == Direction.SOUTH;
     }
 
     public boolean isUnlocked() {

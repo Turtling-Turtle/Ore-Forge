@@ -3,7 +3,6 @@ package ore.forge.Items;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.FurnaceBlock;
 import ore.forge.ReflectionLoader;
@@ -31,20 +30,20 @@ public class Furnace extends Item {
         super(jsonValue);
         this.rewardThreshold = jsonValue.getInt("rewardThreshold");
         this.specialPointReward = jsonValue.getInt("specialPointReward");
-        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"), "upgradeName");
         initBlockConfiguration(this.numberConfig);
         setTexture(new Texture(Gdx.files.internal("Furnace.png")));
     }
 
     //Used to "clone" an item.
     public Furnace(Furnace itemToClone) {
-       super(itemToClone);
-       this.upgrade = itemToClone.upgrade;
-       this.specialPointReward = itemToClone.specialPointReward;
-       this.rewardThreshold = itemToClone.rewardThreshold;
-       this.currentProgress = 0;
-       initBlockConfiguration(this.numberConfig);
-       alignWith(itemToClone.direction);
+        super(itemToClone);
+        this.upgrade = itemToClone.upgrade;
+        this.specialPointReward = itemToClone.specialPointReward;
+        this.rewardThreshold = itemToClone.rewardThreshold;
+        this.currentProgress = 0;
+        initBlockConfiguration(this.numberConfig);
+        alignWith(itemToClone.direction);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class Furnace extends Item {
                         blockConfig[i][j] = new Block(this);
                         break;
                     case 4:
-                        blockConfig[i][j] =new FurnaceBlock(this, upgrade, specialPointReward);
+                        blockConfig[i][j] = new FurnaceBlock(this, upgrade, specialPointReward);
                         break;
                     case 3:
                     case 2:
@@ -66,15 +65,6 @@ public class Furnace extends Item {
                 }
             }
         }
-    }
-
-    @Override
-    public void logInfo() {
-        String info = "\nName: " + name + "\tID: " + id + "\tTier: " + tier;
-        String stats = "Special Point Reward: " + specialPointReward + "\tSpecial Point Threshold: " + rewardThreshold;
-        String stats2 = "Sell Effect: " + upgrade.toString();
-        info += "\n" + stats + "\n" + stats2;
-        Gdx.app.log("Furnace", Color.highlightString(info, Color.CYAN));
     }
 
     public int getRewardThreshold() {

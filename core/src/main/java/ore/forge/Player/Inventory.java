@@ -7,8 +7,8 @@ import ore.forge.Color;
 import ore.forge.Constants;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.ObtainedGameEvent;
-import ore.forge.Items.Item;
 import ore.forge.ItemManager;
+import ore.forge.Items.Item;
 
 import java.lang.StringBuilder;
 import java.util.*;
@@ -31,11 +31,16 @@ public class Inventory {
 //        for (InventoryNode node : inventoryNodes) {
 //            lookUp.put(node.getHeldItemID(), node);
 //        }
+
     }
 
 
     public InventoryNode getNode(String itemID) {
         return lookUp.get(itemID);
+    }
+
+    public InventoryNode getNode(Item item) {
+        return getNode(item.getID());
     }
 
     public ArrayList<InventoryNode> getInventoryNodes() {
@@ -293,5 +298,6 @@ public class Inventory {
         }
     }
 
-    private record InventoryData(String itemName, String type, int totalOwned, String id, boolean isUnlocked) {}
+    private record InventoryData(String itemName, String type, int totalOwned, String id, boolean isUnlocked) {
+    }
 }
