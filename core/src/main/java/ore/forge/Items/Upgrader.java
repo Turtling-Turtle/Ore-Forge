@@ -3,7 +3,6 @@ package ore.forge.Items;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 import ore.forge.Items.Blocks.UpgradeBlock;
@@ -34,7 +33,7 @@ public class Upgrader extends Item {
         super(jsonValue);
         this.conveyorSpeed = jsonValue.getFloat("conveyorSpeed");
         this.upgradeTag = new UpgradeTag(jsonValue.get("upgradeTag"));
-        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"),"upgradeName");
+        this.upgrade = ReflectionLoader.load(jsonValue.get("upgrade"), "upgradeName");
         setTexture(new Texture(Gdx.files.internal("Upgrader.png")));
         initBlockConfiguration(this.numberConfig);
     }
@@ -43,7 +42,7 @@ public class Upgrader extends Item {
     public Upgrader(Upgrader itemToClone) {
         super(itemToClone);
         this.conveyorSpeed = itemToClone.conveyorSpeed;
-        this.upgrade =  itemToClone.upgrade.cloneUpgradeStrategy();
+        this.upgrade = itemToClone.upgrade.cloneUpgradeStrategy();
         this.upgradeTag = itemToClone.upgradeTag;
         this.setTexture(itemToClone.getTexture());
         initBlockConfiguration(itemToClone.numberConfig);
@@ -65,18 +64,10 @@ public class Upgrader extends Item {
                         this.blockConfig[i][j] = new UpgradeBlock(this, upgrade, upgradeTag, conveyorSpeed);
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid Block Config Value For item Type: " + numberConfig[i][j]);}
+                        throw new IllegalArgumentException("Invalid Block Config Value For item Type: " + numberConfig[i][j]);
+                }
             }
         }
-    }
-
-    @Override
-    public void logInfo() {
-        String info = "\nName: " + getName() + " \tID: " + getID() + "\tTier: " + getTier();
-        String stats = "Conveyor Speed: " + conveyorSpeed + "\tMax Upgrades: " + upgradeTag.getMaxUpgrades();
-        String upgradeEffect = "Upgrade: " + upgrade.toString();
-        info += "\n" + stats + "\n" + upgradeEffect;
-        Gdx.app.log("Upgrader", Color.highlightString(info, Color.BLUE));
     }
 
     @Override
@@ -84,8 +75,6 @@ public class Upgrader extends Item {
         return super.toString() +
             "\n[Upgrade]: " + upgrade.toString();
     }
-
-
 
 
 }

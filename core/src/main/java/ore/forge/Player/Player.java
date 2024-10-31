@@ -3,11 +3,13 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
-import ore.forge.*;
+import ore.forge.Color;
+import ore.forge.Constants;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.FailedPurchaseGameEvent;
 import ore.forge.EventSystem.Events.PurchaseGameEvent;
 import ore.forge.Expressions.Function;
+import ore.forge.ItemManager;
 import ore.forge.Items.Item;
 
 //@author Nathan Ulmen
@@ -108,14 +110,21 @@ public class Player {
         if (playerCurrency >= itemToPurchase.getItemValue() * count) {
             inventory.getNode(itemToPurchase.getID()).addNew(count);
             switch (itemToPurchase.getCurrencyBoughtWith()) {
-                case CASH -> setWallet(playerCurrency - itemToPurchase.getItemValue()*count);
-                case SPECIAL_POINTS -> setSpecialPoints((long) (playerCurrency - itemToPurchase.getItemValue()*count));
-                case PRESTIGE_POINTS -> setPrestigeCurrency((int) (playerCurrency - itemToPurchase.getItemValue()*count));
+                case CASH -> setWallet(playerCurrency - itemToPurchase.getItemValue() * count);
+                case SPECIAL_POINTS ->
+                    setSpecialPoints((long) (playerCurrency - itemToPurchase.getItemValue() * count));
+                case PRESTIGE_POINTS ->
+                    setPrestigeCurrency((int) (playerCurrency - itemToPurchase.getItemValue() * count));
             }
             EventManager.getSingleton().notifyListeners(new PurchaseGameEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
         } else {
             EventManager.getSingleton().notifyListeners(new FailedPurchaseGameEvent(itemToPurchase, itemToPurchase.getCurrencyBoughtWith(), count));
         }
+    }
+
+    public void purchaseItem(String id, int count) {
+        Item item = inventory.getNode(id).getHeldItem();
+        purchaseItem(item, count);
     }
 
     public double getWallet() {

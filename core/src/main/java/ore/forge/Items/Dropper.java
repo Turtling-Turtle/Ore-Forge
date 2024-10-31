@@ -3,10 +3,9 @@ package ore.forge.Items;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Color;
 import ore.forge.Expressions.Function;
-import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.ReflectionLoader;
@@ -125,15 +124,6 @@ public class Dropper extends Item {
                 }
             }
         }
-    }
-
-    @Override
-    public void logInfo() {
-        String info = "\nName: " + getName() + " \tID: " + getID() + "\tTier: " + getTier();
-        String stats = "Drop Behavior: " + dropBehavior.toString();
-        String oreInfo = "Ore Name: " + getOreName() + "\tOre Value: " + oreValue + "\tOre Temperature: " + oreTemp + "\tMultiOre: " + multiOre;
-        info += "\n" + stats + "\n" + oreInfo + "\n Ore Effect:" + oreEffect;
-        Gdx.app.log("Dropper", Color.highlightString(info, Color.PINK));
     }
 
     public String getOreName() {

@@ -3,7 +3,6 @@ package ore.forge.Items;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
-import ore.forge.Color;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.ConveyorBlock;
 
@@ -62,14 +61,6 @@ public class Conveyor extends Item {
 
     public float getConveyorSpeed() {
         return conveyorSpeed;
-    }
-
-    @Override
-    public void logInfo() {
-        String info = "\nName: " + getName() + "\tID: " + getID() + "\tTier: " + getTier();
-        String stats = "Conveyor Speed: " + conveyorSpeed + "Item Value: " + getItemValue();
-        info += "\n" + stats;
-        Gdx.app.log("Conveyor", Color.highlightString(info, Color.PURPLE));
     }
 
 }

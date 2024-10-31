@@ -117,6 +117,19 @@ public class ItemMap {
 
     }
 
+    public boolean isInBounds(int x, int y) {
+        return x < mapTiles.length && x >= 0 && y < mapTiles[0].length && y >= 0;
+//        return x > mapTiles.length - 1 || x < 0 || y > mapTiles[0].length - 1 || y < 0;
+    }
+
+    public boolean isInBounds(Vector2 vector2) {
+        return isInBounds((int) vector2.x, (int) vector2.y);
+    }
+
+    public boolean isInBounds(Vector3 vector3) {
+        return isInBounds((int) vector3.x, (int) vector3.y);
+    }
+
     public void loadSetup() {
         //Load data whether that be from memory or from a file remains unknown.
 

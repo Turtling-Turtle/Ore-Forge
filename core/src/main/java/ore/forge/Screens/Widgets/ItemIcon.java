@@ -9,7 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.ButtonType;
-import ore.forge.Input.InventoryMode;
+import ore.forge.EventSystem.EventManager;
+import ore.forge.EventSystem.Events.ItemIconClickedGameEvent;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
 import ore.forge.UIHelper;
@@ -20,7 +21,6 @@ import ore.forge.UIHelper;
 //the name of the item.
 public class ItemIcon extends Table {
     private final InventoryNode node;
-    private InventoryMode processor;
     private final TextTooltip tooltip;
     private final Label storedCount;
 
@@ -86,6 +86,15 @@ public class ItemIcon extends Table {
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 
+
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Clicked Item Icon, Event Fired!!");
+                EventManager.getSingleton().notifyListeners(new ItemIconClickedGameEvent(ItemIcon.this));
+            }
+        });
+
 //        border.debugAll();
     }
 
@@ -105,16 +114,6 @@ public class ItemIcon extends Table {
         return node.getHeldItem().getItemValue();
     }
 
-    public void setProcessor(InventoryMode processor) {
-        this.processor = processor;
-        this.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                notifyProcessor();
-            }
-        });
-    }
-
     private Color determineColor(InventoryNode node) {
         return switch (node.getHeldItem().getTier()) {
             case PINNACLE -> Color.FIREBRICK;
@@ -131,10 +130,6 @@ public class ItemIcon extends Table {
 
     public String toString() {
         return this.getNodeName();
-    }
-
-    public void notifyProcessor() {
-        processor.handleClicked(this);
     }
 
     public void updateTopLeftText(String newMessage) {
