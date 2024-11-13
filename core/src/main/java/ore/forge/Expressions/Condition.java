@@ -20,11 +20,8 @@ import java.util.regex.Pattern;
  * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
  * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
  */
-
 public class Condition implements BooleanExpression {
-    //TODO: Regex expression wont identify names that have spaces in them.
-    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
-
+    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[A-Z_]+|\"(.*)\"|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
     private final ArrayList<BooleanExpression> expressions;
     private final Stack<LogicalOperator> logicalOperators;
 
@@ -80,7 +77,8 @@ public class Condition implements BooleanExpression {
             } else if (ValueOfInfluence.isValue(token)) {
                 operands.push(ValueOfInfluence.valueOf(token));
             } else {
-                StringConstant constant = new StringConstant(token);
+                var stringContents = matcher.group(6); //Contents inside the string
+                StringConstant constant = new StringConstant(stringContents);
                 operands.push(constant);
             }
         }

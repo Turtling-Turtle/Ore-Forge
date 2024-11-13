@@ -323,7 +323,7 @@ public abstract class Item {
         }
     }
 
-    public void rotateClockwise() {//Instead of reordering the array and making new memory could just use direction to determine the order the array is read in.
+    public void rotateClockwise() {//Instead of reordering the array and allocating new memory could just use direction to determine the order the array is read in.
         switch (direction) {
             case NORTH:
                 direction = Direction.EAST;

@@ -122,6 +122,10 @@ public class BigNumber implements Comparable<BigNumber> {
         return normalize(this.mantissa / other, this.exponent);
     }
 
+    public static BigNumber MAX_VALUE() {
+        return new BigNumber(9.99999999999999999D, Long.MAX_VALUE);
+    }
+
     /* Modulo is: a - (b * int(a/b))
      * but we run into issues when the number is outside the range of the Significant digits.
      * */
@@ -178,7 +182,6 @@ public class BigNumber implements Comparable<BigNumber> {
         return bigger.exponent - smaller.exponent;
     }
 
-
     public BigNumber floor() {
         if (exponent < SIGNIFICANT_DIGITS) {
             int shifts = (int) exponent;
@@ -201,10 +204,6 @@ public class BigNumber implements Comparable<BigNumber> {
 
     public BigNumber abs() {
         return BigNumber.abs(this);
-    }
-
-    public BigNumber pow(BigNumber other) {
-        return null;
     }
 
     public BigNumber round() {
@@ -245,7 +244,6 @@ public class BigNumber implements Comparable<BigNumber> {
         BigNumber result = log10();
         return normalize(result.mantissa * 2.302585092994046, result.exponent);
     }
-
 
     public BigNumber log10() {
         return normalize(exponent + Math.log10(mantissa), 0);
