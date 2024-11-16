@@ -9,6 +9,7 @@ import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
+import ore.forge.Player.Player;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
@@ -118,11 +119,10 @@ public class ItemMap {
     }
 
     public void loadState(ItemManager itemManager) {
-        //TODO: Need to make sure that this goes through the players inventory so that they cant place items they dont have.
-//        System.out.println("Made it to beginning of load State!");
         HashMap<String, Item> allItems = itemManager.getAllItems();
         JsonReader jsonReader = new JsonReader();
         JsonValue fileContents;
+        Inventory inventory = Player.getSingleton().getInventory();
         try {
             fileContents = jsonReader.parse(Gdx.files.local(Constants.BASE_LAYOUT_FP));
         } catch (SerializationException e) {
@@ -133,8 +133,6 @@ public class ItemMap {
         Item itemToPlace;
         for (JsonValue jsonValue : fileContents) {
             itemID = jsonValue.getString("itemID");
-//            System.out.println(itemName);
-//            System.out.println(allItems.get(itemName));
             //Create the Item based on the Stored Version in All Items.
             itemToPlace = switch (allItems.get(itemID)) {
                 case Upgrader ignored -> new Upgrader((Upgrader) allItems.get(itemID));
@@ -146,10 +144,14 @@ public class ItemMap {
             //read in the items coordinates and its Direction.
             int x = jsonValue.get("position").getInt("x");
             int y = jsonValue.get("position").getInt("y");
-            itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")));
-            //place the item
-            itemToPlace.placeItem(x, y);
-            System.out.println(itemToPlace);
+            if (inventory.getNode(itemID).hasSupply()) {
+                itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")));
+                itemToPlace.placeItem(x, y);
+                inventory.getNode(itemID).place();
+                System.out.println("Successfully Placed: " + itemToPlace.getName());
+            } else {
+                System.out.println("Failed to place: " + itemToPlace.getName());
+            }
         }
     }
 
