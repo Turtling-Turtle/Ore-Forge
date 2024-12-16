@@ -1,6 +1,7 @@
 package ore.forge.Expressions;
 
 import com.badlogic.gdx.utils.JsonValue;
+import com.mongodb.internal.VisibleForTesting;
 import ore.forge.Expressions.Operands.MethodBasedOperand;
 import ore.forge.Expressions.Operands.NumericOreProperties;
 import ore.forge.Expressions.Operands.ValueOfInfluence;
@@ -22,29 +23,29 @@ import java.util.regex.Pattern;
  * This class will parse an equation from a String and return a Function.
  */
 public class Function implements NumericOperand {
-    /*
-    ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
-    ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, 3.2E-2, -.1, 12.7 etc.
-    ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
-    */
     private final static Pattern pattern = Pattern.compile(
         "(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|(log\\(|sqrt\\(|ln\\(|abs\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
     private final NumericOperator numericOperator;
 
-    public Function(NumericOperand leftNumericOperand, NumericOperand rightNumericOperand, NumericOperator numericOperator) {
+    private Function(NumericOperand leftNumericOperand, NumericOperand rightNumericOperand, NumericOperator numericOperator) {
         this.leftNumericOperand = leftNumericOperand;
         this.rightNumericOperand = rightNumericOperand;
         this.numericOperator = numericOperator;
     }
 
     //Takes a Json Value, extracts the function string from it, then creates a function object based on the extracted string
+    /**
+     * */
     public static Function parseFunction(JsonValue jsonValue) {
         String equation = jsonValue.getString("upgradeFunction");
         return parseFunction(equation);
     }
 
-    //Takes a Json Value, extracts the string from it, then creates a Function object based on the extracted string
+    /** Takes a string that represents a mathematical function, tokenizes it, and creates a mathematical function from it.
+     * @param equation - string representation of a mathematical function.
+     * @return parsed function of the inputted string.
+     */
     public static Function parseFunction(String equation) {
         equation = equation.replaceAll("(\\d+)([-+])(\\d+)", "$1 $2 $3"); //get rid of spaces in Function string.
         Matcher matcher = pattern.matcher(equation);
@@ -112,34 +113,6 @@ public class Function implements NumericOperand {
             return new Function(new Constant(0), operandStack.pop(), NumericOperator.ASSIGNMENT);
         }
 
-        return (Function) operandStack.pop();
-    }
-
-    @Deprecated
-    private static Function deprecated(Matcher matcher) {
-        Stack<NumericOperand> operandStack = new Stack<>();
-        Stack<NumericOperator> numericOperatorStack = new Stack<>();
-        while (matcher.find()) {
-            String token = matcher.group();
-            if (token.equals("(")) { //We Ignore '(' char
-            } else if (token.equals(")")) {
-                NumericOperand right = operandStack.pop();
-                NumericOperand left = operandStack.pop();
-                NumericOperator numericOperator = numericOperatorStack.pop();
-                operandStack.push(new Function(left, right, numericOperator));
-            } else if (NumericOperator.isOperator(token)) {
-                numericOperatorStack.push(NumericOperator.fromSymbol(token));
-            } else if (NumericOreProperties.isProperty(token)) {
-                operandStack.push(NumericOreProperties.valueOf(token));
-            } else if (ValueOfInfluence.isValue(token)) {
-                operandStack.push(ValueOfInfluence.valueOf(token));
-            } else if (isNumeric(token)) {
-                operandStack.push(new Constant(Double.parseDouble(token)));
-            } else {
-                throw new RuntimeException("Unknown token: " + token);
-            }
-        }
-        assert numericOperatorStack.isEmpty();
         return (Function) operandStack.pop();
     }
 

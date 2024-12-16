@@ -69,7 +69,7 @@ public class InputManager implements GameEventListener {
 
     public void update() {
         defaultState.update(camera);
-//        System.out.println(multiplexer.getProcessors());
+        selecting.update();
         if (multiplexer.getProcessors().first() instanceof Building mode) {
             mode.update();
         } else if (multiplexer.getProcessors().first() instanceof Selecting mode) {

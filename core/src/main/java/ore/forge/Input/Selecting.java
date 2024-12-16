@@ -20,8 +20,8 @@ import static com.badlogic.gdx.Input.Keys.*;
  */
 public class Selecting extends InputAdapter {
     private final InputManager inputManager;
-    private final ArrayList<Item> selectedItems;
-    private final ArrayList<Vector2> offsets;
+    private ArrayList<Item> selectedItems;
+    private ArrayList<Vector2> offsets;
     private boolean mouseHeld;
 
     public Selecting(InputManager inputManager) {
@@ -37,9 +37,9 @@ public class Selecting extends InputAdapter {
             offsets.add(new Vector2(0, 0));
         } else {
             selectedItems.add(item);
-            Vector2 original = offsets.getFirst();
+            Vector2 origin = selectedItems.getFirst().getVector2();
             Vector2 itemPosition = item.getVector2();
-            Vector2 offset = new Vector2(itemPosition.x - original.x, itemPosition.y - original.y);
+            Vector2 offset = new Vector2(itemPosition.x - origin.x, itemPosition.y - origin.y);
             offsets.add(offset);
         }
         assert offsets.size() == selectedItems.size();
@@ -67,11 +67,12 @@ public class Selecting extends InputAdapter {
                 //TODO pickup all items then transition into building.
                 inputManager.multiplexer.removeProcessor(this);
                 inputManager.getBuilding().startBuilding(selectedItems, offsets);
+                selectedItems = new ArrayList<>(10); //"Reset Lists after passing to building."
+                offsets = new ArrayList<>(10);
                 inputManager.multiplexer.addProcessor(0, inputManager.getBuilding());
                 yield true;
             }
             case C -> {
-
                 double totalCashCost = 0, totalSpecialPointCost = 0;
                 HashMap<String, Integer> lookup = new HashMap<>();
                 for (Item item : selectedItems) {
@@ -80,9 +81,7 @@ public class Selecting extends InputAdapter {
                     } else if (item.getCurrencyBoughtWith() == Currency.SPECIAL_POINTS) {
                         totalSpecialPointCost += item.getItemValue();
                     }
-
                     lookup.put(item.getID(), lookup.getOrDefault(item.getID(), 0) + 1);
-
                 }
 
                 if (totalCashCost <= Player.getSingleton().getWallet() && totalSpecialPointCost <= Player.getSingleton().getSpecialPoints()) {
@@ -90,7 +89,6 @@ public class Selecting extends InputAdapter {
                         Player.getSingleton().purchaseItem(itemId, lookup.get(itemId));
                     }
                 }
-
                 yield true;
             }
             case Z -> {
@@ -117,7 +115,7 @@ public class Selecting extends InputAdapter {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        System.out.println("UPdating in selecitng(TouchUP)!!");
+        System.out.println("Updating in selecting(TouchUP)!!");
         return switch (button) {
             case LEFT -> {
                 mouseHeld = false;
@@ -129,7 +127,7 @@ public class Selecting extends InputAdapter {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("UPdating in selecitng(TouchDown)!!");
+        System.out.println("Updating in selecting(TouchDown)!!");
         return switch (button) {
             case LEFT -> {
                 selectedItems.clear();
@@ -144,6 +142,10 @@ public class Selecting extends InputAdapter {
 
     public ArrayList<Item> getSelectedItems() {
         return selectedItems;
+    }
+
+    public String toString() {
+        return "Selecting Mode";
     }
 
 }

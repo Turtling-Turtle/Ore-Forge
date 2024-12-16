@@ -17,7 +17,6 @@ public class ReflectionLoader {
             throw new IllegalArgumentException("JsonValue with argument: " + fieldName + " is null.");
         }
 
-
         Constructor<?> constructor = cachedResults.get(jsonValue.getString(fieldName));
         try {
             if (constructor != null) {

@@ -294,7 +294,6 @@ public class BigNumber implements Comparable<BigNumber> {
             return 1;
         }
         return -1;
-
     }
 
     private class MutableBigNumber {

@@ -107,102 +107,54 @@ public class GameWorld extends CustomScreen {
 
 
     private void drawSelectedItem() {
-
-//        if (inputHandler.getCurrentMode() instanceof SelectMode mode) {
-//            var selectedItem = mode.getSelectedItem();
-//            batch.setColor(.2f, 1, .2f, 0.5f);
-//            batch.draw(selectedItem.getTexture(),
-//                (int) selectedItem.getVector2().x,
-//                (int) selectedItem.getVector2().y,
-//                (selectedItem.getWidth() / 2f),
-//                (selectedItem.getHeight() / 2f),
-//                selectedItem.getWidth(),
-//                selectedItem.getHeight(),
-//                1,
-//                1,
-//                selectedItem.getDirection().getAngle(),
-//                0,
-//                0,
-//                selectedItem.getTexture().getWidth(),
-//                selectedItem.getTexture().getHeight(),
-//                false,
-//                false
-//            );
-//            batch.setColor(1, 1, 1, 1f);
-//        }
-//
-//
-
-        if (inputManager.getMultiplexer().getProcessors().first() instanceof Selecting mode) {
+        var selectedItems = inputManager.getSelecting().getSelectedItems();
+        if (selectedItems != null && !selectedItems.isEmpty()) {
             batch.setColor(.2f, 1, .2f, 0.5f);
-            for (Item selectedItem : mode.getSelectedItems()) {
-                batch.draw(selectedItem.getTexture(),
-                    (int) selectedItem.getVector2().x,
-                    (int) selectedItem.getVector2().y,
-                    (selectedItem.getWidth() / 2f),
-                    (selectedItem.getHeight() / 2f),
-                    selectedItem.getWidth(),
-                    selectedItem.getHeight(),
-                    1,
-                    1,
-                    selectedItem.getDirection().getAngle(),
-                    0,
-                    0,
-                    selectedItem.getTexture().getWidth(),
-                    selectedItem.getTexture().getHeight(),
-                    false,
-                    false
-                );
+            for (Item selectedItem : selectedItems) {
+                if (selectedItem.getDirection() == Direction.NORTH || selectedItem.getDirection() == Direction.SOUTH) {
+                    batch.draw(selectedItem.getTexture(),
+                        MathUtils.floor(selectedItem.getVector2().x - xOffset(selectedItem.getWidth(), selectedItem.getHeight())),
+                        MathUtils.floor(selectedItem.getVector2().y - yOffset(selectedItem.getWidth(), selectedItem.getHeight())),
+                        (selectedItem.getWidth() / 2f),
+                        (selectedItem.getHeight() / 2f),
+                        selectedItem.getWidth(),
+                        selectedItem.getHeight(),
+                        1,
+                        1,
+                        selectedItem.getDirection().getAngle(),
+                        0,
+                        0,
+                        selectedItem.getTexture().getWidth(),
+                        selectedItem.getTexture().getHeight(),
+                        false,
+                        false
+                    );
+                } else {
+                    batch.draw(selectedItem.getTexture(),
+                        (int) selectedItem.getVector2().x,
+                        (int) selectedItem.getVector2().y,
+                        (selectedItem.getWidth() / 2f),
+                        (selectedItem.getHeight() / 2f),
+                        selectedItem.getWidth(),
+                        selectedItem.getHeight(),
+                        1,
+                        1,
+                        selectedItem.getDirection().getAngle(),
+                        0,
+                        0,
+                        selectedItem.getTexture().getWidth(),
+                        selectedItem.getTexture().getHeight(),
+                        false,
+                        false
+                    );
+                }
             }
-            batch.setColor(1, 1, 1, 1f);
         }
+        batch.setColor(1, 1, 1, 1f);
     }
 
 
     private void drawHeldItem() {
-//        if (inputHandler.getCurrentMode() instanceof BuildMode mode) {
-//            var selectedItem = mode.getHeldItem();
-//            batch.setColor(.2f, 1, .2f, .6f);
-//            if (selectedItem.getDirection() == Direction.NORTH || selectedItem.getDirection() == Direction.SOUTH) {
-//                batch.draw(selectedItem.getTexture(),
-//                    MathUtils.floor(inputHandler.mouseWorld.x) - xOffset(selectedItem.getWidth(), selectedItem.getHeight()),
-//                    MathUtils.floor(inputHandler.mouseWorld.y) - yOffset(selectedItem.getWidth(), selectedItem.getHeight()),
-////                    selectedItem.getWidth() != selectedItem.getHeight() ? MathUtils.floor(inputHandler.mouseWorld.x) -1f : MathUtils.floor(inputHandler.mouseWorld.x),
-////                    selectedItem.getWidth() != selectedItem.getHeight() ? MathUtils.floor(inputHandler.mouseWorld.y) +1f : MathUtils.floor(inputHandler.mouseWorld.y),
-//                    (selectedItem.getWidth() / 2f),
-//                    (selectedItem.getHeight() / 2f),
-//                    selectedItem.getWidth(),
-//                    selectedItem.getHeight(),
-//                    1,
-//                    1,
-//                    selectedItem.getDirection().getAngle(),
-//                    0,
-//                    0,
-//                    selectedItem.getTexture().getWidth(),
-//                    selectedItem.getTexture().getHeight(),
-//                    false,
-//                    false
-//                );
-//            } else {
-//                batch.draw(selectedItem.getTexture(),
-//                    MathUtils.floor(inputHandler.mouseWorld.x),
-//                    MathUtils.floor(inputHandler.mouseWorld.y),
-//                    (selectedItem.getWidth() / 2f),
-//                    (selectedItem.getHeight() / 2f),
-//                    selectedItem.getWidth(),
-//                    selectedItem.getHeight(),
-//                    1,
-//                    1,
-//                    selectedItem.getDirection().getAngle(),
-//                    0,
-//                    0,
-//                    selectedItem.getTexture().getWidth(),
-//                    selectedItem.getTexture().getHeight(),
-//                    false,
-//                    false
-//                );
-//            }
-
         if (inputManager.getMultiplexer().getProcessors().first() instanceof Building mode) {
             batch.setColor(.2f, 1, .2f, .6f);
             ArrayList<Vector2> offsets = mode.getOffsets();
@@ -212,8 +164,9 @@ public class GameWorld extends CustomScreen {
             for (int i = 0; i < offsets.size(); i++) {
                 var item = items.get(i);
                 var offset = offsets.get(i);
-
                 if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
+                    System.out.println(item.getName() + ": Offset X: " + offset.x + " Offset Y: " + offset.y);
+                    System.out.println("Drawing " + item.getName() + " at " + (mouseWorld.x + offset.x - xOffset(item.getWidth(), item.getHeight())) + ", " + (mouseWorld.x + offset.y - yOffset(item.getWidth(), item.getHeight())));
                     batch.draw(item.getTexture(),
                         MathUtils.floor(mouseWorld.x + offset.x - xOffset(item.getWidth(), item.getHeight())),
                         MathUtils.floor(mouseWorld.y + offset.y - yOffset(item.getWidth(), item.getHeight())),
@@ -233,8 +186,8 @@ public class GameWorld extends CustomScreen {
                     );
                 } else {
                     batch.draw(item.getTexture(),
-                        MathUtils.floor(mouseWorld.x),
-                        MathUtils.floor(mouseWorld.y),
+                        MathUtils.floor(mouseWorld.x + offset.x),
+                        MathUtils.floor(mouseWorld.y + offset.y),
                         (item.getWidth() / 2f),
                         (item.getHeight() / 2f),
                         item.getWidth(),
@@ -252,9 +205,6 @@ public class GameWorld extends CustomScreen {
                 }
             }
         }
-        batch.setColor(1, 1, 1, 1f);
-
-
         batch.setColor(1, 1, 1, 1f);
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.ItemPlacedGameEvent;
+import ore.forge.ItemMap;
 import ore.forge.Items.*;
 import ore.forge.Player.Inventory;
 import ore.forge.Player.InventoryNode;
@@ -71,6 +72,9 @@ public class Building extends InputAdapter {
     }
 
     public void startBuilding(ArrayList<Item> itemsToPlace, ArrayList<Vector2> offsets) {
+        for (Item item : itemsToPlace) {
+            item.removeItem();
+        }
         items = itemsToPlace;
         this.offsets = offsets;
     }
@@ -108,6 +112,7 @@ public class Building extends InputAdapter {
 
     public void placeItems() {
         Vector3 mouseWorld = manager.getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        if (!ItemMap.getSingleton().isInBounds(mouseWorld)) { return; }
         if (!canPlaceAll()) return;
         Inventory inventory = manager.getInventory();
         for (int i = 0; i < items.size(); i++) {
@@ -130,7 +135,7 @@ public class Building extends InputAdapter {
             Item item = items.get(i);
             Vector2 offset = offsets.get(i);
             if (!item.canBePlaced((int) (mouseWorld.x + offset.x), (int) (mouseWorld.y + offset.y))) {
-                Gdx.app.log("Bulding", "Could not place all items, something in the way");
+                Gdx.app.log("Building", "Could not place all items, something in the way");
                 return false;
             }
         }
@@ -153,6 +158,10 @@ public class Building extends InputAdapter {
 
     public ArrayList<Vector2> getOffsets() {
         return offsets;
+    }
+
+    public String toString() {
+        return "Build Mode";
     }
 
 }

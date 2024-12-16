@@ -177,8 +177,8 @@ class FunctionTest {
         oreRealm.depopulate();
         oreRealm.populate();
         int[] array = new int[]{2, 3, 1, 4, 5, 0};
-        for (int j : array) {
-            oreRealm.giveOre().setOreValue(j);
+        for (int num : array) {
+            oreRealm.giveOre().setOreValue(num);
         }
         var testCase = Function.parseFunction("MEDIAN_ORE_VALUE");
         assertEquals(2.5, testCase.calculate(null));

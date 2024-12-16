@@ -83,7 +83,6 @@ public class LootTable {
         return String.valueOf(buckets.size());
     }
 
-    //TODO: This probably isn't working as intended.
     public void updateItems() {
         Iterator<Item> iterator = lockedPrestigeItems.iterator();
         while (iterator.hasNext()) {

@@ -101,6 +101,7 @@ public class Inventory {
             }
         } else {
             //TODO: create the default/beginner inventory.
+            //Give copies of basic conveyor, iron mine, and basic furnace.
         }
 
         //Add nodes for new Items that didn't exist previously.
