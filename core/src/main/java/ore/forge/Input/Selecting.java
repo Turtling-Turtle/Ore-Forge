@@ -32,21 +32,29 @@ public class Selecting extends InputAdapter {
 
     public void addToSelectionList(Item item) {
         assert offsets.size() == selectedItems.size();
-        if (selectedItems.isEmpty()) {
-            selectedItems.add(item);
-            offsets.add(new Vector2(0, 0));
-        } else {
-            selectedItems.add(item);
-            Vector2 origin = selectedItems.getFirst().getVector2();
-            Vector2 itemPosition = item.getVector2();
-            Vector2 offset = new Vector2(itemPosition.x - origin.x, itemPosition.y - origin.y);
+        selectedItems.add(item);
+        offsets.clear();
+
+        // Calculate Center point
+        Vector2 centerPoint = new Vector2();
+        for (Item i : selectedItems) {
+            centerPoint.add(i.getVector2());
+        }
+        centerPoint.x /= selectedItems.size();
+        centerPoint.y /= selectedItems.size();
+
+
+        //Calculate offsets from center point
+        for (Item i : selectedItems) {
+            Vector2 itemPosition = i.getVector2();
+            Vector2 offset = new Vector2(itemPosition.x - centerPoint.x, itemPosition.y - centerPoint.y);
             offsets.add(offset);
         }
+
         assert offsets.size() == selectedItems.size();
     }
 
     public void update() {
-        System.out.println("Called update in selecting !!111");
         if (mouseHeld) {
             System.out.println("Selecting logic going!!");
             var item = ItemMap.getSingleton().getItem(inputManager.getMouseWorld());
@@ -65,10 +73,10 @@ public class Selecting extends InputAdapter {
             }
             case R -> {
                 //TODO pickup all items then transition into building.
-                inputManager.multiplexer.removeProcessor(this);
+//                inputManager.multiplexer.removeProcessor(this);
                 inputManager.getBuilding().startBuilding(selectedItems, offsets);
-                selectedItems = new ArrayList<>(10); //"Reset Lists after passing to building."
-                offsets = new ArrayList<>(10);
+                selectedItems = new ArrayList<>(selectedItems.size()); //"Reset Lists after passing to building."
+                offsets = new ArrayList<>(offsets.size());
                 inputManager.multiplexer.addProcessor(0, inputManager.getBuilding());
                 yield true;
             }
@@ -100,7 +108,7 @@ public class Selecting extends InputAdapter {
                 offsets.clear();
                 selectedItems.clear();
                 // return to default state
-                inputManager.getMultiplexer().removeProcessor(this);
+//                inputManager.getMultiplexer().removeProcessor(this);
                 yield true;
             }
             case X -> {

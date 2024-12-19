@@ -113,8 +113,8 @@ public class GameWorld extends CustomScreen {
             for (Item selectedItem : selectedItems) {
                 if (selectedItem.getDirection() == Direction.NORTH || selectedItem.getDirection() == Direction.SOUTH) {
                     batch.draw(selectedItem.getTexture(),
-                        MathUtils.floor(selectedItem.getVector2().x - xOffset(selectedItem.getWidth(), selectedItem.getHeight())),
-                        MathUtils.floor(selectedItem.getVector2().y - yOffset(selectedItem.getWidth(), selectedItem.getHeight())),
+                        MathUtils.floor(selectedItem.getVector2().x) - xOffset(selectedItem.getWidth(), selectedItem.getHeight()),
+                        MathUtils.floor(selectedItem.getVector2().y) - yOffset(selectedItem.getWidth(), selectedItem.getHeight()),
                         (selectedItem.getWidth() / 2f),
                         (selectedItem.getHeight() / 2f),
                         selectedItem.getWidth(),
@@ -165,11 +165,9 @@ public class GameWorld extends CustomScreen {
                 var item = items.get(i);
                 var offset = offsets.get(i);
                 if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
-                    System.out.println(item.getName() + ": Offset X: " + offset.x + " Offset Y: " + offset.y);
-                    System.out.println("Drawing " + item.getName() + " at " + (mouseWorld.x + offset.x - xOffset(item.getWidth(), item.getHeight())) + ", " + (mouseWorld.x + offset.y - yOffset(item.getWidth(), item.getHeight())));
                     batch.draw(item.getTexture(),
-                        MathUtils.floor(mouseWorld.x + offset.x - xOffset(item.getWidth(), item.getHeight())),
-                        MathUtils.floor(mouseWorld.y + offset.y - yOffset(item.getWidth(), item.getHeight())),
+                        MathUtils.floor(mouseWorld.x + offset.x) - xOffset(item.getWidth(), item.getHeight()),
+                        MathUtils.floor(mouseWorld.y + offset.y) - yOffset(item.getWidth(), item.getHeight()),
                         (item.getWidth() / 2f),
                         (item.getHeight() / 2f),
                         item.getWidth(),

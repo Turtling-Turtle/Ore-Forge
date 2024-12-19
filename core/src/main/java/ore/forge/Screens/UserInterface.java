@@ -149,7 +149,7 @@ public class UserInterface {
         createWallet(fpsStyle);
 //        fpsStyle.fontColor = Color.WHITE;
         createActiveOre(fpsStyle);
-        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
+//        stage.addActor(new QuestIcon(questManager.getQuest("Test Quest 1.0")));
 //        createActiveOreProgressBar();
         inventoryWidget.postStageProcess();
     }

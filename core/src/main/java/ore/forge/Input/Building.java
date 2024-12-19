@@ -32,7 +32,13 @@ public class Building extends InputAdapter {
     public boolean keyUp(int keycode) {
         return switch (keycode) {
             case R -> {
-                for (Item item : items) {
+                assert offsets.size() == items.size();
+                for (int i = 0; i < offsets.size(); i++) {
+                    var offset = offsets.get(i);
+                    var item = items.get(i);
+                    float temp = offset.x;
+                    offset.x = -offset.y;
+                    offset.y = temp;
                     item.rotateClockwise();
                 }
                 yield true;
@@ -104,7 +110,6 @@ public class Building extends InputAdapter {
             InventoryNode node = inventory.getNode(item.getID());
             if (node.getStored() < lookup.get(item.getID())) {
                 return false;
-
             }
         }
         return true;
@@ -112,8 +117,7 @@ public class Building extends InputAdapter {
 
     public void placeItems() {
         Vector3 mouseWorld = manager.getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        if (!ItemMap.getSingleton().isInBounds(mouseWorld)) { return; }
-        if (!canPlaceAll()) return;
+        if (!ItemMap.getSingleton().isInBounds(mouseWorld) || !canPlaceAll()) { return; }
         Inventory inventory = manager.getInventory();
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
