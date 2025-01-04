@@ -29,7 +29,7 @@ public class Ore {
     private int upgradeCount, multiOre;
     private float oreTemperature;
     private float moveSpeed, speedScalar;
-    private Direction direction;
+    private float direction;
     private boolean isDoomed;
     private float deltaTime;
     private boolean isActive;
@@ -47,7 +47,7 @@ public class Ore {
         tagMap = new HashMap<>();
         position = new Vector2();
         destination = new Vector2();
-        direction = Direction.NORTH;
+        direction = Direction.NORTH.getAngle();
         effects = new ArrayList<>();
         removalStack = new Stack<>();
         observerEffects = new ArrayList<>();
@@ -152,14 +152,14 @@ public class Ore {
         return this;
     }
 
-    public Ore setDestination(Vector2 target, float speed, Direction direction) {
+    public Ore setDestination(Vector2 target, float speed, float direction) {
         this.destination.set(target);
         this.direction = direction;
         setMoveSpeed(speed);
         return this;
     }
 
-    public void setDestination(float x, float y, float speed, Direction direction) {
+    public void setDestination(float x, float y, float speed, float direction) {
         this.destination.set(x, y);
         this.direction = direction;
         setMoveSpeed(speed);
@@ -255,7 +255,7 @@ public class Ore {
         return destination;
     }
 
-    public Direction getDirection() {
+    public float getDirection() {
         return direction;
     }
 

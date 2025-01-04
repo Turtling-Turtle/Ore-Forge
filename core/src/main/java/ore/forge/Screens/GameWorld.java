@@ -111,7 +111,7 @@ public class GameWorld extends CustomScreen {
         if (selectedItems != null && !selectedItems.isEmpty()) {
             batch.setColor(.2f, 1, .2f, 0.5f);
             for (Item selectedItem : selectedItems) {
-                if (selectedItem.getDirection() == Direction.NORTH || selectedItem.getDirection() == Direction.SOUTH) {
+                if (selectedItem.getDirection() == Direction.NORTH.getAngle() || selectedItem.getDirection() == Direction.SOUTH.getAngle()) {
                     batch.draw(selectedItem.getTexture(),
                         MathUtils.floor(selectedItem.getVector2().x) - xOffset(selectedItem.getWidth(), selectedItem.getHeight()),
                         MathUtils.floor(selectedItem.getVector2().y) - yOffset(selectedItem.getWidth(), selectedItem.getHeight()),
@@ -121,7 +121,7 @@ public class GameWorld extends CustomScreen {
                         selectedItem.getHeight(),
                         1,
                         1,
-                        selectedItem.getDirection().getAngle(),
+                        selectedItem.getDirection(),
                         0,
                         0,
                         selectedItem.getTexture().getWidth(),
@@ -139,7 +139,7 @@ public class GameWorld extends CustomScreen {
                         selectedItem.getHeight(),
                         1,
                         1,
-                        selectedItem.getDirection().getAngle(),
+                        selectedItem.getDirection(),
                         0,
                         0,
                         selectedItem.getTexture().getWidth(),
@@ -164,7 +164,7 @@ public class GameWorld extends CustomScreen {
             for (int i = 0; i < offsets.size(); i++) {
                 var item = items.get(i);
                 var offset = offsets.get(i);
-                if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
+                if (item.getDirection() == Direction.NORTH.getAngle() || item.getDirection() == Direction.SOUTH.getAngle()) {
                     batch.draw(item.getTexture(),
                         MathUtils.floor(mouseWorld.x + offset.x) - xOffset(item.getWidth(), item.getHeight()),
                         MathUtils.floor(mouseWorld.y + offset.y) - yOffset(item.getWidth(), item.getHeight()),
@@ -174,7 +174,7 @@ public class GameWorld extends CustomScreen {
                         item.getHeight(),
                         1,
                         1,
-                        item.getDirection().getAngle(),
+                        item.getDirection(),
                         0,
                         0,
                         item.getTexture().getWidth(),
@@ -192,7 +192,7 @@ public class GameWorld extends CustomScreen {
                         item.getHeight(),
                         1,
                         1,
-                        item.getDirection().getAngle(),
+                        item.getDirection(),
                         0,
                         0,
                         item.getTexture().getWidth(),
@@ -304,7 +304,7 @@ public class GameWorld extends CustomScreen {
                 ((Conveyor) item).update();//Might use this.
             }
 
-            if (item.getDirection() == Direction.NORTH || item.getDirection() == Direction.SOUTH) {
+            if (item.getDirection() == Direction.NORTH.getAngle() || item.getDirection() == Direction.SOUTH.getAngle()) {
                 batch.draw(item.getTexture(),
                     MathUtils.floor(item.getVector2().x) - xOffset(item.getWidth(), item.getHeight()),
                     MathUtils.floor(item.getVector2().y) - yOffset(item.getWidth(), item.getHeight()),
@@ -316,7 +316,7 @@ public class GameWorld extends CustomScreen {
                     item.getHeight(),
                     1,
                     1,
-                    item.getDirection().getAngle(),
+                    item.getDirection(),
                     0,
                     0,
                     item.getTexture().getWidth(),
@@ -334,7 +334,7 @@ public class GameWorld extends CustomScreen {
                     item.getHeight(),
                     1,
                     1,
-                    item.getDirection().getAngle(),
+                    item.getDirection(),
                     0,
                     0,
                     item.getTexture().getWidth(),

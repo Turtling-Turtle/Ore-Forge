@@ -47,7 +47,15 @@ public class Selecting extends InputAdapter {
         //Calculate offsets from center point
         for (Item i : selectedItems) {
             Vector2 itemPosition = i.getVector2();
-            Vector2 offset = new Vector2(itemPosition.x - centerPoint.x, itemPosition.y - centerPoint.y);
+            Vector2 offset;
+            if (i.getDirection() == 270) {
+                offset = new Vector2(itemPosition.x - centerPoint.x , itemPosition.y - centerPoint.y - i.getWidth());
+            } else if (i.getDirection() == 180) {
+               offset = new Vector2(itemPosition.x - centerPoint.x - i.getHeight(), itemPosition.y - centerPoint.y);
+            } else {
+                offset = new Vector2(itemPosition.x - centerPoint.x, itemPosition.y - centerPoint.y);
+            }
+
             offsets.add(offset);
         }
 

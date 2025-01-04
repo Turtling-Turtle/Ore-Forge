@@ -12,14 +12,14 @@ public class Block {
     protected final static EventManager eventManager = EventManager.getSingleton();
     public final Vector2 vector2;
 
-    protected Direction direction;
+    protected float direction;
     private boolean isProcessBlock, isFull;
 
     protected String name;
     protected String id;
     protected Item parentItem;
 
-    public Block(Direction direction, int x, int y) {
+    public Block(float direction, int x, int y) {
         vector2 = new Vector2();
         vector2.set(x,y);
         this.direction = direction;
@@ -59,7 +59,7 @@ public class Block {
         isFull = state;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(float direction) {
         this.direction = direction;
     }
 

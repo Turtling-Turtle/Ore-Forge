@@ -1,6 +1,7 @@
 package ore.forge.Items.Blocks;
 
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ore.forge.Direction;
 import ore.forge.Items.Item;
@@ -11,11 +12,11 @@ public class ConveyorBlock extends Block implements Worker {
     private float speed;
     private Vector2 force;
 
-    public ConveyorBlock(Direction direction, int x, int y) {
+    public ConveyorBlock(float direction, int x, int y) {
         super(direction, x, y);
     }
 
-    public ConveyorBlock(Item parentItem, float speed, Direction direction) {
+    public ConveyorBlock(Item parentItem, float speed, float direction) {
         super(parentItem);
         this.speed = speed;
         this.direction = direction;
@@ -33,22 +34,27 @@ public class ConveyorBlock extends Block implements Worker {
 //            }
 //            this.setFull(false); //Set this block to empty because it has now moved the ore.\
         } else {
-            int x = (int) vector2.x;
-            int y = (int) vector2.y;
-            switch (direction) {
-                case NORTH:
-                    y++;
-                    break;
-                case SOUTH:
-                    y--;
-                    break;
-                case EAST:
-                    x++;
-                    break;
-                case WEST:
-                    x--;
-                    break;
-            }
+
+            float radians = MathUtils.degreesToRadians * direction;
+            float x = MathUtils.cos(radians) + vector2.x;
+            float y = MathUtils.sin(radians) + vector2.y;
+//
+//            int x = (int) vector2.x;
+//            int y = (int) vector2.y;
+//            switch (direction) {
+//                case NORTH:
+//                    y++;
+//                    break;
+//                case SOUTH:
+//                    y--;
+//                    break;
+//                case EAST:
+//                    x++;
+//                    break;
+//                case WEST:
+//                    x--;
+//                    break;
+//            }
 //            ore.setForce(force);
             ore.setDestination(new Vector2(x, y), speed, direction);
 //            ore.setDestination(blockInFront.getVector().x, blockInFront.getVector().y, speed, direction);

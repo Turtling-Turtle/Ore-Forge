@@ -3,6 +3,7 @@ package ore.forge.Input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ore.forge.EventSystem.EventManager;
@@ -15,8 +16,7 @@ import ore.forge.Player.InventoryNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.badlogic.gdx.Input.Keys.ESCAPE;
-import static com.badlogic.gdx.Input.Keys.R;
+import static com.badlogic.gdx.Input.Keys.*;
 
 public class Building extends InputAdapter {
     private ArrayList<Item> items;
@@ -33,13 +33,18 @@ public class Building extends InputAdapter {
         return switch (keycode) {
             case R -> {
                 assert offsets.size() == items.size();
-                for (int i = 0; i < offsets.size(); i++) {
-                    var offset = offsets.get(i);
-                    var item = items.get(i);
-                    float temp = offset.x;
-                    offset.x = -offset.y;
-                    offset.y = temp;
-                    item.rotateClockwise();
+                if (items.size() > 1) {
+                    for (int i = 0; i < offsets.size(); i++) {
+                        var offset = offsets.get(i);
+                        var item = items.get(i);
+                        offset.rotate90(-1);
+                        //TODO: Update offset cause the bottom left(position) changes as item rotates
+                        item.rotateClockwise();
+                    }
+                } else {
+                    for (int i = 0; i < offsets.size(); i++) {
+                        items.get(i).rotateClockwise();
+                    }
                 }
                 yield true;
             }
@@ -117,12 +122,14 @@ public class Building extends InputAdapter {
 
     public void placeItems() {
         Vector3 mouseWorld = manager.getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        if (!ItemMap.getSingleton().isInBounds(mouseWorld) || !canPlaceAll()) { return; }
+        if (!ItemMap.getSingleton().isInBounds(mouseWorld) || !canPlaceAll()) {
+            return;
+        }
         Inventory inventory = manager.getInventory();
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
             Vector2 offset = offsets.get(i);
-            item.fastPlace((int) (mouseWorld.x + offset.x), (int) (mouseWorld.y + offset.y));
+            item.fastPlace(MathUtils.floor(mouseWorld.x + offset.x), MathUtils.floor(mouseWorld.y + offset.y));
             inventory.getNode(item).place();
             EventManager.getSingleton().notifyListeners(new ItemPlacedGameEvent(item));
         }

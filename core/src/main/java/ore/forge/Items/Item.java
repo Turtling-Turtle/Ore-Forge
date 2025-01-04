@@ -30,7 +30,7 @@ public abstract class Item {
 //    { 0, 1, 1, 0},
 //    { 0, 2, 2, 0},
 //    { 0, 1, 1, 0},
-    protected Direction direction;
+    protected float direction;
 
     //Tier could be used to identify how to load Acquisition info.
     protected final Tier tier;
@@ -58,7 +58,7 @@ public abstract class Item {
         blockConfig = new Block[blockLayout.length][blockLayout[0].length];
         this.tier = TIER;
         this.itemValue = itemValue;
-        this.direction = Direction.NORTH;
+        this.direction = Direction.NORTH.getAngle();
         this.rarity = BigDecimal.valueOf(rarity).setScale(1, RoundingMode.HALF_UP).floatValue();
     }
 
@@ -72,7 +72,7 @@ public abstract class Item {
         this.tier = Tier.valueOf(jsonValue.getString("tier"));
         this.itemValue = jsonValue.getDouble("itemValue");
         this.vector2 = new Vector2();
-        this.direction = Direction.NORTH;
+        this.direction = Direction.NORTH.getAngle();
 
         //Tier could be used to identify how to load Acquisition info.
 
@@ -159,7 +159,7 @@ public abstract class Item {
         blockConfig = new Block[numberConfig.length][numberConfig[0].length];
         tier = itemToClone.tier;
         itemValue = itemToClone.itemValue;
-        direction = Direction.NORTH;
+        direction = Direction.NORTH.getAngle();
         itemTexture = itemToClone.itemTexture;
         this.rarity = itemToClone.rarity;
         this.isShopItem = itemToClone.isShopItem;
@@ -317,26 +317,16 @@ public abstract class Item {
         }
     }
 
-    public void alignWith(Direction direction) {
+    public void alignWith(float direction) {
         while (this.direction != direction) {
             this.rotateClockwise();
         }
     }
 
     public void rotateClockwise() {//Instead of reordering the array and allocating new memory could just use direction to determine the order the array is read in.
-        switch (direction) {
-            case NORTH:
-                direction = Direction.EAST;
-                break;
-            case EAST:
-                direction = Direction.SOUTH;
-                break;
-            case SOUTH:
-                direction = Direction.WEST;
-                break;
-            case WEST:
-                direction = Direction.NORTH;
-                break;
+        direction = (direction - 90) % 360;
+        if (direction < 0) {
+            direction += 360;
         }
 
         int row = blockConfig.length;
@@ -349,7 +339,6 @@ public abstract class Item {
                 rotatedLayout[j][row - 1 - i].setDirection(direction);
             }
         }
-
         blockConfig = rotatedLayout;
 
     }
@@ -417,11 +406,11 @@ public abstract class Item {
         return tier;
     }
 
-    public Direction getDirection() {
+    public float getDirection() {
         return this.direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(float direction) {
         this.direction = direction;
     }
 

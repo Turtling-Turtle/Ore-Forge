@@ -13,7 +13,7 @@ public class UpgradeBlock extends Block implements Worker {
     private UpgradeStrategy upgrade;
     private float speed;
 
-    public UpgradeBlock(Direction direction, int x, int y) {
+    public UpgradeBlock(float direction, int x, int y) {
         super(direction, x, y);
 
     }

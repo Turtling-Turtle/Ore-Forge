@@ -19,7 +19,7 @@ public class DropperBlock extends Block {
     private DropperStrategy dropperEffect;
     private float dropInterval;
 
-    public DropperBlock(Direction direction, int x, int y) {
+    public DropperBlock(float direction, int x, int y) {
         super(direction, x, y);
     }
 

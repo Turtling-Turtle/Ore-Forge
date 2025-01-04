@@ -2,6 +2,7 @@ package ore.forge;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
@@ -35,23 +36,27 @@ public class ItemMap {
         return itemMapSingleton;
     }
 
-    public Block getBlockInFront(Vector2 target, Direction direction) {
-        int x = (int) target.x;
-        int y = (int) target.y;
-        switch (direction) {
-            case NORTH:
-                y++;
-                break;
-            case SOUTH:
-                y--;
-                break;
-            case EAST:
-                x++;
-                break;
-            case WEST:
-                x--;
-                break;
-        }
+    public Block getBlockInFront(Vector2 target, float direction) {
+        float radians = MathUtils.degreesToRadians * direction;
+        float x = MathUtils.cos(radians) + target.x ;
+        float y = MathUtils.sin(radians) + target.y ;
+//        int x = (int) target.x;
+//        int y = (int) target.y;
+//        switch (direction) {
+//            case NORTH:
+//                y++;
+//                break;
+//            case SOUTH:
+//                y--;
+//                break;
+//            case EAST:
+//                x++;
+//                break;
+//            case WEST:
+//                x--;
+//                break;
+//        }
+
         return getBlock(x, y);
     }
 
@@ -164,7 +169,7 @@ public class ItemMap {
             //read in the items coordinates and its Direction.
             int x = jsonValue.get("position").getInt("x");
             int y = jsonValue.get("position").getInt("y");
-            itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")));
+            itemToPlace.alignWith(Direction.valueOf(jsonValue.getString("direction")).getAngle());
             //place the item
             itemToPlace.placeItem(x, y);
             System.out.println(itemToPlace);
@@ -220,10 +225,10 @@ public class ItemMap {
 
     private class MapData {
         private final String itemID;
-        private final Direction direction;
+        private final float direction;
         private final Vector2 position;
 
-        public MapData(String itemID, Direction direction, Vector2 position) {
+        public MapData(String itemID, float direction, Vector2 position) {
             this.itemID = itemID;
             this.direction = direction;
             this.position = position;
