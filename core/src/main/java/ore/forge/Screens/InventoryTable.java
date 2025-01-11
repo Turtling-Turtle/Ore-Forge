@@ -101,7 +101,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             }
         });
 
-
         checkBoxes[1] = new CheckBox("Tier", buttonStyle);
         checkBoxes[1].addListener(new ClickListener() {
             @Override
@@ -159,16 +158,16 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         scrollPane.setScrollingDisabled(true, false);
 
 
-//        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
-        background.add(topTable).row();
+        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
+//        background.add(topTable).fillX().row();
 
 //        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
-        background.add(scrollPane).top().left();
+        background.add(scrollPane).top().left().fill().pad(padValue).expand();
 
-//        Value widthValue = Value.Fixed.percentWidth(0.245f, topTable);
-//        for (int i = 0; i < ROW_COUNT; i++) {
-//            iconTable.columnDefaults(i).width(widthValue);
-//        }
+        Value widthValue = Value.Fixed.percentWidth(0.235f, topTable);
+        for (int i = 0; i < ROW_COUNT; i++) {
+            iconTable.columnDefaults(i).width(widthValue);
+        }
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
@@ -237,8 +236,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).top().left();
-//        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).padTop(padValue).padBottom(padValue).padRight(padValue).colspan(1);
+//        iconTable.add(icon).top().left().height(Value.Fixed.percentHeight(0.2f,this)).width(Value.Fixed.percentWidth(0.24f, topTable));
+        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).pad(padValue).colspan(1);
     }
 
     public void show() {

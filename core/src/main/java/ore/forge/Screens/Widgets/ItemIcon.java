@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Align;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
-import ore.forge.Screens.IRHelper;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
 
@@ -30,7 +29,8 @@ public class ItemIcon extends Table {
         TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         ImageButton button = new ImageButton(test);
         Table imageButtonTable = new Table();
-        imageButtonTable.add(button).size(120, 69);
+//        imageButtonTable.add(button).size(120, 69);
+        imageButtonTable.add(button);
 
 //        button.setDebug(true);
         Table border = new Table();
@@ -39,8 +39,9 @@ public class ItemIcon extends Table {
         border.add(imageButtonTable).fill().expand();
         border.center();
 //        border.setDebug(true);
+
 //        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
-        border.setSize(IRHelper.getWidth(0.081f), IRHelper.getHeight(0.15f));
+//        border.setSize(IRHelper.getWidth(0.081f), IRHelper.getHeight(0.15f));
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -75,16 +76,18 @@ public class ItemIcon extends Table {
         container.setClip(true);
 
         Stack stack = new Stack();
-        stack.setSize(border.getWidth(), border.getHeight());
+//        stack.setSize(border.getWidth(), border.getHeight());
         stack.add(border);
         container.align(Align.topLeft);
         stack.add(container);
         stack.add(nameLabel);
         nameLabel.setAlignment(Align.bottom);
 
-        this.add(stack).expand().fill().center();
+        this.pad(Value.Fixed.percentWidth(0.014f, this));
+
+        this.add(stack).expand().fill();
 //        this.pad(3f);
-        this.pad(Value.Fixed.percentWidth(0.01f, this));
+
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
@@ -154,7 +157,7 @@ public class ItemIcon extends Table {
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
             case 1440 -> 32;
-            case 2160 -> 120;
+            case 2160 -> 80;
             default -> 22;
         };
     }
