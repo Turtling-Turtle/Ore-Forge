@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align;
 import ore.forge.Input.InventoryMode;
 import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
+import ore.forge.Screens.IRHelper;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
 
@@ -27,7 +28,6 @@ public class ItemIcon extends Table {
     public ItemIcon(InventoryNode node) {
         this.node = node;
         TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
-        test.setMinSize(180, 97);
         ImageButton button = new ImageButton(test);
         Table imageButtonTable = new Table();
         imageButtonTable.add(button).size(120, 69);
@@ -40,7 +40,7 @@ public class ItemIcon extends Table {
         border.center();
 //        border.setDebug(true);
 //        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
-        border.setSize(175, 198);
+        border.setSize(IRHelper.getWidth(0.081f), IRHelper.getHeight(0.15f));
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -50,7 +50,7 @@ public class ItemIcon extends Table {
         labelStyle.fontColor = Color.BLACK;
 
         Label nameLabel = new Label(node.getName(), labelStyle);
-        nameLabel.setFontScale(.8f, .8f);
+        nameLabel.setFontScale(.3f, .3f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
 
@@ -84,10 +84,12 @@ public class ItemIcon extends Table {
 
         this.add(stack).expand().fill().center();
 //        this.pad(3f);
-        this.pad(Value.percentWidth(0.01f, this));
+        this.pad(Value.Fixed.percentWidth(0.01f, this));
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
+
+//        this.setSize(288,420);
 
 //        border.debugAll();
     }

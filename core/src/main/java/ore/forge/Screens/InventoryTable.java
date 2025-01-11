@@ -55,7 +55,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         EventManager.getSingleton().registerListener(this);
 
 //        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        background.setSize(700, 736);
+//        background.setSize(IRHelper.getWidth(0.365f), IRHelper.getHeight(0.8f));
         padValue = Value.Fixed.percentHeight(0.005f, background);
 
 
@@ -71,7 +71,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             }
         });
 
-        topTable.add(searchBar).top().left().size(Value.percentWidth(0.35f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+//        topTable.add(searchBar).top().left().size(Value.Fixed.percentWidth(0.35f, background), Value.Fixed.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+        topTable.add(searchBar).top().left();
 
         this.iconTable = new Table();
         checkBoxes = new CheckBox[3];
@@ -142,7 +143,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         ScrollPane scrollPane = new ScrollPane(this.iconTable);
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
-            topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
+//            topTable.add(checkBox).top().left().size(Value.Fixed.percentWidth(0.18f, background), Value.Fixed.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
+            topTable.add(checkBox).top().left();
         }
 
         allIcons = new ArrayList<>();
@@ -157,23 +159,28 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         scrollPane.setScrollingDisabled(true, false);
 
 
-        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
-        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
+//        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
+        background.add(topTable).row();
 
-        Value widthValue = Value.percentWidth(0.245f, topTable);
-        for (int i = 0; i < ROW_COUNT; i++) {
-            iconTable.columnDefaults(i).width(widthValue);
-        }
+//        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
+        background.add(scrollPane).top().left();
+
+//        Value widthValue = Value.Fixed.percentWidth(0.245f, topTable);
+//        for (int i = 0; i < ROW_COUNT; i++) {
+//            iconTable.columnDefaults(i).width(widthValue);
+//        }
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-        Value borderPad = Value.percentHeight(0.0014f, this);
-        this.pad(borderPad, borderPad, borderPad, Value.zero);
-        this.add(background).expand().fill();
-//        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        this.setSize(700, 796);
-//        this.setPosition(1750, 92);
 
+        Value borderPad = Value.Fixed.percentHeight(0.0026f, this);
+        this.pad(borderPad);
+//        this.pad(Value.zero);
+//        this.pad(borderPad, borderPad, borderPad, Value.zero);
+        this.add(background).fill().expand();
+
+//        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
+        this.setSize(IRHelper.getWidth(0.365f), IRHelper.getHeight(.8f));
     }
 
     public void asyncSearch(String target) {
@@ -221,7 +228,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
                 addIconToTable(iconTable, icon, count++);
             }
         }
-        iconTable.setFillParent(true);
+//        iconTable.setFillParent(true);
 //        iconTable.pack();
     }
 
@@ -230,7 +237,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).padTop(padValue).padBottom(padValue).padRight(padValue).colspan(1);
+        iconTable.add(icon).top().left();
+//        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).padTop(padValue).padBottom(padValue).padRight(padValue).colspan(1);
     }
 
     public void show() {
