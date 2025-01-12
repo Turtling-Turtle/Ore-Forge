@@ -48,6 +48,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         textFieldStyle.background = UIHelper.getRoundFull();
 
         textFieldStyle.font = UIHelper.generateFont(determineFontSize());
+        textFieldStyle.font.getData().setScale(0.5f);
 
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
@@ -72,7 +73,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         });
 
 //        topTable.add(searchBar).top().left().size(Value.Fixed.percentWidth(0.35f, background), Value.Fixed.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
-        topTable.add(searchBar).top().left();
+        topTable.add(searchBar).top().left().expandX().fill().padLeft(padValue).padRight(padValue);
 
         this.iconTable = new Table();
         checkBoxes = new CheckBox[3];
@@ -143,7 +144,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         for (CheckBox checkBox : checkBoxes) {
             checkBox.setChecked(false);
 //            topTable.add(checkBox).top().left().size(Value.Fixed.percentWidth(0.18f, background), Value.Fixed.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
-            topTable.add(checkBox).top().left();
+            topTable.add(checkBox).top().left().padRight(padValue).padLeft(padValue).fill();
         }
 
         allIcons = new ArrayList<>();
