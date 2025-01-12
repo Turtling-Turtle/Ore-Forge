@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class UIHelper {
     @SuppressWarnings("GDXJavaStaticResource")
-    private final static FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+    private final static FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/NotoSans-Bold.ttf"));
     private final static HashMap<Integer, BitmapFont> fontLookup = new HashMap<>();
 
     public static BitmapFont generateFont(int size) {
