@@ -48,7 +48,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         textFieldStyle.background = UIHelper.getRoundFull();
 
         textFieldStyle.font = UIHelper.generateFont(determineFontSize());
-        textFieldStyle.font.getData().setScale(0.5f);
+        textFieldStyle.font.getData().setScale(0.2f);
 
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
@@ -350,7 +350,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
             case 1440 -> 32;
-            case 2160 -> 40;
+            case 2160 -> 120;
             default -> 22;
         };
     }
