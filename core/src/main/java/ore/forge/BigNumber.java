@@ -124,6 +124,7 @@ public class BigNumber implements Comparable<BigNumber> {
 
     /* Modulo is: a - (b * int(a/b))
      * but we run into issues when the number is outside the range of the Significant digits.
+     * Might look into using a method inspired by this video??? https://www.youtube.com/watch?v=skUuFzPUhIc
      * */
     public BigNumber modulo(BigNumber other) {
         if (other.mantissa == 0) {
@@ -162,7 +163,6 @@ public class BigNumber implements Comparable<BigNumber> {
         results[0] = this.divide(absOther);
         results[1] = absOther.multiply(results[0].floor());
         return this.subtract(results[1]);
-
     }
 
     private long digitDifference(BigNumber other) {

@@ -57,7 +57,6 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         prestigeItemsIcons = new ArrayList<>();
         iconLookUp = new HashMap<>();
 
-
         createIcons(inventory.getInventoryNodes());
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
@@ -68,27 +67,29 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         style.pressedOffsetY = -2f;
         style.fontColor = Color.BLACK;
 
-
         dropperIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
         furnaceIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
         processItemsIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
         specialPointsIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
 
+        style.font.getData().setScale(.2f);
+
 
         //Initialize "tab" buttons
-
         droppers = new TextButton("Droppers", style);
         furnaces = new TextButton("Furnaces", style);
         processItems = new TextButton("Process Items", style);
         specialPoints = new TextButton("Special Items", style);
         prestigeItems = new TextButton("Prestige Items", style);
+        Button[] widgets = new Button[5];
+        widgets[0] = droppers;
+        widgets[1] = furnaces;
+        widgets[2] = processItems;
+        widgets[3] = specialPoints;
+        widgets[4] = prestigeItems;
 
 
-        droppers.setSize(0, 0);
-        furnaces.setSize(0, 0);
-        processItems.setSize(0, 0);
-        specialPoints.setSize(0, 0);
-        prestigeItems.setSize(0, 0);
+
 
         droppers.addListener(new ClickListener() {
             @Override
@@ -140,20 +141,13 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         background = new Table();
         iconTable = new Table();
 
-
-        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
         padValue = Value.Fixed.percentHeight(0.005f, background);
 
-        Value buttonSize = Value.Fixed.percentWidth(.175f, background);
-
-        topTable.top().left();
-        topTable.add(droppers).top().left().expand().fill().align(Align.topLeft).width(buttonSize).pad(padValue, padValue, padValue, Value.zero);
-        topTable.add(furnaces).top().left().expand().fill().align(Align.topLeft).width(buttonSize).pad(padValue, padValue, padValue, Value.zero);
-        topTable.add(processItems).top().left().expand().fill().align(Align.topLeft).width(buttonSize).pad(padValue, padValue, padValue, Value.zero);
-        topTable.add(specialPoints).top().left().expand().fill().align(Align.topLeft).width(buttonSize).pad(padValue, padValue, padValue, Value.zero);
-        topTable.add(prestigeItems).top().left().expand().fill().align(Align.topLeft).width(buttonSize).pad(padValue, padValue, padValue, Value.zero);
+        for (Button button : widgets) {
+            topTable.add(button).top().left().padRight(padValue).padLeft(padValue).fill();
+        }
         topTable.row();
-        topTable.add(searchBar).expand().fill().top().left().pad(padValue).colspan(3);
+        topTable.add(searchBar).expandX().fill().top().left().padLeft(padValue).padRight(padValue).padTop(padValue).colspan(3);
 
         topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         topTable.setColor(Color.BLACK);
@@ -167,26 +161,25 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setVisible(true);
 
-        background.add(topTable).top().left().expandX().fillX().padRight(padValue).padTop(padValue).row();
-        background.add(scrollPane).top().left().expand().fill().padRight(padValue).padTop(padValue);
-//        scrollPane.debugAll();
+        background.add(topTable).top().left().expandX().fillX().padRight(padValue).padLeft(padValue).row();
+        background.add(scrollPane).top().left().fill().pad(padValue).expand();
+
+        for (int i = 0; i < 6; i++) {
+            iconTable.columnDefaults(i).width(IRHelper.getWidth(0.0784f));
+        }
+
         background.setColor(Color.OLIVE);
         background.setBackground(UIHelper.getRoundFull());
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-        this.pad(2.4f, 0, 2.4f, 2.5f);
-        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        this.add(background).expand().fill();
-//        background.setFillParent(true);
+//        this.pad(2.4f, 0, 2.4f, 2.5f);
+        this.pad(Value.Fixed.percentHeight(0.0026f, this));
 
-
-//        background.setDebug(true);
-//        iconTable.setDebug(true);
-//        scrollPane.setDebug(true);
+        this.add(background).fill().expand();
+        this.setSize(IRHelper.getWidth(.58f), IRHelper.getHeight(0.8f));
 
 
         EventManager.getSingleton().registerListener(this);
-
     }
 
     private void createIcons(ArrayList<InventoryNode> nodes) {
@@ -237,17 +230,18 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         for (ItemIcon icon : icons) {
             addIconToTable(iconTable, icon, count++);
         }
-        iconTable.setFillParent(true);
+//        iconTable.setFillParent(true);
 //        iconTable.pack();
     }
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
         iconTable.top().left();
-        if (count % 4 == 0) {
+        if (count % 6 == 0) {
             iconTable.row();
         }
 
-        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fill().align(Align.topLeft).padLeft(padValue).padTop(padValue).padBottom(padValue);
+        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).pad(padValue).colspan(1);
+//        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).expandX().fill().align(Align.topLeft).padLeft(padValue).padTop(padValue).padBottom(padValue);
 //        iconTable.add(icon).left().top().size(icon.getWidth(), icon.getHeight()).align(Align.topLeft).pad(padValue);
     }
 
@@ -337,14 +331,18 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
 //        table.setDebug(true, true);
         background.row();
         background.add(table).align(Align.bottomLeft).left().bottom().expandX().fillX();
+//        this.add(background).fill().expand();
+
     }
 
     public void show() {
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * 0f, Gdx.graphics.getHeight() * .1f, 0.13f)));
+        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(IRHelper.getWidth(0.005f), IRHelper.getHeight(0.1f), .13f)));
+//        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * 0f, Gdx.graphics.getHeight() * .1f, 0.13f)));
     }
 
     public void hide() {
-        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
+        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - IRHelper.getWidth(1f), IRHelper.getHeight(0.1f), .13f), Actions.hide()));
+//        this.addAction(Actions.sequence(Actions.moveTo(this.getWidth() - Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
     }
 
     @Override
@@ -409,7 +407,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 16;
             case 1440 -> 30;
-            case 2160 -> 34;
+            case 2160 -> 120;
             default -> 22;
         };
     }

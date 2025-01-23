@@ -159,7 +159,8 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         scrollPane.setScrollingDisabled(true, false);
 
 
-        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
+
+        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).padLeft(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
 //        background.add(topTable).fillX().row();
 
 //        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
@@ -169,6 +170,9 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         for (int i = 0; i < ROW_COUNT; i++) {
             iconTable.columnDefaults(i).width(widthValue);
         }
+
+        System.out.println("width value:" + widthValue.get());
+        System.out.println("foo:" + topTable.getWidth() * 0.235f);
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
@@ -243,8 +247,9 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
     public void show() {
         Gdx.app.log("InventoryTable", "Showing");
-//        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(1800, 92)));
-        this.setPosition(700, 92);
+//        this.setPosition(685, 92);
+        this.addAction(Actions.sequence(Actions.moveTo(IRHelper.getWidth(0.63f), IRHelper.getHeight(0.1f), 0.13f)));
+        System.out.println("foo:" + topTable.getWidth() * 0.235f);
 
         System.out.println("World Width " + this.getStage().getViewport().getWorldWidth());
         System.out.println("Screen Width " + this.getStage().getViewport().getScreenWidth());
@@ -254,7 +259,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
     public void hide() {
         Gdx.app.log("InventoryTable", "hiding");
-        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f, Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
+        this.addAction(Actions.sequence(Actions.moveTo(IRHelper.getWidth(1f), IRHelper.getHeight(0.1f), 0.13f), Actions.hide()));
         this.setVisible(false);
         assert !isVisible();
     }

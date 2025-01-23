@@ -30,10 +30,10 @@ public class Lwjgl3Launcher {
         config.setForegroundFPS(100_000);
 
 //        config.setWindowedMode(1920, 1080);
-        config.setWindowedMode(2560, 1440);
+//        config.setWindowedMode(2560, 1440);
 //        config.setWindowedMode(3840, 2160);
 
-//        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
         config.setBackBufferConfig(8, 8, 8, 8, 16, 0, 8);
         config.setResizable(true);
 
