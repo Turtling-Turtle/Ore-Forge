@@ -72,7 +72,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         processItemsIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
         specialPointsIcons.sort(Comparator.comparingDouble(ItemIcon::getPrice));
 
-        style.font.getData().setScale(.2f);
+        style.font.getData().setScale(.5f);
 
 
         //Initialize "tab" buttons
@@ -410,7 +410,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 16;
             case 1440 -> 30;
-            case 2160 -> 120;
+            case 2160 -> 48;
             default -> 22;
         };
     }

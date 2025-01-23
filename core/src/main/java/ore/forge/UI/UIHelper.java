@@ -23,7 +23,7 @@ public class UIHelper {
         parameter.size = size;
         parameter.genMipMaps = true;
         parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearLinear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
         var font = generator.generateFont(parameter);
         fontLookup.put(size, font);
         return font;

@@ -49,9 +49,10 @@ public class ItemIcon extends Table {
 
 
         labelStyle.fontColor = Color.BLACK;
+        labelStyle.font.getData().setScale(0.5f);
 
         Label nameLabel = new Label(node.getName(), labelStyle);
-        nameLabel.setFontScale(.2f, .2f);
+//        nameLabel.setFontScale(.5f, .5f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
 
@@ -61,7 +62,7 @@ public class ItemIcon extends Table {
         TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
         style.background = UIHelper.getRoundFull();
         style.label = new Label.LabelStyle(labelStyle);
-        labelStyle.font.getData().setScale(.2f, .2f);
+//        labelStyle.font.getData().setScale(.2f, .2f);
 
         tooltip = new TextTooltip(node.getHeldItem().getDescription(), style);
         tooltip.setInstant(true);
@@ -157,7 +158,7 @@ public class ItemIcon extends Table {
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
             case 1440 -> 32;
-            case 2160 -> 120;
+            case 2160 -> 48;
             default -> 22;
         };
     }
