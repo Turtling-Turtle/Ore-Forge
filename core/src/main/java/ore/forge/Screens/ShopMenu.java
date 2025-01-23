@@ -106,6 +106,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
             }
 
         });
+
         processItems.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -141,13 +142,15 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         background = new Table();
         iconTable = new Table();
 
+        background.setSize(IRHelper.getWidth(.58f), IRHelper.getHeight(0.8f));
         padValue = Value.Fixed.percentHeight(0.005f, background);
 
+
         for (Button button : widgets) {
-            topTable.add(button).top().left().padRight(padValue).padLeft(padValue).fill();
+            topTable.add(button).top().left().padLeft(padValue).padRight(padValue);
         }
         topTable.row();
-        topTable.add(searchBar).expandX().fill().top().left().padLeft(padValue).padRight(padValue).padTop(padValue).colspan(3);
+        topTable.add(searchBar).fill().top().left().colspan(3).padRight(padValue).padLeft(padValue).padTop(padValue);
 
         topTable.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         topTable.setColor(Color.BLACK);
@@ -161,7 +164,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setVisible(true);
 
-        background.add(topTable).top().left().expandX().fillX().padRight(padValue).padLeft(padValue).row();
+        background.add(topTable).top().left().expandX().fillX().padTop(padValue).padRight(padValue).padLeft(padValue).row();
         background.add(scrollPane).top().left().fill().pad(padValue).expand();
 
         for (int i = 0; i < 6; i++) {
