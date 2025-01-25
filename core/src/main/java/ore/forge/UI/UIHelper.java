@@ -16,9 +16,9 @@ public class UIHelper {
     private final static HashMap<Integer, BitmapFont> fontLookup = new HashMap<>();
 
     public static BitmapFont generateFont(int size) {
-        if (fontLookup.containsKey(size)) {
-            return fontLookup.get(size);
-        }
+//        if (fontLookup.containsKey(size)) {
+//            return fontLookup.get(size);
+//        }
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
         parameter.genMipMaps = true;

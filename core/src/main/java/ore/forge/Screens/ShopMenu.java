@@ -132,7 +132,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
 
 
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = UIHelper.generateFont(determineFontSize());
+        textFieldStyle.font = style.font;
         textFieldStyle.background = UIHelper.getRoundFull();
         textFieldStyle.fontColor = Color.BLACK;
         TextField searchBar = new TextField("Search...", textFieldStyle);
