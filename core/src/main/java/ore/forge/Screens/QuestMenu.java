@@ -76,29 +76,26 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
             var questIcon = new QuestWidget(quest);
             lookup.put(quest.getId(), questIcon);
             questWidgets.add(questIcon);
-            count++;
-//            iconTable.add(questIcon).top().left().size(questIcon.getWidth(), questIcon.getHeight())
-//                .align(Align.topLeft).expand().fill().pad(2f);
 
             widgetTable.add(questIcon).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
-            if (count % 2 == 0) {
+            if (++count % 2 == 0) {
                 widgetTable.row();
             }
         }
 
-//        widgetTable.setDebug(true);
-//        this.pad(2f);
-//        iconTable.setFillParent(true);
+        widgetTable.setSize(IRHelper.getWidth(0.8f), IRHelper.getHeight(0.7f));
+
+        widgetTable.setDebug(true);
+        this.setDebug(true);
+
         this.pad(2.75f);
-        this.add(widgetTable).expand().fill().top().left().align(Align.topLeft);
+//        this.add(widgetTable).expand().fill().top().left().align(Align.topLeft);
+        this.add(widgetTable).top().left().fill().expand();
         this.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
+        this.setSize(IRHelper.getWidth(0.85f), IRHelper.getHeight(0.85f));
 
-        this.setSize(Gdx.graphics.getWidth() * .85f, Gdx.graphics.getHeight() * .85f);
-        this.setPosition(Gdx.graphics.getWidth() * .075f, Gdx.graphics.getHeight() * 0.075f);
-
-//        this.debugAll();
-
+        this.setPosition(IRHelper.getWidth(0.075f), IRHelper.getHeight(0.075f));
     }
 
     private void addListener(TextButton button, Runnable clickedLogic) {
@@ -116,7 +113,7 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
             CompletableFuture.supplyAsync(() -> {
                 ArrayList<QuestWidget> widgetsToAdd = new ArrayList<>(questWidgets);
                 for (QuestWidget widget : questWidgets) {
-                    if (widget.getStatus() == this.filterType || this.filterType == null) {
+                    if (this.filterType == null || widget.getStatus() == this.filterType) {
                         widgetsToAdd.add(widget);
                     }
                 }
@@ -138,7 +135,7 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
         widgetTable.clear();
         int count = 0;
         for (QuestWidget widget : icons) {
-            widgetTable.add(widget).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
+            widgetTable.add(widget).top().left().align(Align.topLeft).colspan(1);
             if (++count % 2 == 0) {
                 widgetTable.row();
             }
