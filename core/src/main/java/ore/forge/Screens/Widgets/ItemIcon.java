@@ -45,7 +45,7 @@ public class ItemIcon extends Table {
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = UIHelper.generateFont(determineFont());
+        labelStyle.font = UIHelper.generateFont(48);
 
 
         labelStyle.fontColor = Color.BLACK;
@@ -154,7 +154,7 @@ public class ItemIcon extends Table {
         tooltip.getActor().setText(newMessage);
     }
 
-    private int determineFont() {
+    private int determineFontSize() {
         return switch (Gdx.graphics.getHeight()) {
             case 1080 -> 20;
             case 1440 -> 32;

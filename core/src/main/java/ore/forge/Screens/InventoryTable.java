@@ -47,7 +47,7 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.background = UIHelper.getRoundFull();
 
-        textFieldStyle.font = UIHelper.generateFont(determineFontSize());
+        textFieldStyle.font = UIHelper.generateFont(48);
         textFieldStyle.font.getData().setScale(0.5f);
 
         searchBar = new TextField("", textFieldStyle);
@@ -157,7 +157,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
 
 
         scrollPane.setScrollingDisabled(true, false);
-
 
 
         background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).padLeft(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
@@ -349,15 +348,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             //Name
             return icon1.getNodeName().compareTo(icon2.getNodeName());
         }
-    }
-
-    private int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 48;
-            default -> 22;
-        };
     }
 
     public TextField getSearchBar() {

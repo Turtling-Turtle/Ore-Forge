@@ -60,7 +60,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         createIcons(inventory.getInventoryNodes());
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.font = UIHelper.generateFont(determineFontSize());
+        style.font = UIHelper.generateFont(48);
         style.up = UIHelper.getRoundFull();
         style.down = UIHelper.getRoundFull();
         style.over = UIHelper.getRoundFull();
@@ -147,7 +147,7 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
 
 
         for (Button button : widgets) {
-            topTable.add(button).top().left().padLeft(padValue).padRight(padValue);
+            topTable.add(button).top().left().expandX().fillX().padLeft(padValue).padRight(padValue);
         }
         topTable.row();
         topTable.add(searchBar).fill().top().left().colspan(3).padRight(padValue).padLeft(padValue).padTop(padValue);
@@ -405,14 +405,5 @@ public class ShopMenu extends Table implements GameEventListener<NodeGameEvent> 
         return NodeGameEvent.class;
     }
 
-
-    private int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 16;
-            case 1440 -> 30;
-            case 2160 -> 48;
-            default -> 22;
-        };
-    }
 }
 
