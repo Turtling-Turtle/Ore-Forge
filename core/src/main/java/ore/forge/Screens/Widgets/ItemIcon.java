@@ -1,6 +1,5 @@
 package ore.forge.Screens.Widgets;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -9,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import ore.forge.Input.InventoryMode;
-import ore.forge.Items.Item.Tier;
 import ore.forge.Player.InventoryNode;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
@@ -29,19 +27,14 @@ public class ItemIcon extends Table {
         TextureRegionDrawable test = new TextureRegionDrawable(node.getHeldItem().getTexture());
         ImageButton button = new ImageButton(test);
         Table imageButtonTable = new Table();
-//        imageButtonTable.add(button).size(120, 69);
         imageButtonTable.add(button);
 
-//        button.setDebug(true);
         Table border = new Table();
         border.setBackground(UIHelper.getRoundFull());
         button.center();
+
         border.add(imageButtonTable).fill().expand();
         border.center();
-//        border.setDebug(true);
-
-//        border.setSize(Gdx.graphics.getWidth() * .081f, Gdx.graphics.getHeight() * .15f);
-//        border.setSize(IRHelper.getWidth(0.081f), IRHelper.getHeight(0.15f));
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -49,20 +42,17 @@ public class ItemIcon extends Table {
 
 
         labelStyle.fontColor = Color.BLACK;
-        labelStyle.font.getData().setScale(0.5f);
 
         Label nameLabel = new Label(node.getName(), labelStyle);
-//        nameLabel.setFontScale(.5f, .5f);
+        nameLabel.setFontScale(0.5f);
         nameLabel.setAlignment(Align.center);
         nameLabel.setWrap(true);
 
         border.row();
 
-
         TextTooltip.TextTooltipStyle style = new TextTooltip.TextTooltipStyle();
         style.background = UIHelper.getRoundFull();
         style.label = new Label.LabelStyle(labelStyle);
-//        labelStyle.font.getData().setScale(.2f, .2f);
 
         tooltip = new TextTooltip(node.getHeldItem().getDescription(), style);
         tooltip.setInstant(true);
@@ -70,14 +60,13 @@ public class ItemIcon extends Table {
         border.setColor(determineColor(node));
         setSize(border.getWidth(), border.getHeight());
         this.setTouchable(Touchable.enabled);
-        assert this.addListener(tooltip);
 
         storedCount = new Label(" Stored: " + node.getStored(), labelStyle);
+        storedCount.setFontScale(0.5f);
         Container<Label> container = new Container<>(storedCount);
         container.setClip(true);
 
         Stack stack = new Stack();
-//        stack.setSize(border.getWidth(), border.getHeight());
         stack.add(border);
         container.align(Align.topLeft);
         stack.add(container);
@@ -86,24 +75,15 @@ public class ItemIcon extends Table {
 
         this.pad(Value.Fixed.percentWidth(0.014f, this));
 
-        this.add(stack).expand().fill();
-//        this.pad(3f);
-
+        this.add(stack).grow();
 
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
 
-//        this.setSize(288,420);
-
-//        border.debugAll();
     }
 
     public String getNodeName() {
         return node.getName();
-    }
-
-    public Tier getNodeTier() {
-        return node.getHeldItem().getTier();
     }
 
     public InventoryNode getNode() {
@@ -154,12 +134,4 @@ public class ItemIcon extends Table {
         tooltip.getActor().setText(newMessage);
     }
 
-    private int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 48;
-            default -> 22;
-        };
-    }
 }

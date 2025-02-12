@@ -41,7 +41,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
     private final Label questName;
     private final Label questDescription;
     private final Label questStep;
-    private static final BitmapFont FONT = UIHelper.generateFont(determineFontSize());
+    private static final BitmapFont FONT = UIHelper.generateFont(48);
     private int index;
 
 
@@ -134,13 +134,13 @@ public class QuestWidget extends Table implements Listener<Quest> {
         scrollBorder.setColor(Color.BLACK);
 
 //        scrollBorder.add(scrollPane).size(scrollBorder.getWidth(), this.getHeight() / 2f).expand().fill();
-        scrollBorder.add(scrollPane).top().left().expandX().fillX();
+        scrollBorder.add(scrollPane).top().left().expandX().fillX().pad(0f);
+//        scrollBorder.debug();
 
         this.add(scrollBorder).expand().fill();
 
         scrollPane.setScrollingDisabled(true, false);
 
-        System.out.println("Widget Width: " + this.getWidth());
     }
 
     private void configureLocked() {
@@ -163,20 +163,10 @@ public class QuestWidget extends Table implements Listener<Quest> {
         for (QuestCondition condition : step.getConditions()) {
             var widget = new ConditionWidget(condition);
 //            descriptionTable.add(widget).top().expand().fill().left().pad(5f).row();
-            descriptionTable.add(widget).top().expandX().fillX().pad(2f).row();
+            descriptionTable.add(widget).top().expandX().fillX().pad(1f).row();
         }
         questStep.setText("Step " + heldQuest.currentStepNumber() + " of " + heldQuest.getTotalSteps());
     }
-
-    private static int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 18;
-            case 1440 -> 30;
-            case 2160 -> 48;
-            default -> 22;
-        };
-    }
-
 
     @Override
     public void update(Quest subject) {

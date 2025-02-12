@@ -3,6 +3,7 @@ package ore.forge.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -77,25 +78,27 @@ public class QuestMenu extends Table implements GameEventListener<QuestStepCompl
             lookup.put(quest.getId(), questIcon);
             questWidgets.add(questIcon);
 
-            widgetTable.add(questIcon).top().left().align(Align.topLeft).expandX().fill().pad(2f).colspan(1);
+            widgetTable.add(questIcon).top().left().align(Align.topLeft).grow().uniform().pad(2.75f);
             if (++count % 2 == 0) {
-                widgetTable.row();
+                widgetTable.row().top().left();
             }
         }
 
-        widgetTable.setSize(IRHelper.getWidth(0.8f), IRHelper.getHeight(0.7f));
+//        widgetTable.setSize(IRHelper.getWidth(0.8f), IRHelper.getHeight(0.7f));
 
         widgetTable.setDebug(true);
-        this.setDebug(true);
+//        this.setDebug(true);
 
         this.pad(2.75f);
+        var scrollPane = new ScrollPane(widgetTable);
 //        this.add(widgetTable).expand().fill().top().left().align(Align.topLeft);
-        this.add(widgetTable).top().left().fill().expand();
+        this.add(scrollPane).top().left().fill().expand();
         this.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-        this.setSize(IRHelper.getWidth(0.85f), IRHelper.getHeight(0.85f));
+        this.setSize(IRHelper.getWidth(0.9f), IRHelper.getHeight(0.90f));
 
         this.setPosition(IRHelper.getWidth(0.075f), IRHelper.getHeight(0.075f));
+
     }
 
     private void addListener(TextButton button, Runnable clickedLogic) {
