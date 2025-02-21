@@ -67,6 +67,9 @@ public class Function implements NumericOperand {
             } else if (ValueOfInfluence.isValue(token)) {
                 operandStack.push(ValueOfInfluence.valueOf(token));
             } else if (token.equals("(")) {
+                if (!operandStack.isEmpty() && operandStack.peek() instanceof NumericOperand && operatorStack.isEmpty()) {
+                    operatorStack.push(NumericOperator.MULTIPLY);
+                }
                 operatorStack.push(null); //push to simulate the parenthesis
             } else if (token.equals(")")) {
                 while (operatorStack.peek() != null) { // "collapse" function till we hit the opening parenthesis.
