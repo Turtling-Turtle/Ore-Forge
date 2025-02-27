@@ -144,10 +144,10 @@ class ConditionTest {
 
     @Test
     void testParen() {
-//        ore.setOreName("foo");
-//        ore.setOreValue(3);
-//        var testCase = Condition.parseCondition("!(ORE_NAME == \"foo\" && ORE_VALUE == 2)");
-//        assertFalse(testCase.evaluate(ore));
+        ore.setOreName("foo");
+        ore.setOreValue(3);
+        var testCase = Condition.parseCondition("!(ORE_NAME == \"foo\" && ORE_VALUE == 2)");
+        assertTrue(testCase.evaluate(ore));
     }
 
     @Test

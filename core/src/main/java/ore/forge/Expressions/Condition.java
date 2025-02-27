@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class Condition implements BooleanExpression<Ore> {
     private final BooleanExpression<Ore> expression;
-    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
+    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[A-Z_]+|\"(.*)\"|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
 
     private Condition(BooleanExpression<Ore> expression) {
         this.expression = expression;
@@ -95,7 +95,8 @@ public class Condition implements BooleanExpression<Ore> {
             } else if (ValueOfInfluence.isValue(token)) {
                 operands.push(ValueOfInfluence.valueOf(token));
             } else {
-                operands.push(new StringConstant(token));
+                var stringContents = matcher.group(6);//Get the contents inside the ""
+                operands.push(new StringConstant(stringContents));
             }
         }
         while (!operators.isEmpty()) {
@@ -104,7 +105,7 @@ public class Condition implements BooleanExpression<Ore> {
             }
             buildExpression(operators, operands);
         }
-        if (operands.peek() instanceof BooleanExpression) {
+        if (!(operands.peek() instanceof BooleanExpression)) {
             throw new IllegalStateException("Final parsed expression is not a BooleanExpression: " + operands.peek());
         }
         return new Condition((BooleanExpression<Ore>) operands.pop());
