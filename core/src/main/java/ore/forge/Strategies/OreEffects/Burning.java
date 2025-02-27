@@ -34,7 +34,7 @@ public class Burning implements OreEffect {
             ore.setIsDoomed(true);
             ore.removeEffect(this);
         } else {
-            ore.setTemp(ore.getOreTemp() + tempIncrease * deltaTime);
+            ore.setTemperature(ore.getOreTemp() + tempIncrease * deltaTime);
         }
     }
 

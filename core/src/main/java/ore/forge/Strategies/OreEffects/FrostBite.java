@@ -37,7 +37,7 @@ public class FrostBite implements OreEffect {
             ore.removeEffect(this);
         } else {
             ore.setSpeedScalar(.5f);
-            ore.setTemp(ore.getOreTemp() + tempDecrease * deltaT);
+            ore.setTemperature(ore.getOreTemp() + tempDecrease * deltaT);
         }
     }
 

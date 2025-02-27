@@ -22,11 +22,11 @@ import java.util.regex.Pattern;
  * This class will parse an equation from a String and return a Function.
  */
 public class Function implements NumericOperand {
-    /*
-    ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
-    ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, 3.2E-2, -.1, 12.7 etc.
-    ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
-    */
+    /**
+     * ([a-zA-Z_]+) Matches for variables. EX: ORE_VALUE, TEMPERATURE, ACTIVE_ORE
+     * ([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?) Matches for numbers. (includes doubles, scientific notation) EX: -2.7E9, 3.2E-2, -.1, 12.7 etc.
+     * ([+\\-/*^%=]) Matches for Operators (+, -, *, /, =, %, ^)
+     */
     private final static Pattern pattern = Pattern.compile(
         "(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|(log\\(|sqrt\\(|ln\\(|abs\\()((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*)|([a-zA-Z_]+)|(-?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)|\\(|\\)|([+\\-*/^=%])");
     private final NumericOperand leftNumericOperand, rightNumericOperand;
@@ -53,7 +53,7 @@ public class Function implements NumericOperand {
 
     /**
      * Uses the Shunting Yard Algorithm: <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">...</a>
-     * to parse the Function from the string.
+     * to parse the mathematical functions from a string.
      */
     private static Function parseFromTokens(Matcher matcher) {
         Stack<NumericOperand> operandStack = new Stack<>();
@@ -158,6 +158,9 @@ public class Function implements NumericOperand {
         return numericOperator.apply(leftNumericOperand.calculate(ore), rightNumericOperand.calculate(ore));
     }
 
+    /**
+     *
+     */
     public static boolean isNumeric(String string) {
         try {
             Double.parseDouble(string);
@@ -167,6 +170,9 @@ public class Function implements NumericOperand {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return (leftNumericOperand + " " + numericOperator.asSymbol() + " " + rightNumericOperand);

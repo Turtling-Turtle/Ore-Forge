@@ -30,7 +30,6 @@ public enum ValueOfInfluence implements NumericOperand {
 //    MEDIAN_MULTIORE,
 
 
-
     ;
     /*
      * Average, Median, Min, Max, values for the different types of numerical Ore properties.
@@ -115,7 +114,7 @@ public enum ValueOfInfluence implements NumericOperand {
 //                return result2;
 //            }
             System.out.println("Median found in " + stopwatch);
-            return (result1 + result2) /2;
+            return (result1 + result2) / 2;
         }
     }
 
@@ -164,4 +163,5 @@ public enum ValueOfInfluence implements NumericOperand {
             return valueGetter.getValue(o1).compareTo(valueGetter.getValue(o2));
         }
     }
+
 }

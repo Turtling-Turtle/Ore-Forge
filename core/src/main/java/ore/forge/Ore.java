@@ -300,7 +300,7 @@ public class Ore extends PhysicsObject {
         return oreTemperature;
     }
 
-    public void setTemp(float newTemp) {
+    public void setTemperature(float newTemp) {
         oreTemperature = newTemp;
     }
 

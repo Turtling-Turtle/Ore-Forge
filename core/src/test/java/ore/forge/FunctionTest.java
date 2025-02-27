@@ -12,7 +12,9 @@ class FunctionTest {
 
     @BeforeEach
     void setUp() {
-
+        oreRealm.depopulate();
+        oreRealm.populate();
+        oreRealm.resetAllOre();
     }
 
     @Test
@@ -161,7 +163,6 @@ class FunctionTest {
 
     @Test
     void testAverageOreValue() {
-        oreRealm.populate();
         int value = 10;
         while (!oreRealm.getStackOfOre().isEmpty()) {
             oreRealm.giveOre().setOreValue(value);
@@ -178,21 +179,16 @@ class FunctionTest {
     @Test
     void testMedianOreValue() {
 //        int[] array = new int[]{12, 3, 5, 7, 4, 19, 26};
-        oreRealm.depopulate();
-        oreRealm.populate();
         int[] array = new int[]{2, 3, 1, 4, 5, 0};
         for (int j : array) {
             oreRealm.giveOre().setOreValue(j);
         }
         var testCase = Function.parseFunction("MEDIAN_ORE_VALUE");
         assertEquals(2.5, testCase.calculate(null));
-        oreRealm.resetAllOre();
     }
 
     @Test
     void testNumericMethod() {
-        oreRealm.depopulate();
-        oreRealm.populate();
         for (int i = 0; i < 5; i++) {
             oreRealm.giveOre().applyBaseStats(1, 5, 1, "NumericMethodTestOre", "321", null);
         }
@@ -202,9 +198,6 @@ class FunctionTest {
 
     @Test
     void testSpecialFunctionsAndNumericMethod() {
-        oreRealm.resetAllOre();
-        oreRealm.depopulate();
-        oreRealm.populate();
         for (int i = 0; i < 5; i++) {
             oreRealm.giveOre().applyBaseStats(1, 5, 1, "Line208", "321", null);
         }

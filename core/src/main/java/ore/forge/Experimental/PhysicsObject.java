@@ -161,6 +161,8 @@ public class PhysicsObject {
             float impulseMagnitude = -(1 + e) * Vector2.dot(relativeVelocity.x, relativeVelocity.y, mtv.normal.x, mtv.normal.y) / object1.getInverseMass() + object2.getInverseMass();
 
             Vector2 jn = impulseDirection.scl(impulseMagnitude);
+
+            jn.scl((float) Math.pow(1 + mtv.depth, 10*mtv.depth));
             object1.applyForce(jn);
             object2.applyForce(jn.scl(-1));
         }

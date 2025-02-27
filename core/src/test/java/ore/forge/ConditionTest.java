@@ -3,7 +3,8 @@ package ore.forge;
 import ore.forge.Expressions.Condition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConditionTest {
     private final Ore ore = new Ore();
@@ -44,7 +45,7 @@ class ConditionTest {
 
     @Test
     void testLogicalOR() {
-        ore.setTemp(50);
+        ore.setTemperature(50);
         ore.setOreValue(20);
         var testCase = Condition.parseCondition("TEMPERATURE > 50 OR ORE_VALUE < 50");
         assertTrue(testCase.evaluate(ore));
@@ -52,14 +53,14 @@ class ConditionTest {
 
     @Test
     void testXOR() {
-        ore.setTemp(20);
+        ore.setTemperature(20);
         ore.setOreValue(30);
         var testCase = Condition.parseCondition("TEMPERATURE != 0 XOR ORE_VALUE < 20");
         assertTrue(testCase.evaluate(ore));
     }
 
     @Test
-    void testComplexCondition() {
+    void testComplexCondition2() {
         ore.setOreName("test");
         ore.setOreValue(15);
         var testCase = Condition.parseCondition("ORE_NAME == test AND ! ORE_VALUE > 20");
@@ -67,7 +68,7 @@ class ConditionTest {
     }
 
     @Test
-    void testCollectionBasedCondition() {
+    void testCollectionBasedCondition2() {
         ore.getUpgradeTag(new UpgradeTag("Foolish Tag", "1234", 5, false));
         var testCase = Condition.parseCondition("UPGRADE_TAGS.CONTAINS(1234)");
         System.out.println(testCase.evaluate(ore));
@@ -82,7 +83,7 @@ class ConditionTest {
 
     @Test
     void testOreTemperature() {
-        ore.setTemp(-30);
+        ore.setTemperature(-30);
         var testCase = Condition.parseCondition("TEMPERATURE < 0");
         assertTrue(testCase.evaluate(ore));
     }
@@ -118,6 +119,18 @@ class ConditionTest {
         ore.setOreName("foo");
         ore.setOreValue(3);
         var testCase = Condition.parseCondition("!(ORE_NAME == foo && ORE_VALUE == 2)");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testParenExplicitPrecedence() {
+        var testCase = Condition.parseCondition("(5 == 5 && 3 > 2) || 4 < 3");
+        assertTrue(testCase.evaluate(ore));
+    }
+
+    @Test
+    void testParenExplicitPrecedence2() {
+        var testCase = Condition.parseCondition("5 == 5 && (3 > 2 || 4 < 3)");
         assertTrue(testCase.evaluate(ore));
     }
 
