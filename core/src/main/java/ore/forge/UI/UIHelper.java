@@ -12,18 +12,18 @@ import java.util.HashMap;
 
 public class UIHelper {
     @SuppressWarnings("GDXJavaStaticResource")
-    private final static FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/ebrimabd.ttf"));
+    private final static FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/NotoSans-Bold.ttf"));
     private final static HashMap<Integer, BitmapFont> fontLookup = new HashMap<>();
 
     public static BitmapFont generateFont(int size) {
-        if (fontLookup.containsKey(size)) {
-            return fontLookup.get(size);
-        }
+//        if (fontLookup.containsKey(size)) {
+//            return fontLookup.get(size);
+//        }
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
         parameter.genMipMaps = true;
-        parameter.minFilter = Texture.TextureFilter.MipMapLinearNearest;
-        parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
+        parameter.minFilter = Texture.TextureFilter.MipMapLinearLinear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
         var font = generator.generateFont(parameter);
         fontLookup.put(size, font);
         return font;

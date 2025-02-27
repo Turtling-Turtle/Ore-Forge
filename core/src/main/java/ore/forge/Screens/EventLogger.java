@@ -1,9 +1,7 @@
 package ore.forge.Screens;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -18,6 +16,8 @@ import ore.forge.EventSystem.Events.OreDroppedGameEvent;
 import ore.forge.EventSystem.Events.OreSoldGameEvent;
 import ore.forge.FontColors;
 import ore.forge.UI.UIHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,12 +34,13 @@ import java.util.HashSet;
  * without having to restart the game.
  */
 public class EventLogger extends WidgetGroup {
+    private static final Logger log = LoggerFactory.getLogger(EventLogger.class);
     private final SimpleDateFormat simpleDateFormat;
     private final HashSet<Class<?>> disabledEvents;
     private final Table logTable;
     private final ScrollPane scrollPane;
     private final static int MAX_EVENTS = 1_000;
-    private final Label.LabelStyle fpsStyle;
+    private final Label.LabelStyle labelStyle;
     private boolean autoScroll = true;
 
     public EventLogger() {
@@ -47,14 +48,14 @@ public class EventLogger extends WidgetGroup {
         disabledEvents.add(OreDroppedGameEvent.class);
         disabledEvents.add(OreSoldGameEvent.class);
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        BitmapFont font2 = UIHelper.generateFont(40);
-        fpsStyle = new Label.LabelStyle(font2, Color.WHITE);
+        BitmapFont font2 = UIHelper.generateFont(24);
+        labelStyle = new Label.LabelStyle(font2, Color.WHITE);
         font2.getData().markupEnabled = true;
 //        font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         logTable = new Table();
 
-        logTable.setSize(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .2f);
+        logTable.setSize(IRHelper.getWidth(0.3f), IRHelper.getHeight(0.2f));
 //        logTable.setDebug(true);
 
 
@@ -62,7 +63,7 @@ public class EventLogger extends WidgetGroup {
         scrollPane.setScrollingDisabled(true, false);
 //        scrollPane.setDebug(true);
 
-        scrollPane.setSize(Gdx.graphics.getWidth() * .4f, Gdx.graphics.getHeight() * .2f);
+        scrollPane.setSize(IRHelper.getWidth(0.3f), IRHelper.getHeight(0.2f));
         scrollPane.addListener(new InputListener() {
             @Override
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
@@ -78,7 +79,6 @@ public class EventLogger extends WidgetGroup {
         });
 
         this.addActor(scrollPane);
-        this.setSize(Gdx.graphics.getWidth() * .3f, Gdx.graphics.getHeight() * .2f);
     }
 
 
@@ -104,9 +104,8 @@ public class EventLogger extends WidgetGroup {
     }
 
     private Label createLabel(GameEvent<?> event) {
-        var label = new Label(formatText(event), fpsStyle);
-        label.getStyle().font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        label.setFontScale(.55f, .55f);
+        var label = new Label(formatText(event), labelStyle);
+        label.getStyle().font.getData().setScale(0.5f);
         return label;
     }
 

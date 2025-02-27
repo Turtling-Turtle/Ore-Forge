@@ -1,7 +1,11 @@
 package ore.forge.Expressions;
 
-import ore.forge.Ore;
+import java.util.function.Function;
 
-public interface BooleanExpression {
-    boolean evaluate(Ore ore);
+public interface BooleanExpression<E> extends Function<E, Boolean> {
+    boolean evaluate(E element);
+
+    default Boolean apply(E element) {
+        return evaluate(element);
+    }
 }

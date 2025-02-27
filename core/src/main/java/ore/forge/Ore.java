@@ -1,6 +1,8 @@
 package ore.forge;
 
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import ore.forge.Experimental.PhysicsObject;
 import ore.forge.Expressions.Operands.ValueOfInfluence;
 import ore.forge.Items.Blocks.Worker;
 import ore.forge.Strategies.OreEffects.BundledOreEffect;
@@ -15,7 +17,7 @@ import java.util.Stack;
 /**
  * @author Nathan Ulmen
  */
-public class Ore {
+public class Ore extends PhysicsObject {
     //Ore can be classified by name, id, type. Ores can have multiple types.
     protected final static ItemMap itemMap = ItemMap.getSingleton();
     protected final static OreRealm oreRealm = OreRealm.getSingleton();
@@ -34,8 +36,23 @@ public class Ore {
     private float deltaTime;
     private boolean isActive;
     private int resetCount;
+    private static final float[] VERTICES = {
+        0.4375f, 0.1289f,   // Bottom Left
+        0.5586f, 0.1289f,   // Bottom Right
+        .9336f, 0.5645f, //Right middle
+//        0.9336f, 0.5040f,   // Right Bottom
+//        0.9336f, 0.6250f,   // Right Top
+        0.7461f, 0.8125f,    // Top Right
+        0.25f, 0.8125f,     // Top Left
+        0.0625f, 0.5645f, //Left Middle
+//        0.0625f, 0.6250f,   // Left Top
+//        0.0625f, 0.5040f,   // Left Bottom
+    };
 
     public Ore() {
+        super(new Polygon(VERTICES));
+        this.setIsStatic(false);
+        this.setCollisionEnabled(true);
         this.oreValue = 0;
         this.oreTemperature = 0;
         this.oreName = "";
@@ -85,8 +102,8 @@ public class Ore {
     }
 
     private void move(float deltaTime) {
-        position.x = updatePosition(position.x, destination.x,moveSpeed * deltaTime);
-        position.y = updatePosition(position.y, destination.y,moveSpeed * deltaTime);
+        position.x = updatePosition(position.x, destination.x, moveSpeed * deltaTime);
+        position.y = updatePosition(position.y, destination.y, moveSpeed * deltaTime);
 
         if (position.idt(destination)) {
             activateBlock();
@@ -283,7 +300,7 @@ public class Ore {
         return oreTemperature;
     }
 
-    public void setTemp(float newTemp) {
+    public void setTemperature(float newTemp) {
         oreTemperature = newTemp;
     }
 

@@ -2,6 +2,7 @@ package ore.forge.Screens.Widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -11,6 +12,7 @@ import ore.forge.QuestComponents.Quest;
 import ore.forge.QuestComponents.QuestCondition;
 import ore.forge.QuestComponents.QuestStatus;
 import ore.forge.QuestComponents.QuestStep;
+import ore.forge.Screens.IRHelper;
 import ore.forge.UI.ButtonType;
 import ore.forge.UI.UIHelper;
 
@@ -39,6 +41,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
     private final Label questName;
     private final Label questDescription;
     private final Label questStep;
+    private static final BitmapFont FONT = UIHelper.generateFont(48);
     private int index;
 
 
@@ -53,27 +56,37 @@ public class QuestWidget extends Table implements Listener<Quest> {
         this.heldQuest = quest;
         heldQuest.addListener(this);
         descriptionTable = new Table();
-        this.setSize(Gdx.graphics.getWidth() * .38f, Gdx.graphics.getHeight() * .25f);
-        this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
+
+//        this.setSize(IRHelper.getWidth(0.38f), IRHelper.getHeight(0.25f));
+//        this.setSize(Gdx.graphics.getWidth() * .38f, Gdx.graphics.getHeight() * .25f);
+//        this.setPosition(Gdx.graphics.getWidth() * 0.15f, Gdx.graphics.getHeight() * 0.55f);
 
         Label.LabelStyle descriptionStyle = new Label.LabelStyle();
-        descriptionStyle.font = UIHelper.generateFont((int) (determineFontSize() * .65f));
+//        descriptionStyle.font = UIHelper.generateFont((int) (determineFontSize() * .65f));
+        descriptionStyle.font = FONT;
+//        descriptionStyle.font.getData().setScale(0.35f);
         descriptionStyle.fontColor = Color.BLACK;
         descriptionStyle.background = UIHelper.getRoundFull();
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = UIHelper.generateFont((int) (determineFontSize() * 1.55));
+//        titleStyle.font = UIHelper.generateFont(determineFontSize());
+//        titleStyle.font.getData().setScale(0.5f);
+        titleStyle.font = FONT;
         titleStyle.fontColor = Color.BLACK;
         titleStyle.background = UIHelper.getRoundFull();
 
         questName = new Label(quest.getName(), titleStyle);
+        questName.setFontScale(0.5f);
         questDescription = new Label(quest.getDescription(), descriptionStyle);
+        questDescription.setFontScale(0.35f);
         questDescription.setWrap(true);
 
         Label.LabelStyle stepOfStyle = new Label.LabelStyle();
-        stepOfStyle.font = UIHelper.generateFont((int) (determineFontSize() * .75f));
+        stepOfStyle.font = FONT;
+//        stepOfStyle.font.getData().setScale(0.3f);
         stepOfStyle.fontColor = Color.DARK_GRAY;
         questStep = new Label("Step " + heldQuest.currentStepNumber() + " of " + heldQuest.getTotalSteps(), stepOfStyle);
+        questStep.setFontScale(0.3f);
 
         System.out.println(quest.getStatus());
 
@@ -88,39 +101,45 @@ public class QuestWidget extends Table implements Listener<Quest> {
         previousSprite.flip(true, true);
         Image previousStepButton = new Image(previousSprite);
         previousStepButton.setColor(Color.BLACK);
-//        previousStepButton.setDebug(true);
 
         Image nextStepButton = new Image(UIHelper.getIcon("icon_next_thin"));
         nextStepButton.setColor(Color.BLACK);
-//        nextStepButton.setDebug(true);
 
-        float dimensions = questStep.getHeight();
+//        float dimensions = questStep.getHeight();
 
         topRow.pad(0);
         topRow.add(questName).top().align(Align.topLeft);
-        topRow.add(previousStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padRight(1f);
-        topRow.add(questStep).bottom().left().padBottom(25);
-        topRow.add(nextStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padLeft(1f);
+        topRow.debug();
+
+        topRow.add(previousStepButton).center().left().size(IRHelper.getWidth(.01f));
+//        topRow.add(previousStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padRight(1f);
+
+        topRow.add(questStep).center().left();
+
+        topRow.add(nextStepButton).center().left().size(IRHelper.getWidth(.01f));
+//        topRow.add(nextStepButton).bottom().left().size(dimensions, dimensions).padBottom(25).padLeft(1f);
 
 
         this.add(topRow).top().left().row();
-        this.add(questDescription).top().left().pad(0).expandX().fillX().row();
+        this.add(questDescription).top().left().expandX().fillX().row();
+        questDescription.setDebug(true);
         this.setBackground(UIHelper.getRoundFull());
 
 
         this.update(heldQuest);
 
-//        this.add(scrollPane).top().expandX().fillX();
-//        scrollPane.setDebug(true);
+
         Table scrollBorder = new Table();
         scrollBorder.background(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         scrollBorder.setColor(Color.BLACK);
-        scrollBorder.add(scrollPane).size(scrollBorder.getWidth(), this.getHeight() / 2f).expand().fill();
-//        this.add(scrollBorder).top().expand().fill().minHeight(this.getHeight() / 2f);
-        this.add(scrollBorder).expand().fill();
-        scrollPane.setScrollingDisabled(true, false);
 
-//        this.debug();
+//        scrollBorder.add(scrollPane).size(scrollBorder.getWidth(), this.getHeight() / 2f).expand().fill();
+        scrollBorder.add(scrollPane).top().left().expandX().fillX().pad(0f);
+//        scrollBorder.debug();
+
+        this.add(scrollBorder).expand().fill();
+
+        scrollPane.setScrollingDisabled(true, false);
 
     }
 
@@ -132,7 +151,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
         var locked = new Image(UIHelper.getIcon("icon_lock"));
         locked.setColor(Color.BLACK);
         float dimensions = locked.getHeight();
-        descriptionTable.add(locked).size(dimensions, dimensions);
+        descriptionTable.add(locked);
     }
 
     private void configureCompleted() {
@@ -143,20 +162,11 @@ public class QuestWidget extends Table implements Listener<Quest> {
         descriptionTable.clear();
         for (QuestCondition condition : step.getConditions()) {
             var widget = new ConditionWidget(condition);
-            descriptionTable.add(widget).top().expand().fill().left().pad(5f).row();
+//            descriptionTable.add(widget).top().expand().fill().left().pad(5f).row();
+            descriptionTable.add(widget).top().expandX().fillX().pad(1f).row();
         }
         questStep.setText("Step " + heldQuest.currentStepNumber() + " of " + heldQuest.getTotalSteps());
     }
-
-    private int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 18;
-            case 1440 -> 30;
-            case 2160 -> 38;
-            default -> 22;
-        };
-    }
-
 
     @Override
     public void update(Quest subject) {
@@ -214,8 +224,12 @@ public class QuestWidget extends Table implements Listener<Quest> {
             toolTip.setInstant(true);
             moreInfoIcon.addListener(toolTip);
 
-            this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
-            this.add(moreInfoIcon).size(50, 50).top().right().align(Align.topRight);
+            this.add(condition).top().left().expandX().fillX().align(Align.topLeft);
+//            this.add(condition).expandX().fillX().top().left().align(Align.topLeft);
+
+//            this.add(moreInfoIcon).size(50, 50).top().right().align(Align.topRight);
+            this.add(moreInfoIcon).top().right().size(IRHelper.getWidth(0.01f)).top().right().align(Align.topRight);
+
             this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
             this.setColor(Color.BLACK);
             questCondition.addListener(this);
@@ -236,9 +250,13 @@ public class QuestWidget extends Table implements Listener<Quest> {
 //                this.addActorBefore(new Label("Completed", labelStyle), moreInfoIcon);
 
                 this.clear();
-                this.add(condition).expandY().fillY().top().left().align(Align.topLeft).padRight(10f);
-                this.add(new Label("Completed", labelStyle)).expand().fill().top().left().align(Align.topLeft);
-                this.add(moreInfoIcon).size(50, 50).right().align(Align.right);
+//                this.add(condition).left().align(Align.topLeft).padRight(0f).expandY().fillY();
+                this.add(condition).expandY().fillY().top().left().align(Align.topLeft).padRight(0f);
+//                this.add(new Label("Completed", labelStyle)).expand().fill().top().left().align(Align.topLeft);
+                this.add(new Label("Completed", labelStyle)).top().left().align(Align.topLeft);
+
+                this.add(moreInfoIcon).right().size(IRHelper.getWidth(.1f)).align(Align.right);
+//                this.add(moreInfoIcon).size(50, 50).right().align(Align.right);
                 System.out.println("Quest Widget Updated");
             }
         }
@@ -247,7 +265,7 @@ public class QuestWidget extends Table implements Listener<Quest> {
             return switch (Gdx.graphics.getHeight()) {
                 case 1080 -> 16;
                 case 1440 -> 28;
-                case 2160 -> 32;
+                case 2160 -> 12;
                 default -> 22;
             };
         }

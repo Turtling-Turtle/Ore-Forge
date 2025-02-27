@@ -1,15 +1,21 @@
 package ore.forge;
 
 import ore.forge.Expressions.Function;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FunctionTest {
     private final static OreRealm oreRealm = OreRealm.getSingleton();
     private final Ore ore = new Ore();
+
+    @BeforeEach
+    void setUp() {
+        oreRealm.depopulate();
+        oreRealm.populate();
+        oreRealm.resetAllOre();
+    }
 
     @Test
     void testAddition() {
@@ -62,7 +68,7 @@ class FunctionTest {
 
     @Test
     void testTemperatureProperty() {
-        ore.setTemp(15);
+        ore.setTemperature(15);
         Function simpleTemperatureProperty = Function.parseFunction("(TEMPERATURE*2)");
         assertEquals(30, simpleTemperatureProperty.calculate(ore));
     }
@@ -125,7 +131,7 @@ class FunctionTest {
     }
 
     @Test
-    void testImpliedMultiply() {
+    void testExplicitMultiply() {
         var testCase = Function.parseFunction("(5+2) * (3+2)");
         assertEquals(35, testCase.calculate(ore));
     }
@@ -150,14 +156,13 @@ class FunctionTest {
 
     @Test
     void testComplexFunction() {
-        ore.setTemp(100);
+        ore.setTemperature(100);
         var testCase = Function.parseFunction("(abs((TEMPERATURE * log(TEMPERATURE)) / 30)) ^ 1.03 + 1");
         assertEquals(Math.pow(Math.abs(ore.getOreTemp() * Math.log10(ore.getOreTemp()) / 30), 1.03) + 1, testCase.calculate(ore));
     }
 
     @Test
     void testAverageOreValue() {
-        oreRealm.populate();
         int value = 10;
         while (!oreRealm.getStackOfOre().isEmpty()) {
             oreRealm.giveOre().setOreValue(value);
@@ -174,21 +179,16 @@ class FunctionTest {
     @Test
     void testMedianOreValue() {
 //        int[] array = new int[]{12, 3, 5, 7, 4, 19, 26};
-        oreRealm.depopulate();
-        oreRealm.populate();
         int[] array = new int[]{2, 3, 1, 4, 5, 0};
         for (int j : array) {
             oreRealm.giveOre().setOreValue(j);
         }
         var testCase = Function.parseFunction("MEDIAN_ORE_VALUE");
         assertEquals(2.5, testCase.calculate(null));
-        oreRealm.resetAllOre();
     }
 
     @Test
     void testNumericMethod() {
-        oreRealm.depopulate();
-        oreRealm.populate();
         for (int i = 0; i < 5; i++) {
             oreRealm.giveOre().applyBaseStats(1, 5, 1, "NumericMethodTestOre", "321", null);
         }
@@ -198,15 +198,39 @@ class FunctionTest {
 
     @Test
     void testSpecialFunctionsAndNumericMethod() {
-        oreRealm.resetAllOre();
-        oreRealm.depopulate();
-        oreRealm.populate();
         for (int i = 0; i < 5; i++) {
             oreRealm.giveOre().applyBaseStats(1, 5, 1, "Line208", "321", null);
         }
         var testCase = Function.parseFunction("ln(ACTIVE_ORE.GET_COUNT(321) * log(ACTIVE_ORE.GET_COUNT(321))) ^ 1.03 + 1");
-        assertEquals(Math.pow(Math.log(5 * Math.log10(5)),1.03) +1, testCase.calculate(null));
+        assertEquals(Math.pow(Math.log(5 * Math.log10(5)), 1.03) + 1, testCase.calculate(null));
+    }
 
+    @Test
+    void testImpliedMultiply() {
+        var testCase = Function.parseFunction("7(4+3)");
+        assertEquals(49, testCase.calculate(null));
+    }
+
+    @Test
+    void testImpliedMultiply2() {
+        ore.setOreValue(10);
+        ore.setTemperature(1);
+        ore.setMultiOre(5);
+        var testCase = Function.parseFunction("ORE_VALUE(TEMPERATURE + MULTIORE)");
+        assertEquals(60, testCase.calculate(ore));
+    }
+
+    @Test
+    void testImpliedMultiplySpecialFunction() {
+        ore.setOreValue(10);
+        var testCase = Function.parseFunction("ORE_VALUE(sqrt(30))");
+        assertEquals(10 * Math.sqrt(30), testCase.calculate(ore));
+    }
+
+    @Test
+    void testImpliedMultiplyParen() {
+        var testCase = Function.parseFunction("(5)(3)");
+        assertEquals(15, testCase.calculate(null));
     }
 
 }

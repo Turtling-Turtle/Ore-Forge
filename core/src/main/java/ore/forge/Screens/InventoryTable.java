@@ -1,15 +1,13 @@
 package ore.forge.Screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
-import ore.forge.ButtonHelper;
+import com.badlogic.gdx.utils.Timer;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.NodeGameEvent;
 import ore.forge.EventSystem.GameEventListener;
@@ -28,13 +26,12 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
     private final static int ROW_COUNT = 4;
     private Comparator<ItemIcon> sortMethod;
     private final TextField searchBar;
-    private final Table iconTable;
+    private final Table iconTable, topTable;
     private final ArrayList<ItemIcon> allIcons;
     private final HashMap<String, ItemIcon> lookUp;
-    private final CheckBox[] checkBoxes;
     private final Value padValue;
-    private Table topTable;
 
+    @SuppressWarnings("unchecked")
     public InventoryTable(Inventory inventory) {
         lookUp = new HashMap<>();
         topTable = new Table();
@@ -46,102 +43,59 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         var textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.background = UIHelper.getRoundFull();
-
-        textFieldStyle.font = UIHelper.generateFont(determineFontSize());
-
+        textFieldStyle.font = UIHelper.generateFont(48);
+        textFieldStyle.font.getData().setScale(0.5f);
         searchBar = new TextField("", textFieldStyle);
         searchBar.setMessageText("Search...");
 
         EventManager.getSingleton().registerListener(this);
 
-        background.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
-        padValue = Value.Fixed.percentHeight(0.005f, background);
-
-
         searchBar.setTextFieldListener(new TextFieldListener() {
-            String last;
-
+            Timer.Task searchTask;
             @Override
             public void keyTyped(TextField textField, char c) {
-                if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) && last != null && !last.equals(textField.getText())) {
-                    asyncSearch(textField.getText());
+                if (searchTask != null) {
+                    searchTask.cancel();
                 }
-                last = textField.getText();
+                searchTask = Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        asyncSearch(textField.getText());
+                    }
+                }, .1f);
             }
         });
 
-        topTable.add(searchBar).top().left().size(Value.percentWidth(0.35f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).pad(padValue);
+        padValue = Value.Fixed.percentHeight(0.005f, background);
 
+        topTable.add(searchBar).top().left().expandX().fill().padLeft(padValue).padRight(padValue);
         this.iconTable = new Table();
-        checkBoxes = new CheckBox[3];
+        TextButton[] buttons = new TextButton[3];
 
-        CheckBox.CheckBoxStyle buttonStyle = new CheckBox.CheckBoxStyle();
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = searchBar.getStyle().font;
         buttonStyle.fontColor = Color.BLACK;
         buttonStyle.up = UIHelper.getRoundFull();
 
-        checkBoxes[0] = new CheckBox("Type", buttonStyle);
-        checkBoxes[0].addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ButtonHelper.getButtonClickSound().play();
-                if (checkBoxes[0].isChecked()) {
-                    sortMethod = new TypeComparator();
+        //Initialize sort buttons
+        String[] labelNames = {"Type", "Tier", "Stored"};
+        Comparator<ItemIcon>[] comparators = new Comparator[]{new TypeComparator(), new TierComparator(), new StoredComparator()};
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i] = new TextButton(labelNames[i], buttonStyle);
+            final Comparator<ItemIcon> comparator = comparators[i];
+            buttons[i].addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    sortMethod = comparator;
                     asyncSearch(searchBar.getText());
-                    for (CheckBox checkBox : checkBoxes) {
-                        if (checkBox != checkBoxes[0] && checkBox != null && checkBox.isChecked()) {
-                            checkBox.setChecked(false);
-                        }
-                    }
-                } else {
-                    sortMethod = null;
                 }
-            }
-        });
-
-
-        checkBoxes[1] = new CheckBox("Tier", buttonStyle);
-        checkBoxes[1].addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ButtonHelper.getButtonClickSound().play();
-                if (checkBoxes[1].isChecked()) {
-                    sortMethod = new TierComparator();
-                    asyncSearch(searchBar.getText());
-                    for (CheckBox checkBox : checkBoxes) {
-                        if (checkBox != checkBoxes[1] && checkBox != null && checkBox.isChecked()) {
-                            checkBox.setChecked(false);
-                        }
-                    }
-                } else {
-                    sortMethod = null;
-                }
-            }
-        });
-
-        checkBoxes[2] = new CheckBox("Stored", buttonStyle);
-        checkBoxes[2].addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ButtonHelper.getButtonClickSound().play();
-                if (checkBoxes[2].isChecked()) {
-                    sortMethod = new StoredComparator();
-                    asyncSearch(searchBar.getText());
-                    for (CheckBox checkBox : checkBoxes) {
-                        if (checkBox != checkBoxes[2] && checkBox != null && checkBox.isChecked()) {
-                            checkBox.setChecked(false);
-                        }
-                    }
-                } else {
-                    sortMethod = null;
-                }
-            }
-        });
+            });
+        }
 
         ScrollPane scrollPane = new ScrollPane(this.iconTable);
-        for (CheckBox checkBox : checkBoxes) {
-            checkBox.setChecked(false);
-            topTable.add(checkBox).top().left().size(Value.percentWidth(0.18f, background), Value.percentHeight(0.08f, background)).expand().fill().align(Align.topLeft).padRight(padValue).padTop(padValue).padBottom(padValue);
+        for (TextButton button : buttons) {
+            button.setChecked(false);
+            topTable.add(button).top().left().padRight(padValue).padLeft(padValue).fill();
         }
 
         allIcons = new ArrayList<>();
@@ -152,25 +106,28 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         }
         addNewIcons(allIcons);
 
-
         scrollPane.setScrollingDisabled(true, false);
 
+        background.add(topTable).growX().padTop(padValue).padRight(padValue).padLeft(padValue).row(); //Dont pad bottom so that when we add scrollPane it doesnt double pad.
 
-        background.add(topTable).expandX().fillX().padTop(padValue).padRight(padValue).row(); //Dont pad bottom so that when we add scrollpane it doesnt double pad.
-        background.add(scrollPane).top().left().expand().padTop(padValue).padRight(padValue).fill();
+        background.add(scrollPane).top().left().fill().pad(padValue).expand();
 
-        Value widthValue = Value.percentWidth(0.245f, topTable);
+        Value widthValue = Value.Fixed.percentWidth(0.235f, topTable);
         for (int i = 0; i < ROW_COUNT; i++) {
             iconTable.columnDefaults(i).width(widthValue);
         }
 
+        System.out.println("width value:" + widthValue.get());
+        System.out.println("foo:" + topTable.getWidth() * 0.235f);
+
         this.setBackground(UIHelper.getButton(ButtonType.ROUND_BOLD_128));
         this.setColor(Color.BLACK);
-        Value borderPad = Value.percentHeight(0.0014f, this);
-        this.pad(borderPad, borderPad, borderPad, Value.zero);
-        this.add(background).expand().fill();
-        this.setSize(Gdx.graphics.getWidth() * .365f, Gdx.graphics.getHeight() * .8f);
 
+        Value borderPad = Value.Fixed.percentHeight(0.0026f, this);
+        this.pad(borderPad);
+        this.add(background).grow();
+
+        this.setSize(IRHelper.getWidth(0.365f), IRHelper.getHeight(.8f));
     }
 
     public void asyncSearch(String target) {
@@ -218,8 +175,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
                 addIconToTable(iconTable, icon, count++);
             }
         }
-        iconTable.setFillParent(true);
-//        iconTable.pack();
     }
 
     private void addIconToTable(Table iconTable, ItemIcon icon, int count) {
@@ -227,19 +182,17 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
         if (count % ROW_COUNT == 0) {
             iconTable.row();
         }
-        iconTable.add(icon).height(Value.percentHeight(0.2f, this)).left().top().align(Align.topLeft).padTop(padValue).padBottom(padValue).padRight(padValue).colspan(1);
+        iconTable.add(icon).uniform().height(Value.percentHeight(0.2f, this)).left().top().pad(padValue).colspan(1);
     }
 
     public void show() {
         Gdx.app.log("InventoryTable", "Showing");
-        this.addAction(Actions.sequence(Actions.show(), Actions.moveTo(Gdx.graphics.getWidth() * .640f, Gdx.graphics.getHeight() * .1f, 0.13f)));
-//        assert isVisible();
+        this.addAction(Actions.sequence(Actions.moveTo(IRHelper.getWidth(0.63f), IRHelper.getHeight(0.1f), 0.13f), Actions.show()));
     }
 
     public void hide() {
         Gdx.app.log("InventoryTable", "hiding");
-        this.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth() * 1f, Gdx.graphics.getHeight() * .1f, 0.13f), Actions.hide()));
-//        assert !isVisible();
+        this.addAction(Actions.sequence(Actions.moveTo(IRHelper.getWidth(1f), IRHelper.getHeight(0.1f), 0.13f), Actions.hide()));
     }
 
     @Override
@@ -327,15 +280,6 @@ public class InventoryTable extends Table implements GameEventListener<NodeGameE
             //Name
             return icon1.getNodeName().compareTo(icon2.getNodeName());
         }
-    }
-
-    private int determineFontSize() {
-        return switch (Gdx.graphics.getHeight()) {
-            case 1080 -> 20;
-            case 1440 -> 32;
-            case 2160 -> 40;
-            default -> 22;
-        };
     }
 
     public TextField getSearchBar() {

@@ -8,35 +8,41 @@ import ore.forge.Expressions.Operators.ComparisonOperator;
 import ore.forge.Expressions.Operators.LogicalOperator;
 import ore.forge.Ore;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-/**
- * @author Nathan Ulmen
- * Represents a Boolean Expression, evaluates an argument, returning a booelan result.
- * Arguments can be numeric or String based(comparing IDs/names,types, etc.)
- * {@link Function} are supported as operands/arguments and can be embedded into the expression as an argument however they must be wrapped in {}.
- * Supported Logical Operators: NOT(!), XOR(^), AND(&&), OR(||).
- * Supported Comparsion Operators: >, <, >=, <=, ==, !=.
- */
 
-public class Condition implements BooleanExpression {
-    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[A-Z_]+|\"(.*)\"|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
+public class Condition implements BooleanExpression<Ore> {
+    private final BooleanExpression<Ore> expression;
+    private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[a-zA-Z_]+|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
 
-    private final ArrayList<BooleanExpression> expressions;
-    private final Stack<LogicalOperator> logicalOperators;
+    private Condition(BooleanExpression<Ore> expression) {
+        this.expression = expression;
+    }
 
-    private Condition(ArrayList<BooleanExpression> expressions, Stack<LogicalOperator> logicalOperators) {
-        this.expressions = expressions;
-        this.logicalOperators = logicalOperators;
+    private enum Parenthesis {
+        LEFT("("),
+        RIGHT(")");
+
+        final String symbol;
+
+        Parenthesis(String s) {
+            symbol = s;
+        }
+
+        @Override
+        public String toString() {
+            return symbol;
+        }
     }
 
     public static Condition parseCondition(String condition) {
         Matcher matcher = pattern.matcher(condition);
-        Stack<LogicalOperator> logicalOperators = new Stack<>();
-        Stack<ComparisonOperator> comparisonOperators = new Stack<>();
-        Stack<Object> operands = new Stack<>();
+        Deque<Object> operators = new ArrayDeque<>();
+        Deque<Object> operands = new ArrayDeque<>();
+
         while (matcher.find()) {
             String token = matcher.group();
             token = token.trim();
@@ -44,14 +50,18 @@ public class Condition implements BooleanExpression {
                 //ignore " "
                 continue;
             } else if (token.equals("(")) {
-//                logicalOperators.push(null);
+                operators.push(Parenthesis.LEFT);
             } else if (token.equals(")")) {
-//                while (logicalOperators.peek() != null) {
-//                }
-//                logicalOperators.pop(); //remove null
+                while (!operators.isEmpty() && operators.peek() != Parenthesis.LEFT) {
+                    buildExpression(operators, operands);
+                }
+                if (operators.isEmpty() || !operators.peek().equals(Parenthesis.LEFT)) {
+                    throw new IllegalArgumentException("Mismatched parenthesis in: " + condition);
+                }
+                operators.pop(); //remove "("
             } else if (token.contains("{") && token.contains("}")) {
                 token = token.replace("{", "").replace("}", "");
-                Function function = Function.parseFunction(token);
+                ore.forge.Expressions.Function function = ore.forge.Expressions.Function.parseFunction(token);
                 operands.push(function);
             } else if (token.contains("(") && token.contains(")") && matcher.group(2).charAt(matcher.group(2).length() - 1) == '.') {//Method verification.
                 var argumentSource = matcher.group(2);
@@ -67,87 +77,104 @@ public class Condition implements BooleanExpression {
                     }
                 }
             } else if (ComparisonOperator.isOperator(token)) {
-                comparisonOperators.push(ComparisonOperator.fromSymbol(token));
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(ComparisonOperator.fromSymbol(token))) {
+                    buildExpression(operators, operands);
+                }
+                operators.push(ComparisonOperator.fromSymbol(token));
             } else if (LogicalOperator.isOperator(token)) {
-                logicalOperators.push(LogicalOperator.fromString(token));
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(LogicalOperator.fromString(token))) {
+                    buildExpression(operators, operands);
+                }
+                operators.push(LogicalOperator.fromString(token));
             } else if (NumericOreProperties.isProperty(token)) {
                 operands.push(NumericOreProperties.valueOf(token));
-            } else if (Function.isNumeric(token)) {
-                operands.push(new Function.Constant(Double.parseDouble(token)));
+            } else if (ore.forge.Expressions.Function.isNumeric(token)) {
+                operands.push(new ore.forge.Expressions.Function.Constant(Double.parseDouble(token)));
             } else if (StringOreProperty.isProperty(token)) {
                 operands.push(StringOreProperty.fromString(token));
             } else if (ValueOfInfluence.isValue(token)) {
                 operands.push(ValueOfInfluence.valueOf(token));
             } else {
-                var stringContents = matcher.group(6);
-                StringConstant constant = new StringConstant(stringContents);
-                operands.push(constant);
+                operands.push(new StringConstant(token));
             }
         }
-        return buildFromRPN(logicalOperators, comparisonOperators, operands);
+        while (!operators.isEmpty()) {
+            if (operators.peek() == Parenthesis.LEFT) {
+                throw new IllegalArgumentException("Mismatched parenthesis in: " + condition);
+            }
+            buildExpression(operators, operands);
+        }
+        if (operands.peek() instanceof BooleanExpression) {
+            throw new IllegalStateException("Final parsed expression is not a BooleanExpression: " + operands.peek());
+        }
+        return new Condition((BooleanExpression<Ore>) operands.pop());
     }
 
-    private static Condition buildFromRPN(Stack<LogicalOperator> logicalOperators, Stack<ComparisonOperator> comparisonOperators, Stack<Object> operands) {
-        ArrayList<BooleanExpression> expressionQueue = new ArrayList<>(); //We treat this like a Queue.
-        while (!operands.isEmpty()) {
-            if (operands.peek() instanceof BooleanExpression) {
-                expressionQueue.add((BooleanExpression) operands.pop());
-                continue;
-            }
-            if (operands.size() - 2 >= 0) {
-                if (operands.peek() instanceof NumericOperand) {
-                    NumericOperand right = (NumericOperand) operands.pop();
-                    ComparisonOperator comparisonOperator = comparisonOperators.pop();
-                    NumericOperand left = (NumericOperand) operands.pop();
-                    NumericExpression expression = new NumericExpression(left, right, comparisonOperator);
-                    expressionQueue.add(expression);
-                } else if (operands.peek() instanceof StringOperand) {
-                    StringOperand right = (StringOperand) operands.pop();
-                    StringOperand left = (StringOperand) operands.pop();
-                    ComparisonOperator comparisonOperator = comparisonOperators.pop();
-                    StringExpression expression = new StringExpression(left, right, comparisonOperator);
-                    expressionQueue.add(expression);
-                }
-            }
+    private static int precedence(Object operator) {
+        if (operator instanceof LogicalOperator logicalOperator) {
+            return switch (logicalOperator) {
+                case BICONDITIONAL -> 0;
+                case OR -> 1;
+                case XOR -> 2;
+                case AND -> 3;
+                case NOT -> 4;
+
+            };
+        } else if (operator instanceof ComparisonOperator) {
+            return 5;
+        } else if (operator == Parenthesis.LEFT) {
+            return 0;
         }
-        return new Condition(expressionQueue, logicalOperators);
+        throw new IllegalArgumentException("Unknown operator: " + operator);
     }
 
-    public boolean evaluate(Ore ore) {
-        int top = 0;
-        boolean[] results = new boolean[expressions.size()];//emulates a stack, so we can work with boolean primitive.
-        for (BooleanExpression expression : expressions) {
-            results[top++] = expression.evaluate(ore);
-        }
-        if (logicalOperators != null && !logicalOperators.isEmpty()) {
-            for (LogicalOperator operator : logicalOperators) {
-                switch (operator) {
-                    case AND, OR, XOR, BICONDITIONAL:
-                        boolean right = results[--top];
-                        boolean left = results[--top];
-                        results[top++] = operator.evaluate(left, right);
-                        break;
-                    case NOT:
-                        boolean result = results[--top];
-                        results[top++] = operator.evaluate(false, result); //NOT.evaluate() method only evaluates right argument
-                        break;
-                }
+
+    private static void buildExpression(Deque<Object> operators, Deque<Object> operands) {
+        var operator = operators.pop();
+        if (operator instanceof ComparisonOperator comparisonOperator) {
+            var right = operands.pop();
+            var left = operands.pop();
+            operands.push(new Comparison(comparisonOperator, (Function) left, (Function) right));
+        } else if (operator instanceof LogicalOperator logicalOperator) {
+            var right = operands.pop();
+            if (operands.isEmpty() || logicalOperator == LogicalOperator.NOT) {
+                operands.push(new LogicalExpression(null, (BooleanExpression<Ore>) right, logicalOperator));
+                return;
             }
+            var left = operands.pop();
+            operands.push(new LogicalExpression((BooleanExpression<Ore>) left, (BooleanExpression<Ore>) right, logicalOperator));
+        } else {
+            throw new IllegalArgumentException("IDK how we made it here");
         }
-        return results[--top];
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        int logicalIndex = 0;
-        for (int i = expressions.size() - 1; i >= 0; i--) {
-            builder.append(expressions.get(i).toString()).append(" ");
-            if (logicalIndex < logicalOperators.size()) {
-                builder.append(logicalOperators.get(logicalIndex++).toString()).append(" ");
-            }
+    public boolean evaluate(Ore ore) {
+        return expression.evaluate(ore);
+    }
+
+    private record Comparison<E, V extends Comparable<V>>(ComparisonOperator comparisonOperator, Function<E, V> left,
+                                                          Function<E, V> right) implements BooleanExpression<E> {
+        @Override
+        public boolean evaluate(E ore) {
+            return comparisonOperator.compare(left.apply(ore), right.apply(ore));
         }
-        return builder.toString();
+
+    }
+
+    private record LogicalExpression(BooleanExpression<Ore> left, BooleanExpression<Ore> right,
+                                     LogicalOperator operator) implements BooleanExpression<Ore> {
+        @Override
+        public boolean evaluate(Ore element) {
+            //For logical NOT, only
+            if (left != null) {
+                return operator.evaluate(left.evaluate(element), right.evaluate(element));
+            } else {
+                return operator.evaluate(false, right.evaluate(element));
+            }
+
+        }
+
     }
 
     public record StringConstant(String string) implements StringOperand {
@@ -162,38 +189,6 @@ public class Condition implements BooleanExpression {
         }
     }
 
-    public record NumericExpression(NumericOperand left, NumericOperand right,
-                                    ComparisonOperator operator) implements BooleanExpression {
-        @Override
-        public boolean evaluate(Ore ore) {
-            return operator.evaluate(left.calculate(ore), right.calculate(ore));
-        }
-
-        @Override
-        public String toString() {
-            return left + " " + operator.asSymbol() + " " + right;
-        }
-    }
-
-    public record StringExpression(StringOperand left, StringOperand right,
-                                   ComparisonOperator operator) implements BooleanExpression {
-        @Override
-        public boolean evaluate(Ore ore) {
-            if (operator == ComparisonOperator.EQUAL_TO) {
-                return left.asString(ore).equals(right.asString(ore));
-            } else if (operator == ComparisonOperator.NOT_EQUAL_TO) {
-                return !left.asString(ore).equals(right.asString(ore));
-            } else {
-                throw new RuntimeException("invalid comparison operator: " + operator);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return left + " " + operator.asSymbol() + " " + right;
-        }
-    }
-
     public record NumericMethodOperand(String targetID, MethodBasedOperand source) implements NumericOperand {
         @Override
         public double calculate(Ore ore) {
@@ -201,7 +196,7 @@ public class Condition implements BooleanExpression {
         }
     }
 
-    public record BooleanMethodOperand(String targetID, MethodBasedOperand source) implements BooleanExpression {
+    public record BooleanMethodOperand(String targetID, MethodBasedOperand source) implements BooleanExpression<Ore> {
         @Override
         public boolean evaluate(Ore ore) {
             return source.evaluate(ore, targetID);

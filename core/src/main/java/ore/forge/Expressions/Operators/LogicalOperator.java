@@ -1,6 +1,8 @@
 package ore.forge.Expressions.Operators;
 
-public enum LogicalOperator {
+import ore.forge.Expressions.BooleanOperator;
+
+public enum LogicalOperator implements BooleanOperator {
     NOT,
     XOR,
     AND,
@@ -9,12 +11,9 @@ public enum LogicalOperator {
 
 
     public boolean evaluate(boolean left, boolean right) {
-        return operator.evaluate(left, right);
+        return operator.applyTo(left, right);
     }
 
-    private interface BooleanOperator {
-        boolean evaluate(boolean left, boolean right);
-    }
 
     public static LogicalOperator fromString(String string) {
         string = string.toUpperCase();
@@ -30,7 +29,7 @@ public enum LogicalOperator {
 
     public static boolean isOperator(String string) {
         return switch (string) {
-            case "NOT", "!",  "XOR", "^", "AND", "&&", "OR", "||", "->", "<->" -> true;
+            case "NOT", "!", "XOR", "^", "AND", "&&", "OR", "||", "->", "<->" -> true;
             default -> false;
         };
     }
@@ -45,7 +44,10 @@ public enum LogicalOperator {
         };
     }
 
+
     private final BooleanOperator operator;
+    private final int precedence;
+
     LogicalOperator() {
         operator = switch (this) {
             case NOT -> (left, right) -> !right;
@@ -54,5 +56,23 @@ public enum LogicalOperator {
             case OR -> (left, right) -> left || right;
             case BICONDITIONAL -> (left, right) -> (left && right) || (!left && !right);
         };
+        precedence = switch (this) {
+            case NOT -> 5;
+            case AND -> 4;
+            case XOR -> 3;
+            case OR -> 2;
+            case BICONDITIONAL -> 1;
+        };
     }
+
+    public int getPrecedence() {
+        return this.precedence;
+    }
+
+
+    @Override
+    public boolean applyTo(boolean left, boolean right) {
+        return false;
+    }
+
 }

@@ -47,6 +47,10 @@ public abstract class Item {
     protected boolean canBeSold;
     protected double sellPrice;
 
+    protected static final float[] vertices = {
+        1, 1, 2, 23, 4, 5
+    };
+
 
     public Item(String name, String description, int[][] blockLayout, Tier TIER, double itemValue, float rarity) {
         this.name = name;
