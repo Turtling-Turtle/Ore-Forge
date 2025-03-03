@@ -1,11 +1,9 @@
 package ore.forge.Expressions.Operators;
 
 
-import ore.forge.Expressions.BooleanOperator;
-
 import java.util.function.Function;
 
-public enum ComparisonOperator implements BooleanOperator {
+public enum ComparisonOperator {
     GREATER_THAN,
     LESS_THAN,
     GREATER_THAN_EQUAL_TO,
@@ -19,11 +17,6 @@ public enum ComparisonOperator implements BooleanOperator {
 
     public <E extends Comparable<E>> boolean compare(E left, E right) {
         return comparisonOperator.apply(left.compareTo(right));
-    }
-
-    @Override
-    public boolean applyTo(boolean left, boolean right) {
-        return false;
     }
 
     @FunctionalInterface

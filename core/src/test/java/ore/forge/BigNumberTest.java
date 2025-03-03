@@ -2,10 +2,12 @@ package ore.forge;
 
 import org.junit.jupiter.api.Test;
 
-
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Nathan Ulmen
@@ -114,7 +116,7 @@ public class BigNumberTest {
 
     @Test
     void testFloor() {
-        assertEquals(54236, new BigNumber("5.423697E4").floor().convertToDouble());
+        assertEquals(54236, new BigNumber("5.423697E4").floor().convertToDouble(), 1e-6);
     }
 
     @Test
@@ -125,6 +127,8 @@ public class BigNumberTest {
 
     @Test
     void testModuloBig() {
+        var result = new BigNumber("2e800").modulo(20);
+        assertEquals(0, result.mantissa());
     }
 
     @Test
@@ -142,12 +146,38 @@ public class BigNumberTest {
     }
 
     @Test
+    public void testDifferentHugeNumberModulo() {
+        // Create another pair of large BigDecimal numbers
+        String num1 = "3.6e410";
+        String num2 = "6e400";
+        BigDecimal bigDecimalNum1 = new BigDecimal(num1);
+        BigDecimal bigDecimalNum2 = new BigDecimal(num2);
+
+        BigDecimal bigDecimalResult = bigDecimalNum1.remainder(bigDecimalNum2, new MathContext(1, RoundingMode.HALF_UP));
+
+        // Create corresponding BigNumber objects
+        BigNumber bigNumberNum1 = new BigNumber(num1);
+        BigNumber bigNumberNum2 = new BigNumber(num2);
+
+        // Perform modulo operation with BigNumber
+        BigNumber bigNumberResult = bigNumberNum1.modulo(bigNumberNum2);
+
+        // Compare the results of BigDecimal and BigNumber modulo
+        System.out.println(bigDecimalResult);
+        System.out.println(bigNumberResult);
+        BigDecimal bigNumberMantissa = new BigDecimal(bigNumberResult.toString());
+        BigDecimal bigNumberMantissaTrimmed = bigNumberMantissa.setScale(16, RoundingMode.HALF_UP);
+
+        assertEquals(bigDecimalResult.setScale(16, RoundingMode.HALF_UP), bigNumberMantissaTrimmed,
+            "BigDecimal result and BigNumber result do not match!");
+    }
+
+    @Test
     void foo() {
         System.out.println(Double.MAX_VALUE % 3);
         System.out.println(Double.MAX_VALUE - (30000 * Math.floor(Double.MAX_VALUE / 30000)));
         System.out.println(Math.floor(Double.MAX_VALUE / 3));
         System.out.println(3 * Math.floor(Double.MAX_VALUE / 3));
-
         System.out.println();
     }
 

@@ -25,7 +25,7 @@ public class InfluencedUpgrade implements UpgradeStrategy {
     }
 
     public InfluencedUpgrade(JsonValue jsonValue) {
-        upgradeFunction = Function.parseFunction(jsonValue.getString("upgradeFunction"));
+        upgradeFunction = Function.compile(jsonValue.getString("upgradeFunction"));
 
         NumericOperator operator = NumericOperator.valueOf(jsonValue.getString("operator"));
         NumericOreProperties valueToModify = NumericOreProperties.valueOf(jsonValue.getString("valueToModify"));

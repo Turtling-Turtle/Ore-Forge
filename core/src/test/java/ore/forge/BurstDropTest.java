@@ -3,6 +3,8 @@ package ore.forge;
 import ore.forge.Strategies.DropperStrategies.BurstDrop;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class BurstDropTest {
     @Test
@@ -14,6 +16,6 @@ public class BurstDropTest {
                 dropped++;
             }
         }
-//        assertEquals(450, dropped);
+        assertEquals(450, dropped, 1);
     }
 }

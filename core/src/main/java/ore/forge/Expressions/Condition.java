@@ -10,10 +10,14 @@ import ore.forge.Ore;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Nathan Ulmen
+ */
 public class Condition implements BooleanExpression<Ore> {
     private final BooleanExpression<Ore> expression;
     private final static Pattern pattern = Pattern.compile("(([A-Z_]+\\.)([A-Z_]+)\\(([^)]+)\\))|\\{([^}]*)}|\\(|\\)|<->|[<>]=?|==|!=|&&|\\|\\||!|[A-Z_]+|\"(.*)\"|([-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)");
@@ -38,18 +42,15 @@ public class Condition implements BooleanExpression<Ore> {
         }
     }
 
-    public static Condition parseCondition(String condition) {
+    public static Condition compile(String condition) {
         Matcher matcher = pattern.matcher(condition);
         Deque<Object> operators = new ArrayDeque<>();
         Deque<Object> operands = new ArrayDeque<>();
-
         while (matcher.find()) {
             String token = matcher.group();
             token = token.trim();
-            if (token.isEmpty() || token.equals(" ")) {
-                //ignore " "
-                continue;
-            } else if (token.equals("(")) {
+            assert !token.isEmpty() && !token.equals(" ");
+            if (token.equals("(")) {
                 operators.push(Parenthesis.LEFT);
             } else if (token.equals(")")) {
                 while (!operators.isEmpty() && operators.peek() != Parenthesis.LEFT) {
@@ -61,7 +62,7 @@ public class Condition implements BooleanExpression<Ore> {
                 operators.pop(); //remove "("
             } else if (token.contains("{") && token.contains("}")) {
                 token = token.replace("{", "").replace("}", "");
-                ore.forge.Expressions.Function function = ore.forge.Expressions.Function.parseFunction(token);
+                ore.forge.Expressions.Function function = ore.forge.Expressions.Function.compile(token);
                 operands.push(function);
             } else if (token.contains("(") && token.contains(")") && matcher.group(2).charAt(matcher.group(2).length() - 1) == '.') {//Method verification.
                 var argumentSource = matcher.group(2);
@@ -95,7 +96,7 @@ public class Condition implements BooleanExpression<Ore> {
             } else if (ValueOfInfluence.isValue(token)) {
                 operands.push(ValueOfInfluence.valueOf(token));
             } else {
-                var stringContents = matcher.group(6);//Get the contents inside the ""
+                String stringContents = matcher.group(6);//Get the contents inside the ""
                 operands.push(new StringConstant(stringContents));
             }
         }
@@ -129,7 +130,6 @@ public class Condition implements BooleanExpression<Ore> {
         throw new IllegalArgumentException("Unknown operator: " + operator);
     }
 
-
     private static void buildExpression(Deque<Object> operators, Deque<Object> operands) {
         var operator = operators.pop();
         if (operator instanceof ComparisonOperator comparisonOperator) {
@@ -147,6 +147,48 @@ public class Condition implements BooleanExpression<Ore> {
         } else {
             throw new IllegalArgumentException("IDK how we made it here");
         }
+    }
+
+    private static class ExpectedProcessor {
+        enum TokenType {
+            STARTING,
+            NUMERIC_OPERAND,
+            STRING_OPERAND,
+            BOOLEAN_OPERAND,
+            LOGICAL_OPERATOR,
+            COMPARISON_OPERATOR,
+            LEFT_PARENTHESIS,
+            RIGHT_PARENTHESIS,
+        }
+
+        private TokenType expected;
+        private static final Map<TokenType, TokenType[]> lookup = Map.of(
+            TokenType.STARTING, new TokenType[]{TokenType.LEFT_PARENTHESIS, TokenType.NUMERIC_OPERAND, TokenType.STRING_OPERAND, TokenType.LOGICAL_OPERATOR},
+            TokenType.NUMERIC_OPERAND, new TokenType[]{TokenType.COMPARISON_OPERATOR, TokenType.RIGHT_PARENTHESIS, TokenType.LOGICAL_OPERATOR},
+            TokenType.STRING_OPERAND, new TokenType[]{TokenType.COMPARISON_OPERATOR, TokenType.RIGHT_PARENTHESIS, TokenType.LOGICAL_OPERATOR},
+            TokenType.BOOLEAN_OPERAND, new TokenType[]{TokenType.COMPARISON_OPERATOR, TokenType.RIGHT_PARENTHESIS, TokenType.LOGICAL_OPERATOR}
+
+
+        );
+
+        public ExpectedProcessor() {
+
+        }
+
+        public boolean update(TokenType next) {
+            //process type
+            var result = isValidToken(next);
+            if (result) {
+                expected = next;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean isValidToken(TokenType next) {
+            return true;
+        }
+
     }
 
     @Override
@@ -173,9 +215,7 @@ public class Condition implements BooleanExpression<Ore> {
             } else {
                 return operator.evaluate(false, right.evaluate(element));
             }
-
         }
-
     }
 
     public record StringConstant(String string) implements StringOperand {

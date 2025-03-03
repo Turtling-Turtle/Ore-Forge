@@ -22,7 +22,7 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
     public QuestCondition(QuestStep parent, JsonValue jsonValue) {
         listeners = new ArrayList<>(5);
         this.parent = parent;
-        condition = Condition.parseCondition(jsonValue.getString("condition"));
+        condition = Condition.compile(jsonValue.getString("condition"));
         state = QuestStatus.valueOf(jsonValue.getString("state"));
         eventType = getEvent(jsonValue, "eventType");
         description = jsonValue.getString("description");

@@ -134,7 +134,7 @@ public class LootTable {
         OreEffect upgradeOverTime = new UpgradeOreEffect(1, 10E10f, simpleMultiply);
 
         UpgradeStrategy basicUpgrade = new BasicUpgrade(.1, NumericOperator.MULTIPLY, ORE_VALUE);
-        Function influenceFunction = Function.parseFunction("(ORE_VALUE * .01) * 2");
+        Function influenceFunction = Function.compile("(ORE_VALUE * .01) * 2");
         UpgradeStrategy influencedUpgrade = new InfluencedUpgrade(influenceFunction, (BasicUpgrade) basicUpgrade, 1.5, 20.0);
         OreEffect influencedUpgradeOverTime = new UpgradeOreEffect(1, 2E10f, influencedUpgrade);
 

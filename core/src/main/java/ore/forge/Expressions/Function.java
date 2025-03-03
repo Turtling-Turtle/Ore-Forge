@@ -39,13 +39,13 @@ public class Function implements NumericOperand {
     }
 
     //Takes a Json Value, extracts the function string from it, then creates a function object based on the extracted string
-    public static Function parseFunction(JsonValue jsonValue) {
+    public static Function compile(JsonValue jsonValue) {
         String equation = jsonValue.getString("upgradeFunction");
-        return parseFunction(equation);
+        return compile(equation);
     }
 
     //Takes a Json Value, extracts the string from it, then creates a Function object based on the extracted string
-    public static Function parseFunction(String equation) {
+    public static Function compile(String equation) {
         equation = equation.replaceAll("(\\d+)([-+])(\\d+)", "$1 $2 $3"); //get rid of spaces in Function string.
         Matcher matcher = pattern.matcher(equation);
         return parseFromTokens(matcher);
@@ -78,7 +78,7 @@ public class Function implements NumericOperand {
                 operatorStack.pop();//remove the null
             } else if (UniqueMathFunctions.isMathFunction(token)) { //Special Functions like ln
                 UniqueMathFunctions function = UniqueMathFunctions.fromSymbol(token);
-                operandStack.push(new UniqueMathFunctions.SpecialFunction(parseFunction(matcher.group(6)), function)); //group 2 is the contents inside special function.
+                operandStack.push(new UniqueMathFunctions.SpecialFunction(compile(matcher.group(6)), function)); //group 2 is the contents inside special function.
                 matcher.find(); //Get rid of the Trailing )
                 assert Objects.equals(matcher.group(), ")");
             } else if (NumericOperator.isOperator(token)) {
@@ -115,34 +115,6 @@ public class Function implements NumericOperand {
             return new Function(new Constant(0), operandStack.pop(), NumericOperator.ASSIGNMENT);
         }
 
-        return (Function) operandStack.pop();
-    }
-
-    @Deprecated
-    private static Function deprecated(Matcher matcher) {
-        Stack<NumericOperand> operandStack = new Stack<>();
-        Stack<NumericOperator> numericOperatorStack = new Stack<>();
-        while (matcher.find()) {
-            String token = matcher.group();
-            if (token.equals("(")) { //We Ignore '(' char
-            } else if (token.equals(")")) {
-                NumericOperand right = operandStack.pop();
-                NumericOperand left = operandStack.pop();
-                NumericOperator numericOperator = numericOperatorStack.pop();
-                operandStack.push(new Function(left, right, numericOperator));
-            } else if (NumericOperator.isOperator(token)) {
-                numericOperatorStack.push(NumericOperator.fromSymbol(token));
-            } else if (NumericOreProperties.isProperty(token)) {
-                operandStack.push(NumericOreProperties.valueOf(token));
-            } else if (ValueOfInfluence.isValue(token)) {
-                operandStack.push(ValueOfInfluence.valueOf(token));
-            } else if (isNumeric(token)) {
-                operandStack.push(new Constant(Double.parseDouble(token)));
-            } else {
-                throw new RuntimeException("Unknown token: " + token);
-            }
-        }
-        assert numericOperatorStack.isEmpty();
         return (Function) operandStack.pop();
     }
 

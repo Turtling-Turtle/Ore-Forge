@@ -29,7 +29,7 @@ public class ConditionalUpgrade implements UpgradeStrategy {
     public ConditionalUpgrade(JsonValue jsonValue) {
         trueBranchStrategy = ReflectionLoader.load(jsonValue.get("trueBranch"), "upgradeName");
         falseBranchStrategy = ReflectionLoader.load(jsonValue.get("falseBranch"), "upgradeName");
-        condition = Condition.parseCondition(jsonValue.getString("condition"));
+        condition = Condition.compile(jsonValue.getString("condition"));
     }
 
     //Clone constructor

@@ -139,45 +139,8 @@ public class BigNumber implements Comparable<BigNumber> {
             return normalize(numThis % numOther, 0);
         }
 
-        long difference = digitDifference(absOther);
-        if (difference < SIGNIFICANT_DIGITS) {
-            if (this.subtract(absOther).equals(this)) {
-                return new BigNumber(0, 0);
-            }
-
-            if (absOther.subtract(this).equals(absOther)) {
-                return this;
-            }
-
-            if (this.isNegative()) {
-                return this.abs().modulo(absOther).multiply(-1);
-            }
-
-            BigNumber[] results = new BigNumber[2];
-            results[0] = this.divide(absOther);
-            results[1] = absOther.multiply(results[0].floor());
-            return this.subtract(results[1]);
-        }
-
-        BigNumber[] results = new BigNumber[2];
-        results[0] = this.divide(absOther);
-        results[1] = absOther.multiply(results[0].floor());
-        return this.subtract(results[1]);
+        return null;
     }
-
-    private long digitDifference(BigNumber other) {
-        BigNumber bigger, smaller;
-        if (this.exponent >= other.mantissa) {
-            bigger = this;
-            smaller = other;
-        } else {
-            bigger = other;
-            smaller = this;
-        }
-
-        return bigger.exponent - smaller.exponent;
-    }
-
 
     public BigNumber floor() {
         if (exponent < SIGNIFICANT_DIGITS) {
@@ -265,7 +228,7 @@ public class BigNumber implements Comparable<BigNumber> {
     }
 
     public String toString() {
-        return mantissa + " E " + String.format("%s,3d", Long.valueOf(exponent));
+        return mantissa + "e" + String.format("%s", Long.valueOf(exponent));
     }
 
     public boolean canBeDouble() {

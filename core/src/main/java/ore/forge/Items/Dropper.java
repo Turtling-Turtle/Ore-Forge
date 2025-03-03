@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Color;
 import ore.forge.Expressions.Function;
-import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Expressions.Operands.NumericOreProperties;
+import ore.forge.Expressions.Operators.NumericOperator;
 import ore.forge.Items.Blocks.Block;
 import ore.forge.Items.Blocks.DropperBlock;
 import ore.forge.ReflectionLoader;
@@ -27,7 +27,7 @@ public class Dropper extends Item {
     protected final double oreValue;
     protected final int oreTemp, multiOre;
     private int totalOreDropped;
-    public OreEffect testEffect = new UpgradeOreEffect(0.1f, 30, new InfluencedUpgrade(Function.parseFunction("ACTIVE_ORE.GET_COUNT(760-pfWQURud)"), new BasicUpgrade(0, NumericOperator.ADD, NumericOreProperties.ORE_VALUE), -9999999, 999999));
+    public OreEffect testEffect = new UpgradeOreEffect(0.1f, 30, new InfluencedUpgrade(Function.compile("ACTIVE_ORE.GET_COUNT(760-pfWQURud)"), new BasicUpgrade(0, NumericOperator.ADD, NumericOreProperties.ORE_VALUE), -9999999, 999999));
     protected final OreEffect oreEffect; //Effect that the dropper will apply when creating ore
     protected final Stopwatch stopwatch = new Stopwatch(TimeUnit.SECONDS);
 

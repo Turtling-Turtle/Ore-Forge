@@ -3,11 +3,13 @@ package ore.forge.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.*;
-import ore.forge.*;
+import ore.forge.Color;
+import ore.forge.Constants;
 import ore.forge.EventSystem.EventManager;
 import ore.forge.EventSystem.Events.FailedPurchaseGameEvent;
 import ore.forge.EventSystem.Events.PurchaseGameEvent;
 import ore.forge.Expressions.Function;
+import ore.forge.ItemManager;
 import ore.forge.Items.Item;
 
 //@author Nathan Ulmen
@@ -88,7 +90,7 @@ public class Player {
     }
 
     public boolean canPrestige() {
-        Function prestigeFunction = Function.parseFunction("(2.5 * 10^19) * (PRESTIGE_LEVEL + 1)");
+        Function prestigeFunction = Function.compile("(2.5 * 10^19) * (PRESTIGE_LEVEL + 1)");
         return prestigeFunction.calculate(null) <= wallet;
     }
 
