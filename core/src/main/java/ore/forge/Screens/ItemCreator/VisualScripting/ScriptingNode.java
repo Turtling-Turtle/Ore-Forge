@@ -28,12 +28,13 @@ import java.util.List;
 public class ScriptingNode<E> {
     private String name, arrayName;
     private ScriptingNode<E> parent; //"input"
-    private List<ScriptingNode<E>> leaves; //outputs
+    private LinkBehavior behavior; //Determines how children are linked, whether that be lines through "linkage" points or a block. ENUM INSTEAD?
+    private final List<ScriptingNode<E>> children; //output
     private final ArrayList<Field> fields;
     private final JsonValue.ValueType type;
 
     public ScriptingNode(Field... fields) {
-        this.leaves = new ArrayList<>();
+        this.children = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.fields.addAll(Arrays.asList(fields));
         this.type = null;
@@ -41,9 +42,10 @@ public class ScriptingNode<E> {
 
     public ScriptingNode(JsonValue.ValueType type, String arrayName, Field... fields) {
         this.arrayName = arrayName;
-        this.leaves = new ArrayList<>();
+        this.children = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.fields.addAll(Arrays.asList(fields));
+        assert type == JsonValue.ValueType.array;
         this.type = type;
     }
 
@@ -51,7 +53,7 @@ public class ScriptingNode<E> {
 //    public void draw(Batch batch, float parentAlpha) {
 //        super.draw(batch, parentAlpha);
 //        for (ScriptingNode<E> child : leaves) {
-//            //TODO: draw line to each child
+//            //TODO: handle drawing
 //        }
 //    }
 
@@ -70,19 +72,23 @@ public class ScriptingNode<E> {
         } else {
             childAdder = jsonValue;
         }
-        for (ScriptingNode<E> child : leaves) {
+        for (ScriptingNode<E> child : children) {
             childAdder.addChild(child.create());
         }
         return jsonValue;
     }
 
-    public ValidationResult validate(ValidationResult result) {
-        for (Field field: fields) {
+    public ValidationResult validate() {
+        return validate(new ValidationResult());
+    }
+
+    private ValidationResult validate(ValidationResult result) {
+        for (Field field : fields) {
             if (!field.isValid()) {
                 result.addError(field.getError());
             }
         }
-        for (ScriptingNode<E> child : leaves) {
+        for (ScriptingNode<E> child : children) {
             child.validate(result);
         }
         return result;
@@ -97,17 +103,17 @@ public class ScriptingNode<E> {
     }
 
     public void addChild(ScriptingNode<E> child) {
-        this.leaves.add(child);
+        this.children.add(child);
         this.onLink(child);
     }
 
     public void removeChild(ScriptingNode<E> child) {
-        this.leaves.remove(child);
+        this.children.remove(child);
         this.onUnlink(child);
     }
 
     public void setChildName(int index, String name) {
-        leaves.get(index).setName(name);
+        children.get(index).setName(name);
     }
 
     public void onLink(ScriptingNode<E> other) {
@@ -197,7 +203,9 @@ public class ScriptingNode<E> {
         bundledUpgrade.addChild(condition);
         bundledUpgrade.addChild(trueBranch);
         bundledUpgrade.setName("upgrade");
-        System.out.println(bundledUpgrade.create());
+        if (bundledUpgrade.validate().isValid()) {
+            System.out.println(bundledUpgrade.create());
+        }
 
     }
 
@@ -215,7 +223,7 @@ public class ScriptingNode<E> {
 
             @Override
             public boolean isValid() {
-                return false;
+                return true;
             }
 
             @Override
