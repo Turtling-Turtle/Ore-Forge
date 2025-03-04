@@ -26,15 +26,25 @@ import java.util.List;
  * {@link Function}
  */
 public class ScriptingNode<E> {
-    private String name;
+    private String name, arrayName;
     private ScriptingNode<E> parent; //"input"
     private List<ScriptingNode<E>> leaves; //outputs
     private final ArrayList<Field> fields;
+    private final JsonValue.ValueType type;
 
     public ScriptingNode(Field... fields) {
         this.leaves = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.fields.addAll(Arrays.asList(fields));
+        this.type = null;
+    }
+
+    public ScriptingNode(JsonValue.ValueType type, String arrayName, Field... fields) {
+        this.arrayName = arrayName;
+        this.leaves = new ArrayList<>();
+        this.fields = new ArrayList<>();
+        this.fields.addAll(Arrays.asList(fields));
+        this.type = type;
     }
 
 //    @Override
@@ -51,10 +61,31 @@ public class ScriptingNode<E> {
         for (Field field : fields) {
             jsonValue.addChild(field.getValue());
         }
+        JsonValue childAdder;
+        if (type == JsonValue.ValueType.array) {
+            childAdder = new JsonValue(JsonValue.ValueType.array);
+            assert arrayName != null && !arrayName.isEmpty();
+            childAdder.name = arrayName;
+            jsonValue.addChild(childAdder);
+        } else {
+            childAdder = jsonValue;
+        }
         for (ScriptingNode<E> child : leaves) {
-            jsonValue.addChild(child.create());
+            childAdder.addChild(child.create());
         }
         return jsonValue;
+    }
+
+    public ValidationResult validate(ValidationResult result) {
+        for (Field field: fields) {
+            if (!field.isValid()) {
+                result.addError(field.getError());
+            }
+        }
+        for (ScriptingNode<E> child : leaves) {
+            child.validate(result);
+        }
+        return result;
     }
 
     public void setName(String name) {
@@ -66,7 +97,13 @@ public class ScriptingNode<E> {
     }
 
     public void addChild(ScriptingNode<E> child) {
-       this.leaves.add(child);
+        this.leaves.add(child);
+        this.onLink(child);
+    }
+
+    public void removeChild(ScriptingNode<E> child) {
+        this.leaves.remove(child);
+        this.onUnlink(child);
     }
 
     public void setChildName(int index, String name) {
@@ -78,6 +115,30 @@ public class ScriptingNode<E> {
     }
 
     public void onUnlink(ScriptingNode<E> other) {
+
+    }
+
+    public static class ValidationResult {
+        private boolean valid;
+        private final List<String> errors;
+
+        public ValidationResult() {
+            valid = true;
+            errors = new ArrayList<>();
+        }
+
+        public void addError(String error) {
+            valid = false;
+            errors.add(error);
+        }
+
+        public List<String> getErrors() {
+            return errors;
+        }
+
+        public boolean isValid() {
+            return valid;
+        }
 
     }
 
@@ -103,10 +164,17 @@ public class ScriptingNode<E> {
             }
             return jsonValue;
         }
+
+        public boolean isValid() {
+            return field.isValid();
+        }
+
+        public String getError() {
+            return field.getError();
+        }
     }
 
     public static void main(String[] args) {
-        System.out.println("Here!");
 
         ScriptingNode<UpgradeStrategy> condition = new ScriptingNode<>(
             new Field("condition", createForumField("ORE_VALUE > 20", JsonValue.ValueType.stringValue))
@@ -118,10 +186,19 @@ public class ScriptingNode<E> {
             new Field("valueToModify", createForumField("ORE_VALUE", JsonValue.ValueType.stringValue)),
             new Field("operator", createForumField("MULTIPLY", JsonValue.ValueType.stringValue))
         );
+        condition.setName("upgradeName");
         condition.addChild(trueBranch);
         condition.setChildName(0, "trueBranch");
 
-        System.out.println(condition.create());
+
+        ScriptingNode<UpgradeStrategy> bundledUpgrade = new ScriptingNode<>(JsonValue.ValueType.array, "upgrades",
+            new Field("upgradeName", createForumField("ore.forge.Strategies.UpgradeStrategies.BundledUpgrade", JsonValue.ValueType.stringValue))
+        );
+        bundledUpgrade.addChild(condition);
+        bundledUpgrade.addChild(trueBranch);
+        bundledUpgrade.setName("upgrade");
+        System.out.println(bundledUpgrade.create());
+
     }
 
     private static ForumField<?> createForumField(Object value, JsonValue.ValueType type) {
@@ -129,6 +206,16 @@ public class ScriptingNode<E> {
             @Override
             public Object getValue() {
                 return value;
+            }
+
+            @Override
+            public String getError() {
+                return "";
+            }
+
+            @Override
+            public boolean isValid() {
+                return false;
             }
 
             @Override
