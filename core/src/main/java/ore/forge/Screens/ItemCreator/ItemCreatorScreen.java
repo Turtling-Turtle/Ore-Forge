@@ -10,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import ore.forge.Expressions.Condition;
 import ore.forge.ItemManager;
 import ore.forge.OreForge;
 import ore.forge.Screens.CustomScreen;
 import ore.forge.Screens.ItemCreator.VisualScripting.Forums.DropDownForum;
+import ore.forge.Screens.ItemCreator.VisualScripting.Forums.TextInputForum;
 import ore.forge.UI.UIHelper;
 
 public class ItemCreatorScreen extends CustomScreen {
@@ -39,23 +41,35 @@ public class ItemCreatorScreen extends CustomScreen {
 
         List.ListStyle listStyle = new List.ListStyle();
         listStyle.font = UIHelper.generateFont(16);
-        listStyle.background = UIHelper.getRoundFull();
-        listStyle.selection = UIHelper.getRoundFull().tint(Color.YELLOW);
+        listStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
+        listStyle.selection = UIHelper.getRoundFull().tint(Color.PURPLE);
         listStyle.down = UIHelper.getRoundFull().tint(Color.RED);
         listStyle.over = UIHelper.getRoundFull().tint(Color.GREEN);
 
         style.listStyle = listStyle;
 
         ScrollPane.ScrollPaneStyle scrollStyle = new ScrollPane.ScrollPaneStyle();
-        scrollStyle.background = UIHelper.getRoundFull().tint(Color.WHITE);
+        scrollStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
 
 
         style.scrollStyle = scrollStyle;
 
         var dropDown= new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar");
-        dropDown.setSize(300, 300);
+        dropDown.setWidth(300);
         dropDown.showScrollPane();
         canvas.addActor(dropDown);
+
+        TextInputForum textInput = new TextInputForum() {
+            @Override
+            public boolean isValid() {
+                try {
+                    Condition.compile(this.getText());
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        };
 
 
     }
