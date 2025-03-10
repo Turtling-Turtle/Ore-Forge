@@ -1,10 +1,12 @@
 package ore.forge.UI;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 
@@ -79,5 +81,13 @@ public class UIHelper {
         return newNinePatch;
     }
 
+    public static List.ListStyle getListStyle() {
+        var listStyle = new List.ListStyle();
+        listStyle.background = UIHelper.getRoundFull();
+        listStyle.selection = UIHelper.getButton(ButtonType.ROUND_EMPTY_128).tint(Color.YELLOW);
+        listStyle.font = generateFont(16);
+        listStyle.font.setColor(Color.BLACK);
+        return listStyle;
+    }
 
 }

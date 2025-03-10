@@ -73,7 +73,7 @@ public class QuestCondition implements GameEventListener<GameEvent<?>> {
         return description;
     }
 
-    public void addListener(Listener listener) {
+    public void addListener(Listener<QuestCondition> listener) {
         listeners.add(listener);
     }
 

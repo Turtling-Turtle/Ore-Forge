@@ -12,6 +12,7 @@ import ore.forge.ButtonHelper;
 import ore.forge.ItemManager;
 import ore.forge.OreForge;
 import ore.forge.Player.Player;
+import ore.forge.Screens.ItemCreator.ItemCreatorScreen;
 
 
 public class MainMenu extends CustomScreen {
@@ -55,11 +56,11 @@ public class MainMenu extends CustomScreen {
 
         Table table = new Table();
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.add(start).pad(20).width((float) Gdx.graphics.getWidth() /5).height((float) Gdx.graphics.getHeight() /20);
+        table.add(start).pad(20).width((float) Gdx.graphics.getWidth() / 5).height((float) Gdx.graphics.getHeight() / 20);
         table.row();
-        table.add(settings).pad(20).width((float) Gdx.graphics.getWidth()/5).height((float) Gdx.graphics.getHeight()/20);
+        table.add(settings).pad(20).width((float) Gdx.graphics.getWidth() / 5).height((float) Gdx.graphics.getHeight() / 20);
         table.row();
-        table.add(exit).pad(20).width((float) Gdx.graphics.getWidth() /5).height((float) Gdx.graphics.getHeight() /20);
+        table.add(exit).pad(20).width((float) Gdx.graphics.getWidth() / 5).height((float) Gdx.graphics.getHeight() / 20);
 
         Texture backgroundTexture = new Texture(Gdx.files.internal("Background3.jpg"));
         Image background = new Image(backgroundTexture);
@@ -68,7 +69,15 @@ public class MainMenu extends CustomScreen {
 //        stage.addActor(start);
         stage.addActor(background);
         stage.addActor(table);
-//        stage.addActor(game.fpsCounter);
+
+        var editorButton = ButtonHelper.createRoundTextButton("Item Editor", Color.DARK_GRAY, Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 22.5f);
+        editorButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ItemCreatorScreen(game, itemManager));
+            }
+        });
+        stage.addActor(editorButton);
     }
 
     @Override
@@ -83,7 +92,6 @@ public class MainMenu extends CustomScreen {
     public void hide() {
         this.screenFadeOut(0.1f);
     }
-
 
 
 }

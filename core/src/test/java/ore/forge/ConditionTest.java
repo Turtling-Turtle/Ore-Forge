@@ -168,4 +168,11 @@ class ConditionTest {
         assertTrue(testCase.evaluate(ore));
     }
 
+    @Test
+    void testComparison() {
+        ore.setTemperature(130);
+        var testCase = Condition.compile("TEMPERATURE > 100");
+        assertTrue(testCase.evaluate(ore));
+    }
+
 }

@@ -51,7 +51,7 @@ public class OreForge extends Game {
          * */
         Gdx.graphics.setVSync(false);
         spriteBatch = new SpriteBatch();
-        int currentMode = 1;
+        int currentMode = 0;
         //0 is default
         //1 is test
         switch (currentMode) {
