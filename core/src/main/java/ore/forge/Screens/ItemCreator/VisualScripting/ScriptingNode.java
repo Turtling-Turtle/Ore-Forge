@@ -1,6 +1,7 @@
 package ore.forge.Screens.ItemCreator.VisualScripting;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Expressions.Condition;
 import ore.forge.Expressions.Function;
@@ -33,8 +34,7 @@ import java.util.List;
  * {@link Function}
  * Fields should be able to validate themselves.
  */
-public class ScriptingNode<E> {
-    private Table table;
+public class ScriptingNode<E> extends Actor {
     private String name, arrayName;
     private ScriptingNode<E> parent; //"input"
     private LinkBehavior<E> behavior; //Link behavior determines # of children, how they are added, and what should happen when added.
@@ -62,13 +62,30 @@ public class ScriptingNode<E> {
         this.type = type;
     }
 
-//    @Override
-//    public void draw(Batch batch, float parentAlpha) {
-//        super.draw(batch, parentAlpha);
-//        for (ScriptingNode<E> child : leaves) {
-//            //TODO: handle drawing
-//        }
-//    }
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        for(Field f : fields) {
+            if (f.field.isUiElement() && f.field instanceof Actor actor) {
+                actor.draw(batch, parentAlpha);
+            }
+        }
+        for (ScriptingNode<E> child : children) {
+            child.draw(batch, parentAlpha);
+        }
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        for(Field f : fields) {
+            if (f.field.isUiElement() && f.field instanceof Actor actor) {
+                actor.act(delta);
+            }
+        }
+        for (ScriptingNode<E> child : children) {
+            child.act(delta);
+        }
+    }
 
     public JsonValue create() {
         JsonValue jsonValue = new JsonValue(JsonValue.ValueType.object);
