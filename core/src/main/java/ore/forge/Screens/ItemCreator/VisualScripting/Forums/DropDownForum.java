@@ -6,9 +6,10 @@ import ore.forge.Screens.ItemCreator.VisualScripting.ForumField;
 
 public class DropDownForum extends SelectBox<String> implements ForumField<String> {
 
-    public DropDownForum(SelectBoxStyle style, String ... options) {
+    public DropDownForum(SelectBoxStyle style, String... options) {
         super(style);
         this.setItems(options);
+        this.showScrollPane();
     }
 
     @Override

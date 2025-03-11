@@ -10,7 +10,6 @@ public class TextInputForum extends TextField implements ForumField<String> {
 
     public TextInputForum(String text) {
         super(text, defaultStyle());
-
     }
 
     public TextInputForum(String string, TextField.TextFieldStyle style) {

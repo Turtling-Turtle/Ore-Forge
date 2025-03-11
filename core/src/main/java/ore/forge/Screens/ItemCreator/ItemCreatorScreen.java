@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -23,11 +24,10 @@ import ore.forge.UI.UIHelper;
 import java.util.ArrayList;
 
 public class ItemCreatorScreen extends CustomScreen {
-    private Stage stage;
-    private Table canvas;
-    private ShapeRenderer shapeRenderer;
-    private float lastTouchX, lastTouchY;
-    private java.util.List<ScriptingNode<?>> scriptingNodes;
+    private final Stage stage;
+    private final Table canvas;
+    private final ShapeRenderer shapeRenderer;
+    private final java.util.List<ScriptingNode<?>> scriptingNodes;
 
     public ItemCreatorScreen(OreForge game, ItemManager itemManager) {
         super(game, itemManager);
@@ -60,10 +60,6 @@ public class ItemCreatorScreen extends CustomScreen {
 
         style.scrollStyle = scrollStyle;
 
-        var dropDown= new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar");
-        dropDown.setWidth(300);
-        dropDown.showScrollPane();
-//        canvas.addActor(dropDown);
 
         TextInputForum textInput = new TextInputForum("ORE_VALUE > 100") {
             @Override
@@ -82,17 +78,17 @@ public class ItemCreatorScreen extends CustomScreen {
         };
 
 //        canvas.add(textInput).pad(30);
-        textInput.setPosition(300, 300);
+        var condition = new ScriptingNode.Field("condition", textInput);
+        var dropDown = new ScriptingNode.Field("valueToModify", new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar"));
         ScriptingNode<UpgradeStrategy> conditionalTestNode = new ScriptingNode<>(new ScriptingNode.Field("upgradeName", new ConstantHiddenForum(ConditionalUpgrade.class.getName())),
-            new ScriptingNode.Field("condition", textInput)
-            , new ScriptingNode.Field("testIng!", new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar"))
+            condition,
+            dropDown
         );
-        conditionalTestNode.setName("upgrade");
-//        canvas.add(conditionalTestNode).bottom().right();
         stage.addActor(conditionalTestNode);
-        System.out.println(0xB00B1E5);
-        conditionalTestNode.debug();
-//        stage.setDebugAll(true);
+
+        conditionalTestNode.setName("upgrade");
+        conditionalTestNode.setSize(300, 300);
+        conditionalTestNode.setPosition(100, 100);
 
         scriptingNodes.add(conditionalTestNode);
     }
@@ -125,12 +121,12 @@ public class ItemCreatorScreen extends CustomScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
         drawGrid();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            var result = scriptingNodes.getFirst().validate();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            var result = scriptingNodes.getFirst().validateContent();
             if (result.isValid()) {
                 System.out.println(scriptingNodes.getFirst().create());
             } else {
-                for (String err: result.getErrors()) {
+                for (String err : result.getErrors()) {
                     System.out.println(err);
                 }
             }
@@ -138,7 +134,6 @@ public class ItemCreatorScreen extends CustomScreen {
         stage.act(delta);
         stage.draw();
     }
-
 
     @Override
     public void dispose() {

@@ -1,7 +1,13 @@
 package ore.forge.Screens.ItemCreator.VisualScripting;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Expressions.Condition;
 import ore.forge.Expressions.Function;
@@ -12,6 +18,7 @@ import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.BundledUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.ConditionalUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.UpgradeStrategy;
+import ore.forge.UI.UIHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,19 +41,42 @@ import java.util.List;
  * {@link Function}
  * Fields should be able to validate themselves.
  */
-public class ScriptingNode<E> extends Actor {
+public class ScriptingNode<E> extends Table  {
     private String name, arrayName;
     private ScriptingNode<E> parent; //"input"
     private LinkBehavior<E> behavior; //Link behavior determines # of children, how they are added, and what should happen when added.
     private final List<ScriptingNode<E>> children; //output
     private final ArrayList<Field> fields;
     private final JsonValue.ValueType type;
+    private Vector2 dragOffset;
 
     public ScriptingNode(Field... fields) {
+        dragOffset = new Vector2();
         this.children = new ArrayList<>();
         this.fields = new ArrayList<>();
-        this.fields.addAll(Arrays.asList(fields));
+        for (Field field : fields) {
+            var cell = addField(field);
+            if (cell != null) {
+                cell.expandX().fillX().row();
+            }
+        }
         this.type = null;
+        this.setTouchable(Touchable.enabled);
+        this.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int point, int button) {
+                dragOffset.set(x, y);
+                return true;
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                float newX = getX() + x - dragOffset.x;
+                float newY = getY() + y - dragOffset.y;
+                setPosition(newX, newY);
+            }
+        });
+        this.setBackground(UIHelper.getRoundFull().tint(Color.ROYAL));
     }
 
     public ScriptingNode(List<Field> fields) {
@@ -60,31 +90,6 @@ public class ScriptingNode<E> extends Actor {
         this.fields.addAll(Arrays.asList(fields));
         assert type == JsonValue.ValueType.array;
         this.type = type;
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        for(Field f : fields) {
-            if (f.field.isUiElement() && f.field instanceof Actor actor) {
-                actor.draw(batch, parentAlpha);
-            }
-        }
-        for (ScriptingNode<E> child : children) {
-            child.draw(batch, parentAlpha);
-        }
-    }
-
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-        for(Field f : fields) {
-            if (f.field.isUiElement() && f.field instanceof Actor actor) {
-                actor.act(delta);
-            }
-        }
-        for (ScriptingNode<E> child : children) {
-            child.act(delta);
-        }
     }
 
     public JsonValue create() {
@@ -112,8 +117,18 @@ public class ScriptingNode<E> extends Actor {
         this.name = name;
     }
 
-    public void addField(Field field) {
-        fields.add(field);
+    /**
+     * @return the cell of the field added for method chaining
+     * */
+    public Cell<Actor> addField(Field field) {
+        assert field != null;
+        if (!fields.contains(field)) {
+            fields.add(field);
+        }
+        if (field.field instanceof Actor actor) {
+            return this.add(actor);
+        }
+        return null;
     }
 
     public void addChild(ScriptingNode<E> child) {
@@ -138,11 +153,11 @@ public class ScriptingNode<E> extends Actor {
         }
     }
 
-    public ValidationResult<E> validate() {
-        return validate(new ValidationResult<>());
+    public ValidationResult<E> validateContent() {
+        return validateContent(new ValidationResult<>());
     }
 
-    private ValidationResult<E> validate(ValidationResult<E> result) {
+    private ValidationResult<E> validateContent(ValidationResult<E> result) {
         result.visit(this);
         for (Field field : fields) {
             if (!field.isValid()) {
@@ -151,7 +166,7 @@ public class ScriptingNode<E> extends Actor {
             }
         }
         for (ScriptingNode<E> child : children) {
-            child.validate(result);
+            child.validateContent(result);
         }
         return result;
     }
@@ -201,7 +216,7 @@ public class ScriptingNode<E> extends Actor {
 
     public static class Field {
         private final String key;
-        private ForumField<?> field; //InputField for the ValueType, actual UI element
+        private final ForumField<?> field; //InputField for the ValueType, actual UI element
 
         public Field(String key, ForumField<?> field) {
             this.field = field;
@@ -229,6 +244,10 @@ public class ScriptingNode<E> extends Actor {
         public String getError() {
             return field.getError();
         }
+
+        public ForumField<?> getField() {
+            return this.field;
+        }
     }
 
     public static void main(String[] args) {
@@ -244,7 +263,7 @@ public class ScriptingNode<E> extends Actor {
 
 
         bundled.setName("upgrade");
-        var result = bundled.validate();
+        var result = bundled.validateContent();
         if (result.isValid()) {
             System.out.println(bundled.create());
         } else {
@@ -255,7 +274,7 @@ public class ScriptingNode<E> extends Actor {
 
         System.out.println("-------------");
         bundled.removeChild(trueBranch);
-        result = bundled.validate();
+        result = bundled.validateContent();
         if (result.isValid()) {
             System.out.println(bundled.create());
         } else {
@@ -265,30 +284,6 @@ public class ScriptingNode<E> extends Actor {
         }
 
 
-    }
-
-    private static ForumField<?> createForumField(Object value, JsonValue.ValueType type) {
-        return new ForumField<>() {
-            @Override
-            public Object value() {
-                return value;
-            }
-
-            @Override
-            public String getError() {
-                return "";
-            }
-
-            @Override
-            public boolean isValid() {
-                return true;
-            }
-
-            @Override
-            public JsonValue.ValueType getType() {
-                return type;
-            }
-        };
     }
 
     private static ScriptingNode<UpgradeStrategy> createBundledNode() {
