@@ -1,18 +1,23 @@
 package ore.forge.Screens.ItemCreator.VisualScripting;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.Expressions.Condition;
 import ore.forge.Expressions.Function;
 import ore.forge.Expressions.Operands.NumericOreProperties;
 import ore.forge.Expressions.Operators.NumericOperator;
+import ore.forge.Screens.ItemCreator.ItemCreatorScreen;
 import ore.forge.Screens.ItemCreator.VisualScripting.Forums.ConstantHiddenForum;
 import ore.forge.Strategies.UpgradeStrategies.BasicUpgrade;
 import ore.forge.Strategies.UpgradeStrategies.BundledUpgrade;
@@ -41,18 +46,22 @@ import java.util.List;
  * {@link Function}
  * Fields should be able to validate themselves.
  */
-public class ScriptingNode<E> extends Table  {
+public class ScriptingNode<E> extends Table {
+
     private String name, arrayName;
-    private ScriptingNode<E> parent; //"input"
+    private ScriptingNode<E> parentNode; //"input"
     private LinkBehavior<E> behavior; //Link behavior determines # of children, how they are added, and what should happen when added.
-    private final List<ScriptingNode<E>> children; //output
+    private final List<ScriptingNode<E>> childNodes; //output
     private final ArrayList<Field> fields;
     private final JsonValue.ValueType type;
-    private Vector2 dragOffset;
+    private boolean selected;
+    private static final float SNAP_DISTANCE = 100;
+    private static float elapsedTime = 0; //used for highlight effect.
+    private ItemCreatorScreen canvas;
 
     public ScriptingNode(Field... fields) {
-        dragOffset = new Vector2();
-        this.children = new ArrayList<>();
+        canvas = null;
+        this.childNodes = new ArrayList<>();
         this.fields = new ArrayList<>();
         for (Field field : fields) {
             var cell = addField(field);
@@ -62,30 +71,119 @@ public class ScriptingNode<E> extends Table  {
         }
         this.type = null;
         this.setTouchable(Touchable.enabled);
-        this.addListener(new InputListener() {
+        this.setBackground(UIHelper.createBorder(1000, Color.WHITE, Color.NAVY));
+
+        this.addListener(new DragListener() {
+            private final Vector2 dragOffset = new Vector2();
+
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int point, int button) {
+            public void dragStart(InputEvent event, float x, float y, int pointer) {
                 dragOffset.set(x, y);
-                return true;
             }
 
             @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                float newX = getX() + x - dragOffset.x;
-                float newY = getY() + y - dragOffset.y;
-                setPosition(newX, newY);
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                move(x, y, dragOffset);
+            }
+
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                ScriptingNode<E> closestNode = getClosestNode();
+
+                if (closestNode != null) {
+                    System.out.println(closestNode.getX() + " " + closestNode.getY());
+                    setPosition(closestNode.getX(), closestNode.getY() - getHeight());
+                    closestNode.link(ScriptingNode.this);
+                } else if (parentNode != null) {
+                    ScriptingNode.this.unlink(parentNode);
+                }
             }
         });
-        this.setBackground(UIHelper.getRoundFull().tint(Color.ROYAL));
+
+        this.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                toFront();
+                select(true);
+                return true;
+            }
+
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                select(false);
+            }
+
+        });
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+
+        if (selected) {
+            this.setColor(Color.WHITE.cpy().lerp(Color.NAVY, (float) (0.5 * (MathUtils.sin(MathUtils.PI2 * .5f * elapsedTime) + 1))));
+            if (Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                for (ScriptingNode<E> child : childNodes) {
+                    child.remove();
+                    canvas.getScriptingNodes().remove(child);
+                }
+                canvas.getScriptingNodes().remove(this);
+                remove();
+            }
+        } else {
+            this.setColor(Color.WHITE);
+        }
+    }
+
+    private void select(boolean state) {
+        selected = state;
+        for (ScriptingNode<E> child : childNodes) {
+            child.select(state);
+        }
+    }
+
+    public static void updateElapsed(float delta) {
+        elapsedTime += delta;
+    }
+
+    private ScriptingNode<E> getClosestNode() {
+        ScriptingNode<E> closestNode = null;
+        float closestDistance = SNAP_DISTANCE;
+
+        for (Actor actor : getStage().getActors()) {
+            if (actor instanceof ScriptingNode<?> node && node != ScriptingNode.this) {
+                float dx = Math.abs(getX() - node.getX());
+                float dy = Math.abs(getY() - node.getY());
+                float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < closestDistance) {
+                    closestNode = (ScriptingNode<E>) node;
+                    closestDistance = distance;
+                }
+            }
+        }
+        return closestNode;
+    }
+
+    private void move(float x, float y, Vector2 dragOffset) {
+        moveBy(x - dragOffset.x, y - dragOffset.y);
+        for (ScriptingNode<E> child : childNodes) {
+            child.move(x, y, dragOffset);
+        }
     }
 
     public ScriptingNode(List<Field> fields) {
         this(fields.toArray(new Field[0]));
     }
 
+    public void setLinkBehavior(LinkBehavior<E> behavior) {
+        this.behavior = behavior;
+    }
+
     public ScriptingNode(JsonValue.ValueType type, String arrayName, Field... fields) {
         this.arrayName = arrayName;
-        this.children = new ArrayList<>();
+        this.childNodes = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.fields.addAll(Arrays.asList(fields));
         assert type == JsonValue.ValueType.array;
@@ -107,7 +205,7 @@ public class ScriptingNode<E> extends Table  {
         } else {
             childAdder = jsonValue;
         }
-        for (ScriptingNode<E> child : children) {
+        for (ScriptingNode<E> child : childNodes) {
             childAdder.addChild(child.create());
         }
         return jsonValue;
@@ -119,7 +217,7 @@ public class ScriptingNode<E> extends Table  {
 
     /**
      * @return the cell of the field added for method chaining
-     * */
+     */
     public Cell<Actor> addField(Field field) {
         assert field != null;
         if (!fields.contains(field)) {
@@ -131,26 +229,37 @@ public class ScriptingNode<E> extends Table  {
         return null;
     }
 
-    public void addChild(ScriptingNode<E> child) {
+    public void link(ScriptingNode<E> child) {
         if (behavior != null) {
             this.behavior.onLink(this, child);
-        } else {
-            this.children.add(child);
+        }
+    }
+
+    public void unlink(ScriptingNode<E> toUnlink) {
+        if (behavior != null) {
+            behavior.onUnlink(toUnlink, this);
+        }
+    }
+
+    public void addChild(ScriptingNode<E> child) {
+        if (!childNodes.contains(child)) {
+            childNodes.add(child);
+            child.parentNode = this;
         }
     }
 
     public void addChild(ScriptingNode<E> child, String childName) {
         child.setName(childName);
         this.addChild(child);
-
     }
 
     public void removeChild(ScriptingNode<E> child) {
-        if(behavior != null) {
-            behavior.onUnlink(this, child);
-        } else {
-            this.children.remove(child);
-        }
+        this.childNodes.remove(child);
+        child.parentNode = null;
+    }
+
+    public ScriptingNode<E> getParentNode() {
+        return parentNode;
     }
 
     public ValidationResult<E> validateContent() {
@@ -165,10 +274,18 @@ public class ScriptingNode<E> extends Table  {
                 result.recordErrorNode(this);
             }
         }
-        for (ScriptingNode<E> child : children) {
+        for (ScriptingNode<E> child : childNodes) {
             child.validateContent(result);
         }
         return result;
+    }
+
+    public List<ScriptingNode<E>> getChildNodes() {
+        return childNodes;
+    }
+
+    public void setCanvas(ItemCreatorScreen canvas) {
+        this.canvas = canvas;
     }
 
     public static class ValidationResult<E> {
@@ -248,42 +365,6 @@ public class ScriptingNode<E> extends Table  {
         public ForumField<?> getField() {
             return this.field;
         }
-    }
-
-    public static void main(String[] args) {
-        var bundled = createBundledNode();
-        var condition = createConditionalNode("TEMPERATURE > 100");
-        var trueBranch = createBasicUpgradeNode(10.0, NumericOreProperties.ORE_VALUE.name(), "MULTIPLY");
-
-        condition.addChild(trueBranch, "trueBranch");
-        condition.addChild(createBasicUpgradeNode(100.0, NumericOreProperties.TEMPERATURE.name(), "ASSIGNMENT"), "falseBranch");
-        bundled.addChild(condition, "upgrades");
-        bundled.addChild(trueBranch);
-//        bundled.addChild(createBasicUpgradeNode(2.0, NumericOreProperties.ORE_VALUE.name(), "MULTIPLY"));
-
-
-        bundled.setName("upgrade");
-        var result = bundled.validateContent();
-        if (result.isValid()) {
-            System.out.println(bundled.create());
-        } else {
-            for (String error : result.getErrors()) {
-                System.out.println(error);
-            }
-        }
-
-        System.out.println("-------------");
-        bundled.removeChild(trueBranch);
-        result = bundled.validateContent();
-        if (result.isValid()) {
-            System.out.println(bundled.create());
-        } else {
-            for (String error : result.getErrors()) {
-                System.out.println(error);
-            }
-        }
-
-
     }
 
     private static ScriptingNode<UpgradeStrategy> createBundledNode() {

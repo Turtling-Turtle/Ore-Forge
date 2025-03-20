@@ -67,6 +67,7 @@ public class Function implements NumericOperand {
             } else if (ValueOfInfluence.isValue(token)) {
                 operandStack.push(ValueOfInfluence.valueOf(token));
             } else if (token.equals("(")) {
+                //check for implied multiplication by looking at available operands.
                 if (!operandStack.isEmpty() && operandStack.peek() instanceof NumericOperand && operatorStack.isEmpty()) {
                     operatorStack.push(NumericOperator.MULTIPLY);
                 }

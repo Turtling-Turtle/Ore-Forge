@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -13,6 +12,7 @@ import ore.forge.Expressions.Condition;
 import ore.forge.ItemManager;
 import ore.forge.OreForge;
 import ore.forge.Screens.CustomScreen;
+import ore.forge.Screens.ItemCreator.VisualScripting.Forums.ConditionalLink;
 import ore.forge.Screens.ItemCreator.VisualScripting.Forums.ConstantHiddenForum;
 import ore.forge.Screens.ItemCreator.VisualScripting.Forums.DropDownForum;
 import ore.forge.Screens.ItemCreator.VisualScripting.Forums.TextInputForum;
@@ -40,57 +40,8 @@ public class ItemCreatorScreen extends CustomScreen {
         canvas = new Table();
         canvas.setFillParent(true);
         stage.addActor(canvas);
-        SelectBox.SelectBoxStyle style = new SelectBox.SelectBoxStyle();
-        style.font = UIHelper.generateFont(16);
-        style.background = UIHelper.getRoundFull().tint(Color.BLACK);
-        style.backgroundOpen = UIHelper.getRoundFull().tint(Color.PURPLE);
 
-        List.ListStyle listStyle = new List.ListStyle();
-        listStyle.font = UIHelper.generateFont(16);
-        listStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
-        listStyle.selection = UIHelper.getRoundFull().tint(Color.PURPLE);
-        listStyle.down = UIHelper.getRoundFull().tint(Color.FOREST);
-        listStyle.over = UIHelper.getRoundFull().tint(Color.FOREST);
-
-        style.listStyle = listStyle;
-
-        ScrollPane.ScrollPaneStyle scrollStyle = new ScrollPane.ScrollPaneStyle();
-        scrollStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
-
-
-        style.scrollStyle = scrollStyle;
-
-
-        TextInputForum textInput = new TextInputForum("ORE_VALUE > 100") {
-            @Override
-            public boolean isValid() {
-                try {
-                    Condition.compile(this.getText());
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-            @Override
-            public String getError() {
-                return "Failed to compile condition: " + this.getText();
-            }
-        };
-
-//        canvas.add(textInput).pad(30);
-        var condition = new ScriptingNode.Field("condition", textInput);
-        var dropDown = new ScriptingNode.Field("valueToModify", new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar"));
-        ScriptingNode<UpgradeStrategy> conditionalTestNode = new ScriptingNode<>(new ScriptingNode.Field("upgradeName", new ConstantHiddenForum(ConditionalUpgrade.class.getName())),
-            condition,
-            dropDown
-        );
-        stage.addActor(conditionalTestNode);
-
-        conditionalTestNode.setName("upgrade");
-        conditionalTestNode.setSize(300, 300);
-        conditionalTestNode.setPosition(100, 100);
-
-        scriptingNodes.add(conditionalTestNode);
+        spawnNode();
     }
 
     private void drawGrid() {
@@ -121,7 +72,9 @@ public class ItemCreatorScreen extends CustomScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
         drawGrid();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        ScriptingNode.updateElapsed(delta);
+        //This logic is bugged - Doesn't check for multiple different node trees.
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && !scriptingNodes.isEmpty()) {
             var result = scriptingNodes.getFirst().validateContent();
             if (result.isValid()) {
                 System.out.println(scriptingNodes.getFirst().create());
@@ -130,6 +83,9 @@ public class ItemCreatorScreen extends CustomScreen {
                     System.out.println(err);
                 }
             }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            spawnNode();
         }
         stage.act(delta);
         stage.draw();
@@ -148,6 +104,63 @@ public class ItemCreatorScreen extends CustomScreen {
         style.cursor = UIHelper.getRoundFull().tint(Color.BLACK);
 
         return style;
+    }
+
+    private void spawnNode() {
+
+        SelectBox.SelectBoxStyle style = new SelectBox.SelectBoxStyle();
+        style.font = UIHelper.generateFont(16);
+        style.background = UIHelper.getRoundFull().tint(Color.BLACK);
+        style.backgroundOpen = UIHelper.getRoundFull().tint(Color.PURPLE);
+
+        List.ListStyle listStyle = new List.ListStyle();
+        listStyle.font = UIHelper.generateFont(16);
+        listStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
+        listStyle.selection = UIHelper.getRoundFull().tint(Color.PURPLE);
+        listStyle.down = UIHelper.getRoundFull().tint(Color.FOREST);
+        listStyle.over = UIHelper.getRoundFull().tint(Color.FOREST);
+
+        style.listStyle = listStyle;
+
+        ScrollPane.ScrollPaneStyle scrollStyle = new ScrollPane.ScrollPaneStyle();
+        scrollStyle.background = UIHelper.getRoundFull().tint(Color.BLACK);
+
+        style.scrollStyle = scrollStyle;
+
+        TextInputForum textInput = new TextInputForum("ORE_VALUE > 100") {
+            @Override
+            public boolean isValid() {
+                try {
+                    Condition.compile(this.getText());
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public String getError() {
+                return "Failed to compile condition: " + this.getText();
+            }
+        };
+
+//        canvas.add(textInput).pad(30);
+        var condition = new ScriptingNode.Field("condition", textInput);
+        var dropDown = new ScriptingNode.Field("valueToModify", new DropDownForum(style, "Ore Value", "Ore Temperature", "Multiore", "Speed Scalar"));
+        ScriptingNode<UpgradeStrategy> conditionalTestNode = new ScriptingNode<>(new ScriptingNode.Field("upgradeName", new ConstantHiddenForum(ConditionalUpgrade.class.getName())),
+            condition,
+            dropDown
+        );
+        conditionalTestNode.setSize(300, 300);
+        stage.addActor(conditionalTestNode);
+        scriptingNodes.add(conditionalTestNode);
+        conditionalTestNode.setName("upgrade");
+        conditionalTestNode.setLinkBehavior(new ConditionalLink<>());
+        conditionalTestNode.setCanvas(this);
+    }
+
+    public java.util.List<ScriptingNode<?>> getScriptingNodes() {
+        return scriptingNodes;
     }
 
 }

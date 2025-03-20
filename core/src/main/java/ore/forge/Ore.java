@@ -40,13 +40,9 @@ public class Ore extends PhysicsObject {
         0.4375f, 0.1289f,   // Bottom Left
         0.5586f, 0.1289f,   // Bottom Right
         .9336f, 0.5645f, //Right middle
-//        0.9336f, 0.5040f,   // Right Bottom
-//        0.9336f, 0.6250f,   // Right Top
         0.7461f, 0.8125f,    // Top Right
         0.25f, 0.8125f,     // Top Left
         0.0625f, 0.5645f, //Left Middle
-//        0.0625f, 0.6250f,   // Left Top
-//        0.0625f, 0.5040f,   // Left Bottom
     };
 
     public Ore() {

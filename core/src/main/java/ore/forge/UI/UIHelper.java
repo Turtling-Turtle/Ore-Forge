@@ -2,8 +2,10 @@ package ore.forge.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
@@ -88,6 +90,18 @@ public class UIHelper {
         listStyle.font = generateFont(16);
         listStyle.font.setColor(Color.BLACK);
         return listStyle;
+    }
+
+    public static NinePatchDrawable createBorder(int thickness, Color borderColor, Color fillColor) {
+        Pixmap pixmap = new Pixmap(thickness, thickness, Pixmap.Format.RGBA8888);
+
+        pixmap.setColor(fillColor);
+        pixmap.fill();
+
+        pixmap.setColor(borderColor);
+        pixmap.drawRectangle(0, 0, thickness, thickness);
+
+        return new NinePatchDrawable(new NinePatch(new Texture(pixmap), 10, 10, 10, 10));
     }
 
 }
