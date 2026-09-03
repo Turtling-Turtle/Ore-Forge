@@ -317,7 +317,7 @@ public class TestScene implements Screen {
         MeshData meshData = null;
 
         for (AssetID id : resourceManager.getAssetIDs()) {
-            CpuAssetData data = resourceManager.getCpuAsset(id);
+            CpuAssetData data = resourceManager.getCpuAsset(resourceManager.acquireCpuDataAsync(id));
             switch (data) {
                 case MeshData foundMeshData -> {
                     meshData = foundMeshData;

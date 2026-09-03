@@ -1,5 +1,6 @@
 package ore.forge.serialization;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -90,7 +91,7 @@ class ImporterTest {
         resourceManager.importGltf(modelFixture("Cube.gltf"));
 
         for (AssetID id : resourceManager.getAssetIDs()) {
-            assertNotNull(resourceManager.getCpuAsset(id));
+            assertNotNull(resourceManager.acquireCpuDataSync(id));
         }
     }
 
@@ -104,7 +105,7 @@ class ImporterTest {
 
         for (AssetID id : resourceManager.getAssetIDs()) {
             if (resourceManager.getAssetType(id) == AssetType.TEXTURE) {
-                data = resourceManager.getCpuAsset(id);
+                data = resourceManager.getCpuAsset(resourceManager.acquireCpuDataSync(id));
             }
         }
 

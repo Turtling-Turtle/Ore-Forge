@@ -1,12 +1,8 @@
 package ore.forge.engine.resources;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.VertexAttributes;
-
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -15,9 +11,14 @@ import ore.forge.engine.Handle;
 import ore.forge.engine.HandleRegistry;
 import ore.forge.engine.VertexAttribute;
 import ore.forge.engine.profiling.Stopwatch;
+import ore.forge.engine.resources.ResourceManager.RequestType;
 
 final class AssetManager {
     private static final String LOG_TAG = AssetManager.class.getName();
+    // Native-free 1x1 PNG placeholder so CPU-only tests do not require libGDX image natives at class load time.
+    private static final byte[] DEFAULT_TEXTURE_BYTES = Base64.getDecoder().decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC"
+    );
     private static final MeshData DEFAULT_MESH = createDefaultMesh();
     private static final TextureData DEFAULT_TEXTURE = createDefaultTexture();
     private final HashMap<AssetID, Handle<CpuAssetData>> handleLookup;
@@ -34,7 +35,7 @@ final class AssetManager {
         this.serializer = new AssetDataSerializer();
     }
 
-    public Handle<CpuAssetData> getCpuAsset(AssetID id) {
+    public Handle<CpuAssetData> getCpuAsset(AssetID id, RequestType requestType) {
         //Case 1: Resource already loaded
         if (handleLookup.get(id) != null) {
             return handleRegistry.accquireHandle(handleLookup.get(id));
@@ -57,26 +58,58 @@ final class AssetManager {
         cpuReadyFutures.put(id, cpuReady);
 
         CompletableFuture<CpuAssetData> future = serializer.load(target);
-        future.thenAccept(result -> 
-            Gdx.app.postRunnable(() -> {
-                if (slot != null) { //carry on as normal
-                    slot.resolve(result);
-                    cpuReady.complete(handle);
-                    Gdx.app.log(LOG_TAG, "Resolved resource " + target + " in " + Stopwatch.elapsedString(start, TimeUnit.MILLISECONDS));
-                } else {//nothing references resource anymore so we get rid of it. 
-                    result.dispose();
-                    cpuReady.cancel(false);
-                }
-                cpuReadyFutures.remove(id);
-            }));
+
+        switch (requestType) {
+            case SYNCHRONOUS -> {
+                future.thenAccept(result -> {
+                    this.resolveLoad(handle, id, cpuReady, slot, result);
+                });
+                future.join();
+            }
+            case ASYNC_IMMEDIATE -> {
+                future.thenAccept(result -> {
+                    Gdx.app.postRunnable(() -> {
+                        this.resolveLoad(handle, id, cpuReady, slot, result);
+                    });
+                });
+            }
+            case ASYNC_CALLBACK -> {
+                throw new UnsupportedOperationException("Unimplemented");
+            }
+        }
+
+        // future.thenAccept(result -> 
+        //     Gdx.app.postRunnable(() -> {
+        //         this.resolveLoad(handle, id, cpuReady, slot, result);
+        //         if (slot != null) { //carry on as normal
+        //             slot.resolve(result);
+        //             cpuReady.complete(handle);
+        //             Gdx.app.log(LOG_TAG, "Resolved resource " + target + " in " + Stopwatch.elapsedString(start, TimeUnit.MILLISECONDS));
+        //         } else {//nothing references resource anymore so we get rid of it. 
+        //             result.dispose();
+        //             cpuReady.cancel(false);
+        //         }
+        //         cpuReadyFutures.remove(id);
+        //     }));
 
         if (target.dependencies() != null) {
             for (AssetArtifact dependency : target.dependencies()) {
-                getCpuAsset(dependency.assetID());
+                getCpuAsset(dependency.assetID(), requestType);
             }
         }
 
         return handle;
+    }
+
+    private void resolveLoad(Handle<CpuAssetData> handle, AssetID id, CompletableFuture<Handle<CpuAssetData>> cpuReady, ResourceSlot<CpuAssetData> slot, CpuAssetData result) {
+        if (slot != null) {
+            slot.resolve(result);
+            cpuReady.complete(handle);
+        } else {
+            result.dispose();
+            cpuReady.cancel(false);
+        }
+        cpuReadyFutures.remove(id);
     }
 
 
@@ -162,21 +195,7 @@ final class AssetManager {
     }
 
     private static TextureData createDefaultTexture() {
-        Pixmap pixmap = new Pixmap(2, 2, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1f, 0f, 1f, 1f);
-        pixmap.fill();
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try {
-            PixmapIO.PNG writer = new PixmapIO.PNG();
-            writer.write(output, pixmap);
-            writer.dispose();
-            return new TextureData(output.toByteArray());
-        } catch (Exception e) {
-            throw new GdxRuntimeException("Failed to build default placeholder texture.", e);
-        } finally {
-            pixmap.dispose();
-        }
+        return new TextureData(DEFAULT_TEXTURE_BYTES);
     }
 
 }

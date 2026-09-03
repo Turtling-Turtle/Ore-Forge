@@ -9,6 +9,7 @@ import ore.forge.engine.Handle;
 import ore.forge.engine.HandleRegistry;
 import ore.forge.engine.Pair;
 import ore.forge.engine.render.Renderer;
+import ore.forge.engine.resources.ResourceManager.RequestType;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -42,14 +43,14 @@ final class GpuResourceManager {
      * @param id to an asset that want a handle to.
      * @return A handle to the asset that the id references.
      */
-    public Handle<GpuResource> accquireHandle(AssetID id) {
+    public Handle<GpuResource> accquireHandle(AssetID id, RequestType requestType) {
         Handle<GpuResource> target = handles.get(id);
         if (target != null) {
             Gdx.app.log(LOG_TAG, "Obtained existing Handle");
             return gpuResources.accquireHandle(target);
         }
 
-        Handle<CpuAssetData> handle = assetManager.getCpuAsset(id);
+        Handle<CpuAssetData> handle = assetManager.getCpuAsset(id, requestType);
         Handle<GpuResource> gpuHandle = createHandleToResource(createGpuResouce(id, handle));
         handles.put(id, gpuHandle);
 
@@ -145,7 +146,7 @@ final class GpuResourceManager {
      * @param assetHandle Handle to the resource on that you want to reference on that's stored on the GPU.
      * @return resource that the assetHandle references.
      */
-    public GpuResource getGpuResource(Handle<GpuResource> assetHandle) {
+    public GpuResource resolveHandle(Handle<GpuResource> assetHandle) {
         return gpuResources.getResource(assetHandle);
     }
 

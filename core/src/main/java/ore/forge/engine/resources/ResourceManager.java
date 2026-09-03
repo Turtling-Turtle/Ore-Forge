@@ -17,6 +17,12 @@ public class ResourceManager {
     private final AssetImporter importer;
     private final AssetManager assetManager;
     private final GpuResourceManager gpuResourceManager;
+    
+    enum RequestType {
+        SYNCHRONOUS,
+        ASYNC_IMMEDIATE,
+        ASYNC_CALLBACK
+    }
 
     public ResourceManager() {
         this(new AssetRegistry());
@@ -37,20 +43,12 @@ public class ResourceManager {
         importer.importGlbFile(file);
     }
 
-    public CpuAssetData getCpuAsset(AssetID id) {
-        return assetManager.resolveHandle(assetManager.getCpuAsset(id));
-    }
-
     public CpuAssetData getCpuAsset(Handle<CpuAssetData> handle) {
         return assetManager.resolveHandle(handle);
     }
 
     public GpuResource getGpuResource(Handle<GpuResource> assetHandle) {
-        return gpuResourceManager.getGpuResource(assetHandle);
-    }
-
-    public Handle<GpuResource> getGpuHandle(AssetID id) {
-        return gpuResourceManager.accquireHandle(id);
+        return gpuResourceManager.resolveHandle(assetHandle);
     }
 
     public AssetType getAssetType(AssetID id) {
@@ -73,10 +71,6 @@ public class ResourceManager {
         loadRegistry(new JsonReader().parse(fileHandle));
     }
 
-    public void accquireGpuResource(AssetID id) {
-        gpuResourceManager.accquireHandle(id);
-    }
-
     public void releaseGpuResource(Handle<GpuResource> handle) {
         gpuResourceManager.releaseHandle(handle);
     }
@@ -92,25 +86,36 @@ public class ResourceManager {
 
     //---synchronous loading---   
     public Handle<CpuAssetData> acquireCpuDataSync(AssetID id) {
-        return null;
+        return assetManager.getCpuAsset(id, RequestType.SYNCHRONOUS);
     }
 
     public Handle<GpuResource> acquireGpuResourceSync(AssetID id) {
-        return null;
+        return gpuResourceManager.accquireHandle(id, RequestType.SYNCHRONOUS);
     }
 
     public Iterable<CpuAssetData> acquireCpuDataSync(Iterable<AssetID> id) {
+        //TODO
         return null;    
     }
 
     public Iterable<GpuResource> acquireGpuResourcesSync(Iterable<AssetID> id) {
+        //TODO
         return null;
     }
 
     //---Immediate Access(Some Already Have currently)---   
 
+    public Handle<CpuAssetData> acquireCpuDataAsync(AssetID id) {
+        return assetManager.getCpuAsset(id, RequestType.ASYNC_IMMEDIATE);
+    }
+
+    public Handle<GpuResource> acquireGpuResourceAsync(AssetID id) {
+        return gpuResourceManager.accquireHandle(id, RequestType.ASYNC_IMMEDIATE);
+    }
+
     public Iterable<CpuAssetData> acquireCpuDataAsync(Iterable<AssetID> ids) {
         return null;
+        
     }
 
     public Iterable<GpuResource> acquireGpuResourcesAsync(Iterable<AssetID> ids) {
