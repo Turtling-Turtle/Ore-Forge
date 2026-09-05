@@ -12,6 +12,7 @@ import ore.forge.engine.HandleRegistry;
 import ore.forge.engine.VertexAttribute;
 import ore.forge.engine.profiling.Stopwatch;
 import ore.forge.engine.resources.ResourceManager.RequestType;
+import ore.forge.engine.resources.ResourceSlot.LoadState;
 
 final class AssetManager {
     private static final String LOG_TAG = AssetManager.class.getName();
@@ -35,7 +36,7 @@ final class AssetManager {
         this.serializer = new AssetDataSerializer();
     }
 
-    public Handle<CpuAssetData> getCpuAsset(AssetID id, RequestType requestType) {
+    public Handle<CpuAssetData> acquireHandle(AssetID id, RequestType requestType) {
         //Case 1: Resource already loaded
         if (handleLookup.get(id) != null) {
             return handleRegistry.accquireHandle(handleLookup.get(id));
@@ -47,8 +48,7 @@ final class AssetManager {
             Gdx.app.error(LOG_TAG, "Target artifact of id:[" + id + "] was not present in asset registry.", new IllegalArgumentException());
         }
         
-        long start = Stopwatch.timeNow(TimeUnit.MILLISECONDS);
-        Handle<CpuAssetData> handle = handleRegistry.addResource(resolvePlaceHolder(target));
+        Handle<CpuAssetData> handle = handleRegistry.addResource(resolvePlaceHolder(target), LoadState.REQUESTED);
         ResourceSlot<CpuAssetData> slot = handleRegistry.getResourceSlot(handle);
         handleLookup.put(id, handle);
 
@@ -57,7 +57,7 @@ final class AssetManager {
         CompletableFuture<Handle<CpuAssetData>> cpuReady = new CompletableFuture<>();
         cpuReadyFutures.put(id, cpuReady);
 
-        CompletableFuture<CpuAssetData> future = serializer.load(target);
+        CompletableFuture<CpuAssetData> future = serializer.load(target, slot);
 
         switch (requestType) {
             case SYNCHRONOUS -> {
@@ -78,32 +78,50 @@ final class AssetManager {
             }
         }
 
-        // future.thenAccept(result -> 
-        //     Gdx.app.postRunnable(() -> {
-        //         this.resolveLoad(handle, id, cpuReady, slot, result);
-        //         if (slot != null) { //carry on as normal
-        //             slot.resolve(result);
-        //             cpuReady.complete(handle);
-        //             Gdx.app.log(LOG_TAG, "Resolved resource " + target + " in " + Stopwatch.elapsedString(start, TimeUnit.MILLISECONDS));
-        //         } else {//nothing references resource anymore so we get rid of it. 
-        //             result.dispose();
-        //             cpuReady.cancel(false);
-        //         }
-        //         cpuReadyFutures.remove(id);
-        //     }));
-
         if (target.dependencies() != null) {
             for (AssetArtifact dependency : target.dependencies()) {
-                getCpuAsset(dependency.assetID(), requestType);
+                acquireHandle(dependency.assetID(), requestType);
             }
         }
 
         return handle;
     }
 
+    public CompletableFuture<Handle<CpuAssetData>> asyncCallback(AssetID id)  {
+        if (handleLookup.get(id) != null) { //Case 1: asset has already been loaded so we return a completed future
+           Handle<CpuAssetData> handle = handleRegistry.accquireHandle(handleLookup.get(id));
+           CompletableFuture<Handle<CpuAssetData>> finishedFuture = new CompletableFuture<>();
+           finishedFuture.complete(handle);
+           return finishedFuture;
+        }
+
+        //Case 2: resouce not loaded or in process of loading so we need to begin that process
+        AssetArtifact target = assetRegistry.lookUp(id);
+        if (target == null) {
+            Gdx.app.error(LOG_TAG, "Target artifact of id:[" + id + "] was not present in asset registry.", new IllegalArgumentException());
+        }
+        
+        Handle<CpuAssetData> handle = handleRegistry.addResource(resolvePlaceHolder(target), LoadState.REQUESTED);
+        ResourceSlot<CpuAssetData> slot = handleRegistry.getResourceSlot(handle);
+        handleLookup.put(id, handle);
+
+        //flag that will complete when this data has resolved to a slot
+        CompletableFuture<Handle<CpuAssetData>> cpuReady = new CompletableFuture<>();
+        cpuReadyFutures.put(id, cpuReady);
+
+        CompletableFuture<CpuAssetData> future = serializer.load(target, slot);
+        return future.thenApply(result -> {
+            Gdx.app.postRunnable(() -> {
+                this.resolveLoad(handle, id, cpuReady, slot, result);
+            });
+            return handle;
+        });
+    }
+
     private void resolveLoad(Handle<CpuAssetData> handle, AssetID id, CompletableFuture<Handle<CpuAssetData>> cpuReady, ResourceSlot<CpuAssetData> slot, CpuAssetData result) {
         if (slot != null) {
             slot.resolve(result);
+            slot.setLoadState(LoadState.COMPLETED);
             cpuReady.complete(handle);
         } else {
             result.dispose();

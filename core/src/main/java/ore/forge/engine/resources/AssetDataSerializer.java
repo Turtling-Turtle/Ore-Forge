@@ -8,6 +8,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.Pool;
 import ore.forge.engine.definitions.AssetType;
 import ore.forge.engine.definitions.MeshDataSerializer;
+import ore.forge.engine.resources.ResourceSlot.LoadState;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,8 +80,18 @@ public class AssetDataSerializer {
         output.flush();
     }
 
-    public CompletableFuture<CpuAssetData> load(AssetArtifact assetArtifact) {
+    public CompletableFuture<CpuAssetData> load(AssetArtifact assetArtifact, ResourceSlot slot) {
         return CompletableFuture.supplyAsync(() -> {
+            //set flag stating that this resource is now being loaded.
+            slot.setLoadState(LoadState.IN_PROGRESS);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             Kryo kryo = kryoPool.obtain();
             try (Input input = new Input(Files.newInputStream(assetArtifact.filepath()))) {
                 return switch (assetArtifact.type()) {
@@ -90,6 +101,7 @@ public class AssetDataSerializer {
                     case ANIMATION -> kryo.readObject(input, AnimationData.class);
                 };
             } catch (IOException e) {
+                slot.setLoadState(LoadState.FAILED);
                 Gdx.app.error(LOG_TAG, "Failed to read data from: " + assetArtifact.filepath(), e);
                 throw new RuntimeException("Failed to read data from: " + assetArtifact.filepath(), e);
             } finally {

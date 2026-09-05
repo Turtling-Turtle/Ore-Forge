@@ -1,6 +1,7 @@
 package ore.forge;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.badlogic.ashley.core.Engine;
@@ -32,6 +33,7 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
 import ore.forge.engine.ComponentListener;
+import ore.forge.engine.Handle;
 import ore.forge.engine.PhysicsBodyType;
 import ore.forge.engine.PhysicsMotionType;
 import ore.forge.engine.PhysicsWorld;
@@ -135,9 +137,6 @@ public class TestScene implements Screen {
         initializeEngine();
         populateScene(resourceManager);
         renderEntities = engine.getEntitiesFor(Family.all(RenderC.class, WorldTransformC.class).get());
-
-
-
     }
 
     @Override
@@ -314,25 +313,42 @@ public class TestScene implements Screen {
     private void populateScene(ResourceManager resourceManager) {
         AssetID meshHandle = null;
         AssetID textureHandle = null;
-        MeshData meshData = null;
 
         for (AssetID id : resourceManager.getAssetIDs()) {
-            CpuAssetData data = resourceManager.getCpuAsset(resourceManager.acquireCpuDataAsync(id));
-            switch (data) {
-                case MeshData foundMeshData -> {
-                    meshData = foundMeshData;
-                    meshHandle = id;
-                }
-                case TextureData ignored -> textureHandle = id;
+            switch (resourceManager.getAssetType(id)) {
+                case MESH -> meshHandle = id;
+                case TEXTURE -> textureHandle = id;
                 default -> {
                 }
             }
         }
 
-        if (meshHandle == null || meshData == null || textureHandle == null) {
+        if (meshHandle == null || textureHandle == null) {
             throw new IllegalStateException("TestScene requires one mesh and one texture in the asset registry.");
         }
+        AssetID loadedMeshID = meshHandle;
+        AssetID loadedTextureID = textureHandle;
 
+        CompletableFuture<Handle<CpuAssetData>> meshFuture = resourceManager.acquireCpuDataThen(loadedMeshID);
+        CompletableFuture<Handle<CpuAssetData>> textureFuture = resourceManager.acquireCpuDataThen(loadedTextureID);
+
+        CompletableFuture.allOf(meshFuture, textureFuture)
+            .thenRun(() -> Gdx.app.postRunnable(() -> {
+                CpuAssetData meshAsset = resourceManager.getCpuAsset(meshFuture.join());
+                CpuAssetData textureAsset = resourceManager.getCpuAsset(textureFuture.join());
+                if (!(meshAsset instanceof MeshData meshData) || !(textureAsset instanceof TextureData)) {
+                    Gdx.app.error(LOG_TAG, "TestScene assets resolved to unexpected types.");
+                    return;
+                }
+                createScene(loadedMeshID, loadedTextureID, meshData);
+            }))
+            .exceptionally(error -> {
+                Gdx.app.error(LOG_TAG, "Failed to load TestScene assets.", error);
+                return null;
+            });
+    }
+
+    private void createScene(AssetID meshHandle, AssetID textureHandle, MeshData meshData) {
         BoundingBox meshBounds = calculateMeshBounds(meshData);
         Vector3 meshCenter = meshBounds.getCenter(new Vector3());
         BoundingBox centeredMeshBounds = recenterBounds(meshBounds, meshCenter);

@@ -1,13 +1,14 @@
 package ore.forge.engine.resources;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.engine.Handle;
 import ore.forge.engine.definitions.AssetType;
 
 import java.nio.file.Path;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Public resource-system entry point for importing, registry persistence, CPU residency, and GPU residency.
@@ -86,60 +87,44 @@ public class ResourceManager {
 
     //---synchronous loading---   
     public Handle<CpuAssetData> acquireCpuDataSync(AssetID id) {
-        return assetManager.getCpuAsset(id, RequestType.SYNCHRONOUS);
+        return assetManager.acquireHandle(id, RequestType.SYNCHRONOUS);
     }
 
     public Handle<GpuResource> acquireGpuResourceSync(AssetID id) {
         return gpuResourceManager.accquireHandle(id, RequestType.SYNCHRONOUS);
     }
 
-    public Iterable<CpuAssetData> acquireCpuDataSync(Iterable<AssetID> id) {
-        //TODO
-        return null;    
-    }
-
-    public Iterable<GpuResource> acquireGpuResourcesSync(Iterable<AssetID> id) {
-        //TODO
-        return null;
-    }
-
-    //---Immediate Access(Some Already Have currently)---   
-
     public Handle<CpuAssetData> acquireCpuDataAsync(AssetID id) {
-        return assetManager.getCpuAsset(id, RequestType.ASYNC_IMMEDIATE);
+        return assetManager.acquireHandle(id, RequestType.ASYNC_IMMEDIATE);
     }
 
     public Handle<GpuResource> acquireGpuResourceAsync(AssetID id) {
         return gpuResourceManager.accquireHandle(id, RequestType.ASYNC_IMMEDIATE);
     }
 
-    public Iterable<CpuAssetData> acquireCpuDataAsync(Iterable<AssetID> ids) {
-        return null;
-        
+    public CompletableFuture<Handle<CpuAssetData>> acquireCpuDataThen(AssetID id) {
+        return assetManager.asyncCallback(id);
     }
 
-    public Iterable<GpuResource> acquireGpuResourcesAsync(Iterable<AssetID> ids) {
-        return null;
+    public CompletableFuture<Handle<GpuResource>> acqurieGpuResourceThen(AssetID id) {
+        return gpuResourceManager.asyncCallback(id);
     }
 
-    //---Readiness Access---
-
-    public Handle<CpuAssetData> acquireCpuDataThen(AssetID id, Consumer<Handle<CpuAssetData>> action) {
-        return null;
+    //------------- Batching Api --------------------------
+    public Iterable<Handle<CpuAssetData>> acquireCpuDataSync(Iterable<AssetID> ids) {
+        Array<Handle<CpuAssetData>> handles = new Array<>();
+        for (AssetID id : ids) {
+            handles.add(assetManager.acquireHandle(id, RequestType.SYNCHRONOUS));
+        }
+        return handles;    
     }
 
-    public Handle<GpuResource> acqurieGpuResourceThen(AssetID id, Consumer<Handle<GpuResource>> action) {
-        return null;
-    }
-
-    public Iterable<Handle<CpuAssetData>> acquireCpuDataThen(Iterable<AssetID> ids, Consumer<Iterable<Handle<CpuAssetData>>> action) {
-        //TODO
-        return null;
-    }
-
-    public Iterable<GpuResource> acquireGpuResourcesThen(Iterable<AssetID> ids, Consumer<Iterable<Handle<GpuResource>>> action) {
-        //TODO
-        return null;
+    public Iterable<Handle<GpuResource>> acquireGpuResourcesSync(Iterable<AssetID> ids) {
+        Array<Handle<GpuResource>> handles = new Array<>();
+        for (AssetID id : ids) {
+            handles.add(gpuResourceManager.accquireHandle(id, RequestType.SYNCHRONOUS));
+        }
+        return handles;
     }
 
 }

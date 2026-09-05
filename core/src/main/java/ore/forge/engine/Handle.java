@@ -1,9 +1,5 @@
 package ore.forge.engine;
 
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.IntMap;
-import ore.forge.engine.definitions.Asset;
-
 /**
  * @author Nathan Ulmen
  * A Handle is used to reference resources owned by other systems.

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntArray;
 
 import ore.forge.engine.resources.ResourceSlot;
+import ore.forge.engine.resources.ResourceSlot.LoadState;
 
 
 /**
@@ -60,14 +61,14 @@ public class HandleRegistry<E extends Disposable> {
         return entry.data();
     }
 
-    public Handle<E> addResource(E resourceData) {
+    public Handle<E> addResource(E resourceData, LoadState state) {
         int index = handleLookup.size;
         int version = versionCounter++;
         if (!freeList.isEmpty()) {
             index = freeList.pop();
-            handleLookup.set(index, new Entry<>(version, createSlot(resourceData), 1));
+            handleLookup.set(index, new Entry<>(version, createSlot(resourceData, state), 1));
         } else {
-            handleLookup.add(new Entry<>(version, createSlot(resourceData), 1));
+            handleLookup.add(new Entry<>(version, createSlot(resourceData, state), 1));
         }
 
         return new Handle<E>(index, version);
@@ -94,8 +95,8 @@ public class HandleRegistry<E extends Disposable> {
         return entry == null ? null : entry.slot();
     }
 
-    public ResourceSlot<E> createSlot(E resourceData) {
-        return new ResourceSlot<>(resourceData);
+    public ResourceSlot<E> createSlot(E resourceData, LoadState state) {
+        return new ResourceSlot<>(resourceData, state);
     }
 
     public int size() {
