@@ -1,19 +1,20 @@
 package ore.forge.engine.resources;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import ore.forge.engine.Handle;
 import ore.forge.engine.definitions.AssetType;
 
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import ore.forge.engine.RenderThreadDispatcher;
 
 /**
  * Public resource-system entry point for importing, registry persistence, CPU residency, and GPU residency.
  */
-public class ResourceManager {
+public class ResourceManager implements RenderThreadDispatcher {
+    private final ConcurrentLinkedQueue<Runnable> workQueue;
     private final AssetRegistry registry;
     private final AssetImporter importer;
     private final AssetManager assetManager;
@@ -35,8 +36,9 @@ public class ResourceManager {
     private ResourceManager(AssetRegistry registry) {
         this.registry = registry;
         this.importer = new AssetImporter(registry);
-        this.assetManager = new AssetManager(registry);
-        this.gpuResourceManager = new GpuResourceManager(assetManager);
+        this.assetManager = new AssetManager(registry, this);
+        this.gpuResourceManager = new GpuResourceManager(assetManager, this);
+        this.workQueue = new ConcurrentLinkedQueue<>();
     }
 
     public void importGltf(Path file) {
@@ -99,6 +101,24 @@ public class ResourceManager {
 
     public ResourceHandle<GpuResource> acquireGpuResourceAsync(AssetID id) {
         return gpuResourceManager.acquiResourceHandle(id, RequestType.ASYNC);
+    }
+
+    public void synchronize() {
+        Runnable runnable = workQueue.poll();
+        while (runnable != null) {
+            runnable.run();
+            runnable = workQueue.poll();
+        }
+    }
+
+    @Override
+    public void post(Runnable runnable) {
+        workQueue.add(runnable);
+    }
+
+    @Override
+    public boolean isRenderThread() {
+        return true;
     }
 
 }

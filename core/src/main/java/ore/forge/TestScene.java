@@ -200,6 +200,7 @@ public class TestScene implements Screen {
         stopwatch.restart();
         cameraController.update(delta);
         camera.update(true);
+        resourceManager.synchronize();
 
         if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
             Ray mouse = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY());

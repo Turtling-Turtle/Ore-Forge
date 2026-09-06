@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import ore.forge.engine.Handle;
 import ore.forge.engine.HandleRegistry;
 import ore.forge.engine.Pair;
+import ore.forge.engine.RenderThreadDispatcher;
 import ore.forge.engine.render.Renderer;
 import ore.forge.engine.resources.ResourceManager.RequestType;
 import ore.forge.engine.resources.ResourceSlot.LoadState;
@@ -30,8 +31,10 @@ final class GpuResourceManager {
     private final HashMap<AssetID, Handle<GpuResource>> handles;
     private final HandleRegistry<GpuResource> gpuResources;
     private final HashMap<AssetID, CompletableFuture<Handle<GpuResource>>> gpuReadyFutures;
+    private final RenderThreadDispatcher dispatcher;
 
-    public GpuResourceManager(AssetManager assetManager) {
+    public GpuResourceManager(AssetManager assetManager, RenderThreadDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
         this.assetManager = assetManager;
         this.handles = new HashMap<>();
         this.gpuResources = new HandleRegistry<>();
@@ -64,12 +67,11 @@ final class GpuResourceManager {
             handles.put(id, handle);
 
             ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
-            var future = assetManager.getCpuReadyFuture(id).thenApply((loadedHandle) -> {
-                //TODO: dispatch this to render thread and ensure happens at a good time.
+            CompletableFuture<Handle<GpuResource>> future = assetManager.getCpuReadyFuture(id).thenApplyAsync((loadedHandle) -> {
                 slot.resolve(createGpuResouce(id, loadedHandle));
                 slot.setLoadState(LoadState.COMPLETED);
                 return handle;
-            });
+            }, dispatcher::post);
 
             gpuReadyFutures.put(id, future);
             return new ResourceHandle<>(handle, future);
@@ -79,20 +81,21 @@ final class GpuResourceManager {
             handles.put(id, handle);
 
             ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
-            var future = cpuReadyFuture.thenApply((loadedHandle) -> {
-                //TODO: dispatch this to render thread and ensure happens at a good time.
+            CompletableFuture<Handle<GpuResource>> future = cpuReadyFuture.thenApplyAsync((loadedHandle) -> {
                 slot.resolve(createGpuResouce(id, loadedHandle));
                 slot.setLoadState(LoadState.COMPLETED);
                 return handle;
-            });
+            }, dispatcher::post);
 
             gpuReadyFutures.put(id, future);
             return new ResourceHandle<>(handle, future);
         } else {//case 4: cpu side already loaded.
             //upload resource
             GpuResource gpuResource = createGpuResouce(id, cpuReadyFuture.join());
+            //pass in null for initial placeholder
             Handle<GpuResource> handle = createHandleToResource(null, LoadState.COMPLETED);
             ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
+            //resolve to actual resource
             slot.resolve(gpuResource);
             //log that resource exists
             handles.put(id, handle);

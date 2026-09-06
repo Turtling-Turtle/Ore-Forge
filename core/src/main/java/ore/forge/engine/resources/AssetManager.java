@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import ore.forge.engine.GdxRenderThreadDispatcher;
 import ore.forge.engine.Handle;
 import ore.forge.engine.HandleRegistry;
+import ore.forge.engine.RenderThreadDispatcher;
 import ore.forge.engine.VertexAttribute;
 import ore.forge.engine.profiling.Stopwatch;
 import ore.forge.engine.resources.ResourceManager.RequestType;
@@ -28,13 +29,15 @@ final class AssetManager {
     private final HandleRegistry<CpuAssetData> handleRegistry;
     private final AssetRegistry assetRegistry;
     private final AssetDataSerializer serializer;
+    private final RenderThreadDispatcher dispatcher;
 
-    public AssetManager(AssetRegistry registry) {
+    public AssetManager(AssetRegistry registry, RenderThreadDispatcher dispatcher) {
         this.cpuReadyFutures = new HashMap<>();
         this.assetRegistry = registry;
         this.handleLookup = new HashMap<>();
         this.handleRegistry = new HandleRegistry<>();
         this.serializer = new AssetDataSerializer();
+        this.dispatcher = dispatcher;
     }
 
     public ResourceHandle<CpuAssetData> acquireResourceHandle(AssetID id, RequestType type) {
@@ -66,10 +69,8 @@ final class AssetManager {
 
         loadFuture.thenAcceptAsync(loadedData -> {
             //TODO: setup dispatcher so we dont get race conditions
-            Gdx.app.postRunnable( () -> {
-                resolveLoad(handle, id, cpuReady, slot, loadedData);
-            });
-        });
+            resolveLoad(handle, id, cpuReady, slot, loadedData);
+        }, dispatcher::post);
 
         if (target.dependencies() != null){
             for (AssetArtifact dependency : target.dependencies()) {
