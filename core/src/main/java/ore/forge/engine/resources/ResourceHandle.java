@@ -1,0 +1,42 @@
+package ore.forge.engine.resources;
+
+import java.util.concurrent.CompletableFuture;
+
+
+import ore.forge.engine.Handle;
+
+public class  ResourceHandle<E> {
+    private ResourceManager resourceManager;
+    private CompletableFuture<Handle<E>> handleFuture;
+    private Handle<E> handle;
+
+    ResourceHandle(Handle<E> handle, CompletableFuture<Handle<E>> future) {
+        assert handle != null : "Handle cannot be null";
+        assert future != null : "Future should not be null";
+        this.handleFuture = future;
+        this.handle = java.util.Objects.requireNonNull(handle, "Resource handle must not be null.");
+    }
+
+    E value() {
+        //todo
+        return null;
+    }
+
+    public Handle<E> handle() {
+        return handle;
+    }
+
+    public boolean hasPlaceholder() {
+        //todo
+        return false;
+    }
+
+    public boolean isReady() {
+        return handleFuture.isDone();
+    } 
+
+    public CompletableFuture<Handle<E>> getFuture() {
+        return handleFuture;
+    }
+    
+}

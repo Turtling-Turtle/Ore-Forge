@@ -51,7 +51,9 @@ public class ResourceSlot<E extends Disposable> implements Disposable {
         if (current != null) {
             current.dispose();
         }
-        placeHolder.dispose();
+        if (placeHolder != null) {
+            placeHolder.dispose();
+        }
     }
 
     public String toString()  {

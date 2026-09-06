@@ -21,8 +21,7 @@ public class ResourceManager {
     
     enum RequestType {
         SYNCHRONOUS,
-        ASYNC_IMMEDIATE,
-        ASYNC_CALLBACK
+        ASYNC
     }
 
     public ResourceManager() {
@@ -72,8 +71,8 @@ public class ResourceManager {
         loadRegistry(new JsonReader().parse(fileHandle));
     }
 
-    public void releaseGpuResource(Handle<GpuResource> handle) {
-        gpuResourceManager.releaseHandle(handle);
+    public void releaseGpuResource(ResourceHandle<GpuResource> handle) {
+        gpuResourceManager.releaseHandle(handle.handle());
     }
 
     public int activeCpuResources() {
@@ -86,45 +85,20 @@ public class ResourceManager {
     }
 
     //---synchronous loading---   
-    public Handle<CpuAssetData> acquireCpuDataSync(AssetID id) {
-        return assetManager.acquireHandle(id, RequestType.SYNCHRONOUS);
+    public ResourceHandle<CpuAssetData> acquireCpuData(AssetID id) {
+        return assetManager.acquireResourceHandle(id, RequestType.SYNCHRONOUS);
     }
 
-    public Handle<GpuResource> acquireGpuResourceSync(AssetID id) {
-        return gpuResourceManager.accquireHandle(id, RequestType.SYNCHRONOUS);
+    public ResourceHandle<GpuResource> acquireGpuResource(AssetID id) {
+        return gpuResourceManager.acquiResourceHandle(id, RequestType.SYNCHRONOUS);
     }
 
-    public Handle<CpuAssetData> acquireCpuDataAsync(AssetID id) {
-        return assetManager.acquireHandle(id, RequestType.ASYNC_IMMEDIATE);
+    public ResourceHandle<CpuAssetData> acquireCpuDataAsync(AssetID id) {
+        return assetManager.acquireResourceHandle(id, RequestType.ASYNC);
     }
 
-    public Handle<GpuResource> acquireGpuResourceAsync(AssetID id) {
-        return gpuResourceManager.accquireHandle(id, RequestType.ASYNC_IMMEDIATE);
-    }
-
-    public CompletableFuture<Handle<CpuAssetData>> acquireCpuDataThen(AssetID id) {
-        return assetManager.asyncCallback(id);
-    }
-
-    public CompletableFuture<Handle<GpuResource>> acqurieGpuResourceThen(AssetID id) {
-        return gpuResourceManager.asyncCallback(id);
-    }
-
-    //------------- Batching Api --------------------------
-    public Iterable<Handle<CpuAssetData>> acquireCpuDataSync(Iterable<AssetID> ids) {
-        Array<Handle<CpuAssetData>> handles = new Array<>();
-        for (AssetID id : ids) {
-            handles.add(assetManager.acquireHandle(id, RequestType.SYNCHRONOUS));
-        }
-        return handles;    
-    }
-
-    public Iterable<Handle<GpuResource>> acquireGpuResourcesSync(Iterable<AssetID> ids) {
-        Array<Handle<GpuResource>> handles = new Array<>();
-        for (AssetID id : ids) {
-            handles.add(gpuResourceManager.accquireHandle(id, RequestType.SYNCHRONOUS));
-        }
-        return handles;
+    public ResourceHandle<GpuResource> acquireGpuResourceAsync(AssetID id) {
+        return gpuResourceManager.acquiResourceHandle(id, RequestType.ASYNC);
     }
 
 }

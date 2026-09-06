@@ -85,13 +85,6 @@ public class AssetDataSerializer {
             //set flag stating that this resource is now being loaded.
             slot.setLoadState(LoadState.IN_PROGRESS);
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
             Kryo kryo = kryoPool.obtain();
             try (Input input = new Input(Files.newInputStream(assetArtifact.filepath()))) {
                 return switch (assetArtifact.type()) {

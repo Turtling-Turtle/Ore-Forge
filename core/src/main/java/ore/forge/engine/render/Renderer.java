@@ -88,8 +88,8 @@ public class Renderer {
         while (startIndex < commandBuffer.size()) {
             RenderCommand first = commandBuffer.get(startIndex);
 
-            GpuMeshResource meshResource = (GpuMeshResource) resourceManager.getGpuResource(first.meshHandle);
-            GpuTextureResource textureResource = (GpuTextureResource) resourceManager.getGpuResource(first.materialHandle.baseColorTexture);
+            GpuMeshResource meshResource = (GpuMeshResource) resourceManager.getGpuResource(first.meshHandle.handle());
+            GpuTextureResource textureResource = (GpuTextureResource) resourceManager.getGpuResource(first.materialHandle.baseColorTexture.handle());
             //if resources are loading and have no placeholder skip
             if (meshResource == null || textureResource == null) continue;
 

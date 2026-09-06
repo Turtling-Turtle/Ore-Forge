@@ -52,6 +52,7 @@ import ore.forge.engine.render.passes.BasicRenderPass;
 import ore.forge.engine.resources.AssetID;
 import ore.forge.engine.resources.CpuAssetData;
 import ore.forge.engine.resources.MeshData;
+import ore.forge.engine.resources.ResourceHandle;
 import ore.forge.engine.resources.ResourceManager;
 import ore.forge.engine.resources.TextureData;
 import ore.forge.engine.systems.PostPhysicsTransformSyncSystem;
@@ -329,13 +330,13 @@ public class TestScene implements Screen {
         AssetID loadedMeshID = meshHandle;
         AssetID loadedTextureID = textureHandle;
 
-        CompletableFuture<Handle<CpuAssetData>> meshFuture = resourceManager.acquireCpuDataThen(loadedMeshID);
-        CompletableFuture<Handle<CpuAssetData>> textureFuture = resourceManager.acquireCpuDataThen(loadedTextureID);
+        ResourceHandle<CpuAssetData> meshFuture = resourceManager.acquireCpuDataAsync(loadedMeshID);
+        ResourceHandle<CpuAssetData> textureFuture = resourceManager.acquireCpuDataAsync(loadedTextureID);
 
-        CompletableFuture.allOf(meshFuture, textureFuture)
+        CompletableFuture.allOf(meshFuture.getFuture(), textureFuture.getFuture())
             .thenRun(() -> Gdx.app.postRunnable(() -> {
-                CpuAssetData meshAsset = resourceManager.getCpuAsset(meshFuture.join());
-                CpuAssetData textureAsset = resourceManager.getCpuAsset(textureFuture.join());
+                CpuAssetData meshAsset = resourceManager.getCpuAsset(meshFuture.handle());
+                CpuAssetData textureAsset = resourceManager.getCpuAsset(textureFuture.handle());
                 if (!(meshAsset instanceof MeshData meshData) || !(textureAsset instanceof TextureData)) {
                     Gdx.app.error(LOG_TAG, "TestScene assets resolved to unexpected types.");
                     return;

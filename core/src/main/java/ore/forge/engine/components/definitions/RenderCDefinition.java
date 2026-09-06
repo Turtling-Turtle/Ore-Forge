@@ -35,8 +35,8 @@ public class RenderCDefinition implements ComponentDefinition<RenderC> {
     @Override
     public RenderC create() {
         RenderC component = new RenderC();
-        RenderPart part = RenderPart.defaultRenderPart(resourceManager.acquireGpuResourceSync(meshId));
-        part.material.baseColorTexture = resourceManager.acquireGpuResourceSync(materialId);
+        RenderPart part = RenderPart.defaultRenderPart(resourceManager.acquireGpuResource(meshId));
+        part.material.baseColorTexture = resourceManager.acquireGpuResource(materialId);
         component.renderPart = part;
         component.scale.set(scale);
         component.localFromEntity.set(localFromEntity);

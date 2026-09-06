@@ -29,11 +29,13 @@ final class GpuResourceManager {
     private final AssetManager assetManager;
     private final HashMap<AssetID, Handle<GpuResource>> handles;
     private final HandleRegistry<GpuResource> gpuResources;
+    private final HashMap<AssetID, CompletableFuture<Handle<GpuResource>>> gpuReadyFutures;
 
     public GpuResourceManager(AssetManager assetManager) {
         this.assetManager = assetManager;
         this.handles = new HashMap<>();
         this.gpuResources = new HandleRegistry<>();
+        this.gpuReadyFutures = new HashMap<>();
     }
 
     /**
@@ -44,75 +46,61 @@ final class GpuResourceManager {
      * @param id to an asset that want a handle to.
      * @return A handle to the asset that the id references.
      */
-    public Handle<GpuResource> accquireHandle(AssetID id, RequestType requestType) {
-        Handle<GpuResource> target = handles.get(id);
-        if (target != null) {
-            Gdx.app.log(LOG_TAG, "Obtained existing Handle");
-            return gpuResources.accquireHandle(target);
+    public ResourceHandle<GpuResource> acquiResourceHandle(AssetID id, RequestType type) {
+        //case 1: already in progress or loaded.
+        Handle<GpuResource> lookupHandle = handles.get(id);
+        if (lookupHandle != null) {
+            return new ResourceHandle<>(gpuResources.accquireHandle(lookupHandle), gpuReadyFutures.get(id));
         }
+        
+        CompletableFuture<Handle<CpuAssetData>> cpuReadyFuture = assetManager.getCpuReadyFuture(id);
+        if (cpuReadyFuture == null) {//case 2: cpu not loaded at all
+            //begin process of load
+            ResourceHandle<CpuAssetData> cpuResourceHandle = assetManager.acquireResourceHandle(id, type);
+            //create resource
+            GpuResource gpuResource = createGpuResouce(id, cpuResourceHandle.handle());
 
-        return switch (requestType) {
-            case SYNCHRONOUS, ASYNC_IMMEDIATE -> {
-                Handle<CpuAssetData> handle = assetManager.acquireHandle(id, requestType);
-                Handle<GpuResource> gpuHandle = createHandleToResource(createGpuResouce(id, handle), LoadState.COMPLETED);
-                handles.put(id, gpuHandle);
+            Handle<GpuResource> handle = gpuResources.addResource(gpuResource, LoadState.REQUESTED);
+            handles.put(id, handle);
 
-                //retrieve flag
-                CompletableFuture<Handle<CpuAssetData>> cpuReadyFuture = assetManager.getCpuReadyFuture(id);
-                
-                if (cpuReadyFuture != null) {
-                    cpuReadyFuture.thenApply((loadedHandle) -> {
-                        Gdx.app.postRunnable(() -> {
-                            Gdx.app.log(LOG_TAG, "Resource loaded into GPU memory.");
-                            ResourceSlot<GpuResource> gpuSlot = gpuResources.getResourceSlot(gpuHandle);
-                            if (gpuSlot != null) {
-                                gpuSlot.resolve(createGpuResouce(id, handle));
-                            } 
-                        });
-                        return gpuHandle;
-                    });
-                }
-                yield gpuHandle;
-            }
-            case ASYNC_CALLBACK -> {
-                assetManager.asyncCallback(id);
-                yield null;
-            }
-        };
-    }
+            ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
+            var future = assetManager.getCpuReadyFuture(id).thenApply((loadedHandle) -> {
+                //TODO: dispatch this to render thread and ensure happens at a good time.
+                slot.resolve(createGpuResouce(id, loadedHandle));
+                slot.setLoadState(LoadState.COMPLETED);
+                return handle;
+            });
 
-    public CompletableFuture<Handle<GpuResource>> asyncCallback(AssetID id) {
-        Handle<GpuResource> target = handles.get(id);
-        if (target != null) {
-            Gdx.app.log(LOG_TAG, "Obtained existing Handle");
-            target = gpuResources.accquireHandle(target);
-            var future = new CompletableFuture();
-            future.complete(target);
-            return future;
+            gpuReadyFutures.put(id, future);
+            return new ResourceHandle<>(handle, future);
+        } else if (!cpuReadyFuture.isDone()) {//case 3: cpu in progress
+            GpuResource gpuResource = createGpuResouce(id, assetManager.acquireResourceHandle(id, type).handle());
+            Handle<GpuResource> handle = gpuResources.addResource(gpuResource, LoadState.REQUESTED);
+            handles.put(id, handle);
+
+            ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
+            var future = cpuReadyFuture.thenApply((loadedHandle) -> {
+                //TODO: dispatch this to render thread and ensure happens at a good time.
+                slot.resolve(createGpuResouce(id, loadedHandle));
+                slot.setLoadState(LoadState.COMPLETED);
+                return handle;
+            });
+
+            gpuReadyFutures.put(id, future);
+            return new ResourceHandle<>(handle, future);
+        } else {//case 4: cpu side already loaded.
+            //upload resource
+            GpuResource gpuResource = createGpuResouce(id, cpuReadyFuture.join());
+            Handle<GpuResource> handle = createHandleToResource(null, LoadState.COMPLETED);
+            ResourceSlot<GpuResource> slot = gpuResources.getResourceSlot(handle);
+            slot.resolve(gpuResource);
+            //log that resource exists
+            handles.put(id, handle);
+            CompletableFuture<Handle<GpuResource>> future = new CompletableFuture<>();
+            future.complete(handle);
+            gpuReadyFutures.put(id, future);
+            return new ResourceHandle<>(handle, future);
         }
-
-        CompletableFuture<Handle<CpuAssetData>> cpuFuture = assetManager.asyncCallback(id);
-        return cpuFuture.thenApply(cpuHandle ->  {
-            Handle<GpuResource> gpuHandle = createHandleToResource(createGpuResouce(id, cpuHandle), LoadState.COMPLETED);
-            handles.put(id, gpuHandle);
-
-            //retrieve flag
-            CompletableFuture<Handle<CpuAssetData>> cpuReadyFuture = assetManager.getCpuReadyFuture(id);
-            
-            if (cpuReadyFuture != null) {
-                cpuReadyFuture.thenApply((loadedHandle) -> {
-                    Gdx.app.postRunnable(() -> {
-                        Gdx.app.log(LOG_TAG, "Resource loaded into GPU memory.");
-                        ResourceSlot<GpuResource> gpuSlot = gpuResources.getResourceSlot(gpuHandle);
-                        if (gpuSlot != null) {
-                            gpuSlot.resolve(createGpuResouce(id, cpuHandle));
-                        } 
-                    });
-                    return gpuHandle;
-                });
-            }
-            return gpuHandle;
-        });
     }
 
     private GpuResource createGpuResouce(AssetID id, Handle<CpuAssetData> handle) {
