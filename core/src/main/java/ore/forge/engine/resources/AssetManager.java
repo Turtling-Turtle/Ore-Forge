@@ -68,7 +68,6 @@ final class AssetManager {
         cpuReadyFutures.put(id, cpuReady);
 
         loadFuture.thenAcceptAsync(loadedData -> {
-            //TODO: setup dispatcher so we dont get race conditions
             resolveLoad(handle, id, cpuReady, slot, loadedData);
         }, dispatcher::post);
 
@@ -121,6 +120,10 @@ final class AssetManager {
 
     public CpuAssetData resolveHandle(Handle<CpuAssetData> handle) {
         return handleRegistry.getResource(handle);
+    }
+
+    public int size() {
+        return handleRegistry.size();
     }
 
     private static MeshData createDefaultMesh() {

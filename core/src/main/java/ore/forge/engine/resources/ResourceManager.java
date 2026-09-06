@@ -78,8 +78,7 @@ public class ResourceManager implements RenderThreadDispatcher {
     }
 
     public int activeCpuResources() {
-        //TODO
-        return -1;
+        return assetManager.size();
     }
 
     public int activeGpuResources() {
